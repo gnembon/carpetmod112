@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorDebug.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorDebug.java
+@@ -14,6 +14,9 @@
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.ChunkPrimer;
+ 
++import net.minecraft.entity.Entity;
++import net.minecraft.nbt.NBTTagList;
++
+ public class ChunkGeneratorDebug implements IChunkGenerator
+ {
+     private static final List<IBlockState> field_177464_a = Lists.<IBlockState>newArrayList();
+@@ -125,4 +128,9 @@
+         field_177462_b = MathHelper.func_76123_f(MathHelper.func_76129_c((float)field_177464_a.size()));
+         field_181039_c = MathHelper.func_76123_f((float)field_177464_a.size() / (float)field_177462_b);
+     }
++
++    // Retrieval method to get the bounding boxes CARPET-XCOM
++    public NBTTagList getBoundingBoxes(Entity entity) {
++    	return new NBTTagList();
++	}
+ }

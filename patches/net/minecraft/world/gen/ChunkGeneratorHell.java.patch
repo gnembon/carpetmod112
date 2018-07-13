@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorHell.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorHell.java
+@@ -25,6 +25,10 @@
+ import net.minecraft.world.gen.feature.WorldGenerator;
+ import net.minecraft.world.gen.structure.MapGenNetherBridge;
+ 
++import net.minecraft.entity.Entity;
++import carpet.carpetclient.CarpetClientMarkers;
++import net.minecraft.nbt.NBTTagList;
++
+ public class ChunkGeneratorHell implements IChunkGenerator
+ {
+     protected static final IBlockState field_185940_a = Blocks.field_150350_a.func_176223_P();
+@@ -455,4 +459,12 @@
+     {
+         this.field_73172_c.func_186125_a(this.field_185952_n, p_180514_2_, p_180514_3_, (ChunkPrimer)null);
+     }
++
++    // Retrieval method to get the bounding boxes CARPET-XCOM
++    public NBTTagList getBoundingBoxes(Entity entity)
++    {
++        NBTTagList nbttaglist = new NBTTagList();
++        nbttaglist.func_74742_a(this.field_73172_c.getBoundingBoxes(entity, CarpetClientMarkers.FORTRESS));
++        return nbttaglist;
++    }
+ }

@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/StructureStart.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/StructureStart.java
+@@ -9,6 +9,8 @@
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.world.World;
+ 
++import carpet.CarpetSettings;
++
+ public abstract class StructureStart
+ {
+     protected List<StructureComponent> field_75075_a = Lists.<StructureComponent>newLinkedList();
+@@ -75,6 +77,7 @@
+             nbttaglist.func_74742_a(structurecomponent.func_143010_b());
+         }
+ 
++        if(CarpetSettings.getBool("boundingBoxFix")) func_75072_c(); // add this line
+         nbttagcompound.func_74782_a("Children", nbttaglist);
+         this.func_143022_a(nbttagcompound);
+         return nbttagcompound;

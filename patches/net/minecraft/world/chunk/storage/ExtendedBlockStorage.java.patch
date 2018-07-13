@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/storage/ExtendedBlockStorage.java
+@@ -6,6 +6,8 @@
+ import net.minecraft.world.chunk.BlockStateContainer;
+ import net.minecraft.world.chunk.NibbleArray;
+ 
++import carpet.CarpetSettings;
++
+ public class ExtendedBlockStorage
+ {
+     private final int field_76684_a;
+@@ -63,7 +65,12 @@
+ 
+     public boolean func_76663_a()
+     {
+-        return this.field_76682_b == 0;
++    	// NewLight PHIPRO-CARPET
++    	if (CarpetSettings.newLight){
++    		return false;
++    	}else{
++    		return this.field_76682_b == 0;
++    	}
+     }
+ 
+     public boolean func_76675_b()

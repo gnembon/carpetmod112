@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorFlat.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorFlat.java
+@@ -24,6 +24,9 @@
+ import net.minecraft.world.gen.structure.MapGenVillage;
+ import net.minecraft.world.gen.structure.StructureOceanMonument;
+ 
++import net.minecraft.entity.Entity;
++import net.minecraft.nbt.NBTTagList;
++
+ public class ChunkGeneratorFlat implements IChunkGenerator
+ {
+     private final World field_73163_a;
+@@ -243,4 +246,15 @@
+             mapgenstructure.func_186125_a(this.field_73163_a, p_180514_2_, p_180514_3_, (ChunkPrimer)null);
+         }
+     }
++
++    // Retrieval method to get the bounding boxes CARPET-XCOM
++    public NBTTagList getBoundingBoxes(Entity entity)
++    {
++        NBTTagList nbttaglist = new NBTTagList();
++        for(Map.Entry e : field_82696_f.entrySet())
++        {
++            nbttaglist.func_74742_a(((MapGenStructure)e.getValue()).getBoundingBoxes(entity, 1));
++        }
++        return nbttaglist;
++    }
+ }
