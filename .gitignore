@@ -9,6 +9,8 @@
 /.idea
 /classes
 *.iml
+*.ipr
+*.iws
 
 # Gradle
 /build
