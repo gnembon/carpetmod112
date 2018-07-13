@@ -75,43 +75,43 @@
          private final EntityGhast field_179470_b;
 @@ -180,7 +230,28 @@
  
-         public boolean func_75250_a()
-         {
--            return this.field_179470_b.func_70638_az() != null;
-+            //return this.parentEntity.getAttackTarget() != null;
-+            if (this.field_179470_b.func_70638_az() == null)
-+            {
-+                return false;
-+            }
-+            if (CarpetSettings.getBool("rideableGhasts") && this.field_179470_b.func_145818_k_() )
-+            {
-+                if (this.field_179470_b.func_184207_aI())
+             public boolean func_75250_a()
+             {
+-                return this.field_179470_b.func_70638_az() != null;
++                //return this.parentEntity.getAttackTarget() != null;
++                if (this.field_179470_b.func_70638_az() == null)
 +                {
-+                    //reset the attack;
-+                    this.func_75251_c();
 +                    return false;
 +                }
-+                Entity at = this.field_179470_b.func_70638_az();
-+                if (at instanceof EntityPlayer && GhastHelper.is_yo_bro(this.field_179470_b, (EntityPlayer)at))
++                if (CarpetSettings.getBool("rideableGhasts") && this.field_179470_b.func_145818_k_() )
 +                {
-+                    //reset the attack
-+                    this.func_75251_c();
-+                    return false;
++                    if (this.field_179470_b.func_184207_aI())
++                    {
++                        //reset the attack;
++                        this.func_75251_c();
++                        return false;
++                    }
++                    Entity at = this.field_179470_b.func_70638_az();
++                    if (at instanceof EntityPlayer && GhastHelper.is_yo_bro(this.field_179470_b, (EntityPlayer)at))
++                    {
++                        //reset the attack
++                        this.func_75251_c();
++                        return false;
++                    }
 +                }
-+            }
-+            return true;
-         }
++                return true;
+             }
  
-         public void func_75249_e()
+             public void func_75249_e()
 @@ -191,6 +262,11 @@
-         public void func_75251_c()
-         {
-             this.field_179470_b.func_175454_a(false);
-+            //CM added reset attacking entity, but this should be here from day one
-+            if (CarpetSettings.getBool("rideableGhasts"))
-+            {
-+                this.field_179470_b.func_70624_b(null);
-+            }
-         }
+             public void func_75251_c()
+             {
+                 this.field_179470_b.func_175454_a(false);
++                //CM added reset attacking entity, but this should be here from day one
++                if (CarpetSettings.getBool("rideableGhasts"))
++                {
++                    this.field_179470_b.func_70624_b(null);
++                }
+             }
  
-         public void func_75246_d()
+             public void func_75246_d()

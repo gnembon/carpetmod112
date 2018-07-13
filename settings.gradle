@@ -18,4 +18,4 @@ gradle.ext.mappings = 'snapshot_20161116' // Same as MCP 4.10 snapshot_20161116
 gradle.ext.useJavadocs = true
 
 // Whether to use the origial astyle formatting. false is recommended, set to true for compatibility with MCP.
-gradle.ext.useAstyle = true
+gradle.ext.useAstyle = false
