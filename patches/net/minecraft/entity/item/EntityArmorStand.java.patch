@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityArmorStand.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityArmorStand.java
+@@ -93,6 +93,7 @@
+         this.func_70107_b(p_i45855_2_, p_i45855_4_, p_i45855_6_);
+     }
+ 
++    public String cm_name() { return "Armor Stand"; }
+     protected final void func_70105_a(float p_70105_1_, float p_70105_2_)
+     {
+         double d0 = this.field_70165_t;

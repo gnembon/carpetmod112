@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityMob.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityMob.java
+@@ -19,6 +19,8 @@
+ import net.minecraft.world.EnumSkyBlock;
+ import net.minecraft.world.World;
+ 
++import carpet.logging.logHelpers.DamageReporter;
++
+ public abstract class EntityMob extends EntityCreature implements IMob
+ {
+     public EntityMob(World p_i1738_1_)
+@@ -32,6 +34,9 @@
+         return SoundCategory.HOSTILE;
+     }
+ 
++    //CM
++    public String cm_name() { return "Mob"; }
++
+     public void func_70636_d()
+     {
+         this.func_82168_bl();
+@@ -90,10 +95,16 @@
+         float f = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
+         int i = 0;
+ 
++        // CM
++        DamageReporter.register_damage_attacker((EntityLivingBase) p_70652_1_, this, f);
++        float ff = f;
++        // end CM
++        
+         if (p_70652_1_ instanceof EntityLivingBase)
+         {
+             f += EnchantmentHelper.func_152377_a(this.func_184614_ca(), ((EntityLivingBase)p_70652_1_).func_70668_bt());
+             i += EnchantmentHelper.func_77501_a(this);
++            DamageReporter.modify_damage((EntityLivingBase)p_70652_1_, null, ff, f, "attacker enchants"); // CM
+         }
+ 
+         boolean flag = p_70652_1_.func_70097_a(DamageSource.func_76358_a(this), f);

@@ -1,0 +1,84 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandClone.java
++++ ../src-work/minecraft/net/minecraft/command/CommandClone.java
+@@ -18,6 +18,10 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.gen.structure.StructureBoundingBox;
+ 
++import carpet.CarpetSettings;
++
++ import carpet.CarpetSettings;
++
+ public class CommandClone extends CommandBase
+ {
+     public String func_71517_b()
+@@ -51,9 +55,9 @@
+             StructureBoundingBox structureboundingbox1 = new StructureBoundingBox(blockpos2, blockpos2.func_177971_a(structureboundingbox.func_175896_b()));
+             int i = structureboundingbox.func_78883_b() * structureboundingbox.func_78882_c() * structureboundingbox.func_78880_d();
+ 
+-            if (i > 32768)
++            if (i > CarpetSettings.getInt("fillLimit")) //CM
+             {
+-                throw new CommandException("commands.clone.tooManyBlocks", new Object[] {i, Integer.valueOf(32768)});
++                throw new CommandException("commands.clone.tooManyBlocks", new Object[] {i, Integer.valueOf(CarpetSettings.getInt("fillLimit"))}); //CM
+             }
+             else
+             {
+@@ -154,12 +158,12 @@
+                                         ((IInventory)tileentity1).func_174888_l();
+                                     }
+ 
+-                                    world.func_180501_a(blockpos6, Blocks.field_180401_cv.func_176223_P(), 2);
++                                    world.func_180501_a(blockpos6, Blocks.field_180401_cv.func_176223_P(), 2 | (CarpetSettings.getBool("fillUpdates")?0:128)); //carpet
+                                 }
+ 
+                                 for (BlockPos blockpos7 : deque)
+                                 {
+-                                    world.func_180501_a(blockpos7, Blocks.field_150350_a.func_176223_P(), 3);
++                                    world.func_180501_a(blockpos7, Blocks.field_150350_a.func_176223_P(), (CarpetSettings.getBool("fillUpdates")?3:131)); //carpet
+                                 }
+                             }
+ 
+@@ -178,19 +182,18 @@
+                                     ((IInventory)tileentity2).func_174888_l();
+                                 }
+ 
+-                                world.func_180501_a(commandclone$staticclonedata.field_179537_a, Blocks.field_180401_cv.func_176223_P(), 2);
++                                world.func_180501_a(commandclone$staticclonedata.field_179537_a, Blocks.field_180401_cv.func_176223_P(), 2 | (CarpetSettings.getBool("fillUpdates")?0:128)); //carpet
+                             }
+ 
+                             i = 0;
+ 
+                             for (CommandClone.StaticCloneData commandclone$staticclonedata1 : list3)
+                             {
+-                                if (world.func_180501_a(commandclone$staticclonedata1.field_179537_a, commandclone$staticclonedata1.field_179535_b, 2))
++                                if (world.func_180501_a(commandclone$staticclonedata1.field_179537_a, commandclone$staticclonedata1.field_179535_b, 2 | (CarpetSettings.getBool("fillUpdates")?0:128))) //carpet
+                                 {
+                                     ++i;
+                                 }
+                             }
+-
+                             for (CommandClone.StaticCloneData commandclone$staticclonedata2 : list1)
+                             {
+                                 TileEntity tileentity3 = world.func_175625_s(commandclone$staticclonedata2.field_179537_a);
+@@ -206,7 +209,10 @@
+ 
+                                 world.func_180501_a(commandclone$staticclonedata2.field_179537_a, commandclone$staticclonedata2.field_179535_b, 2);
+                             }
+-
++                            /*carpet mod */
++                            if (CarpetSettings.getBool("fillUpdates"))
++                            {
++                                /*carpet mod end EXTRA INDENTATION START*/
+                             for (CommandClone.StaticCloneData commandclone$staticclonedata3 : list4)
+                             {
+                                 world.func_175722_b(commandclone$staticclonedata3.field_179537_a, commandclone$staticclonedata3.field_179535_b.func_177230_c(), false);
+@@ -225,7 +231,8 @@
+                                     }
+                                 }
+                             }
+-
++                            } //carpet mod back extra indentation
++                            
+                             if (i <= 0)
+                             {
+                                 throw new CommandException("commands.clone.failed", new Object[0]);

@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockShulkerBox.java
++++ ../src-work/minecraft/net/minecraft/block/BlockShulkerBox.java
+@@ -32,6 +32,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import carpet.CarpetSettings;
++
+ public class BlockShulkerBox extends BlockContainer
+ {
+     public static final PropertyEnum<EnumFacing> field_190957_a = PropertyDirection.func_177714_a("facing");
+@@ -176,7 +178,7 @@
+                 NBTTagCompound nbttagcompound = new NBTTagCompound();
+                 NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                 nbttagcompound.func_74782_a("BlockEntityTag", ((TileEntityShulkerBox)tileentity).func_190580_f(nbttagcompound1));
+-                itemstack.func_77982_d(nbttagcompound);
++                if(!CarpetSettings.getBool("stackableEmptyShulkerBoxes") || nbttagcompound1.func_186856_d() > 0) itemstack.func_77982_d(nbttagcompound);
+ 
+                 if (tileentityshulkerbox.func_145818_k_())
+                 {

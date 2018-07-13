@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTNT.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTNT.java
+@@ -22,6 +22,8 @@
+ import net.minecraft.world.Explosion;
+ import net.minecraft.world.World;
+ 
++import carpet.CarpetSettings;
++
+ public class BlockTNT extends Block
+ {
+     public static final PropertyBool field_176246_a = PropertyBool.func_177716_a("explode");
+@@ -37,7 +39,8 @@
+     {
+         super.func_176213_c(p_176213_1_, p_176213_2_, p_176213_3_);
+ 
+-        if (p_176213_1_.func_175640_z(p_176213_2_))
++		// Carpet setting to remove updates when tnt is placed CARPET-XCOM
++        if (!CarpetSettings.getBool("TNTDoNotUpdate") && p_176213_1_.func_175640_z(p_176213_2_))
+         {
+             this.func_176206_d(p_176213_1_, p_176213_2_, p_176213_3_.func_177226_a(field_176246_a, Boolean.valueOf(true)));
+             p_176213_1_.func_175698_g(p_176213_2_);

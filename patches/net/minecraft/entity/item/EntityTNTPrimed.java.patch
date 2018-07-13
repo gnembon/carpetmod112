@@ -1,0 +1,111 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityTNTPrimed.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityTNTPrimed.java
+@@ -11,17 +11,32 @@
+ import net.minecraft.util.EnumParticleTypes;
+ import net.minecraft.world.World;
+ 
++import carpet.CarpetSettings;
++import carpet.logging.logHelpers.TNTLogHelper;
++import carpet.logging.LoggerRegistry;
++
+ public class EntityTNTPrimed extends Entity
+ {
+     private static final DataParameter<Integer> field_184537_a = EntityDataManager.<Integer>func_187226_a(EntityTNTPrimed.class, DataSerializers.field_187192_b);
+     @Nullable
+     private EntityLivingBase field_94084_b;
+     private int field_70516_a;
++    
++    // Merge code for optimizing the tnt code CARPET-XCOM
++    private int mergedTNT;
++    private boolean mergeBool;
+ 
++    // ----- Carpet Start ----- //
++    private TNTLogHelper logHelper = null;
++    public String cm_name() { return "Primed TNT"; }
++    // ----- Carpet End ----- //
++
+     public EntityTNTPrimed(World p_i1729_1_)
+     {
+         super(p_i1729_1_);
+         this.field_70516_a = 80;
++        mergedTNT = 1;
++        mergeBool = false;
+         this.field_70156_m = true;
+         this.field_70178_ae = true;
+         this.func_70105_a(0.98F, 0.98F);
+@@ -31,10 +46,21 @@
+     {
+         this(p_i1730_1_);
+         this.func_70107_b(p_i1730_2_, p_i1730_4_, p_i1730_6_);
+-        float f = (float)(Math.random() * (Math.PI * 2D));
+-        this.field_70159_w = (double)(-((float)Math.sin((double)f)) * 0.02F);
+-        this.field_70181_x = 0.20000000298023224D;
+-        this.field_70179_y = (double)(-((float)Math.cos((double)f)) * 0.02F);
++        float f = 0F;
++        if(!CarpetSettings.getBool("tntPrimerMomentumRemoved")){
++            f = (float)(Math.random() * (Math.PI * 2D));
++            if(CarpetSettings.hardcodeTNTangle > 0) f = CarpetSettings.hardcodeTNTangle;
++            this.field_70159_w = (double)(-((float)Math.sin((double)f)) * 0.02F);
++            this.field_70181_x = 0.20000000298023224D;
++            this.field_70179_y = (double)(-((float)Math.cos((double)f)) * 0.02F);
++        }
++        // ----- Carpet Start ----- //
++        if (LoggerRegistry.__tnt)
++        {
++            logHelper = new TNTLogHelper();
++            logHelper.onPrimed(p_i1730_2_, p_i1730_4_, p_i1730_6_, f);
++        }
++        // ----- Carpet End ----- //
+         this.func_184534_a(80);
+         this.field_70169_q = p_i1730_2_;
+         this.field_70167_r = p_i1730_4_;
+@@ -75,11 +101,33 @@
+ 
+         if (this.field_70122_E)
+         {
++            // Merge code for combining tnt into a single entity if they happen to exist in the same spot, same fuse, no motion CARPET-XCOM
++            if(CarpetSettings.mergeTNT){
++                if(!field_70170_p.field_72995_K && mergeBool && this.field_70159_w == 0 && this.field_70181_x == 0 && this.field_70179_y == 0){
++                    mergeBool = false;
++                    for(Entity entity : field_70170_p.func_72839_b(this, this.func_174813_aQ())){
++                        if(entity instanceof EntityTNTPrimed && !entity.field_70128_L){
++                            EntityTNTPrimed entityTNTPrimed = (EntityTNTPrimed)entity;
++                            if(entityTNTPrimed.field_70159_w == 0 && entityTNTPrimed.field_70181_x == 0 && entityTNTPrimed.field_70179_y == 0
++                                    && this.field_70165_t == entityTNTPrimed.field_70165_t && this.field_70161_v == entityTNTPrimed.field_70161_v && this.field_70163_u == entityTNTPrimed.field_70163_u
++                                    && this.field_70516_a == entityTNTPrimed.field_70516_a){
++                                mergedTNT += entityTNTPrimed.mergedTNT;
++                                entityTNTPrimed.func_70106_y();
++                            }
++                        }
++                    }
++                }
++            }
+             this.field_70159_w *= 0.699999988079071D;
+             this.field_70179_y *= 0.699999988079071D;
+             this.field_70181_x *= -0.5D;
+         }
+ 
++     // Merge code, merge only tnt that have had a chance to move CARPET-XCOM
++        if(!field_70170_p.field_72995_K && (this.field_70181_x != 0 || this.field_70159_w != 0 || this.field_70179_y != 0)){
++            mergeBool = true;
++        }
++
+         --this.field_70516_a;
+ 
+         if (this.field_70516_a <= 0)
+@@ -100,8 +148,14 @@
+ 
+     private void func_70515_d()
+     {
++        // ----- Carpet Start ----- //
++        if (LoggerRegistry.__tnt && logHelper != null)
++            logHelper.onExploded(field_70165_t, field_70163_u, field_70161_v);
++        // ----- Carpet End ----- //
+         float f = 4.0F;
+-        this.field_70170_p.func_72876_a(this, this.field_70165_t, this.field_70163_u + (double)(this.field_70131_O / 16.0F), this.field_70161_v, 4.0F, true);
++        // Multi explode the amount of merged TNT CARPET-XCOM
++        for(int i = 0; i < mergedTNT; i++)
++            this.field_70170_p.func_72876_a(this, this.field_70165_t, this.field_70163_u + (double)(this.field_70131_O / 16.0F), this.field_70161_v, 4.0F, true);
+     }
+ 
+     protected void func_70014_b(NBTTagCompound p_70014_1_)

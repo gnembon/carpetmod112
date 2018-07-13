@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityEnchantmentTable.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityEnchantmentTable.java
+@@ -13,6 +13,8 @@
+ import net.minecraft.util.text.TextComponentTranslation;
+ import net.minecraft.world.IInteractionObject;
+ 
++import carpet.CarpetSettings;
++
+ public class TileEntityEnchantmentTable extends TileEntity implements ITickable, IInteractionObject
+ {
+     public int field_145926_a;
+@@ -52,6 +54,10 @@
+ 
+     public void func_73660_a()
+     {
++        // CARPET-optimizedTileEntities: Skip the update on servers, because it only performs an animation
++        if(CarpetSettings.optimizedTileEntities && !this.field_145850_b.field_72995_K)
++            return;
++
+         this.field_145927_n = this.field_145930_m;
+         this.field_145925_p = this.field_145928_o;
+         EntityPlayer entityplayer = this.field_145850_b.func_184137_a((double)((float)this.field_174879_c.func_177958_n() + 0.5F), (double)((float)this.field_174879_c.func_177956_o() + 0.5F), (double)((float)this.field_174879_c.func_177952_p() + 0.5F), 3.0D, false);

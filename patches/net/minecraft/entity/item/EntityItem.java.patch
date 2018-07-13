@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
+@@ -35,6 +35,8 @@
+     private String field_145801_f;
+     private String field_145802_g;
+     public float field_70290_d;
++    //CM
++    public String cm_name() { return "Item"; }
+ 
+     public EntityItem(World p_i1709_1_, double p_i1709_2_, double p_i1709_4_, double p_i1709_6_)
+     {
+@@ -221,8 +223,23 @@
+                     }
+                     else if (itemstack1.func_190916_E() + itemstack.func_190916_E() > itemstack1.func_77976_d())
+                     {
++                        // Add check for stacking shoulkers without NBT on the ground CARPET-XCOM
++                        if (itemstack1.isGroundStackable() && itemstack.isGroundStackable())
++                        {
++                            itemstack1.func_190917_f(itemstack.func_190916_E());
++                            p_70289_1_.field_145804_b = Math.max(p_70289_1_.field_145804_b, this.field_145804_b);
++                            p_70289_1_.field_70292_b = Math.min(p_70289_1_.field_70292_b, this.field_70292_b);
++                            p_70289_1_.func_92058_a(itemstack1);
++                            this.func_70106_y();
++                            return true;
++                        }
+                         return false;
+                     }
++                    // make sure stackable items are checked before combining them, always true in vanilla CARPET-XCOM
++                    else if (!itemstack1.func_77985_e() && !itemstack.func_77985_e())
++                    {
++                        return false;
++                    }
+                     else
+                     {
+                         itemstack1.func_190917_f(itemstack.func_190916_E());
+@@ -470,4 +487,9 @@
+         this.func_174871_r();
+         this.field_70292_b = 5999;
+     }
++    //CM
++    public int func_174872_o()
++    {
++        return this.field_70292_b;
++    }
+ }

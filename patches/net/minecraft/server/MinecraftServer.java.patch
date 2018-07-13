@@ -1,0 +1,157 @@
+--- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
++++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
+@@ -85,6 +85,15 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import java.util.Locale;
++import narcolepticfrog.rsmm.server.RSMMServer;
++import net.minecraft.network.play.server.SPacketPlayerListHeaderFooter;
++import net.minecraft.util.text.TextFormatting;
++import carpet.CarpetSettings;
++import carpet.CarpetServer;
++import carpet.helpers.TickSpeed;
++import carpet.utils.CarpetProfiler;
++
+ public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
+ {
+     private static final Logger field_147145_h = LogManager.getLogger();
+@@ -143,6 +152,7 @@
+ 
+     public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
+     {
++        CarpetServer.init(this); //CM init
+         this.field_110456_c = p_i47054_2_;
+         this.field_152364_T = p_i47054_4_;
+         this.field_147143_S = p_i47054_5_;
+@@ -449,18 +459,33 @@
+             {
+                 this.field_175591_ab = func_130071_aq();
+                 long i = 0L;
+-                this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
++                if ("_".equals(CarpetSettings.getString("customMOTD")))
++                    this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
++                else
++                    this.field_147147_p.func_151315_a(new TextComponentString(CarpetSettings.getString("customMOTD")));
+                 this.field_147147_p.func_151321_a(new ServerStatusResponse.Version("1.12", 335));
+                 this.func_184107_a(this.field_147147_p);
+ 
+                 while (this.field_71317_u)
+                 {
++                    /* carpet mod commandTick */
++                    //todo check if this check is necessary
++                    if (TickSpeed.time_warp_start_time != 0)
++                    {
++                        if (TickSpeed.continueWarp())
++                        {
++                            this.func_71217_p();
++                            this.field_175591_ab = func_130071_aq();
++                            this.field_71296_Q = true;
++                        }
++                        continue;
++                    }
++                    /* end */
+                     long k = func_130071_aq();
+                     long j = k - this.field_175591_ab;
+ 
+                     if (j > 2000L && this.field_175591_ab - this.field_71299_R >= 15000L)
+                     {
+-                        field_147145_h.warn("Can't keep up! Did the system time change, or is the server overloaded? Running {}ms behind, skipping {} tick(s)", Long.valueOf(j), Long.valueOf(j / 50L));
+                         j = 2000L;
+                         this.field_71299_R = this.field_175591_ab;
+                     }
+@@ -473,6 +498,7 @@
+ 
+                     i += j;
+                     this.field_175591_ab = k;
++                    boolean falling_behind = false;
+ 
+                     if (this.field_71305_c[0].func_73056_e())
+                     {
+@@ -481,14 +507,29 @@
+                     }
+                     else
+                     {
+-                        while (i > 50L)
++                        boolean keeping_up = false;
++                        while (i > TickSpeed.mspt) /* carpet mod 50L */
+                         {
+-                            i -= 50L;
++                            i -= TickSpeed.mspt; /* carpet mod 50L */
++                            if (CarpetSettings.getBool("watchdogFix") && keeping_up)
++                            {
++                                this.field_175591_ab = func_130071_aq();
++                                this.field_71296_Q = true;
++                                falling_behind = true;
++                            }
+                             this.func_71217_p();
++                            keeping_up = true;
+                         }
+                     }
+ 
+-                    Thread.sleep(Math.max(1L, 50L - i));
++                    if (falling_behind)
++                    {
++                        Thread.sleep(1L); /* carpet mod 50L */
++                    }
++                    else
++                    {
++                        Thread.sleep(Math.max(1L, TickSpeed.mspt - i)); /* carpet mod 50L */
++                    }
+                     this.field_71296_Q = true;
+                 }
+             }
+@@ -592,6 +633,11 @@
+     {
+         long i = System.nanoTime();
+         ++this.field_71315_w;
++        CarpetServer.tick(this);
++        if (CarpetProfiler.tick_health_requested != 0L)
++        {
++            CarpetProfiler.start_tick_profiling();
++        }
+ 
+         if (this.field_71295_T)
+         {
+@@ -621,12 +667,17 @@
+ 
+         if (this.field_71315_w % 900 == 0)
+         {
++            CarpetProfiler.start_section(null, "Autosave");
+             this.field_71304_b.func_76320_a("save");
+             this.field_71318_t.func_72389_g();
+             this.func_71267_a(true);
+             this.field_71304_b.func_76319_b();
++            CarpetProfiler.end_current_section();
+         }
++        
+ 
++
++
+         this.field_71304_b.func_76320_a("tallying");
+         this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
+         this.field_71304_b.func_76319_b();
+@@ -644,6 +695,10 @@
+ 
+         this.field_71304_b.func_76319_b();
+         this.field_71304_b.func_76319_b();
++        if (CarpetProfiler.tick_health_requested != 0L)
++        {
++            CarpetProfiler.end_tick_profiling(this);
++        }
+     }
+ 
+     public void func_71190_q()
+@@ -710,10 +765,12 @@
+             this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
+         }
+ 
++        CarpetProfiler.start_section(null, "Network");
+         this.field_71304_b.func_76318_c("connection");
+         this.func_147137_ag().func_151269_c();
+         this.field_71304_b.func_76318_c("players");
+         this.field_71318_t.func_72374_b();
++        CarpetProfiler.end_current_section();
+         this.field_71304_b.func_76318_c("commandFunctions");
+         this.func_193030_aL().func_73660_a();
+         this.field_71304_b.func_76318_c("tickables");

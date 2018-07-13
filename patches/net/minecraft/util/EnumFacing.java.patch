@@ -1,0 +1,135 @@
+--- ../src-base/minecraft/net/minecraft/util/EnumFacing.java
++++ ../src-work/minecraft/net/minecraft/util/EnumFacing.java
+@@ -13,6 +13,8 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.Vec3i;
+ 
++import carpet.helpers.BlockRotator;
++
+ public enum EnumFacing implements IStringSerializable
+ {
+     DOWN(0, 1, -1, "down", EnumFacing.AxisDirection.NEGATIVE, EnumFacing.Axis.Y, new Vec3i(0, -1, 0)),
+@@ -28,9 +30,9 @@
+     private final String field_176757_j;
+     private final EnumFacing.Axis field_176758_k;
+     private final EnumFacing.AxisDirection field_176755_l;
+-    private final Vec3i field_176756_m;
+-    private static final EnumFacing[] field_82609_l = new EnumFacing[6];
+-    private static final EnumFacing[] field_176754_o = new EnumFacing[4];
++    public final Vec3i field_176756_m;
++    public static final EnumFacing[] field_82609_l = new EnumFacing[6];
++    public static final EnumFacing[] field_176754_o = new EnumFacing[4];
+     private static final Map<String, EnumFacing> field_176761_p = Maps.<String, EnumFacing>newHashMap();
+ 
+     private EnumFacing(int p_i46016_3_, int p_i46016_4_, int p_i46016_5_, String p_i46016_6_, EnumFacing.AxisDirection p_i46016_7_, EnumFacing.Axis p_i46016_8_, Vec3i p_i46016_9_)
+@@ -187,11 +189,15 @@
+ 
+             if (d0 - (double)p_190914_0_.func_177956_o() > 2.0D)
+             {
++                if (BlockRotator.flippinEligibility(p_190914_1_))
++                    return DOWN;
+                 return UP;
+             }
+ 
+             if ((double)p_190914_0_.func_177956_o() - d0 > 0.0D)
+             {
++                if (BlockRotator.flippinEligibility(p_190914_1_))
++                    return UP;
+                 return DOWN;
+             }
+         }
+@@ -297,6 +303,94 @@
+         }
+     }
+ 
++    /*
++     * Rotate this Facing around the given axis clockwise. If this facing cannot be rotated around the given axis,
++     * returns this facing without rotating.
++     */
++    public EnumFacing func_176732_a(EnumFacing.Axis p_176732_1_)
++    {
++        switch (p_176732_1_)
++        {
++            case X:
++                if (this != WEST && this != EAST)
++                {
++                    return this.func_176744_n();
++                }
++
++                return this;
++
++            case Y:
++                if (this != UP && this != DOWN)
++                {
++                    return this.func_176746_e();
++                }
++
++                return this;
++
++            case Z:
++                if (this != NORTH && this != SOUTH)
++                {
++                    return this.func_176738_p();
++                }
++
++                return this;
++
++            default:
++                throw new IllegalStateException("Unable to get CW facing for axis " + p_176732_1_);
++        }
++    }
++
++    /*
++     * Rotate this Facing around the X axis (NORTH => DOWN => SOUTH => UP => NORTH)
++     */
++    private EnumFacing func_176744_n()
++    {
++        switch (this)
++        {
++            case NORTH:
++                return DOWN;
++
++            case EAST:
++            case WEST:
++            default:
++                throw new IllegalStateException("Unable to get X-rotated facing of " + this);
++
++            case SOUTH:
++                return UP;
++
++            case UP:
++                return NORTH;
++
++            case DOWN:
++                return SOUTH;
++        }
++    }
++
++    /*
++     * Rotate this Facing around the Z axis (EAST => DOWN => WEST => UP => EAST)
++     */
++    private EnumFacing func_176738_p()
++    {
++        switch (this)
++        {
++            case EAST:
++                return DOWN;
++
++            case SOUTH:
++            default:
++                throw new IllegalStateException("Unable to get Z-rotated facing of " + this);
++
++            case WEST:
++                return UP;
++
++            case UP:
++                return EAST;
++
++            case DOWN:
++                return WEST;
++        }
++    }
++
+     public static enum Plane implements Predicate<EnumFacing>, Iterable<EnumFacing> {
+         HORIZONTAL,
+         VERTICAL;

@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityMinecart.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityMinecart.java
+@@ -34,6 +34,10 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
+ 
++import carpet.CarpetSettings;
++
++ import carpet.CarpetSettings;
++
+ public abstract class EntityMinecart extends Entity implements IWorldNameable
+ {
+     private static final DataParameter<Integer> field_184265_a = EntityDataManager.<Integer>func_187226_a(EntityMinecart.class, DataSerializers.field_187192_b);
+@@ -51,6 +55,9 @@
+     private double field_70512_ao;
+     private double field_70513_ap;
+ 
++    //CM
++    public String cm_name() { return "Minecart"; }
++
+     public EntityMinecart(World p_i1712_1_)
+     {
+         super(p_i1712_1_);
+@@ -483,7 +490,10 @@
+         this.field_70179_y = d5 * d2 / d3;
+         Entity entity = this.func_184188_bt().isEmpty() ? null : (Entity)this.func_184188_bt().get(0);
+ 
+-        if (entity instanceof EntityLivingBase)
++        /*
++         * Carpet settings to make only players be able to control minecarts. CARPET-XCOM
++         */
++        if (entity instanceof EntityLivingBase && (!CarpetSettings.getBool("mobsDontControlMinecarts") || entity instanceof EntityPlayer))
+         {
+             double d6 = (double)((EntityLivingBase)entity).field_191988_bg;
+ 

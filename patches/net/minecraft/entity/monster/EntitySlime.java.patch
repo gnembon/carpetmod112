@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntitySlime.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntitySlime.java
+@@ -36,6 +36,8 @@
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.storage.loot.LootTableList;
+ 
++import carpet.logging.logHelpers.DamageReporter;
++
+ public class EntitySlime extends EntityLiving implements IMob
+ {
+     private static final DataParameter<Integer> field_184711_bt = EntityDataManager.<Integer>func_187226_a(EntitySlime.class, DataSerializers.field_187192_b);
+@@ -251,7 +253,10 @@
+     {
+         int i = this.func_70809_q();
+ 
+-        if (this.func_70685_l(p_175451_1_) && this.func_70068_e(p_175451_1_) < 0.6D * (double)i * 0.6D * (double)i && p_175451_1_.func_70097_a(DamageSource.func_76358_a(this), (float)this.func_70805_n()))
++        if (this.func_70685_l(p_175451_1_) &&
++		    this.func_70068_e(p_175451_1_) < 0.6D * (double)i * 0.6D * (double)i &&
++			DamageReporter.register_damage_attacker((EntityLivingBase)p_175451_1_, this, (float)this.func_70805_n()) && //CM
++			p_175451_1_.func_70097_a(DamageSource.func_76358_a(this), (float)this.func_70805_n()) )
+         {
+             this.func_184185_a(SoundEvents.field_187870_fk, 1.0F, (this.field_70146_Z.nextFloat() - this.field_70146_Z.nextFloat()) * 0.2F + 1.0F);
+             this.func_174815_a(this, p_175451_1_);
+@@ -273,6 +278,12 @@
+         return this.func_70809_q();
+     }
+ 
++        // carpet mod
++    public float getPublicAttackStrength()
++    {
++        return (float)this.func_70805_n();
++    }
++    
+     protected SoundEvent func_184601_bQ(DamageSource p_184601_1_)
+     {
+         return this.func_189101_db() ? SoundEvents.field_187898_fy : SoundEvents.field_187880_fp;

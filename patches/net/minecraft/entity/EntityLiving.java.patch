@@ -1,0 +1,59 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
+@@ -56,6 +56,8 @@
+ import net.minecraft.world.storage.loot.LootContext;
+ import net.minecraft.world.storage.loot.LootTable;
+ 
++import net.minecraft.util.text.TextFormatting;
++
+ public abstract class EntityLiving extends EntityLivingBase
+ {
+     private static final DataParameter<Byte> field_184654_a = EntityDataManager.<Byte>func_187226_a(EntityLiving.class, DataSerializers.field_187191_a);
+@@ -192,11 +194,19 @@
+ 
+     public void func_70642_aH()
+     {
+-        SoundEvent soundevent = this.func_184639_G();
+-
+-        if (soundevent != null)
++		/* CM
++		 * EasterEgg CARPET-XCOM
++		 * added indentation level with if statatement
++		 */
++    	String s = TextFormatting.func_110646_a(this.func_70005_c_());
++        if (s != null && !("Xcom".equalsIgnoreCase(s) || "gnembon".equalsIgnoreCase(s)))
+         {
+-            this.func_184185_a(soundevent, this.func_70599_aP(), this.func_70647_i());
++	        SoundEvent soundevent = this.func_184639_G();
++
++	        if (soundevent != null)
++	        {
++	            this.func_184185_a(soundevent, this.func_70599_aP(), this.func_70647_i());
++	        }
+         }
+     }
+ 
+@@ -1419,4 +1429,23 @@
+         IN_AIR,
+         IN_WATER;
+     }
++
++    // Added optimized despawn mobs causing netlag by Luflosi CARPET-XCOM
++	public boolean willImmediatelyDespawn() {
++		if (!this.func_70692_ba() || this.field_82179_bU) {
++			return false;
++		}
++		boolean playerInDimension = false;
++		for (int i = 0; i < this.field_70170_p.field_73010_i.size(); i++) {
++			EntityPlayer entityplayer = this.field_70170_p.field_73010_i.get(i);
++			if (!entityplayer.func_175149_v()) {
++				playerInDimension = true;
++				double distanceSq = entityplayer.func_70092_e(this.field_70165_t, this.field_70163_u, this.field_70161_v);
++				if (distanceSq <= 16384.0D) {
++					return false;
++				}
++			}
++		}
++		return playerInDimension;
++	}
+ }

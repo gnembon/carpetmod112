@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityHanging.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityHanging.java
+@@ -115,8 +115,8 @@
+ 
+             if (!this.field_70128_L && !this.func_70518_d())
+             {
+-                this.func_70106_y();
+                 this.func_110128_b((Entity)null);
++                this.func_70106_y(); // CM moved to the back - no effect in behaviour
+             }
+         }
+     }
+@@ -180,9 +180,9 @@
+         {
+             if (!this.field_70128_L && !this.field_70170_p.field_72995_K)
+             {
+-                this.func_70106_y();
+                 this.func_70018_K();
+                 this.func_110128_b(p_70097_1_.func_76346_g());
++                this.func_70106_y(); // CM moved to the back - no effect in behaviour
+             }
+ 
+             return true;
+@@ -193,8 +193,8 @@
+     {
+         if (!this.field_70170_p.field_72995_K && !this.field_70128_L && p_70091_2_ * p_70091_2_ + p_70091_4_ * p_70091_4_ + p_70091_6_ * p_70091_6_ > 0.0D)
+         {
+-            this.func_70106_y();
+             this.func_110128_b((Entity)null);
++            this.func_70106_y(); // CM moved to the back - no effect in behaviour
+         }
+     }
+ 
+@@ -202,8 +202,8 @@
+     {
+         if (!this.field_70170_p.field_72995_K && !this.field_70128_L && p_70024_1_ * p_70024_1_ + p_70024_3_ * p_70024_3_ + p_70024_5_ * p_70024_5_ > 0.0D)
+         {
+-            this.func_70106_y();
+             this.func_110128_b((Entity)null);
++            this.func_70106_y(); // CM moved to the back - no effect in behaviour
+         }
+     }
+ 

@@ -1,0 +1,13 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketPlayerListHeaderFooter.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketPlayerListHeaderFooter.java
+@@ -8,8 +8,8 @@
+ 
+ public class SPacketPlayerListHeaderFooter implements Packet<INetHandlerPlayClient>
+ {
+-    private ITextComponent field_179703_a;
+-    private ITextComponent field_179702_b;
++    public ITextComponent field_179703_a; // CM access for TSPDisplay
++    public ITextComponent field_179702_b; // CM access for TPSDisplay
+ 
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
+     {

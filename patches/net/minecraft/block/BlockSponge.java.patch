@@ -1,0 +1,51 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSponge.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSponge.java
+@@ -16,6 +16,9 @@
+ import net.minecraft.util.text.translation.I18n;
+ import net.minecraft.world.World;
+ 
++import carpet.CarpetSettings;
++import java.util.Random;
++
+ public class BlockSponge extends Block
+ {
+     public static final PropertyBool field_176313_a = PropertyBool.func_177716_a("wet");
+@@ -111,6 +114,38 @@
+         return ((Boolean)p_176201_1_.func_177229_b(field_176313_a)).booleanValue() ? 1 : 0;
+     }
+ 
++    @Override
++    public void func_180645_a(World worldIn, BlockPos pos, IBlockState state, Random random)
++    {
++        super.func_180645_a(worldIn, pos, state, random);
++        if (!CarpetSettings.getBool("spongeRandom"))
++        {
++            return;
++        }
++        boolean touches_water = false;
++        boolean touches_wet = false;
++        for (EnumFacing enumfacing : EnumFacing.values())
++        {
++            BlockPos blockpos1 = pos.func_177972_a(enumfacing);
++            if (worldIn.func_180495_p(blockpos1).func_185904_a() == Material.field_151586_h)
++            {
++                touches_water = true;
++            }
++            if (worldIn.func_180495_p(blockpos1).func_177230_c() == Blocks.field_150360_v && worldIn.func_180495_p(blockpos1).func_177229_b(field_176313_a).booleanValue() )
++            {
++                touches_wet = true;
++            }
++        }
++        if ((state.func_177229_b(field_176313_a)).booleanValue() && !touches_water && worldIn.func_175678_i(pos.func_177984_a()) && worldIn.func_72935_r() && !worldIn.func_175727_C(pos.func_177984_a()))
++        {
++            worldIn.func_180501_a(pos, state.func_177226_a(field_176313_a, Boolean.valueOf(false)), 2);
++        }
++        else if ( !(state.func_177229_b(field_176313_a)).booleanValue() && (touches_wet || touches_water || worldIn.func_175727_C(pos.func_177984_a())) && random.nextInt(3)==0)
++        {
++            worldIn.func_180501_a(pos, state.func_177226_a(field_176313_a, Boolean.valueOf(true)), 2);
++        }
++    }
++
+     protected BlockStateContainer func_180661_e()
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176313_a});

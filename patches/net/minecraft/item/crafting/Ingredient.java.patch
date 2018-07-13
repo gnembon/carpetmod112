@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/Ingredient.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/Ingredient.java
+@@ -78,4 +78,7 @@
+ 
+         return field_193370_a;
+     }
++
++    // Client code required for nitwit crafting
++    public ItemStack[] func_193365_a() { return this.field_193371_b; }
+ }

@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
+@@ -60,7 +60,7 @@
+         return new ItemStack(Items.field_151132_bS);
+     }
+ 
+-    protected int func_176403_d(IBlockState p_176403_1_)
++    protected int getDelay(IBlockState state, World world, BlockPos pos)
+     {
+         return 2;
+     }

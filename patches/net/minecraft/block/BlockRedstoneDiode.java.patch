@@ -1,0 +1,36 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneDiode.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneDiode.java
+@@ -64,7 +64,7 @@
+ 
+                 if (!flag)
+                 {
+-                    p_180650_1_.func_175654_a(p_180650_2_, this.func_180674_e(p_180650_3_).func_177230_c(), this.func_176399_m(p_180650_3_), -1);
++                    p_180650_1_.func_175654_a(p_180650_2_, this.func_180674_e(p_180650_3_).func_177230_c(), this.getTickDelay(p_180650_3_, p_180650_1_, p_180650_2_), -1);
+                 }
+             }
+         }
+@@ -129,7 +129,7 @@
+                     i = -2;
+                 }
+ 
+-                p_176398_1_.func_175654_a(p_176398_2_, this, this.func_176403_d(p_176398_3_), i);
++                p_176398_1_.func_175654_a(p_176398_2_, this, this.getDelay(p_176398_3_, p_176398_1_, p_176398_2_), i);
+             }
+         }
+     }
+@@ -276,12 +276,12 @@
+         }
+     }
+ 
+-    protected int func_176399_m(IBlockState p_176399_1_)
++    protected int getTickDelay(IBlockState state, World world, BlockPos pos)
+     {
+-        return this.func_176403_d(p_176399_1_);
++        return this.getDelay(state, world, pos);
+     }
+ 
+-    protected abstract int func_176403_d(IBlockState p_176403_1_);
++    protected abstract int getDelay(IBlockState state, World world, BlockPos pos);
+ 
+     protected abstract IBlockState func_180674_e(IBlockState p_180674_1_);
+ 

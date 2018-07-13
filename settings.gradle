@@ -1,0 +1,21 @@
+// The project name, starts with lower case letter, should obey Java variable naming rules
+rootProject.name = 'carpetmod'
+
+// The version of the mod
+gradle.ext.modVersion = new java.text.SimpleDateFormat('yy_MM_dd').format(new Date())
+
+// Set to 'client' to make a client-only jar mod, 'server' to make it server-only and 'both' to make it both
+// Only 'server' is fully supported currently
+gradle.ext.side = 'server'
+
+// The Minecraft version to use
+gradle.ext.mcVersion = '1.12'
+
+// The MCP mappings to use
+gradle.ext.mappings = 'snapshot_20161116' // Same as MCP 4.10 snapshot_20161116
+
+// Whether the source should contain javadocs. false is recommended, set to true for compatibility with MCP.
+gradle.ext.useJavadocs = true
+
+// Whether to use the origial astyle formatting. false is recommended, set to true for compatibility with MCP.
+gradle.ext.useAstyle = true

@@ -1,0 +1,58 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityEnderChest.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityEnderChest.java
+@@ -6,7 +6,10 @@
+ import net.minecraft.util.ITickable;
+ import net.minecraft.util.SoundCategory;
+ 
+-public class TileEntityEnderChest extends TileEntity implements ITickable
++import carpet.CarpetSettings;
++import carpet.helpers.TileEntityOptimizer.ILazyTileEntity;
++
++public class TileEntityEnderChest extends TileEntity implements ITickable, ILazyTileEntity
+ {
+     public float field_145972_a;
+     public float field_145975_i;
+@@ -15,6 +18,11 @@
+ 
+     public void func_73660_a()
+     {
++        // CARPET-optimizedTileEntities: Skip the rest of the update if sleeping
++        if(CarpetSettings.optimizedTileEntities && this.isSleeping)
++            return;
++
++        // I have seriously no clue what this code does, but it lags the server ALOT, so ill get rid of it.
+         if (++this.field_145974_k % 20 * 4 == 0)
+         {
+             this.field_145850_b.func_175641_c(this.field_174879_c, Blocks.field_150477_bB, 1, this.field_145973_j);
+@@ -65,10 +73,16 @@
+                 this.field_145972_a = 0.0F;
+             }
+         }
++        // CARPET-optimizedTileEntities: Go to sleep if no one is using the chest and you are not performing an animation
++        else if(this.field_145973_j == 0)
++            this.isSleeping = true;
+     }
+ 
+     public boolean func_145842_c(int p_145842_1_, int p_145842_2_)
+     {
++        // CARPET-optimizedTileEntities: Wake up if a player is using the enderchest
++        this.isSleeping = false;
++
+         if (p_145842_1_ == 1)
+         {
+             this.field_145973_j = p_145842_2_;
+@@ -109,4 +123,14 @@
+             return p_145971_1_.func_70092_e((double)this.field_174879_c.func_177958_n() + 0.5D, (double)this.field_174879_c.func_177956_o() + 0.5D, (double)this.field_174879_c.func_177952_p() + 0.5D) <= 64.0D;
+         }
+     }
++
++    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
++    // False by default so tile entities wake up upon chunk loading
++    private boolean isSleeping = false;
++
++    // CARPET-optimizedTileEntities
++    @Override
++    public void wakeUp(){
++        this.isSleeping = false;
++    }
+ }

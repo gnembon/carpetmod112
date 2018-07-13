@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/IRecipe.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/IRecipe.java
+@@ -15,8 +15,11 @@
+ 
+     NonNullList<ItemStack> func_179532_b(InventoryCrafting p_179532_1_);
+ 
+-default boolean func_192399_d()
++    default boolean func_192399_d()
+     {
+         return false;
+     }
++
++    // Client code required for nitwit crafting
++    default NonNullList<Ingredient> func_192400_c() { return NonNullList.<Ingredient>func_191196_a(); }
+ }

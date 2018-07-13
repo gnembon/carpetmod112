@@ -1,0 +1,87 @@
+--- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
++++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
+@@ -120,11 +120,15 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import carpet.CarpetServer;
++import carpet.CarpetSettings;
++import carpet.helpers.TickSpeed;
++
+ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
+ {
+     private static final Logger field_147370_c = LogManager.getLogger();
+     public final NetworkManager field_147371_a;
+-    private final MinecraftServer field_147367_d;
++    protected final MinecraftServer field_147367_d; // CM changed from private
+     public EntityPlayerMP field_147369_b;
+     private int field_147368_e;
+     private int field_147378_h;
+@@ -249,7 +253,7 @@
+         }
+     }
+ 
+-    private void func_184342_d()
++    public void func_184342_d()
+     {
+         this.field_184349_l = this.field_147369_b.field_70165_t;
+         this.field_184350_m = this.field_147369_b.field_70163_u;
+@@ -287,6 +291,11 @@
+     {
+         PacketThreadUtil.func_180031_a(p_147358_1_, this, this.field_147369_b.func_71121_q());
+         this.field_147369_b.func_110430_a(p_147358_1_.func_149620_c(), p_147358_1_.func_192620_b(), p_147358_1_.func_149618_e(), p_147358_1_.func_149617_f());
++        //CM checking if player is moving, for commandTick
++        if (p_147358_1_.func_149620_c() != 0.0F || p_147358_1_.func_192620_b() != 0.0F || p_147358_1_.func_149618_e() || p_147358_1_.func_149617_f())
++        {
++            TickSpeed.reset_player_active_timeout();
++        }
+     }
+ 
+     private static boolean func_183006_b(CPacketPlayer p_183006_0_)
+@@ -490,6 +499,10 @@
+                         double d10 = this.field_147369_b.field_70159_w * this.field_147369_b.field_70159_w + this.field_147369_b.field_70181_x * this.field_147369_b.field_70181_x + this.field_147369_b.field_70179_y * this.field_147369_b.field_70179_y;
+                         double d11 = d7 * d7 + d8 * d8 + d9 * d9;
+ 
++                        if (d11 > 0.0001D) // for commandTick
++                        {
++                            TickSpeed.reset_player_active_timeout();
++                        }
+                         if (this.field_147369_b.func_70608_bn())
+                         {
+                             if (d11 > 1.0D)
+@@ -508,7 +521,7 @@
+                                 i = 1;
+                             }
+ 
+-                            if (!this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_82766_b("disableElytraMovementCheck") || !this.field_147369_b.func_184613_cA()))
++                            if (!CarpetSettings.antiCheat && !this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_82766_b("disableElytraMovementCheck") || !this.field_147369_b.func_184613_cA()))
+                             {
+                                 float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
+ 
+@@ -1205,7 +1218,15 @@
+                             }
+                             else
+                             {
+-                                itemstack1.func_190917_f(i);
++                                // Crafting window duplication clitch fixed CARPET-XCOM
++                                if(!CarpetSettings.getBool("craftingWindowDuplicationFix") || ItemStack.func_185132_d(itemstack, itemstack1) )
++                                {
++                                    itemstack1.func_190917_f(i);
++                                }
++                                else
++                                {
++                                    this.field_147369_b.func_71019_a(cpacketrecipeplacement$itemmove.field_192673_a, true);
++                                }
+                             }
+                         }
+ 
+@@ -1823,5 +1844,9 @@
+                 field_147370_c.error("Couldn't pick item", (Throwable)exception);
+             }
+         }
++        else // CM handling all the packets from modders cheaters
++        {
++            CarpetServer.customPacket(this.field_147369_b, s, p_147349_1_);
++        }
+     }
+ }

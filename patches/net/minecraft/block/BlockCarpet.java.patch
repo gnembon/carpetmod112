@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCarpet.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCarpet.java
+@@ -15,6 +15,10 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import net.minecraft.entity.EntityLivingBase;
++import carpet.utils.WoolTool;
++import net.minecraft.entity.player.EntityPlayer;
++
+ public class BlockCarpet extends Block
+ {
+     public static final PropertyEnum<EnumDyeColor> field_176330_a = PropertyEnum.<EnumDyeColor>func_177709_a("color", EnumDyeColor.class);
+@@ -101,4 +105,13 @@
+     {
+         return p_193383_4_ == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+     }
++    public IBlockState func_180642_a(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer)
++    {
++        IBlockState state = super.func_180642_a(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
++        if (placer instanceof EntityPlayer)
++        {
++             WoolTool.carpetPlacedAction(((EnumDyeColor)state.func_177229_b(field_176330_a)), (EntityPlayer)placer, pos, worldIn);
++        }
++        return state;
++    }
+ }

@@ -1,0 +1,83 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityChest.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityChest.java
+@@ -23,7 +23,10 @@
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ 
+-public class TileEntityChest extends TileEntityLockableLoot implements ITickable
++import carpet.CarpetSettings;
++import carpet.helpers.TileEntityOptimizer.ILazyTileEntity;
++
++public class TileEntityChest extends TileEntityLockableLoot implements ITickable, ILazyTileEntity
+ {
+     private NonNullList<ItemStack> field_145985_p = NonNullList.<ItemStack>func_191197_a(27, ItemStack.field_190927_a);
+     public boolean field_145984_a;
+@@ -46,6 +49,10 @@
+         this.field_145982_r = p_i46677_1_;
+     }
+ 
++
++    //CM
++    public String cm_name() { return "Chest"; }
++
+     public int func_70302_i_()
+     {
+         return 27;
+@@ -209,6 +216,10 @@
+ 
+     public void func_73660_a()
+     {
++        // CARPET-optimizedTileEntities: Skip the update if sleeping
++        if(CarpetSettings.optimizedTileEntities && this.isSleeping)
++            return;
++
+         this.func_145979_i();
+         int i = this.field_174879_c.func_177958_n();
+         int j = this.field_174879_c.func_177956_o();
+@@ -234,6 +245,10 @@
+             }
+         }
+ 
++        // CARPET-optimizedTileEntities: If no players are using the chest, go to sleep
++        if(this.field_145987_o == 0)
++            this.isSleeping = true;
++
+         this.field_145986_n = this.field_145989_m;
+         float f1 = 0.1F;
+ 
+@@ -257,6 +272,10 @@
+ 
+         if (this.field_145987_o == 0 && this.field_145989_m > 0.0F || this.field_145987_o > 0 && this.field_145989_m < 1.0F)
+         {
++            // CARPET-optimizedTileEntities: This is the closing animation.
++            // It is possible here that numPlayersUsing is 0, so make sure you don't sleep
++            this.isSleeping = false;
++
+             float f2 = this.field_145989_m;
+ 
+             if (this.field_145987_o > 0)
+@@ -302,6 +321,9 @@
+ 
+     public boolean func_145842_c(int p_145842_1_, int p_145842_2_)
+     {
++        // CARPET-optimizedTileEntities: Wake up the chest when a player uses it
++        this.isSleeping = false;
++
+         if (p_145842_1_ == 1)
+         {
+             this.field_145987_o = p_145842_2_;
+@@ -385,4 +407,14 @@
+     {
+         return this.field_145985_p;
+     }
++
++    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
++    // False by default so tile entities wake up upon chunk loading
++    private boolean isSleeping = false;
++
++    // CARPET-optimizedTileEntities
++    @Override
++    public void wakeUp(){
++        this.isSleeping = false;
++    }
+ }

@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/ShapelessRecipes.java
+@@ -122,4 +122,7 @@
+ 
+         return nonnulllist;
+     }
++
++    // Client code required for nitwit crafting
++    public NonNullList<Ingredient> func_192400_c() { return this.field_77579_b; }
+ }

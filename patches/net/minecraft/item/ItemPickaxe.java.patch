@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemPickaxe.java
++++ ../src-work/minecraft/net/minecraft/item/ItemPickaxe.java
+@@ -7,6 +7,10 @@
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.init.Blocks;
+ 
++import carpet.CarpetSettings;
++
++ import carpet.CarpetSettings;
++
+ public class ItemPickaxe extends ItemTool
+ {
+     private static final Set<Block> field_150915_c = Sets.newHashSet(Blocks.field_150408_cc, Blocks.field_150365_q, Blocks.field_150347_e, Blocks.field_150319_E, Blocks.field_150484_ah, Blocks.field_150482_ag, Blocks.field_150334_T, Blocks.field_150318_D, Blocks.field_150340_R, Blocks.field_150352_o, Blocks.field_150432_aD, Blocks.field_150339_S, Blocks.field_150366_p, Blocks.field_150368_y, Blocks.field_150369_x, Blocks.field_150439_ay, Blocks.field_150341_Y, Blocks.field_150424_aL, Blocks.field_150403_cj, Blocks.field_150448_aq, Blocks.field_150450_ax, Blocks.field_150322_A, Blocks.field_180395_cM, Blocks.field_150348_b, Blocks.field_150333_U, Blocks.field_150430_aB, Blocks.field_150456_au);
+@@ -85,6 +89,9 @@
+     public float func_150893_a(ItemStack p_150893_1_, IBlockState p_150893_2_)
+     {
+         Material material = p_150893_2_.func_185904_a();
+-        return material != Material.field_151573_f && material != Material.field_151574_g && material != Material.field_151576_e ? super.func_150893_a(p_150893_1_, p_150893_2_) : this.field_77864_a;
++        /*
++         * Added missing tool for piston CARPET-XCOM
++         */
++        return material != Material.field_151573_f && material != Material.field_151574_g && material != Material.field_151576_e && (!CarpetSettings.getBool("missingTools") || (material != Material.field_76233_E && material != Material.field_151592_s)) ? super.func_150893_a(p_150893_1_, p_150893_2_) : this.field_77864_a;
+     }
+ }

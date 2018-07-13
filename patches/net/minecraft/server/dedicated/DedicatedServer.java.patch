@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
++++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
+@@ -43,6 +43,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import carpet.CarpetServer;
++
+ public class DedicatedServer extends MinecraftServer implements IServer
+ {
+     private static final Logger field_155771_h = LogManager.getLogger();
+@@ -254,6 +256,10 @@
+                 TileEntitySkull.func_184293_a(this.func_152358_ax());
+                 TileEntitySkull.func_184294_a(this.func_147130_as());
+                 PlayerProfileCache.func_187320_a(this.func_71266_T());
++
++                //CM init - all stuff loaded from the server, just before worlds loading
++                CarpetServer.onServerLoaded(this);
++
+                 field_155771_h.info("Preparing level \"{}\"", (Object)this.func_71270_I());
+                 this.func_71247_a(this.func_71270_I(), this.func_71270_I(), k, worldtype, s2);
+                 long i1 = System.nanoTime() - j;

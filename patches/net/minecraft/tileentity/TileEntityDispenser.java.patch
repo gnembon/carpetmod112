@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityDispenser.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityDispenser.java
+@@ -18,6 +18,9 @@
+     private static final Random field_174913_f = new Random();
+     private NonNullList<ItemStack> field_146022_i = NonNullList.<ItemStack>func_191197_a(9, ItemStack.field_190927_a);
+ 
++
++     //CM
++    public String cm_name() { return "Dropper/Dispenser"; }
+     public int func_70302_i_()
+     {
+         return 9;

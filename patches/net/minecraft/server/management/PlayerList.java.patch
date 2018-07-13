@@ -1,0 +1,53 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerList.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerList.java
+@@ -65,6 +65,10 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import carpet.CarpetServer;
++import carpet.patches.EntityPlayerMPFake;
++import carpet.patches.NetHandlerPlayServerFake;
++
+ public abstract class PlayerList
+ {
+     public static final File field_152613_a = new File("banned-players.json");
+@@ -125,7 +129,8 @@
+         WorldServer worldserver = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
+         WorldInfo worldinfo = worldserver.func_72912_H();
+         this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, worldserver);
+-        NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.field_72400_f, p_72355_1_, p_72355_2_);
++        //NetHandlerPlayServer nethandlerplayserver = new NetHandlerPlayServer(this.mcServer, netManager, playerIn); //CM replaces with 
++        NetHandlerPlayServer nethandlerplayserver = (p_72355_2_ instanceof EntityPlayerMPFake)?(new NetHandlerPlayServerFake(this.field_72400_f, p_72355_1_, p_72355_2_)):(new NetHandlerPlayServer(this.field_72400_f, p_72355_1_, p_72355_2_));
+         nethandlerplayserver.func_147359_a(new SPacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.func_186058_p().func_186068_a(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
+         nethandlerplayserver.func_147359_a(new SPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
+         nethandlerplayserver.func_147359_a(new SPacketServerDifficulty(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
+@@ -343,6 +348,8 @@
+ 
+         worldserver.func_72838_d(p_72377_1_);
+         this.func_72375_a(p_72377_1_, (WorldServer)null);
++        //CM grabbing event of player logged in
++        CarpetServer.playerConnected(p_72377_1_);
+     }
+ 
+     public void func_72358_d(EntityPlayerMP p_72358_1_)
+@@ -352,6 +359,8 @@
+ 
+     public void func_72367_e(EntityPlayerMP p_72367_1_)
+     {
++        //CM player logging off
++        CarpetServer.playerDisconnected(p_72367_1_);
+         WorldServer worldserver = p_72367_1_.func_71121_q();
+         p_72367_1_.func_71029_a(StatList.field_75947_j);
+         this.func_72391_b(p_72367_1_);
+@@ -452,6 +461,11 @@
+ 
+         for (EntityPlayerMP entityplayermp1 : list)
+         {
++        	if(entityplayermp1 instanceof EntityPlayerMPFake)
++        	{
++        		entityplayermp1.func_174812_G();
++        		continue;
++        	}
+             entityplayermp1.field_71135_a.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.duplicate_login", new Object[0]));
+         }
+ 

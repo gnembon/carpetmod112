@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/block/state/BlockPistonStructureHelper.java
++++ ../src-work/minecraft/net/minecraft/block/state/BlockPistonStructureHelper.java
+@@ -11,6 +11,10 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ 
++import carpet.CarpetSettings;
++
++ import carpet.CarpetSettings;
++
+ public class BlockPistonStructureHelper
+ {
+     private final World field_177261_a;
+@@ -100,7 +104,7 @@
+         {
+             int i = 1;
+ 
+-            if (i + this.field_177258_e.size() > 12)
++            if (i + this.field_177258_e.size() > CarpetSettings.pushLimit) //CM
+             {
+                 return false;
+             }
+@@ -119,7 +123,7 @@
+ 
+                     ++i;
+ 
+-                    if (i + this.field_177258_e.size() > 12)
++                    if (i + this.field_177258_e.size() > CarpetSettings.pushLimit) //CM
+                     {
+                         return false;
+                     }
+@@ -175,7 +179,7 @@
+                         return true;
+                     }
+ 
+-                    if (this.field_177258_e.size() >= 12)
++                    if (this.field_177258_e.size() >= CarpetSettings.pushLimit) //CM
+                     {
+                         return false;
+                     }

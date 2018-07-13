@@ -1,0 +1,70 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityShulkerBox.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityShulkerBox.java
+@@ -28,7 +28,10 @@
+ import net.minecraft.util.datafix.walkers.ItemStackDataLists;
+ import net.minecraft.util.math.AxisAlignedBB;
+ 
+-public class TileEntityShulkerBox extends TileEntityLockableLoot implements ITickable, ISidedInventory
++import carpet.CarpetSettings;
++import carpet.helpers.TileEntityOptimizer.ILazyTileEntity;
++
++public class TileEntityShulkerBox extends TileEntityLockableLoot implements ITickable, ISidedInventory, ILazyTileEntity
+ {
+     private static final int[] field_190595_a = new int[27];
+     private NonNullList<ItemStack> field_190596_f;
+@@ -54,6 +57,10 @@
+ 
+     public void func_73660_a()
+     {
++        // CARPET-optimizedTileEntities: Skip the update if sleeping
++    	if(CarpetSettings.optimizedTileEntities && this.isSleeping)
++    		return;
++
+         this.func_190583_o();
+ 
+         if (this.field_190599_i == TileEntityShulkerBox.AnimationStatus.OPENING || this.field_190599_i == TileEntityShulkerBox.AnimationStatus.CLOSING)
+@@ -69,6 +76,9 @@
+         switch (this.field_190599_i)
+         {
+             case CLOSED:
++                // CARPET-optimizedTileEntities: Fall asleep if closed
++            	this.isSleeping = true;
++
+                 this.field_190600_j = 0.0F;
+                 break;
+ 
+@@ -96,6 +106,9 @@
+                 break;
+ 
+             case OPENED:
++                // CARPET-optimizedTileEntities: Fall asleep if opened
++            	this.isSleeping = true;
++
+                 this.field_190600_j = 1.0F;
+         }
+     }
+@@ -204,6 +217,9 @@
+ 
+     public boolean func_145842_c(int p_145842_1_, int p_145842_2_)
+     {
++        // CARPET-optimizedTileEntities: Skip the update if sleeping
++    	this.isSleeping = false;
++
+         if (p_145842_1_ == 1)
+         {
+             this.field_190598_h = p_145842_2_;
+@@ -411,4 +427,14 @@
+         OPENED,
+         CLOSING;
+     }
++
++    // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not.
++    // False by default so tile entities wake up upon chunk loading
++    private boolean isSleeping = false;
++
++    // CARPET-optimizedTileEntities
++    @Override
++    public void wakeUp(){
++    	this.isSleeping = false;
++    }
+ }

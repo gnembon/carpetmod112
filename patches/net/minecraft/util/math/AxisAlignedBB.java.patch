@@ -1,0 +1,52 @@
+--- ../src-base/minecraft/net/minecraft/util/math/AxisAlignedBB.java
++++ ../src-work/minecraft/net/minecraft/util/math/AxisAlignedBB.java
+@@ -12,6 +12,9 @@
+     public final double field_72336_d;
+     public final double field_72337_e;
+     public final double field_72334_f;
++    
++    // Margin fix CARPET-XCOM
++	public static double margin = 0;
+ 
+     public AxisAlignedBB(double p_i2300_1_, double p_i2300_3_, double p_i2300_5_, double p_i2300_7_, double p_i2300_9_, double p_i2300_11_)
+     {
+@@ -237,7 +240,8 @@
+ 
+                 if (d1 < p_72316_2_)
+                 {
+-                    p_72316_2_ = d1;
++                	// Margin fix CARPET-XCOM
++                    p_72316_2_ = d1 - margin;
+                 }
+             }
+             else if (p_72316_2_ < 0.0D && p_72316_1_.field_72340_a >= this.field_72336_d)
+@@ -246,7 +250,8 @@
+ 
+                 if (d0 > p_72316_2_)
+                 {
+-                    p_72316_2_ = d0;
++                	// Margin fix CARPET-XCOM
++                    p_72316_2_ = d0 + margin;
+                 }
+             }
+ 
+@@ -299,7 +304,8 @@
+ 
+                 if (d1 < p_72322_2_)
+                 {
+-                    p_72322_2_ = d1;
++                	// Margin fix CARPET-XCOM
++                    p_72322_2_ = d1 - margin;
+                 }
+             }
+             else if (p_72322_2_ < 0.0D && p_72322_1_.field_72339_c >= this.field_72334_f)
+@@ -308,7 +314,8 @@
+ 
+                 if (d0 > p_72322_2_)
+                 {
+-                    p_72322_2_ = d0;
++                	// Margin fix CARPET-XCOM
++                    p_72322_2_ = d0 + margin;
+                 }
+             }
+ 

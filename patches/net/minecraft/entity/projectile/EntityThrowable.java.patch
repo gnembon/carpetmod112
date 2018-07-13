@@ -1,0 +1,58 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
+@@ -21,6 +21,9 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
+ 
++import carpet.logging.logHelpers.TrajectoryLogHelper;
++import carpet.logging.LoggerRegistry;
++
+ public abstract class EntityThrowable extends Entity implements IProjectile
+ {
+     private int field_145788_c;
+@@ -36,6 +39,8 @@
+     public Entity field_184539_c;
+     private int field_184540_av;
+ 
++    private TrajectoryLogHelper logHelper = null;
++
+     public EntityThrowable(World p_i1776_1_)
+     {
+         super(p_i1776_1_);
+@@ -43,6 +48,11 @@
+         this.field_145786_d = -1;
+         this.field_145787_e = -1;
+         this.func_70105_a(0.25F, 0.25F);
++        //CM
++        if (LoggerRegistry.__projectiles)
++        {
++            logHelper = new TrajectoryLogHelper("projectiles");
++        }
+     }
+ 
+     public EntityThrowable(World p_i1778_1_, double p_i1778_2_, double p_i1778_4_, double p_i1778_6_)
+@@ -268,9 +278,24 @@
+             this.field_70181_x -= (double)f2;
+         }
+ 
++        // ----- Carpet Start ----- //
++        if (LoggerRegistry.__projectiles && logHelper != null)
++        {
++            logHelper.onTick(field_70165_t, field_70163_u, field_70161_v, field_70159_w, field_70181_x, field_70179_y);
++        }
++        // ----- Carpet End ----- //
+         this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
+     }
+ 
++    @Override
++    public void func_70106_y() {
++        super.func_70106_y();
++        // ----- Carpet Start ----- //
++        if (LoggerRegistry.__projectiles && logHelper != null)
++            logHelper.onFinish();
++        // ----- Carpet End ----- //
++    }
++
+     protected float func_70185_h()
+     {
+         return 0.03F;

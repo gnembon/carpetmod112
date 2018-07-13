@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/ShapedRecipes.java
+@@ -350,4 +350,7 @@
+             return new ItemStack(item, j, i);
+         }
+     }
++
++    // Client code required for nitwit crafting
++    public NonNullList<Ingredient> func_192400_c() { return this.field_77574_d; }
+ }

@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/net/minecraft/command/ServerCommandManager.java
++++ ../src-work/minecraft/net/minecraft/command/ServerCommandManager.java
+@@ -33,6 +33,24 @@
+ import net.minecraft.util.text.TextComponentTranslation;
+ import net.minecraft.util.text.TextFormatting;
+ 
++import carpet.commands.CommandBlockInfo;
++import carpet.commands.CommandCarpet;
++import carpet.commands.CommandCounter;
++import carpet.commands.CommandDistance;
++import carpet.commands.CommandEntityInfo;
++import carpet.commands.CommandGMC;
++import carpet.commands.CommandGMS;
++import carpet.commands.CommandLog;
++import carpet.commands.CommandPerimeter;
++import carpet.commands.CommandPlayer;
++import carpet.commands.CommandRNG;
++import carpet.commands.CommandSpawn;
++import carpet.commands.CommandTick;
++import carpet.commands.CommandTickHealth;
++import carpet.commands.CommandUnload;
++import narcolepticfrog.rsmm.MeterCommand;
++import carpet.CarpetServer;
++ 
+ public class ServerCommandManager extends CommandHandler implements ICommandListener
+ {
+     private final MinecraftServer field_184880_a;
+@@ -89,7 +107,29 @@
+         this.func_71560_a(new CommandLocate());
+         this.func_71560_a(new CommandReload());
+         this.func_71560_a(new CommandFunction());
++        
++        /* carpet mod */
++        this.func_71560_a(new CommandEntityInfo());
++        this.func_71560_a(new CommandSpawn());
++        this.func_71560_a(new CommandTick());
++        this.func_71560_a(new CommandTickHealth());
++        this.func_71560_a(new CommandDistance());
++        this.func_71560_a(new CommandBlockInfo());
++        this.func_71560_a(new CommandCarpet());
++        this.func_71560_a(new CommandCounter());
++        this.func_71560_a(new CommandUnload());
++        this.func_71560_a(new CommandGMC());
++        this.func_71560_a(new CommandGMS());
++        this.func_71560_a(new CommandLog());
++        this.func_71560_a(new CommandPerimeter());
++        this.func_71560_a(new CommandRNG());
+ 
++        this.func_71560_a(new CommandPlayer());
++        /* end */
++        // ----- RSMM Start ----- //
++        this.func_71560_a(new MeterCommand(CarpetServer.rsmmServer));
++        // ----- RSMM End ----- //
++
+         if (p_i46985_1_.func_71262_S())
+         {
+             this.func_71560_a(new CommandOp());

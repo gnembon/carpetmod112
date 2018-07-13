@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRail.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRail.java
+@@ -50,6 +50,14 @@
+             case CLOCKWISE_180:
+                 switch ((BlockRailBase.EnumRailDirection)p_185499_1_.func_177229_b(field_176565_b))
+                 {
++                    //added due to somebody forgetting to add it at mojang
++                    case NORTH_SOUTH:
++                        return p_185499_1_.func_177226_a(field_176565_b, BlockRailBase.EnumRailDirection.NORTH_SOUTH);
++
++                    //added due to somebody forgetting to add it at mojang
++                    case EAST_WEST:
++                        return p_185499_1_.func_177226_a(field_176565_b, BlockRailBase.EnumRailDirection.EAST_WEST);
++                    
+                     case ASCENDING_EAST:
+                         return p_185499_1_.func_177226_a(field_176565_b, BlockRailBase.EnumRailDirection.ASCENDING_WEST);
+ 

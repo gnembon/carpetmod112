@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockHopper.java
++++ ../src-work/minecraft/net/minecraft/block/BlockHopper.java
+@@ -31,6 +31,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import carpet.helpers.BlockRotator;
++
+ public class BlockHopper extends BlockContainer
+ {
+     public static final PropertyDirection field_176430_a = PropertyDirection.func_177712_a("facing", new Predicate<EnumFacing>()
+@@ -71,6 +73,8 @@
+     public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
+     {
+         EnumFacing enumfacing = p_180642_3_.func_176734_d();
++        if (BlockRotator.flippinEligibility(p_180642_8_))
++            enumfacing = enumfacing.func_176734_d();
+ 
+         if (enumfacing == EnumFacing.UP)
+         {

@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
+@@ -29,6 +29,9 @@
+     private int field_145847_g = -1;
+     protected Block field_145854_h;
+ 
++    //CM
++    public String cm_name() { return "Other Tile Entity"; }
++
+     private static void func_190560_a(String p_190560_0_, Class <? extends TileEntity > p_190560_1_)
+     {
+         field_190562_f.func_82595_a(new ResourceLocation(p_190560_0_), p_190560_1_);

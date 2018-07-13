@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityHusk.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityHusk.java
+@@ -16,6 +16,9 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.storage.loot.LootTableList;
+ 
++import carpet.CarpetSettings;
++import net.minecraft.world.WorldServer;
++
+ public class EntityHusk extends EntityZombie
+ {
+     public EntityHusk(World p_i47286_1_)
+@@ -30,7 +33,12 @@
+ 
+     public boolean func_70601_bi()
+     {
+-        return super.func_70601_bi() && this.field_70170_p.func_175678_i(new BlockPos(this));
++    	// Added temprule to always spawn husks in desert temples CARPET-XCOM
++    	if(CarpetSettings.huskSpawningInTemples){
++    		return super.func_70601_bi() && (this.field_70170_p.func_175678_i(new BlockPos(this)) || ((WorldServer)this.field_70170_p).func_72863_F().func_193413_a(this.field_70170_p, "Temple", new BlockPos(this)));
++    	}else{
++    		return super.func_70601_bi() && this.field_70170_p.func_175678_i(new BlockPos(this));
++    	}
+     }
+ 
+     protected boolean func_190730_o()

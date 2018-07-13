@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/CPacketPlayerDigging.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketPlayerDigging.java
+@@ -13,6 +13,18 @@
+     private EnumFacing field_179716_b;
+     private CPacketPlayerDigging.Action field_149508_e;
+ 
++    // CM missing constructor
++    public CPacketPlayerDigging(Action p_i46871_1_, BlockPos p_i46871_2_, EnumFacing p_i46871_3_)
++    {
++        this.field_179717_a = p_i46871_2_;
++        this.field_179716_b = p_i46871_3_;
++        this.field_149508_e = p_i46871_1_;
++    }
++
++    public CPacketPlayerDigging()
++    {
++    }
++
+     public void func_148837_a(PacketBuffer p_148837_1_) throws IOException
+     {
+         this.field_149508_e = (CPacketPlayerDigging.Action)p_148837_1_.func_179257_a(CPacketPlayerDigging.Action.class);

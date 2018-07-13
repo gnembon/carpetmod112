@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntitySkull.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntitySkull.java
+@@ -17,6 +17,8 @@
+ import net.minecraft.util.Rotation;
+ import net.minecraft.util.StringUtils;
+ 
++import carpet.CarpetSettings;
++
+ public class TileEntitySkull extends TileEntity implements ITickable
+ {
+     private int field_145908_a;
+@@ -80,7 +82,8 @@
+ 
+     public void func_73660_a()
+     {
+-        if (this.field_145908_a == 5)
++    	// CARPET-optimizedTileEntities: Skip update on servers, because it only performs an animation
++        if (this.field_145908_a == 5 && !(CarpetSettings.optimizedTileEntities && !this.field_145850_b.field_72995_K))
+         {
+             if (this.field_145850_b.func_175640_z(this.field_174879_c))
+             {

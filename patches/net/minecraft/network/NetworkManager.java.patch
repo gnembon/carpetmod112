@@ -1,0 +1,25 @@
+--- ../src-base/minecraft/net/minecraft/network/NetworkManager.java
++++ ../src-work/minecraft/net/minecraft/network/NetworkManager.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.network;
+ 
++import carpet.logging.logHelpers.PacketCounter;
+ import com.google.common.collect.Queues;
+ import com.google.common.util.concurrent.ThreadFactoryBuilder;
+ import io.netty.channel.Channel;
+@@ -122,6 +123,7 @@
+ 
+     protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet<?> p_channelRead0_2_) throws Exception
+     {
++        PacketCounter.totalIn++;
+         if (this.field_150746_k.isOpen())
+         {
+             try
+@@ -188,6 +190,7 @@
+ 
+     private void func_150732_b(final Packet<?> p_150732_1_, @Nullable final GenericFutureListener <? extends Future <? super Void >> [] p_150732_2_)
+     {
++        PacketCounter.totalOut++;
+         final EnumConnectionState enumconnectionstate = EnumConnectionState.func_150752_a(p_150732_1_);
+         final EnumConnectionState enumconnectionstate1 = (EnumConnectionState)this.field_150746_k.attr(field_150739_c).get();
+ 

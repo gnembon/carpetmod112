@@ -1,0 +1,64 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDragonEgg.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDragonEgg.java
+@@ -15,6 +15,12 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import carpet.CarpetSettings;
++import net.minecraft.init.Items;
++import net.minecraft.item.Item;
++import net.minecraft.item.ItemFood;
++import net.minecraft.item.ItemStack;
++
+ public class BlockDragonEgg extends Block
+ {
+     protected static final AxisAlignedBB field_185660_a = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 1.0D, 0.9375D);
+@@ -74,10 +80,48 @@
+ 
+     public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)
+     {
++    	// Added funtions for renewable dragon eggs. Feed them meet. CARPET-XCOM
++        if(CarpetSettings.getBool("renewableDragonEggs"))
++        {
++            ItemStack itemstack = p_180639_4_.func_184586_b(p_180639_5_);
++            if (isMeat(itemstack.func_77973_b()))
++            {
++                int saturation = (int) (((ItemFood) itemstack.func_77973_b()).func_150906_h(itemstack) * 10);
++                if (!p_180639_4_.field_71075_bZ.field_75098_d)
++                {
++                    itemstack.func_190918_g(1);
++                }
++                for (int i = 0; i < saturation; i++)
++                {
++                    this.func_180684_e(p_180639_1_, p_180639_2_);
++                    p_180639_1_.func_180501_a(p_180639_2_, this.func_176223_P(), 2);
++                }
++                return true;
++            }
++        }
+         this.func_180684_e(p_180639_1_, p_180639_2_);
+         return true;
+     }
+ 
++    private boolean isMeat(Item food)
++    {
++        if(food == Items.field_151078_bh){ return true; }
++        if(food == Items.field_151082_bd){ return true; }
++        if(food == Items.field_151083_be){ return true; }
++        if(food == Items.field_151076_bf){ return true; }
++        if(food == Items.field_151077_bg){ return true; }
++        if(food == Items.field_151115_aP){ return true; }
++        if(food == Items.field_179566_aV){ return true; }
++        if(food == Items.field_151147_al){ return true; }
++        if(food == Items.field_151157_am){ return true; }
++        if(food == Items.field_179558_bo){ return true; }
++        if(food == Items.field_179559_bp){ return true; }
++        if(food == Items.field_179561_bm){ return true; }
++        if(food == Items.field_179557_bn){ return true; }
++        if(food == Items.field_151070_bp){ return true; }
++        return false;
++    }
++    
+     public void func_180649_a(World p_180649_1_, BlockPos p_180649_2_, EntityPlayer p_180649_3_)
+     {
+         this.func_180684_e(p_180649_1_, p_180649_2_);

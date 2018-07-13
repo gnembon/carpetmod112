@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityZombieVillager.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityZombieVillager.java
+@@ -33,7 +33,7 @@
+ {
+     private static final DataParameter<Boolean> field_184739_bx = EntityDataManager.<Boolean>func_187226_a(EntityZombieVillager.class, DataSerializers.field_187198_h);
+     private static final DataParameter<Integer> field_190739_c = EntityDataManager.<Integer>func_187226_a(EntityZombieVillager.class, DataSerializers.field_187192_b);
+-    private int field_82234_d;
++    public int field_82234_d; // CM changed access from private
+     private UUID field_191992_by;
+ 
+     public EntityZombieVillager(World p_i47277_1_)

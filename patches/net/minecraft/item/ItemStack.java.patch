@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemStack.java
++++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
+@@ -207,7 +207,9 @@
+ 
+     public int func_77976_d()
+     {
+-        return this.func_77973_b().func_77639_j();
++    	// Changed slightly for NBT stack changes CARPET-XCOM
++        return this.func_77973_b().getNBTDependentStackLimit(func_77942_o());
++        //return this.getItem().getItemStackLimit();
+     }
+ 
+     public boolean func_77985_e()
+@@ -881,4 +883,9 @@
+     {
+         this.func_190917_f(-p_190918_1_);
+     }
++
++    // Check for ground stacking CARPET-XCOM
++	public boolean isGroundStackable() {
++		return this.func_77973_b().itemGroundStacking(func_77942_o());
++	}
+ }

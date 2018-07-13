@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIFindEntityNearestPlayer.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIFindEntityNearestPlayer.java
+@@ -19,7 +19,7 @@
+ public class EntityAIFindEntityNearestPlayer extends EntityAIBase
+ {
+     private static final Logger field_179436_a = LogManager.getLogger();
+-    private final EntityLiving field_179434_b;
++    protected final EntityLiving field_179434_b; // CM needed access to subclass
+     private final Predicate<Entity> field_179435_c;
+     private final EntityAINearestAttackableTarget.Sorter field_179432_d;
+     private EntityLivingBase field_179433_e;

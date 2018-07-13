@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemShulkerBox.java
++++ ../src-work/minecraft/net/minecraft/item/ItemShulkerBox.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.item;
+ 
+ import net.minecraft.block.Block;
++import carpet.CarpetSettings;
+ 
+ public class ItemShulkerBox extends ItemBlock
+ {
+@@ -9,4 +10,21 @@
+         super(p_i47260_1_);
+         this.func_77625_d(1);
+     }
++
++    /*
++     * Fix for chaning stack size using NBT or not CARPET-XCOM
++     */
++    @Override
++    public int getNBTDependentStackLimit(boolean hasTag){
++    	if(hasTag) return 1;
++    	return func_77639_j();
++    }
++
++    /*
++     * Stack empty shulkers on the ground CARPET-XCOM
++     */
++    @Override
++    public boolean itemGroundStacking(boolean hasTag){
++    	return !hasTag && CarpetSettings.getBool("stackableEmptyShulkerBoxes");
++    }
+ }

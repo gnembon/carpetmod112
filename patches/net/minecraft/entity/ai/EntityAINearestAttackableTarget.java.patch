@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAINearestAttackableTarget.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAINearestAttackableTarget.java
+@@ -20,6 +20,10 @@
+ import net.minecraft.util.EntitySelectors;
+ import net.minecraft.util.math.AxisAlignedBB;
+ 
++import carpet.CarpetSettings;
++
++ import carpet.CarpetSettings;
++
+ public class EntityAINearestAttackableTarget<T extends EntityLivingBase> extends EntityAITarget
+ {
+     protected final Class<T> field_75307_b;
+@@ -82,12 +86,19 @@
+             else
+             {
+                 Collections.sort(list, this.field_75306_g);
+-                this.field_75309_a = list.get(0);
+-                return true;
++                //this.targetEntity = list.get(0);
++                //return true;
++				//CM replaced with
++				if (!(CarpetSettings.getBool("invisibilityFix") && (list.get(0) instanceof EntityPlayer)))
++				{
++					this.field_75309_a = list.get(0);
++                    return true;
++				}
+             }
+         }
+-        else
+-        {
++		//CM removed condition
++        //else
++        //{
+             this.field_75309_a = (T)this.field_75299_d.field_70170_p.func_184150_a(this.field_75299_d.field_70165_t, this.field_75299_d.field_70163_u + (double)this.field_75299_d.func_70047_e(), this.field_75299_d.field_70161_v, this.func_111175_f(), this.func_111175_f(), new Function<EntityPlayer, Double>()
+             {
+                 @Nullable
+@@ -112,7 +123,7 @@
+                 }
+             }, (Predicate<EntityPlayer>)this.field_82643_g);
+             return this.field_75309_a != null;
+-        }
++        //} CM removed condition
+     }
+ 
+     protected AxisAlignedBB func_188511_a(double p_188511_1_)

@@ -1,0 +1,98 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityBeacon.java
+@@ -32,6 +32,8 @@
+ import net.minecraft.util.math.AxisAlignedBB;
+ import net.minecraft.util.math.BlockPos;
+ 
++import carpet.CarpetSettings;
++
+ public class TileEntityBeacon extends TileEntityLockable implements ITickable, ISidedInventory
+ {
+     public static final Potion[][] field_146009_a = new Potion[][] {{MobEffects.field_76424_c, MobEffects.field_76422_e}, {MobEffects.field_76429_m, MobEffects.field_76430_j}, {MobEffects.field_76420_g}, {MobEffects.field_76428_l}};
+@@ -111,49 +113,54 @@
+         boolean flag = true;
+         BlockPos.MutableBlockPos blockpos$mutableblockpos = new BlockPos.MutableBlockPos();
+ 
+-        for (int i1 = j + 1; i1 < 256; ++i1)
++        // CARPET-optimizedTileEntities
++        if(!(CarpetSettings.optimizedTileEntities && !this.field_145850_b.field_72995_K
++                && this.field_145850_b.field_73011_w.func_191066_m() && this.field_145850_b.func_175678_i(field_174879_c)))
+         {
+-            IBlockState iblockstate = this.field_145850_b.func_180495_p(blockpos$mutableblockpos.func_181079_c(i, i1, k));
+-            float[] afloat;
+-
+-            if (iblockstate.func_177230_c() == Blocks.field_150399_cn)
++            for (int i1 = j + 1; i1 < 256; ++i1)
+             {
+-                afloat = ((EnumDyeColor)iblockstate.func_177229_b(BlockStainedGlass.field_176547_a)).func_193349_f();
+-            }
+-            else
+-            {
+-                if (iblockstate.func_177230_c() != Blocks.field_150397_co)
++                IBlockState iblockstate = this.field_145850_b.func_180495_p(blockpos$mutableblockpos.func_181079_c(i, i1, k));
++                float[] afloat;
++
++                if (iblockstate.func_177230_c() == Blocks.field_150399_cn)
+                 {
+-                    if (iblockstate.func_185891_c() >= 15 && iblockstate.func_177230_c() != Blocks.field_150357_h)
++                    afloat = ((EnumDyeColor)iblockstate.func_177229_b(BlockStainedGlass.field_176547_a)).func_193349_f();
++                }
++                else
++                {
++                    if (iblockstate.func_177230_c() != Blocks.field_150397_co)
+                     {
+-                        this.field_146015_k = false;
+-                        this.field_174909_f.clear();
+-                        break;
++                        if (iblockstate.func_185891_c() >= 15 && iblockstate.func_177230_c() != Blocks.field_150357_h)
++                        {
++                            this.field_146015_k = false;
++                            this.field_174909_f.clear();
++                            break;
++                        }
++
++                        tileentitybeacon$beamsegment.func_177262_a();
++                        continue;
+                     }
+ 
+-                    tileentitybeacon$beamsegment.func_177262_a();
+-                    continue;
++                    afloat = ((EnumDyeColor)iblockstate.func_177229_b(BlockStainedGlassPane.field_176245_a)).func_193349_f();
+                 }
+ 
+-                afloat = ((EnumDyeColor)iblockstate.func_177229_b(BlockStainedGlassPane.field_176245_a)).func_193349_f();
+-            }
++                if (!flag)
++                {
++                    afloat = new float[] {(tileentitybeacon$beamsegment.func_177263_b()[0] + afloat[0]) / 2.0F, (tileentitybeacon$beamsegment.func_177263_b()[1] + afloat[1]) / 2.0F, (tileentitybeacon$beamsegment.func_177263_b()[2] + afloat[2]) / 2.0F};
++                }
+ 
+-            if (!flag)
+-            {
+-                afloat = new float[] {(tileentitybeacon$beamsegment.func_177263_b()[0] + afloat[0]) / 2.0F, (tileentitybeacon$beamsegment.func_177263_b()[1] + afloat[1]) / 2.0F, (tileentitybeacon$beamsegment.func_177263_b()[2] + afloat[2]) / 2.0F};
+-            }
++                if (Arrays.equals(afloat, tileentitybeacon$beamsegment.func_177263_b()))
++                {
++                    tileentitybeacon$beamsegment.func_177262_a();
++                }
++                else
++                {
++                    tileentitybeacon$beamsegment = new TileEntityBeacon.BeamSegment(afloat);
++                    this.field_174909_f.add(tileentitybeacon$beamsegment);
++                }
+ 
+-            if (Arrays.equals(afloat, tileentitybeacon$beamsegment.func_177263_b()))
+-            {
+-                tileentitybeacon$beamsegment.func_177262_a();
++                flag = false;
+             }
+-            else
+-            {
+-                tileentitybeacon$beamsegment = new TileEntityBeacon.BeamSegment(afloat);
+-                this.field_174909_f.add(tileentitybeacon$beamsegment);
+-            }
+-
+-            flag = false;
+         }
+ 
+         if (this.field_146015_k)

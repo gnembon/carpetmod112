@@ -1,0 +1,88 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIVillagerMate.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIVillagerMate.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.ai;
+ 
++import carpet.CarpetSettings;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.passive.EntityVillager;
+ import net.minecraft.util.math.BlockPos;
+@@ -23,8 +24,16 @@
+ 
+     public boolean func_75250_a()
+     {
++        if (CarpetSettings.displayMobAI && this.field_75450_b.func_70874_b()<5 && this.field_75450_b.func_70874_b()>0)
++        {
++            this.field_75450_b.func_96094_a("Ready to mate");
++        }
+         if (this.field_75450_b.func_70874_b() != 0)
+         {
++            if (CarpetSettings.displayMobAI && this.field_75450_b.func_70874_b()>5)
++            {
++                this.field_75450_b.func_96094_a("Waiting: "+this.field_75450_b.func_70874_b());
++            }
+             return false;
+         }
+         else if (this.field_75450_b.func_70681_au().nextInt(500) != 0)
+@@ -37,6 +46,10 @@
+ 
+             if (this.field_75452_a == null)
+             {
++                if (CarpetSettings.displayMobAI)
++                {
++                    this.field_75450_b.func_96094_a("Outside of a village");
++                }
+                 return false;
+             }
+             else if (this.func_75446_f() && this.field_75450_b.func_175550_n(true))
+@@ -55,6 +68,10 @@
+             }
+             else
+             {
++                if (CarpetSettings.displayMobAI)
++                {
++                    this.field_75450_b.func_96094_a("Don't want to mate");
++                }
+                 return false;
+             }
+         }
+@@ -64,6 +81,10 @@
+     {
+         this.field_75449_e = 300;
+         this.field_75450_b.func_70947_e(true);
++        if (CarpetSettings.displayMobAI)
++        {
++            this.field_75450_b.func_96094_a("In love: 300");
++        }
+     }
+ 
+     public void func_75251_c()
+@@ -71,6 +92,10 @@
+         this.field_75452_a = null;
+         this.field_75451_c = null;
+         this.field_75450_b.func_70947_e(false);
++        if (CarpetSettings.displayMobAI)
++        {
++            this.field_75450_b.func_96094_a("Ready to mate");
++        }
+     }
+ 
+     public boolean func_75253_b()
+@@ -81,6 +106,17 @@
+     public void func_75246_d()
+     {
+         --this.field_75449_e;
++        if (CarpetSettings.displayMobAI)
++        {
++            if (this.field_75449_e>0)
++            {
++                this.field_75450_b.func_96094_a("In love: "+this.field_75449_e);
++            }
++            else
++            {
++                this.field_75450_b.func_96094_a("Ready to mate");
++            }
++        }
+         this.field_75450_b.func_70671_ap().func_75651_a(this.field_75451_c, 10.0F, 30.0F);
+ 
+         if (this.field_75450_b.func_70068_e(this.field_75451_c) > 2.25D)

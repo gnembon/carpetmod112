@@ -1,0 +1,52 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandFill.java
++++ ../src-work/minecraft/net/minecraft/command/CommandFill.java
+@@ -16,6 +16,10 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ 
++import carpet.CarpetSettings;
++
++ import carpet.CarpetSettings;
++
+ public class CommandFill extends CommandBase
+ {
+     public String func_71517_b()
+@@ -60,9 +64,9 @@
+             BlockPos blockpos3 = new BlockPos(Math.max(blockpos.func_177958_n(), blockpos1.func_177958_n()), Math.max(blockpos.func_177956_o(), blockpos1.func_177956_o()), Math.max(blockpos.func_177952_p(), blockpos1.func_177952_p()));
+             int i = (blockpos3.func_177958_n() - blockpos2.func_177958_n() + 1) * (blockpos3.func_177956_o() - blockpos2.func_177956_o() + 1) * (blockpos3.func_177952_p() - blockpos2.func_177952_p() + 1);
+ 
+-            if (i > 32768)
++            if (i > CarpetSettings.getInt("fillLimit")) //CM
+             {
+-                throw new CommandException("commands.fill.tooManyBlocks", new Object[] {i, Integer.valueOf(32768)});
++                throw new CommandException("commands.fill.tooManyBlocks", new Object[] {i, Integer.valueOf(CarpetSettings.getInt("fillLimit"))}); //CM
+             }
+             else if (blockpos2.func_177956_o() >= 0 && blockpos3.func_177956_o() < 256)
+             {
+@@ -152,7 +156,7 @@
+                                 ((IInventory)tileentity1).func_174888_l();
+                             }
+ 
+-                            if (world.func_180501_a(blockpos4, iblockstate, 2))
++                            if (world.func_180501_a(blockpos4, iblockstate, 2 | (CarpetSettings.getBool("fillUpdates")?0:128)  )) //CM
+                             {
+                                 list.add(blockpos4);
+                                 ++i;
+@@ -173,12 +177,16 @@
+                         }
+                     }
+                 }
+-
++                /*carpet mod */
++                if (CarpetSettings.getBool("fillUpdates"))
++                {
++                    /*carpet mod end EXTRA INDENT*/
+                 for (BlockPos blockpos5 : list)
+                 {
+                     Block block2 = world.func_180495_p(blockpos5).func_177230_c();
+                     world.func_175722_b(blockpos5, block2, false);
+                 }
++                } //carpet mod back extra indentation
+ 
+                 if (i <= 0)
+                 {

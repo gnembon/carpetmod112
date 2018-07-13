@@ -1,0 +1,37 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
+@@ -26,6 +26,9 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
+ 
++import carpet.helpers.BlockRotator;
++import carpet.CarpetSettings;
++
+ public class PlayerInteractionManager
+ {
+     public World field_73092_a;
+@@ -191,6 +194,11 @@
+                 this.field_73088_d = true;
+                 this.field_180240_f = p_180784_1_;
+                 int i = (int)(f * 10.0F);
++                //CM mining ghost blocks fix
++                if (CarpetSettings.getBool("miningGhostBlocksFix"))
++                {
++                    field_73090_b.field_71135_a.func_147359_a(new SPacketBlockChange(field_73092_a, field_180240_f));
++                }
+                 this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), p_180784_1_, i);
+                 this.field_73094_o = i;
+             }
+@@ -406,6 +414,12 @@
+             {
+                 IBlockState iblockstate = p_187251_2_.func_180495_p(p_187251_5_);
+ 
++                //flip method will check for flippinCactus setting
++                Boolean flipped = BlockRotator.flipBlockWithCactus(p_187251_2_, p_187251_5_, iblockstate, p_187251_1_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_);
++                if (flipped)
++                {
++                    return EnumActionResult.PASS;
++                }
+                 if (iblockstate.func_177230_c().func_180639_a(p_187251_2_, p_187251_5_, iblockstate, p_187251_1_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_))
+                 {
+                     return EnumActionResult.SUCCESS;

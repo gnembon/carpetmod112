@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketChunkData.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketChunkData.java
+@@ -15,6 +15,8 @@
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+ 
++import carpet.CarpetSettings;
++
+ public class SPacketChunkData implements Packet<INetHandlerPlayClient>
+ {
+     private int field_149284_a;
+@@ -30,6 +32,7 @@
+ 
+     public SPacketChunkData(Chunk p_i47124_1_, int p_i47124_2_)
+     {
++    	if (CarpetSettings.newLight) p_i47124_1_.func_177412_p().lightingEngine.procLightUpdates();
+         this.field_149284_a = p_i47124_1_.field_76635_g;
+         this.field_149282_b = p_i47124_1_.field_76647_h;
+         this.field_149279_g = p_i47124_2_ == 65535;

@@ -1,0 +1,103 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityFallingBlock.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityFallingBlock.java
+@@ -30,6 +30,10 @@
+ import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.World;
+ 
++import carpet.CarpetSettings;
++import carpet.logging.logHelpers.TrajectoryLogHelper;
++import carpet.logging.LoggerRegistry;
++
+ public class EntityFallingBlock extends Entity
+ {
+     private IBlockState field_175132_d;
+@@ -39,9 +43,24 @@
+     private boolean field_145809_g;
+     private int field_145815_h = 40;
+     private float field_145816_i = 2.0F;
++
++    //CM
++    private int iceCount = 0;
++
+     public NBTTagCompound field_145810_d;
+     protected static final DataParameter<BlockPos> field_184532_d = EntityDataManager.<BlockPos>func_187226_a(EntityFallingBlock.class, DataSerializers.field_187200_j);
++    
++    // ----- Carpet Start ----- //
++    private TrajectoryLogHelper logHelper = null;
+ 
++    @Override
++    public void func_70106_y() {
++        if (LoggerRegistry.__fallingBlocks && logHelper != null)
++            logHelper.onFinish();
++        super.func_70106_y();
++    }
++    // ----- Carpet End ----- //
++
+     public EntityFallingBlock(World p_i1706_1_)
+     {
+         super(p_i1706_1_);
+@@ -61,12 +80,18 @@
+         this.field_70167_r = p_i45848_4_;
+         this.field_70166_s = p_i45848_6_;
+         this.func_184530_a(new BlockPos(this));
++        // CM
++        this.iceCount = 0;
++        if (LoggerRegistry.__fallingBlocks)
++            logHelper = new TrajectoryLogHelper("fallingBlocks");
+     }
+ 
+     public boolean func_70075_an()
+     {
+         return false;
+     }
++    //CM
++    public String cm_name() { return "Falling Block"; }
+ 
+     public void func_184530_a(BlockPos p_184530_1_)
+     {
+@@ -90,6 +115,11 @@
+ 
+     public void func_70071_h_()
+     {
++        // ----- Carpet Start ----- //
++        if (LoggerRegistry.__fallingBlocks && logHelper != null)
++            logHelper.onTick(field_70165_t, field_70163_u, field_70161_v, field_70159_w, field_70181_x, field_70179_y);
++        // ----- Carpet End ----- //
++
+         Block block = this.field_175132_d.func_177230_c();
+ 
+         if (this.field_175132_d.func_185904_a() == Material.field_151579_a)
+@@ -123,7 +153,7 @@
+             }
+ 
+             this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
+-
++            
+             if (!this.field_70170_p.field_72995_K)
+             {
+                 BlockPos blockpos1 = new BlockPos(this);
+@@ -168,6 +198,24 @@
+                     this.field_70179_y *= 0.699999988079071D;
+                     this.field_70181_x *= -0.5D;
+ 
++                    if (block == Blocks.field_150467_bQ &&
++                            CarpetSettings.getBool("renewablePackedIce") &&
++                            this.field_70170_p.func_180495_p(new BlockPos(this.field_70165_t, this.field_70163_u - 0.059999999776482582D, this.field_70161_v)).func_177230_c()==Blocks.field_150432_aD  )
++                    {
++                        if (iceCount < 2)
++                        {
++                            field_70170_p.func_175655_b(blockpos1.func_177977_b(), false);
++                            this.field_70122_E = false;
++                            iceCount++;
++                            return;
++                        }
++                        else
++                        {
++                            field_70170_p.func_180501_a(blockpos1.func_177977_b(),Blocks.field_150403_cj.func_176223_P(),3);
++                            field_70170_p.func_175718_b(2001,blockpos1.func_177977_b(),Block.func_149682_b(Blocks.field_150403_cj));
++                        }
++                    }
++
+                     if (iblockstate.func_177230_c() != Blocks.field_180384_M)
+                     {
+                         this.func_70106_y();
