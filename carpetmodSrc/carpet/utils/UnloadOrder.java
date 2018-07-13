@@ -1,6 +1,7 @@
 package carpet.utils;
 
 import carpet.CarpetSettings;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerChunkMap;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
@@ -8,6 +9,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -47,6 +49,22 @@ public class UnloadOrder
         rep.add("Saving is disabled on the server");
         return rep;
     }
+    public static int getCurrentHashSize(WorldServer server)
+    {
+        ChunkProviderServer chunkproviderserver = server.getChunkProvider();
+        try
+        {
+            Field field = chunkproviderserver.droppedChunksSet.getClass().getDeclaredField("table");
+            //WIP
+            return 0;
+        }
+        catch (NoSuchFieldException e)
+        {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
 
     public static int get_chunk_order(ChunkPos chpos)
     {
@@ -55,7 +73,7 @@ public class UnloadOrder
         {
             Method method = HashMap.class.getDeclaredMethod("hash", Object.class);
             method.setAccessible(true);
-            return (Integer) method.invoke(null, Long.hashCode(ChunkPos.asLong(chpos.chunkXPos, chpos.chunkZPos))) % 4096;
+            return (Integer) method.invoke(null, Long.hashCode(ChunkPos.asLong(chpos.chunkXPos, chpos.chunkZPos))) & (4096-1);
         }
         catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e)
         {
