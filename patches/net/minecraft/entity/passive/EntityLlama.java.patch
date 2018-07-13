@@ -20,11 +20,10 @@
              {
                  flag = true;
                  this.func_146082_f(p_190678_1_);
-@@ -565,4 +569,17 @@
-             this.field_190886_a = p_i47283_1_;
+@@ -492,6 +496,19 @@
          }
      }
-+
+ 
 +    /*
 +     * Breeding items for llamas: CARPET-XCOM
 +     */
@@ -37,4 +36,7 @@
 +
 +    	return true;
 +    }
- }
++
+     public boolean func_190684_dE()
+     {
+         return false;

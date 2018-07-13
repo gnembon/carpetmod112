@@ -71,8 +71,8 @@
 +    //END CM GHAST CHANGES
 +
      static class AIFireballAttack extends EntityAIBase
-     {
-         private final EntityGhast field_179470_b;
+         {
+             private final EntityGhast field_179470_b;
 @@ -180,7 +230,28 @@
  
              public boolean func_75250_a()

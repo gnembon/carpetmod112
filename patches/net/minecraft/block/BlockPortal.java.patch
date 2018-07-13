@@ -13,7 +13,7 @@
  public class BlockPortal extends BlockBreakable
  {
      public static final PropertyEnum<EnumFacing.Axis> field_176550_a = PropertyEnum.<EnumFacing.Axis>func_177706_a("axis", EnumFacing.Axis.class, EnumFacing.Axis.X, EnumFacing.Axis.Z);
-@@ -110,6 +116,12 @@
+@@ -108,6 +114,12 @@
          if (blockportal$size.func_150860_b() && blockportal$size.field_150864_e == 0)
          {
              blockportal$size.func_150859_c();
@@ -26,7 +26,7 @@
              return true;
          }
          else
-@@ -119,6 +131,12 @@
+@@ -117,6 +129,12 @@
              if (blockportal$size1.func_150860_b() && blockportal$size1.field_150864_e == 0)
              {
                  blockportal$size1.func_150859_c();
@@ -39,7 +39,7 @@
                  return true;
              }
              else
-@@ -139,6 +157,12 @@
+@@ -137,6 +155,12 @@
              if (!blockportal$size.func_150860_b() || blockportal$size.field_150864_e < blockportal$size.field_150868_h * blockportal$size.field_150862_g)
              {
                  p_189540_2_.func_175656_a(p_189540_3_, Blocks.field_150350_a.func_176223_P());
@@ -52,7 +52,7 @@
              }
          }
          else if (enumfacing$axis == EnumFacing.Axis.Z)
-@@ -148,6 +172,12 @@
+@@ -146,6 +170,12 @@
              if (!blockportal$size1.func_150860_b() || blockportal$size1.field_150864_e < blockportal$size1.field_150868_h * blockportal$size1.field_150862_g)
              {
                  p_189540_2_.func_175656_a(p_189540_3_, Blocks.field_150350_a.func_176223_P());

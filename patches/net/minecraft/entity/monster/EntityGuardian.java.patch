@@ -11,11 +11,10 @@
  public class EntityGuardian extends EntityMob
  {
      private static final DataParameter<Boolean> field_190766_bz = EntityDataManager.<Boolean>func_187226_a(EntityGuardian.class, DataSerializers.field_187198_h);
-@@ -550,4 +554,28 @@
-             return (p_apply_1_ instanceof EntityPlayer || p_apply_1_ instanceof EntitySquid) && p_apply_1_.func_70068_e(this.field_179916_a) > 9.0D;
+@@ -396,6 +400,30 @@
          }
      }
-+
+ 
 +    public void func_70077_a(EntityLightningBolt lightningBolt)
 +    {
 +        if (!this.field_70170_p.field_72995_K && !this.field_70128_L && CarpetSettings.getBool("renewableElderGuardians"))
@@ -39,4 +38,7 @@
 +            super.func_70077_a(lightningBolt);
 +        }
 +    }
- }
++
+     static class AIGuardianAttack extends EntityAIBase
+         {
+             private final EntityGuardian field_179456_a;

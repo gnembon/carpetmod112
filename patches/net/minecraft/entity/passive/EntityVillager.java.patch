@@ -81,7 +81,7 @@
          if (this.field_175563_bv != 0 && this.field_175562_bw != 0)
          {
              ++this.field_175562_bw;
-@@ -843,6 +871,12 @@
+@@ -842,6 +870,12 @@
          ItemStack itemstack = p_175445_1_.func_92059_d();
          Item item = itemstack.func_77973_b();
  
@@ -94,14 +94,16 @@
          if (this.func_175558_a(item))
          {
              ItemStack itemstack1 = this.field_175560_bz.func_174894_a(itemstack);
-@@ -1141,4 +1175,10 @@
-             }
+@@ -948,6 +982,12 @@
          }
      }
-+
+ 
 +    //CM
 +    public int getWealth()
 +    {
 +        return this.field_70956_bz;
 +    }
- }
++
+     static class EmeraldForItems implements EntityVillager.ITradeList
+         {
+             public Item field_179405_a;

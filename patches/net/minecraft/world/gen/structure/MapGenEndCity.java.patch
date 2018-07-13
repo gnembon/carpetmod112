@@ -49,7 +49,7 @@
 +    // Method to edit shulkers spawning in end cities or remove them from the list. CARPET-XCOM
 +    public static void shulkerSpawning(boolean spawnShulkers)
 +    {
-+        if(spawnShulkers) //comment
++        if(spawnShulkers)
 +        {
 +            spawnList.add(new Biome.SpawnListEntry(EntityShulker.class, 10, 4, 4));
 +        }

@@ -1,7 +1,7 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRailDetector.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRailDetector.java
-@@ -219,6 +219,14 @@
-             case CLOCKWISE_180:
+@@ -220,6 +220,14 @@
+ 
                  switch ((BlockRailBase.EnumRailDirection)p_185499_1_.func_177229_b(field_176573_b))
                  {
 +                    //added due to somebody forgetting to add it at mojang
@@ -14,4 +14,4 @@
 +
                      case ASCENDING_EAST:
                          return p_185499_1_.func_177226_a(field_176573_b, BlockRailBase.EnumRailDirection.ASCENDING_WEST);
- 
+                     case ASCENDING_WEST:

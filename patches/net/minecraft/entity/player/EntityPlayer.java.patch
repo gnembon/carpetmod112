@@ -40,7 +40,7 @@
          {
              this.func_192030_dh();
          }
-@@ -911,10 +928,23 @@
+@@ -908,10 +925,23 @@
                      this.func_70999_a(true, true, false);
                  }
  
@@ -65,7 +65,7 @@
                      if (this.field_70170_p.func_175659_aa() == EnumDifficulty.PEACEFUL)
                      {
                          p_70097_2_ = 0.0F;
-@@ -929,6 +959,7 @@
+@@ -926,6 +956,7 @@
                      {
                          p_70097_2_ = p_70097_2_ * 3.0F / 2.0F;
                      }
@@ -73,7 +73,7 @@
                  }
  
                  return p_70097_2_ == 0.0F ? false : super.func_70097_a(p_70097_1_, p_70097_2_);
-@@ -1011,16 +1042,22 @@
+@@ -1008,16 +1039,22 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -96,7 +96,7 @@
                  this.func_70606_j(this.func_110143_aJ() - p_70665_2_);
                  this.func_110142_aN().func_94547_a(p_70665_1_, f1, p_70665_2_);
  
-@@ -1030,6 +1067,12 @@
+@@ -1027,6 +1064,12 @@
                  }
              }
          }
@@ -109,7 +109,7 @@
      }
  
      public void func_175141_a(TileEntitySign p_175141_1_)
-@@ -1230,19 +1273,33 @@
+@@ -1227,19 +1270,33 @@
                          {
                              float f3 = 1.0F + EnchantmentHelper.func_191527_a(this) * f;
  
@@ -143,7 +143,7 @@
                          if (p_71059_1_ instanceof EntityPlayerMP && p_71059_1_.field_70133_I)
                          {
                              ((EntityPlayerMP)p_71059_1_).field_71135_a.func_147359_a(new SPacketEntityVelocity(p_71059_1_));
-@@ -1336,6 +1393,13 @@
+@@ -1333,6 +1390,13 @@
                      }
                  }
              }
@@ -157,7 +157,7 @@
          }
      }
  
-@@ -2047,6 +2111,20 @@
+@@ -2044,6 +2108,20 @@
          this.func_192031_i(new NBTTagCompound());
      }
  

@@ -32,10 +32,10 @@
 +
                  this.field_190600_j = 0.0F;
                  break;
+             case OPENING:
+@@ -93,6 +103,9 @@
  
-@@ -96,6 +106,9 @@
                  break;
- 
              case OPENED:
 +                // CARPET-optimizedTileEntities: Fall asleep if opened
 +            	this.isSleeping = true;
@@ -43,7 +43,7 @@
                  this.field_190600_j = 1.0F;
          }
      }
-@@ -204,6 +217,9 @@
+@@ -202,6 +215,9 @@
  
      public boolean func_145842_c(int p_145842_1_, int p_145842_2_)
      {
@@ -53,7 +53,7 @@
          if (p_145842_1_ == 1)
          {
              this.field_190598_h = p_145842_2_;
-@@ -411,4 +427,14 @@
+@@ -409,4 +425,14 @@
          OPENED,
          CLOSING;
      }

@@ -58,7 +58,7 @@
                              {
                                  float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
  
-@@ -1205,7 +1218,15 @@
+@@ -1200,7 +1213,15 @@
                              }
                              else
                              {
@@ -75,7 +75,7 @@
                              }
                          }
  
-@@ -1823,5 +1844,9 @@
+@@ -1816,5 +1837,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }

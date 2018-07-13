@@ -1,13 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/Biome.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/Biome.java
-@@ -524,6 +524,12 @@
+@@ -520,6 +520,12 @@
                  this.field_76299_d = p_i1970_4_;
              }
  
 +            //carpet mod
 +            public int getWeight()
 +            {
-+                return this.field_76292_a; //comment
++                return this.field_76292_a;
 +            }
 +
              public String toString()

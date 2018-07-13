@@ -11,7 +11,7 @@
  public class BlockPistonBase extends BlockDirectional
  {
      public static final PropertyBool field_176320_b = PropertyBool.func_177716_a("extended");
-@@ -104,7 +108,8 @@
+@@ -99,7 +103,8 @@
  
      public void func_180633_a(World p_180633_1_, BlockPos p_180633_2_, IBlockState p_180633_3_, EntityLivingBase p_180633_4_, ItemStack p_180633_5_)
      {
@@ -21,7 +21,7 @@
  
          if (!p_180633_1_.field_72995_K)
          {
-@@ -147,11 +152,34 @@
+@@ -142,11 +147,34 @@
          }
          else if (!flag && ((Boolean)p_176316_3_.func_177229_b(field_176320_b)).booleanValue())
          {
@@ -58,7 +58,7 @@
      {
          for (EnumFacing enumfacing : EnumFacing.values())
          {
-@@ -167,6 +195,12 @@
+@@ -162,6 +190,12 @@
          }
          else
          {
@@ -71,7 +71,7 @@
              BlockPos blockpos = p_176318_2_.func_177984_a();
  
              for (EnumFacing enumfacing1 : EnumFacing.values())
-@@ -246,7 +280,8 @@
+@@ -241,7 +275,8 @@
                      }
                  }
  
@@ -81,7 +81,7 @@
                  {
                      this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
                  }
-@@ -314,7 +349,13 @@
+@@ -307,7 +342,13 @@
                      return false;
                  }
  
@@ -96,7 +96,7 @@
              }
              else
              {
-@@ -326,6 +367,14 @@
+@@ -319,6 +360,14 @@
              return false;
          }
      }
@@ -111,7 +111,7 @@
  
      private boolean func_176319_a(World p_176319_1_, BlockPos p_176319_2_, EnumFacing p_176319_3_, boolean p_176319_4_)
      {
-@@ -365,15 +414,64 @@
+@@ -358,15 +407,64 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }

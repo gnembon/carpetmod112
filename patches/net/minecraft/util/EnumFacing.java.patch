@@ -22,7 +22,7 @@
      private static final Map<String, EnumFacing> field_176761_p = Maps.<String, EnumFacing>newHashMap();
  
      private EnumFacing(int p_i46016_3_, int p_i46016_4_, int p_i46016_5_, String p_i46016_6_, EnumFacing.AxisDirection p_i46016_7_, EnumFacing.Axis p_i46016_8_, Vec3i p_i46016_9_)
-@@ -187,11 +189,15 @@
+@@ -179,11 +181,15 @@
  
              if (d0 - (double)p_190914_0_.func_177956_o() > 2.0D)
              {
@@ -38,7 +38,7 @@
                  return DOWN;
              }
          }
-@@ -297,6 +303,94 @@
+@@ -289,6 +295,94 @@
          }
      }
  

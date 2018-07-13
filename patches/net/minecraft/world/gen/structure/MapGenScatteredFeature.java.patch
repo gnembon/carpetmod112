@@ -38,8 +38,8 @@
 +    }
 +
      public static class Start extends StructureStart
-     {
-         public Start()
+         {
+             public Start()
 @@ -166,4 +179,19 @@
                  this.func_75072_c();
              }
@@ -54,7 +54,7 @@
 +            StructureComponent structurecomponent = structurestart.field_75075_a.get(0);
 +            return structurecomponent instanceof ComponentScatteredFeaturePieces.DesertPyramid;
 +        }
-+        else //hey
++        else
 +        {
 +            return false;
 +        }
