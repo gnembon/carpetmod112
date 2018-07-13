@@ -1,0 +1,43 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorEnd.java
++++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorEnd.java
+@@ -22,6 +22,11 @@
+ import net.minecraft.world.gen.feature.WorldGenEndIsland;
+ import net.minecraft.world.gen.structure.MapGenEndCity;
+ 
++import carpet.carpetclient.CarpetClientMarkers;
++import net.minecraft.entity.Entity;
++import net.minecraft.nbt.NBTTagList;
++import carpet.CarpetSettings;
++
+ public class ChunkGeneratorEnd implements IChunkGenerator
+ {
+     private final Random field_73220_k;
+@@ -404,6 +409,13 @@
+ 
+     public List<Biome.SpawnListEntry> func_177458_a(EnumCreatureType p_177458_1_, BlockPos p_177458_2_)
+     {
++        if(CarpetSettings.shulkerSpawningInEndCities && EnumCreatureType.MONSTER == p_177458_1_)
++        {
++            if (this.field_185972_n.func_175795_b(p_177458_2_))
++            {
++                return this.field_185972_n.getSpawnList();
++            }
++        }
+         return this.field_73230_p.func_180494_b(p_177458_2_).func_76747_a(p_177458_1_);
+     }
+ 
+@@ -420,5 +432,14 @@
+ 
+     public void func_180514_a(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_)
+     {
++        //I assume its for shulker spaning in end cities
++        if (CarpetSettings.shulkerSpawningInEndCities) this.field_185972_n.func_186125_a(this.field_73230_p, p_180514_2_, p_180514_3_, (ChunkPrimer)null);
+     }
++    
++    // Retrieval method to get the bounding boxes CARPET-XCOM
++    public NBTTagList getBoundingBoxes(Entity entity) {
++        NBTTagList nbttaglist = new NBTTagList();
++        nbttaglist.func_74742_a(field_185972_n.getBoundingBoxes(entity, CarpetClientMarkers.END_CITY));
++        return nbttaglist;
++    }
+ }

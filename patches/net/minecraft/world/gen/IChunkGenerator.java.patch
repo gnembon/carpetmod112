@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/IChunkGenerator.java
++++ ../src-work/minecraft/net/minecraft/world/gen/IChunkGenerator.java
+@@ -8,6 +8,9 @@
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.chunk.Chunk;
+ 
++import net.minecraft.entity.Entity;
++import net.minecraft.nbt.NBTTagList;
++
+ public interface IChunkGenerator
+ {
+     Chunk func_185932_a(int p_185932_1_, int p_185932_2_);
+@@ -24,4 +27,7 @@
+     void func_180514_a(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_);
+ 
+     boolean func_193414_a(World p_193414_1_, String p_193414_2_, BlockPos p_193414_3_);
++
++ // Retrieval method to get the bounding boxes CARPET-XCOM
++    public NBTTagList getBoundingBoxes(Entity entity);
+ }

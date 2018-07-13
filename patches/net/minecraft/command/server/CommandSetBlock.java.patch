@@ -1,17 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/command/server/CommandSetBlock.java
 +++ ../src-work/minecraft/net/minecraft/command/server/CommandSetBlock.java
-@@ -20,6 +20,10 @@
+@@ -20,6 +20,8 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  
 +import carpet.CarpetSettings;
 +
-+ import carpet.CarpetSettings;
-+
  public class CommandSetBlock extends CommandBase
  {
      public String func_71517_b()
-@@ -110,7 +114,7 @@
+@@ -110,7 +112,7 @@
                      ((IInventory)tileentity1).func_174888_l();
                  }
  
@@ -20,7 +18,7 @@
                  {
                      throw new CommandException("commands.setblock.noChange", new Object[0]);
                  }
-@@ -129,7 +133,12 @@
+@@ -129,7 +131,12 @@
                          }
                      }
  

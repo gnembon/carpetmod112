@@ -1,0 +1,441 @@
+--- ../src-base/minecraft/net/minecraft/world/World.java
++++ ../src-work/minecraft/net/minecraft/world/World.java
+@@ -4,12 +4,16 @@
+ import com.google.common.base.MoreObjects;
+ import com.google.common.base.Predicate;
+ import com.google.common.collect.Lists;
++
++import java.lang.reflect.Field;
+ import java.util.Calendar;
+ import java.util.Collection;
+ import java.util.Iterator;
+ import java.util.List;
+ import java.util.Random;
+ import java.util.UUID;
++import java.util.concurrent.atomic.AtomicLong;
++
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.AdvancementManager;
+ import net.minecraft.advancements.FunctionManager;
+@@ -59,6 +63,18 @@
+ import net.minecraft.world.storage.WorldSavedData;
+ import net.minecraft.world.storage.loot.LootTableManager;
+ 
++import carpet.helpers.TickSpeed;
++import carpet.utils.CarpetProfiler;
++import carpet.utils.Messenger;
++import carpet.helpers.CollisionBoxesOptimizations;
++import carpet.CarpetSettings;
++import carpet.helpers.TileEntityOptimizer;
++import carpet.helpers.LightingEngine;
++import narcolepticfrog.rsmm.events.StateChangeEventDispatcher;
++import net.minecraft.util.text.ITextComponent;
++import carpet.logging.LoggerRegistry;
++
++
+ public abstract class World implements IBlockAccess
+ {
+     private int field_181546_a = 63;
+@@ -104,6 +120,9 @@
+     private final WorldBorder field_175728_M;
+     int[] field_72994_J;
+ 
++    // NewLight PHIPRO-CARPET
++    public final LightingEngine lightingEngine;
++
+     protected World(ISaveHandler p_i45749_1_, WorldInfo p_i45749_2_, WorldProvider p_i45749_3_, Profiler p_i45749_4_, boolean p_i45749_5_)
+     {
+         this.field_73021_x = Lists.newArrayList(this.field_184152_t);
+@@ -118,6 +137,7 @@
+         this.field_73011_w = p_i45749_3_;
+         this.field_72995_K = p_i45749_5_;
+         this.field_175728_M = p_i45749_3_.func_177501_r();
++        this.lightingEngine = new LightingEngine(this);
+     }
+ 
+     public World func_175643_b()
+@@ -268,7 +288,7 @@
+         }
+     }
+ 
+-    protected abstract boolean func_175680_a(int p_175680_1_, int p_175680_2_, boolean p_175680_3_);
++    public abstract boolean func_175680_a(int p_175680_1_, int p_175680_2_, boolean p_175680_3_);
+ 
+     public Chunk func_175726_f(BlockPos p_175726_1_)
+     {
+@@ -299,7 +319,8 @@
+         {
+             Chunk chunk = this.func_175726_f(p_180501_1_);
+             Block block = p_180501_2_.func_177230_c();
+-            IBlockState iblockstate = chunk.func_177436_a(p_180501_1_, p_180501_2_);
++            //CM modified for fillUpdates = false
++            IBlockState iblockstate = chunk.setBlockState_carpet(p_180501_1_, p_180501_2_, ((p_180501_3_ & 128) != 0) ?true:false ); // carpet added flag
+ 
+             if (iblockstate == null)
+             {
+@@ -328,7 +349,8 @@
+                         this.func_175666_e(p_180501_1_, block);
+                     }
+                 }
+-                else if (!this.field_72995_K && (p_180501_3_ & 16) == 0)
++                //CM else if (!this.isRemote && (flags & 16) == 0) replaces
++                else if (!this.field_72995_K && ((p_180501_3_ & 16) == 0) && ((p_180501_3_ & 128) == 0))
+                 {
+                     this.func_190522_c(p_180501_1_, block);
+                 }
+@@ -429,8 +451,36 @@
+         this.func_190529_b(p_190522_1_.func_177968_d(), p_190522_2_, p_190522_1_);
+     }
+ 
++    /* carpet mod */
++    public void updateObservingBlocksAt_other(BlockPos pos, Block blockType)
++    {
++        this.func_190529_b(pos.func_177976_e(), blockType, pos);
++        this.func_190529_b(pos.func_177974_f(), blockType, pos);
++        this.func_190529_b(pos.func_177977_b(), blockType, pos);
++        //this.observedNeighborChanged(pos.up(), blockType, pos);
++        this.func_190529_b(pos.func_177978_c(), blockType, pos);
++        this.func_190529_b(pos.func_177968_d(), blockType, pos);
++    }
++
+     public void func_175685_c(BlockPos p_175685_1_, Block p_175685_2_, boolean p_175685_3_)
+     {
++        /* carpet mod */
++        if (CarpetSettings.extendedConnectivity)
++        {
++            BlockPos posd = p_175685_1_.func_177977_b();
++
++            this.func_190524_a(posd.func_177976_e(), p_175685_2_, p_175685_1_);
++            this.func_190524_a(posd.func_177974_f(), p_175685_2_, p_175685_1_);
++            this.func_190524_a(posd.func_177977_b(), p_175685_2_, p_175685_1_);
++            //this.neighborChanged(pos.up(), blockType);
++            this.func_190524_a(posd.func_177978_c(), p_175685_2_, p_175685_1_);
++            this.func_190524_a(posd.func_177968_d(), p_175685_2_, p_175685_1_);
++            if (p_175685_3_)
++            {
++                    this.updateObservingBlocksAt_other(posd, p_175685_2_);
++            }
++        }
++        /* end */
+         this.func_190524_a(p_175685_1_.func_177976_e(), p_175685_2_, p_175685_1_);
+         this.func_190524_a(p_175685_1_.func_177974_f(), p_175685_2_, p_175685_1_);
+         this.func_190524_a(p_175685_1_.func_177977_b(), p_175685_2_, p_175685_1_);
+@@ -446,6 +496,44 @@
+ 
+     public void func_175695_a(BlockPos p_175695_1_, Block p_175695_2_, EnumFacing p_175695_3_)
+     {
++        /* carpet mod */
++        if (CarpetSettings.extendedConnectivity)
++        {
++            BlockPos posd = p_175695_1_.func_177977_b();
++
++            if (p_175695_3_ != EnumFacing.WEST)
++            {
++                    this.func_190524_a(posd.func_177976_e(), p_175695_2_, posd);
++            }
++
++            if (p_175695_3_ != EnumFacing.EAST)
++            {
++                    this.func_190524_a(posd.func_177974_f(), p_175695_2_, posd);
++            }
++
++            if (p_175695_3_ != EnumFacing.DOWN)
++            {
++                    this.func_190524_a(posd.func_177977_b(), p_175695_2_, posd);
++            }
++
++            //if (skipSide != EnumFacing.UP)
++            //{
++            //      this.neighborChanged(pos.up(), blockType, posd);
++            //}
++
++            if (p_175695_3_ != EnumFacing.NORTH)
++            {
++                    this.func_190524_a(posd.func_177978_c(), p_175695_2_, posd);
++            }
++
++            if (p_175695_3_ != EnumFacing.SOUTH)
++            {
++                    this.func_190524_a(posd.func_177968_d(), p_175695_2_, posd);
++            }
++
++        }
++        /* carpet mod */
++
+         if (p_175695_3_ != EnumFacing.WEST)
+         {
+             this.func_190524_a(p_175695_1_.func_177976_e(), p_175695_2_, p_175695_1_);
+@@ -508,6 +596,11 @@
+                 CrashReportCategory.func_175750_a(crashreportcategory, p_190524_1_, iblockstate);
+                 throw new ReportedException(crashreport);
+             }
++            // ----- RSMM Start ----- //
++            if (CarpetSettings.redstoneMultimeter) {
++                StateChangeEventDispatcher.dispatchEvent(this, p_190524_1_);
++            }
++            // ----- RSMM End ----- //
+         }
+     }
+ 
+@@ -545,6 +638,11 @@
+                     throw new ReportedException(crashreport);
+                 }
+             }
++            // ----- RSMM Start ----- //
++            if (CarpetSettings.redstoneMultimeter) {
++                StateChangeEventDispatcher.dispatchEvent(this, p_190529_1_);
++            }
++            // ----- RSMM End ----- //
+         }
+     }
+ 
+@@ -1125,6 +1223,9 @@
+ 
+     private boolean func_191504_a(@Nullable Entity p_191504_1_, AxisAlignedBB p_191504_2_, boolean p_191504_3_, @Nullable List<AxisAlignedBB> p_191504_4_)
+     {
++        if (CarpetSettings.blockCollisionsOptimization) { // CARPET-MASA
++            return CollisionBoxesOptimizations.optimizedGetCollisionBoxes(this, p_191504_1_, p_191504_2_, p_191504_3_, p_191504_4_);
++        }
+         int i = MathHelper.func_76128_c(p_191504_2_.field_72340_a) - 1;
+         int j = MathHelper.func_76143_f(p_191504_2_.field_72336_d) + 1;
+         int k = MathHelper.func_76128_c(p_191504_2_.field_72338_b) - 1;
+@@ -1369,6 +1470,8 @@
+                 this.field_73007_j.remove(i--);
+             }
+         }
++        String world_name = this.field_73011_w.func_186058_p().func_186065_b();
++        CarpetProfiler.start_section(world_name, "entities");
+ 
+         this.field_72984_F.func_76318_c("remove");
+         this.field_72996_f.removeAll(this.field_72997_g);
+@@ -1397,6 +1500,7 @@
+         for (int i1 = 0; i1 < this.field_72996_f.size(); ++i1)
+         {
+             Entity entity2 = this.field_72996_f.get(i1);
++            CarpetProfiler.start_entity_section(world_name, entity2);
+             Entity entity3 = entity2.func_184187_bx();
+ 
+             if (entity3 != null)
+@@ -1415,7 +1519,10 @@
+             {
+                 try
+                 {
+-                    this.func_72870_g(entity2);
++                    if (TickSpeed.process_entities)
++                    {
++                        this.func_72870_g(entity2);
++                    }
+                 }
+                 catch (Throwable throwable1)
+                 {
+@@ -1442,17 +1549,29 @@
+                 this.field_72996_f.remove(i1--);
+                 this.func_72847_b(entity2);
+             }
++            CarpetProfiler.end_current_entity_section();
+ 
+             this.field_72984_F.func_76319_b();
+         }
++        CarpetProfiler.end_current_section();
++        CarpetProfiler.start_section(world_name, "tileentities");
+ 
+         this.field_72984_F.func_76318_c("blockEntities");
++        if (CarpetSettings.getBool("hopperDuplicationFix") && !this.field_147483_b.isEmpty())
++        {
++            this.field_175730_i.removeAll(this.field_147483_b);
++            this.field_147482_g.removeAll(this.field_147483_b);
++            this.field_147483_b.clear();
++        }
+         this.field_147481_N = true;
+         Iterator<TileEntity> iterator = this.field_175730_i.iterator();
+ 
++        //CM checking for profiler once
++        boolean profilingEnabled = this.field_72984_F.field_76327_a;
+         while (iterator.hasNext())
+         {
+             TileEntity tileentity = iterator.next();
++            CarpetProfiler.start_tileentity_section(world_name, tileentity);
+ 
+             if (!tileentity.func_145837_r() && tileentity.func_145830_o())
+             {
+@@ -1462,9 +1581,20 @@
+                 {
+                     try
+                     {
+-                        this.field_72984_F.func_76320_a(tileentity.getClass().getSimpleName());
+-                        ((ITickable)tileentity).func_73660_a();
+-                        this.field_72984_F.func_76319_b();
++                        if (TickSpeed.process_entities)
++                        {
++                            //[CM] added condition - same number of check than in 1.12.1
++                            if (profilingEnabled)
++                            {
++                                this.field_72984_F.func_76320_a(tileentity.getClass().getSimpleName());
++                                ((ITickable) tileentity).func_73660_a();
++                                this.field_72984_F.func_76319_b();
++                            }
++                            else
++                            {
++                                ((ITickable) tileentity).func_73660_a();
++                            }
++                        }
+                     }
+                     catch (Throwable throwable)
+                     {
+@@ -1486,11 +1616,12 @@
+                     this.func_175726_f(tileentity.func_174877_v()).func_177425_e(tileentity.func_174877_v());
+                 }
+             }
++            CarpetProfiler.end_current_entity_section();
+         }
+ 
+         this.field_147481_N = false;
+ 
+-        if (!this.field_147483_b.isEmpty())
++        if (!CarpetSettings.getBool("hopperDuplicationFix") && !this.field_147483_b.isEmpty())
+         {
+             this.field_175730_i.removeAll(this.field_147483_b);
+             this.field_147482_g.removeAll(this.field_147483_b);
+@@ -1524,6 +1655,7 @@
+ 
+             this.field_147484_a.clear();
+         }
++        CarpetProfiler.end_current_section();
+ 
+         this.field_72984_F.func_76319_b();
+         this.field_72984_F.func_76319_b();
+@@ -1644,7 +1776,8 @@
+                 this.func_72964_e(p_72866_1_.field_70176_ah, p_72866_1_.field_70164_aj).func_76608_a(p_72866_1_, p_72866_1_.field_70162_ai);
+             }
+ 
+-            if (!p_72866_1_.func_184189_br() && !this.func_175680_a(l, j1, true))
++            // Faster entitys can move into unloaded chunks and can get stuck in memory lagging the server. this fixes it CARPET-XCOM
++            if (!CarpetSettings.unloadedEntityFix && !p_72866_1_.func_184189_br() && !this.func_175680_a(l, j1, true))
+             {
+                 p_72866_1_.field_70175_ag = false;
+             }
+@@ -1685,7 +1818,8 @@
+         {
+             Entity entity = list.get(i);
+ 
+-            if (!entity.field_70128_L && entity.field_70156_m && entity != p_72917_2_ && (p_72917_2_ == null || entity.func_184223_x(p_72917_2_)))
++            // carpet mod replaces: if (!entity.isDead && entity.preventEntitySpawning && entity != entityIn && (entityIn == null || entity.isRidingSameEntity(entityIn)))
++            if (!entity.field_70128_L && entity.field_70156_m && entity != p_72917_2_ && (p_72917_2_ == null || entity.func_184223_x(p_72917_2_) || CarpetSettings.getBool("1.8Spawning")))
+             {
+                 return false;
+             }
+@@ -2149,6 +2283,13 @@
+                         {
+                             this.field_72986_A.func_76090_f(this.field_73012_v.nextInt(168000) + 12000);
+                         }
++                        // Log Weather CARPET-XCOM
++                        if (LoggerRegistry.__weather)
++                        {
++                            LoggerRegistry.getLogger("weather").log(()-> new ITextComponent[]{
++                                    Messenger.s(null, "Thunder is set to: " + this.field_72986_A.func_76061_m() + " time: " + this.field_72986_A.func_76071_n())
++                            });
++                        }
+                     }
+                     else
+                     {
+@@ -2173,6 +2314,13 @@
+                         {
+                             this.field_72986_A.func_76080_g(this.field_73012_v.nextInt(168000) + 12000);
+                         }
++                        // Log Weather CARPET-XCOM
++                        if (LoggerRegistry.__weather)
++                        {
++                            LoggerRegistry.getLogger("weather").log(()-> new ITextComponent[]{
++                                    Messenger.s(null, "Rain is set to: " + this.field_72986_A.func_76059_o() + " time: " + this.field_72986_A.func_76083_p())
++                            });
++                        }
+                     }
+                     else
+                     {
+@@ -2383,6 +2531,11 @@
+ 
+     public boolean func_180500_c(EnumSkyBlock p_180500_1_, BlockPos p_180500_2_)
+     {
++    	// NewLight PHIPRO-CARPET
++		if (CarpetSettings.newLight){
++			this.lightingEngine.scheduleLightUpdate(p_180500_1_, p_180500_2_);
++			return true;
++		}
+         if (!this.func_175648_a(p_180500_2_, 17, false))
+         {
+             return false;
+@@ -3263,30 +3416,44 @@
+ 
+     public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
+     {
+-        for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
++        if (CarpetSettings.optimizedTileEntities)
+         {
+-            BlockPos blockpos = p_175666_1_.func_177972_a(enumfacing);
+-
+-            if (this.func_175667_e(blockpos))
++            // CARPET-optimizedTileEntities: Enhanced behavior
++            TileEntityOptimizer.updateComparatorsAndLazyTileEntities(this, p_175666_1_, p_175666_2_);
++        }
++        else
++        {
++            // CARPET-optimizedTileEntities: Vanilla behavior
++            for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+             {
+-                IBlockState iblockstate = this.func_180495_p(blockpos);
++                BlockPos blockpos = p_175666_1_.func_177972_a(enumfacing);
+ 
+-                if (Blocks.field_150441_bU.func_185547_C(iblockstate))
++                if (this.func_175667_e(blockpos))
+                 {
+-                    iblockstate.func_189546_a(this, blockpos, p_175666_2_, p_175666_1_);
+-                }
+-                else if (iblockstate.func_185915_l())
+-                {
+-                    blockpos = blockpos.func_177972_a(enumfacing);
+-                    iblockstate = this.func_180495_p(blockpos);
++                    IBlockState iblockstate = this.func_180495_p(blockpos);
+ 
+                     if (Blocks.field_150441_bU.func_185547_C(iblockstate))
+                     {
+                         iblockstate.func_189546_a(this, blockpos, p_175666_2_, p_175666_1_);
+                     }
++                    else if (iblockstate.func_185915_l())
++                    {
++                        blockpos = blockpos.func_177972_a(enumfacing);
++                        iblockstate = this.func_180495_p(blockpos);
++
++                        if (Blocks.field_150441_bU.func_185547_C(iblockstate))
++                        {
++                            iblockstate.func_189546_a(this, blockpos, p_175666_2_, p_175666_1_);
++                        }
++                    }
+                 }
+             }
+         }
++        // ----- RSMM Start ----- //
++        if (CarpetSettings.redstoneMultimeter) {
++            StateChangeEventDispatcher.dispatchEvent(this, p_175666_1_);
++        }
++        // ----- RSMM End ----- //
+     }
+ 
+     public DifficultyInstance func_175649_E(BlockPos p_175649_1_)
+@@ -3357,4 +3524,17 @@
+     {
+         return null;
+     }
++
++    public long getRandSeed(){
++		try
++		{
++		    Field field = Random.class.getDeclaredField("seed");
++			field.setAccessible(true);
++			AtomicLong scrambledSeed = (AtomicLong) field.get(field_73012_v);   //this needs to be XOR'd with 0x5DEECE66DL
++			return scrambledSeed.get();
++			// Minecraft.getMinecraft().player.sendChatMessage(chunk.x + ", " + chunk.z + ", seed " + theSeed);
++		} catch (Exception e) {}
++
++		return 0;
++    }
+ }

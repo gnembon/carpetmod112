@@ -1,0 +1,62 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/MapGenScatteredFeature.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/MapGenScatteredFeature.java
+@@ -13,19 +13,27 @@
+ import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ 
++import java.util.ArrayList;
++import net.minecraft.entity.monster.EntityHusk;
++import net.minecraft.world.biome.Biome.SpawnListEntry;
++
+ public class MapGenScatteredFeature extends MapGenStructure
+ {
+     private static final List<Biome> field_75061_e = Arrays.<Biome>asList(Biomes.field_76769_d, Biomes.field_76786_s, Biomes.field_76782_w, Biomes.field_76792_x, Biomes.field_76780_h, Biomes.field_76774_n, Biomes.field_150584_S);
+     private final List<Biome.SpawnListEntry> field_82668_f;
++    private final ArrayList<SpawnListEntry> scatteredFeatureSpawnListHusk;
++
+     private int field_82669_g;
+     private final int field_82670_h;
+ 
+     public MapGenScatteredFeature()
+     {
+         this.field_82668_f = Lists.<Biome.SpawnListEntry>newArrayList();
++        this.scatteredFeatureSpawnListHusk = Lists.<Biome.SpawnListEntry>newArrayList();
+         this.field_82669_g = 32;
+         this.field_82670_h = 8;
+         this.field_82668_f.add(new Biome.SpawnListEntry(EntityWitch.class, 1, 1, 1));
++        this.scatteredFeatureSpawnListHusk.add(new Biome.SpawnListEntry(EntityHusk.class, 1, 1, 1));
+     }
+ 
+     public MapGenScatteredFeature(Map<String, String> p_i2061_1_)
+@@ -121,6 +129,11 @@
+         return this.field_82668_f;
+     }
+ 
++    public List<Biome.SpawnListEntry> getScatteredFeatureSpawnListHusk()
++    {
++        return this.scatteredFeatureSpawnListHusk;
++    }
++
+     public static class Start extends StructureStart
+     {
+         public Start()
+@@ -166,4 +179,19 @@
+                 this.func_75072_c();
+             }
+         }
++
++    public boolean isTemple(BlockPos p_175798_1_)
++    {
++        StructureStart structurestart = this.func_175797_c(p_175798_1_);
++
++        if (structurestart != null && structurestart instanceof MapGenScatteredFeature.Start && !structurestart.field_75075_a.isEmpty())
++        {
++            StructureComponent structurecomponent = structurestart.field_75075_a.get(0);
++            return structurecomponent instanceof ComponentScatteredFeaturePieces.DesertPyramid;
++        }
++        else //hey
++        {
++            return false;
++        }
++    }
+ }

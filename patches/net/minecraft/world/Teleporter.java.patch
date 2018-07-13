@@ -1,0 +1,163 @@
+--- ../src-base/minecraft/net/minecraft/world/Teleporter.java
++++ ../src-work/minecraft/net/minecraft/world/Teleporter.java
+@@ -15,11 +15,16 @@
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.util.math.MathHelper;
+ 
++import net.minecraft.server.MinecraftServer;
++import carpet.CarpetSettings;
++
+ public class Teleporter
+ {
+     private final WorldServer field_85192_a;
+     private final Random field_77187_a;
+     private final Long2ObjectMap<Teleporter.PortalPosition> field_85191_c = new Long2ObjectOpenHashMap<Teleporter.PortalPosition>(4096);
++    //CM var
++    private final Long2ObjectMap<Teleporter.PortalPosition> destinationHistoryCache = new Long2ObjectOpenHashMap(4096); //carpet mod
+ 
+     public Teleporter(WorldServer p_i1963_1_)
+     {
+@@ -74,6 +79,7 @@
+         int j = MathHelper.func_76128_c(p_180620_1_.field_70165_t);
+         int k = MathHelper.func_76128_c(p_180620_1_.field_70161_v);
+         boolean flag = true;
++        boolean flag_cm = true; // CM
+         BlockPos blockpos = BlockPos.field_177992_a;
+         long l = ChunkPos.func_77272_a(j, k);
+ 
+@@ -85,8 +91,20 @@
+             teleporter$portalposition.field_85087_d = this.field_85192_a.func_82737_E();
+             flag = false;
+         }
+-        else
++        else if (CarpetSettings.getBool("portalCaching") && this.destinationHistoryCache.containsKey(l)) // potential best candidate for linkage.
+         {
++            Teleporter.PortalPosition teleporter$portalposition_cm = (Teleporter.PortalPosition)this.destinationHistoryCache.get(l);
++            if (this.field_85192_a.func_180495_p(teleporter$portalposition_cm).func_177230_c() == Blocks.field_150427_aO)
++            //just to verify nobody is cheating the system with update suppression
++            {
++                d0 = 0.0D;
++                blockpos = teleporter$portalposition_cm;
++                flag_cm = false;
++            }
++        }
++            /* end */
++        if (d0 < 0.0D)
++        {
+             BlockPos blockpos3 = new BlockPos(p_180620_1_);
+ 
+             for (int i1 = -128; i1 <= 128; ++i1)
+@@ -125,6 +143,13 @@
+             {
+                 this.field_85191_c.put(l, new Teleporter.PortalPosition(blockpos, this.field_85192_a.func_82737_E()));
+             }
++            /* carpet mod */
++            if (CarpetSettings.getBool("portalCaching") && (flag || flag_cm))
++            {
++                //its timeless
++                this.destinationHistoryCache.put(l, new Teleporter.PortalPosition(blockpos, 0L));
++            }
++            /* carpet mod end */
+ 
+             double d5 = (double)blockpos.func_177958_n() + 0.5D;
+             double d7 = (double)blockpos.func_177952_p() + 0.5D;
+@@ -137,14 +162,35 @@
+             {
+                 ++d2;
+             }
+-
++            
++            //CM portalSuffocationFix
++            //removed offset calculation outside of the if statement
++            double offset = (1.0D - p_180620_1_.func_181014_aG().field_72450_a) * (double)blockpattern$patternhelper.func_181118_d() * (double)blockpattern$patternhelper.func_177669_b().func_176746_e().func_176743_c().func_179524_a();
++            if (CarpetSettings.getBool("portalSuffocationFix"))
++            {
++                double entity_corrected_radius = 1.02*(double)p_180620_1_.field_70130_N/2;
++                if (entity_corrected_radius >= (double)blockpattern$patternhelper.func_181118_d()-entity_corrected_radius)
++                {
++                    //entity is wider than portal, so will suffocate anyways, so place it directly in the middle
++                    entity_corrected_radius = (double)blockpattern$patternhelper.func_181118_d()/2-0.001;
++                }
++                    
++                if (offset >= 0)
++                {
++                    offset = MathHelper.func_151237_a(offset, entity_corrected_radius, (double)blockpattern$patternhelper.func_181118_d()-entity_corrected_radius);
++                }
++                else
++                {
++                    offset = MathHelper.func_151237_a(offset, -(double)blockpattern$patternhelper.func_181118_d()+entity_corrected_radius, -entity_corrected_radius);
++                }
++            }
+             if (blockpattern$patternhelper.func_177669_b().func_176740_k() == EnumFacing.Axis.X)
+             {
+-                d7 = d2 + (1.0D - p_180620_1_.func_181014_aG().field_72450_a) * (double)blockpattern$patternhelper.func_181118_d() * (double)blockpattern$patternhelper.func_177669_b().func_176746_e().func_176743_c().func_179524_a();
++                d7 = d2 + offset;
+             }
+             else
+             {
+-                d5 = d2 + (1.0D - p_180620_1_.func_181014_aG().field_72450_a) * (double)blockpattern$patternhelper.func_181118_d() * (double)blockpattern$patternhelper.func_177669_b().func_176746_e().func_176743_c().func_179524_a();
++                d5 = d2 + offset;
+             }
+ 
+             float f = 0.0F;
+@@ -182,6 +228,13 @@
+             if (p_180620_1_ instanceof EntityPlayerMP)
+             {
+                 ((EntityPlayerMP)p_180620_1_).field_71135_a.func_147364_a(d5, d6, d7, p_180620_1_.field_70177_z, p_180620_1_.field_70125_A);
++                /*
++                 * Resets the players postion after move to fix a bug created in the teleportation. CARPET-XCOM
++                 */
++                if(CarpetSettings.getBool("portalTeleportationFix") )
++                {
++                    ((EntityPlayerMP)p_180620_1_).field_71135_a.func_184342_d();
++                }
+             }
+             else
+             {
+@@ -395,6 +448,12 @@
+                 }
+             }
+         }
++        /* carpet mod */
++        if (CarpetSettings.getBool("portalCaching"))
++        {
++            clearHistoryCache();
++        }
++        /* carpet mod */
+ 
+         return true;
+     }
+@@ -415,8 +474,33 @@
+                     objectiterator.remove();
+                 }
+             }
++            /* carpet mod */
++            //failsafe - arbitrary, but will never happen in normal circumstances, 
++            //but who knows these freekin players.
++            if (CarpetSettings.getBool("portalCaching") && this.destinationHistoryCache.size()> 65000 )
++            {
++                removeAllCachedEntries();
++            }
++            /* carpet mod end */
+         }
+     }
++    
++    //carpet mod
++    public void clearHistoryCache()
++    {
++        MinecraftServer minecraftserver = this.field_85192_a.func_73046_m();
++        for (int i=-1; i<2; i++)
++        {
++            WorldServer s = minecraftserver.func_71218_a(i);
++            s.func_85176_s().removeAllCachedEntries();
++        }
++    }
++    
++    //carpet mod
++    public void removeAllCachedEntries()
++    {
++        this.destinationHistoryCache.clear();
++    }
+ 
+     public class PortalPosition extends BlockPos
+     {

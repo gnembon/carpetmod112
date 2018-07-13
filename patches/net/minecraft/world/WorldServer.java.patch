@@ -1,0 +1,188 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldServer.java
++++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
+@@ -79,12 +79,16 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import carpet.CarpetSettings;
++import carpet.helpers.TickSpeed;
++import carpet.utils.CarpetProfiler;
++
+ public class WorldServer extends World implements IThreadListener
+ {
+     private static final Logger field_147491_a = LogManager.getLogger();
+     private final MinecraftServer field_73061_a;
+     private final EntityTracker field_73062_L;
+-    private final PlayerChunkMap field_73063_M;
++    public final PlayerChunkMap field_73063_M;
+     private final Set<NextTickListEntry> field_73064_N = Sets.<NextTickListEntry>newHashSet();
+     private final TreeSet<NextTickListEntry> field_73065_O = new TreeSet<NextTickListEntry>();
+     private final Map<UUID, Entity> field_175741_N = Maps.<UUID, Entity>newHashMap();
+@@ -183,12 +187,19 @@
+             this.func_73053_d();
+         }
+ 
++        String world_name = this.field_73011_w.func_186058_p().func_186065_b();
++        if (TickSpeed.process_entities)
++        {// extra indent
++
+         this.field_72984_F.func_76320_a("mobSpawner");
++        CarpetProfiler.start_section(world_name, "spawning");
+ 
+         if (this.func_82736_K().func_82766_b("doMobSpawning") && this.field_72986_A.func_76067_t() != WorldType.field_180272_g)
+         {
+             this.field_175742_R.func_77192_a(this, this.field_72985_G, this.field_72992_H, this.field_72986_A.func_82573_f() % 400L == 0L);
+         }
++        CarpetProfiler.end_current_section();
++        }//end indent
+ 
+         this.field_72984_F.func_76318_c("chunkSource");
+         this.field_73020_y.func_73156_b();
+@@ -199,26 +210,56 @@
+             this.func_175692_b(j);
+         }
+ 
++        if (TickSpeed.process_entities)
++        { // CM extra indent
+         this.field_72986_A.func_82572_b(this.field_72986_A.func_82573_f() + 1L);
+ 
+         if (this.func_82736_K().func_82766_b("doDaylightCycle"))
+         {
+             this.field_72986_A.func_76068_b(this.field_72986_A.func_76073_f() + 1L);
+         }
+-
+         this.field_72984_F.func_76318_c("tickPending");
+-        this.func_72955_a(false);
++
++        CarpetProfiler.start_section(world_name, "blocks");
++        
++		this.func_72955_a(false);
++		
++		if(CarpetSettings.setSeed != 0){
++        	this.field_73012_v.setSeed(CarpetSettings.setSeed ^ 0x5DEECE66DL);
++        }
++		
++		CarpetProfiler.end_current_section();
++		
++		}
++		CarpetProfiler.start_section(world_name, "blocks");
+         this.field_72984_F.func_76318_c("tickBlocks");
+         this.func_147456_g();
++        CarpetProfiler.end_current_section();
+         this.field_72984_F.func_76318_c("chunkMap");
+         this.field_73063_M.func_72693_b();
++
++        if (TickSpeed.process_entities)
++        { // CM indent
+         this.field_72984_F.func_76318_c("village");
+         this.field_72982_D.func_75544_a();
+         this.field_175740_d.func_75528_a();
+         this.field_72984_F.func_76318_c("portalForcer");
+         this.field_85177_Q.func_85189_a(this.func_82737_E());
++		}
++		
++		// NewLight PHIPRO-CARPET
++		if (CarpetSettings.newLight)
++        {
++            this.field_72984_F.func_76318_c("lighting");
++            this.lightingEngine.procLightUpdates();
++        }
+         this.field_72984_F.func_76319_b();
++
+         this.func_147488_Z();
++        
++        if(CarpetSettings.setSeed != 0){
++        	this.field_73012_v.setSeed(CarpetSettings.setSeed ^ 0x5DEECE66DL);
++        }
+     }
+ 
+     @Nullable
+@@ -254,8 +295,15 @@
+                     ++j;
+                 }
+             }
+-
+-            this.field_73068_P = j > 0 && j >= this.field_73010_i.size() - i;
++            int sleepingThreshold = CarpetSettings.getInt("sleepingThreshold");
++            if(sleepingThreshold < 100)
++            { // custom amount
++                field_73068_P = j > 0;
++            }
++            else
++            { // vanilla - all
++                field_73068_P = j > 0 && j >= this.field_73010_i.size() - i;
++            }
+         }
+     }
+ 
+@@ -289,6 +337,28 @@
+     {
+         if (this.field_73068_P && !this.field_72995_K)
+         {
++            //CM sleeping
++            int sleepingThreshold = CarpetSettings.getInt("sleepingThreshold");
++            if(sleepingThreshold < 100)
++            {
++                float numberOfPlayers = 0;
++                float sleepingPlayerCount = 0;
++
++                for (EntityPlayer entityplayer : this.field_73010_i)
++                {
++                    if (!entityplayer.func_175149_v())
++                    {
++                        numberOfPlayers++;
++                        if (entityplayer.func_71026_bH())
++                        {
++                            sleepingPlayerCount++;
++                        }
++                    }
++                }
++                return sleepingThreshold <= (int) ((sleepingPlayerCount / numberOfPlayers) * 100);
++            }
++            //CM end
++            // Vanilla
+             for (EntityPlayer entityplayer : this.field_73010_i)
+             {
+                 if (!entityplayer.func_175149_v() && !entityplayer.func_71026_bH())
+@@ -305,7 +375,7 @@
+         }
+     }
+ 
+-    protected boolean func_175680_a(int p_175680_1_, int p_175680_2_, boolean p_175680_3_)
++    public boolean func_175680_a(int p_175680_1_, int p_175680_2_, boolean p_175680_3_)
+     {
+         return this.func_72863_F().func_73149_a(p_175680_1_, p_175680_2_);
+     }
+@@ -357,6 +427,11 @@
+                 chunk.func_76594_o();
+                 this.field_72984_F.func_76318_c("tickChunk");
+                 chunk.func_150804_b(false);
++                if (!TickSpeed.process_entities)
++                { // skipping the rest of the block processing
++                    this.field_72984_F.func_76319_b();
++                    continue;
++                }
+                 this.field_72984_F.func_76318_c("thunder");
+ 
+                 if (flag && flag1 && this.field_73012_v.nextInt(100000) == 0)
+@@ -445,7 +520,7 @@
+         }
+     }
+ 
+-    protected BlockPos func_175736_a(BlockPos p_175736_1_)
++    public BlockPos func_175736_a(BlockPos p_175736_1_)
+     {
+         BlockPos blockpos = this.func_175725_q(p_175736_1_);
+         AxisAlignedBB axisalignedbb = (new AxisAlignedBB(blockpos, new BlockPos(blockpos.func_177958_n(), this.func_72800_K(), blockpos.func_177952_p()))).func_186662_g(3.0D);
+@@ -505,9 +580,10 @@
+                     {
+                         iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
+                     }
++                    if(CarpetSettings.worldGenBug) return;
+                 }
+ 
+-                return;
++                if(!CarpetSettings.worldGenBug) return;
+             }
+ 
+             p_175654_3_ = 1;
