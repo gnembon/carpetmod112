@@ -1,13 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -85,6 +85,15 @@
+@@ -85,6 +85,11 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-+import java.util.Locale;
-+import narcolepticfrog.rsmm.server.RSMMServer;
-+import net.minecraft.network.play.server.SPacketPlayerListHeaderFooter;
-+import net.minecraft.util.text.TextFormatting;
 +import carpet.CarpetSettings;
 +import carpet.CarpetServer;
 +import carpet.helpers.TickSpeed;
@@ -16,7 +12,7 @@
  public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
  {
      private static final Logger field_147145_h = LogManager.getLogger();
-@@ -143,6 +152,7 @@
+@@ -143,6 +148,7 @@
  
      public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
      {
@@ -24,7 +20,7 @@
          this.field_110456_c = p_i47054_2_;
          this.field_152364_T = p_i47054_4_;
          this.field_147143_S = p_i47054_5_;
-@@ -449,18 +459,33 @@
+@@ -449,18 +455,33 @@
              {
                  this.field_175591_ab = func_130071_aq();
                  long i = 0L;
@@ -60,7 +56,7 @@
                          j = 2000L;
                          this.field_71299_R = this.field_175591_ab;
                      }
-@@ -473,6 +498,7 @@
+@@ -473,6 +494,7 @@
  
                      i += j;
                      this.field_175591_ab = k;
@@ -68,7 +64,7 @@
  
                      if (this.field_71305_c[0].func_73056_e())
                      {
-@@ -481,14 +507,29 @@
+@@ -481,14 +503,29 @@
                      }
                      else
                      {
@@ -101,7 +97,7 @@
                      this.field_71296_Q = true;
                  }
              }
-@@ -592,6 +633,11 @@
+@@ -592,6 +629,11 @@
      {
          long i = System.nanoTime();
          ++this.field_71315_w;
@@ -113,7 +109,7 @@
  
          if (this.field_71295_T)
          {
-@@ -621,12 +667,17 @@
+@@ -621,12 +663,17 @@
  
          if (this.field_71315_w % 900 == 0)
          {
@@ -131,7 +127,7 @@
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
          this.field_71304_b.func_76319_b();
-@@ -644,6 +695,10 @@
+@@ -644,6 +691,10 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -142,7 +138,7 @@
      }
  
      public void func_71190_q()
-@@ -710,10 +765,12 @@
+@@ -710,10 +761,12 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  
