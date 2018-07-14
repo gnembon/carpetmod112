@@ -24,4 +24,4 @@ Use `mktest.cmd` to run the modified server with generated patches as a localhos
 In case you use different paths, you might need to modify the build script.
 This will leave a ready server jar file in your saves folder.
 
-It requires to have 7za, rm, cp, mv available in paths
+It requires to have 7za installed in your paths
