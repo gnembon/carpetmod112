@@ -254,7 +254,7 @@ task(project.name + 'OutputJar', type: Zip)
 		}
 	}
 	
-	archiveName = "${capitalizedName}_v${project.version}.zip"
+	archiveName = "${capitalizedName}_${project.version}.zip"
 	destinationDir = outputJar.destinationDir
 	includeEmptyDirs = false
 	

@@ -16,5 +16,9 @@ Edit the files in the `src` folder, like you would for a normal project. The onl
 Use `gradlew genPatches`
 ### To apply patches after pulling
 Use `gradlew setupCarpetmod`
-### To create a release
+### To create a release / patch files
 Use `gradlew createRelease`. The release will be a ZIP file containing all modified classes, obfuscated, in the `build/distributions` folder.
+### To run the server locally
+Use `mktest.cmd` to run the modified server with generated patches as a localhost server. It requires `gradlew createRelease` to finish successfully as well as using default paths for your minecraft installation folder.
+In case you use different paths, you might need to modify the build script.
+This will leave a ready server jar file in your saves folder.
