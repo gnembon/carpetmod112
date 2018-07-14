@@ -23,7 +23,7 @@ public class CommandGMC extends CommandCarpetBase
     /**
      * Gets the name of the command
      */
-    public String getCommandName()
+    public String getName()
     {
         return "c";
     }
@@ -33,7 +33,7 @@ public class CommandGMC extends CommandCarpetBase
      *  
      * @param sender The ICommandSender who is requesting usage details
      */
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "commands.gamemode.usage";
     }
@@ -50,7 +50,7 @@ public class CommandGMC extends CommandCarpetBase
         if (!command_enabled("commandCameramode", sender)) return;
         if (args.length > 0)
         {
-            throw new WrongUsageException(getCommandUsage(sender), new Object[0]);
+            throw new WrongUsageException(getUsage(sender), new Object[0]);
         }
         else
         {
@@ -66,7 +66,7 @@ public class CommandGMC extends CommandCarpetBase
         }
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
     {
         return Collections.<String>emptyList();
     }

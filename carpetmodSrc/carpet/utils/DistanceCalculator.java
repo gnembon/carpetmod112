@@ -1,12 +1,9 @@
 package carpet.utils;
 
-import carpet.utils.Messenger;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.HashMap;

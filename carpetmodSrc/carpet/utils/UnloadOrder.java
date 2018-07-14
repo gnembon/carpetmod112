@@ -38,9 +38,9 @@ public class UnloadOrder
 
             for (Chunk chunk : Lists.newArrayList(chunkproviderserver.getLoadedChunks()))
             {
-                if (chunk != null && !pcm.contains(chunk.xPosition, chunk.zPosition))
+                if (chunk != null && !pcm.contains(chunk.x, chunk.z))
                 {
-                    chunkproviderserver.unload(chunk);
+                    chunkproviderserver.queueUnload(chunk);
                 }
             }
             return chunkproviderserver.tick_reportive_no_action(pos, verbose);
@@ -73,7 +73,7 @@ public class UnloadOrder
         {
             Method method = HashMap.class.getDeclaredMethod("hash", Object.class);
             method.setAccessible(true);
-            return (Integer) method.invoke(null, Long.hashCode(ChunkPos.asLong(chpos.chunkXPos, chpos.chunkZPos))) & (4096-1);
+            return (Integer) method.invoke(null, Long.hashCode(ChunkPos.asLong(chpos.x, chpos.z))) & (4096-1);
         }
         catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e)
         {
@@ -84,7 +84,7 @@ public class UnloadOrder
     public static int get_chunk_order_new(ChunkPos chpos)
     {
         //return HashMap_hash(Long.hashCode(ChunkPos.asLong(chpos.chunkXPos, chpos.chunkZPos)));
-        return HashCommon.murmurHash3(Long.hashCode(ChunkPos.asLong(chpos.chunkXPos, chpos.chunkZPos))) % (2<<20);
+        return HashCommon.murmurHash3(Long.hashCode(ChunkPos.asLong(chpos.x, chpos.z))) % (2<<20);
 
     }
 
@@ -100,10 +100,10 @@ public class UnloadOrder
         }
         ChunkPos chpos1 = new ChunkPos(pos);
         ChunkPos chpos2 = new ChunkPos(pos1);
-        int minx = (chpos1.chunkXPos < chpos2.chunkXPos) ? chpos1.chunkXPos : chpos2.chunkXPos;
-        int maxx = (chpos1.chunkXPos > chpos2.chunkXPos) ? chpos1.chunkXPos : chpos2.chunkXPos;
-        int minz = (chpos1.chunkZPos < chpos2.chunkZPos) ? chpos1.chunkZPos : chpos2.chunkZPos;
-        int maxz = (chpos1.chunkZPos > chpos2.chunkZPos) ? chpos1.chunkZPos : chpos2.chunkZPos;
+        int minx = (chpos1.x < chpos2.x) ? chpos1.x : chpos2.x;
+        int maxx = (chpos1.x > chpos2.x) ? chpos1.x : chpos2.x;
+        int minz = (chpos1.z < chpos2.z) ? chpos1.z : chpos2.z;
+        int maxz = (chpos1.z > chpos2.z) ? chpos1.z : chpos2.z;
         HashMap<Integer,Integer> stat = new HashMap<Integer,Integer>();
         int total = 0;
         for (int chposx = minx; chposx <= maxx; chposx++)

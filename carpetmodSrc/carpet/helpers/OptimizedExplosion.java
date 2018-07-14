@@ -64,19 +64,19 @@ public class OptimizedExplosion
             affectedBlockPositionsSet.clear();
         }
 
-        float f3 = e.explosionSize * 2.0F;
-        int k1 = MathHelper.floor(e.explosionX - (double) f3 - 1.0D);
-        int l1 = MathHelper.floor(e.explosionX + (double) f3 + 1.0D);
-        int i2 = MathHelper.floor(e.explosionY - (double) f3 - 1.0D);
-        int i1 = MathHelper.floor(e.explosionY + (double) f3 + 1.0D);
-        int j2 = MathHelper.floor(e.explosionZ - (double) f3 - 1.0D);
-        int j1 = MathHelper.floor(e.explosionZ + (double) f3 + 1.0D);
-        Vec3d vec3d = new Vec3d(e.explosionX, e.explosionY, e.explosionZ);
+        float f3 = e.size * 2.0F;
+        int k1 = MathHelper.floor(e.x - (double) f3 - 1.0D);
+        int l1 = MathHelper.floor(e.x + (double) f3 + 1.0D);
+        int i2 = MathHelper.floor(e.y - (double) f3 - 1.0D);
+        int i1 = MathHelper.floor(e.y + (double) f3 + 1.0D);
+        int j2 = MathHelper.floor(e.z - (double) f3 - 1.0D);
+        int j1 = MathHelper.floor(e.z + (double) f3 + 1.0D);
+        Vec3d vec3d = new Vec3d(e.x, e.y, e.z);
 
-        if (vec3dmem == null || !vec3dmem.equals(vec3d) || tickmem != e.worldObj.getTotalWorldTime()) {
+        if (vec3dmem == null || !vec3dmem.equals(vec3d) || tickmem != e.world.getTotalWorldTime()) {
             vec3dmem = vec3d;
-            tickmem = e.worldObj.getTotalWorldTime();
-            entitylist = e.worldObj.getEntitiesWithinAABBExcludingEntity(null,
+            tickmem = e.world.getTotalWorldTime();
+            entitylist = e.world.getEntitiesWithinAABBExcludingEntity(null,
                     new AxisAlignedBB((double) k1, (double) i2, (double) j2, (double) l1, (double) i1, (double) j1));
             explosionSound = 0;
         }
@@ -101,12 +101,12 @@ public class OptimizedExplosion
             }
 
             if (!entity.isImmuneToExplosions()) {
-                double d12 = entity.getDistance(e.explosionX, e.explosionY, e.explosionZ) / (double) f3;
+                double d12 = entity.getDistance(e.x, e.y, e.z) / (double) f3;
 
                 if (d12 <= 1.0D) {
-                    double d5 = entity.posX - e.explosionX;
-                    double d7 = entity.posY + (double) entity.getEyeHeight() - e.explosionY;
-                    double d9 = entity.posZ - e.explosionZ;
+                    double d5 = entity.posX - e.x;
+                    double d7 = entity.posY + (double) entity.getEyeHeight() - e.y;
+                    double d9 = entity.posZ - e.z;
                     double d13 = (double) MathHelper.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
 
                     if (d13 != 0.0D) {
@@ -122,7 +122,7 @@ public class OptimizedExplosion
 						if (density == Double.MAX_VALUE)
 						{
 							Pair<Vec3d, AxisAlignedBB> pair = Pair.of(vec3d, entity.getEntityBoundingBox());
-							density = e.worldObj.getBlockDensity(vec3d, entity.getEntityBoundingBox());
+							density = e.world.getBlockDensity(vec3d, entity.getEntityBoundingBox());
 							densityCache.put(pair, density);
 						}
 
@@ -157,10 +157,10 @@ public class OptimizedExplosion
 
     public static void doExplosionB(Explosion e, boolean spawnParticles)
     {
-        World world = e.worldObj;
-        double posX = e.explosionX;
-        double posY = e.explosionY;
-        double posZ = e.explosionZ;
+        World world = e.world;
+        double posX = e.x;
+        double posY = e.y;
+        double posZ = e.z;
 
         // explosionSound incremented till disabling the explosion particles and sound
         if (explosionSound < 100 || explosionSound % 100 == 0)
@@ -168,7 +168,7 @@ public class OptimizedExplosion
             world.playSound(null, posX, posY, posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F,
                     (1.0F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.2F) * 0.7F);
 
-            if (e.explosionSize >= 2.0F && e.isSmoking)
+            if (e.size >= 2.0F && e.damagesTerrain)
             {
                 world.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, posX, posY, posZ, 1.0D, 0.0D, 0.0D);
             }
@@ -178,7 +178,7 @@ public class OptimizedExplosion
             }
         }
 
-        if (e.isSmoking)
+        if (e.damagesTerrain)
         {
             for (BlockPos blockpos : e.affectedBlockPositions)
             {
@@ -197,7 +197,7 @@ public class OptimizedExplosion
                     d3 = d3 / d6;
                     d4 = d4 / d6;
                     d5 = d5 / d6;
-                    double d7 = 0.5D / (d6 / (double) e.explosionSize + 0.1D);
+                    double d7 = 0.5D / (d6 / (double) e.size + 0.1D);
                     d7 = d7 * (double)(world.rand.nextFloat() * world.rand.nextFloat() + 0.3F);
                     d3 = d3 * d7;
                     d4 = d4 * d7;
@@ -212,7 +212,7 @@ public class OptimizedExplosion
                     if (block.canDropFromExplosion(e))
                     {
                         // CARPET-MASA: use the state from above instead of getting it again from the world
-                        block.dropBlockAsItemWithChance(world, blockpos, iblockstate, 1.0F / e.explosionSize, 0);
+                        block.dropBlockAsItemWithChance(world, blockpos, iblockstate, 1.0F / e.size, 0);
                     }
 
                     world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 3);
@@ -221,7 +221,7 @@ public class OptimizedExplosion
             }
         }
 
-        if (e.isFlaming)
+        if (e.causesFire)
         {
             for (BlockPos blockpos1 : e.affectedBlockPositions)
             {
@@ -230,7 +230,7 @@ public class OptimizedExplosion
 
                 if (chunk.getBlockState(blockpos1).getMaterial() == Material.AIR &&
                     chunk.getBlockState(blockpos1.down()).isFullBlock() &&
-                    e.explosionRNG.nextInt(3) == 0)
+                    e.random.nextInt(3) == 0)
                 {
                     world.setBlockState(blockpos1, Blocks.FIRE.getDefaultState());
                 }
@@ -258,28 +258,28 @@ public class OptimizedExplosion
                         d0 = d0 / d3;
                         d1 = d1 / d3;
                         d2 = d2 / d3;
-                        float rand = e.worldObj.rand.nextFloat();
+                        float rand = e.world.rand.nextFloat();
                         if (CarpetSettings.tntRandomRange >= 0) {
                             rand = CarpetSettings.tntRandomRange;
                         }
-                        float f = e.explosionSize * (0.7F + rand * 0.6F);
-                        double d4 = e.explosionX;
-                        double d6 = e.explosionY;
-                        double d8 = e.explosionZ;
+                        float f = e.size * (0.7F + rand * 0.6F);
+                        double d4 = e.x;
+                        double d6 = e.y;
+                        double d8 = e.z;
 
                         for (float f1 = 0.3F; f > 0.0F; f -= 0.22500001F) {
                             BlockPos blockpos = new BlockPos(d4, d6, d8);
-                            IBlockState iblockstate = e.worldObj.getBlockState(blockpos);
+                            IBlockState iblockstate = e.world.getBlockState(blockpos);
 
                             if (iblockstate.getMaterial() != Material.AIR) {
                                 float f2 = e.exploder != null
-                                        ? e.exploder.getExplosionResistance(e, e.worldObj, blockpos, iblockstate)
+                                        ? e.exploder.getExplosionResistance(e, e.world, blockpos, iblockstate)
                                         : iblockstate.getBlock().getExplosionResistance((Entity) null);
                                 f -= (f2 + 0.3F) * 0.3F;
                             }
 
                             if (f > 0.0F && (e.exploder == null ||
-                                e.exploder.verifyExplosion(e, e.worldObj, blockpos, iblockstate, f)))
+                                e.exploder.canExplosionDestroyBlock(e, e.world, blockpos, iblockstate, f)))
                             {
                                 affectedBlockPositionsSet.add(blockpos);
                             }
@@ -374,12 +374,12 @@ public class OptimizedExplosion
         double xInc = (xRel / len) * 0.3;
         double yInc = (yRel / len) * 0.3;
         double zInc = (zRel / len) * 0.3;
-        float rand = e.worldObj.rand.nextFloat();
+        float rand = e.world.rand.nextFloat();
         float sizeRand = (CarpetSettings.tntRandomRange >= 0F ? CarpetSettings.tntRandomRange : rand);
-        float size = e.explosionSize * (0.7F + sizeRand * 0.6F);
-        double posX = e.explosionX;
-        double posY = e.explosionY;
-        double posZ = e.explosionZ;
+        float size = e.size * (0.7F + sizeRand * 0.6F);
+        double posX = e.x;
+        double posY = e.y;
+        double posZ = e.z;
 
         for (float f1 = 0.3F; size > 0.0F; size -= 0.22500001F)
         {
@@ -392,7 +392,7 @@ public class OptimizedExplosion
             if (state == null)
             {
                 posImmutable = posMutable.toImmutable();
-                state = e.worldObj.getBlockState(posImmutable);
+                state = e.world.getBlockState(posImmutable);
                 stateCache.put(posImmutable, state);
             }
 
@@ -402,7 +402,7 @@ public class OptimizedExplosion
 
                 if (e.exploder != null)
                 {
-                    resistance = e.exploder.getExplosionResistance(e, e.worldObj, posMutable, state);
+                    resistance = e.exploder.getExplosionResistance(e, e.world, posMutable, state);
                 }
                 else
                 {
@@ -412,7 +412,7 @@ public class OptimizedExplosion
                 size -= (resistance + 0.3F) * 0.3F;
             }
 
-            if (size > 0.0F && (e.exploder == null || e.exploder.verifyExplosion(e, e.worldObj, posMutable, state, size)))
+            if (size > 0.0F && (e.exploder == null || e.exploder.canExplosionDestroyBlock(e, e.world, posMutable, state, size)))
             {
                 affectedBlockPositionsSet.add(posImmutable != null ? posImmutable : posMutable.toImmutable());
             }

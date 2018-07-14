@@ -19,25 +19,14 @@ public class CommandBlockInfo extends CommandCarpetBase
      * Gets the name of the command
      */
 
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "Usage: blockinfo <X> <Y> <Z>";
     }
 
-    public String getCommandName()
+    public String getName()
     {
         return "blockinfo";
-    }
-
-    /**
-     * Return the required permission level for this command.
-     */
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
-    }
-    public int getRequiredPermissionLevel()
-    {
-        return 0;
     }
 
     /**
@@ -49,14 +38,14 @@ public class CommandBlockInfo extends CommandCarpetBase
 
         if (args.length != 3)
         {
-            throw new WrongUsageException(getCommandUsage(sender), new Object[0]);
+            throw new WrongUsageException(getUsage(sender), new Object[0]);
         }
         BlockPos blockpos = parseBlockPos(sender, args, 0, false);
         World world = sender.getEntityWorld();
         msg(sender, BlockInfo.blockInfo(blockpos, world));
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.getBool("commandBlockInfo"))
         {

@@ -47,7 +47,7 @@
 +        nbttaglist.func_74742_a(field_186004_w.getBoundingBoxes(entity, CarpetClientMarkers.STRONGHOLD));
 +        nbttaglist.func_74742_a(field_186006_y.getBoundingBoxes(entity, CarpetClientMarkers.MINESHAFT));
 +        nbttaglist.func_74742_a(field_185980_B.getBoundingBoxes(entity, CarpetClientMarkers.MONUMENT));
-+        nbttaglist.func_74742_a(field_191060_C.getBoundingBoxes(entity, CarpetClientMarkers.MANTION));
++        nbttaglist.func_74742_a(field_191060_C.getBoundingBoxes(entity, CarpetClientMarkers.MANSION));
 +        return nbttaglist;
 +    }
  }

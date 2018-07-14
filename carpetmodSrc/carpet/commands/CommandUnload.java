@@ -20,12 +20,12 @@ public class CommandUnload extends CommandCarpetBase
     /**
      * Gets the name of the command
      */
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "Usage: unload <short|verbose> <X1> <Y1> <Z1>";
     }
 
-    public String getCommandName()
+    public String getName()
     {
         return "unload";
     }
@@ -47,7 +47,7 @@ public class CommandUnload extends CommandCarpetBase
         if (!command_enabled("commandUnload", sender)) return;
         if (args.length != 0 && args.length != 1 && args.length != 4 && args.length != 7)
         {
-            throw new WrongUsageException(getCommandUsage(sender));
+            throw new WrongUsageException(getUsage(sender));
         }
         BlockPos pos = null;
         BlockPos pos2 = null;
@@ -108,18 +108,18 @@ public class CommandUnload extends CommandCarpetBase
         }
         if (custom_dim)
         {
-            WorldServer custom_server = server.worldServerForDimension(custom_dim_id);
+            WorldServer custom_server = server.getWorld(custom_dim_id);
             notifyCommandListener(sender, this, "Chunk unloading report for "+custom_server.provider.getDimensionType());
             List<String> report = UnloadOrder.test_save_chunks(custom_server, pos, verbose);
             print_multi_message(report, sender);
             return;
         }
         World world = sender.getEntityWorld();
-        for (int i = 0; i < server.worldServers.length; ++i)
+        for (int i = 0; i < server.worlds.length; ++i)
             {
-                if (server.worldServers[i] != null)
+                if (server.worlds[i] != null)
                 {
-                    WorldServer worldserver = server.worldServers[i];
+                    WorldServer worldserver = server.worlds[i];
                     if (worldserver.provider == world.provider)
                     {
                         notifyCommandListener(sender, this, "Chunk unloading report for "+world.provider.getDimensionType());
@@ -131,7 +131,7 @@ public class CommandUnload extends CommandCarpetBase
             }
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.getBool("commandUnload"))
         {

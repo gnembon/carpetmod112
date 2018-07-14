@@ -22,12 +22,12 @@ public class CommandCounter extends CommandCarpetBase
     /**
      * Gets the name of the command
      */
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "Usage: counter <color> <reset/realtime>";
     }
 
-    public String getCommandName()
+    public String getName()
     {
         return "counter";
     }
@@ -73,11 +73,11 @@ public class CommandCounter extends CommandCarpetBase
             notifyCommandListener(sender, this, String.format("%s counters restarted.", color));
             return;
         }
-        throw new WrongUsageException(getCommandUsage(sender));
+        throw new WrongUsageException(getUsage(sender));
 
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.getBool("hopperCounters"))
         {

@@ -105,7 +105,7 @@ public class CarpetServer // static for now - easier to handle all around the co
     
     public static Random setRandomSeed(int p_72843_1_, int p_72843_2_, int p_72843_3_)
     {
-        long i = (long)p_72843_1_ * 341873128712L + (long)p_72843_2_ * 132897987541L + CCServer.getMinecraftServer().worldServers[0].getWorldInfo().getSeed() + (long)p_72843_3_;
+        long i = (long)p_72843_1_ * 341873128712L + (long)p_72843_2_ * 132897987541L + CCServer.getMinecraftServer().worlds[0].getWorldInfo().getSeed() + (long)p_72843_3_;
         rand.setSeed(i);
         return rand;
     }

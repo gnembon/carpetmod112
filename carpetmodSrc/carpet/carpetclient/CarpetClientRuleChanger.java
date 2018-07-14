@@ -17,10 +17,10 @@ public class CarpetClientRuleChanger {
 
 	static void ruleChanger(EntityPlayerMP sender, PacketBuffer data) {
 		int type = data.readInt();
-		String rule = data.readStringFromBuffer(100);
+		String rule = data.readString(100);
 
 		if (CHANGE_RULE == type) {
-			if (sender.canCommandSenderUseCommand(2, "carpet")) {
+			if (sender.canUseCommand(2, "carpet")) {
 				CarpetSettingEntry entry = CarpetSettings.getCarpetSetting(rule);
 				String value = entry.getNextValue();
 				ruleChangeLogic(sender, rule, value);
@@ -28,14 +28,14 @@ public class CarpetClientRuleChanger {
 				Messenger.m(sender, "r You do not have permissions to change the rules.");
 			}
 		} else if (CHANGE_TEXT_RULE == type) {
-			if (sender.canCommandSenderUseCommand(2, "carpet")) {
-				String value = data.readStringFromBuffer(100);
+			if (sender.canUseCommand(2, "carpet")) {
+				String value = data.readString(100);
 				ruleChangeLogic(sender, rule, value);
 			} else {
 				Messenger.m(sender, "r You do not have permissions to change the rules.");
 			}
 		} else if (RESET_RULE == type) {
-			if (sender.canCommandSenderUseCommand(2, "carpet")) {
+			if (sender.canUseCommand(2, "carpet")) {
 				CarpetSettingEntry entry = CarpetSettings.getCarpetSetting(rule);
 				String value = entry.getDefault();
 				ruleChangeLogic(sender, rule, value);

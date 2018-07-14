@@ -68,10 +68,10 @@ public class LightingHooks
             final int yMin = Math.max(j << 4, height);
 
             for (int y = yMin & 15; y < 16; ++y)
-                blockStorage.setExtSkylightValue(x, y, z, EnumSkyBlock.SKY.defaultLightValue);
+                blockStorage.setSkyLight(x, y, z, EnumSkyBlock.SKY.defaultLightValue);
         }
 
-        chunk.setChunkModified();
+        chunk.markDirty();
     }
 
     public static void initChunkLighting(final World world, final Chunk chunk)
@@ -81,10 +81,10 @@ public class LightingHooks
 
         chunk.pendingNeighborLightInits = 15;
 
-        chunk.setChunkModified();
+        chunk.markDirty();
 
-        final int xBase = chunk.xPosition << 4;
-        final int zBase = chunk.zPosition << 4;
+        final int xBase = chunk.x << 4;
+        final int zBase = chunk.z << 4;
 
         final PooledMutableBlockPos pos = PooledMutableBlockPos.retain();
 
@@ -112,7 +112,7 @@ public class LightingHooks
 
         pos.release();
 
-        if (!world.provider.func_191066_m())
+        if (!world.provider.hasSkyLight())
             return;
 
         for (int x = 0; x < 16; ++x)
@@ -124,8 +124,8 @@ public class LightingHooks
 
                 for (final EnumFacing dir : EnumFacing.HORIZONTALS)
                 {
-                    final int nX = x + dir.getFrontOffsetX();
-                    final int nZ = z + dir.getFrontOffsetZ();
+                    final int nX = x + dir.getXOffset();
+                    final int nZ = z + dir.getZOffset();
 
                     if (((nX | nZ) & CHUNK_COORD_OVERFLOW_MASK) != 0)
                         continue;
@@ -150,10 +150,10 @@ public class LightingHooks
         if (chunk.pendingNeighborLightInits == 0)
             chunk.setLightPopulated(true);
 
-        chunk.setChunkModified();
+        chunk.markDirty();
 
-        final int xOffset = nDir.getFrontOffsetX();
-        final int zOffset = nDir.getFrontOffsetZ();
+        final int xOffset = nDir.getXOffset();
+        final int zOffset = nDir.getZOffset();
 
         final int xMin;
         final int zMin;
@@ -172,8 +172,8 @@ public class LightingHooks
         final int xMax = xMin + 15 * (zOffset & 1);
         final int zMax = zMin + 15 * (xOffset & 1);
 
-        final int xBase = nChunk.xPosition << 4;
-        final int zBase = nChunk.zPosition << 4;
+        final int xBase = nChunk.x << 4;
+        final int zBase = nChunk.z << 4;
 
         final PooledMutableBlockPos pos = PooledMutableBlockPos.retain();
 
@@ -194,8 +194,8 @@ public class LightingHooks
 
                 for (final EnumFacing dir : EnumFacing.HORIZONTALS)
                 {
-                    final int nX = x + dir.getFrontOffsetX();
-                    final int nZ = z + dir.getFrontOffsetZ();
+                    final int nX = x + dir.getXOffset();
+                    final int nZ = z + dir.getZOffset();
 
                     if (((nX | nZ) & CHUNK_COORD_OVERFLOW_MASK) != 0)
                         continue;
@@ -216,7 +216,7 @@ public class LightingHooks
 
         for (final EnumFacing dir : EnumFacing.HORIZONTALS)
         {
-            final Chunk nChunk = provider.getLoadedChunk(chunk.xPosition + dir.getFrontOffsetX(), chunk.zPosition + dir.getFrontOffsetZ());
+            final Chunk nChunk = provider.getLoadedChunk(chunk.x + dir.getXOffset(), chunk.z + dir.getZOffset());
 
             if (nChunk == null)
                 continue;
@@ -242,7 +242,7 @@ public class LightingHooks
 
     public static void initSkylightForSection(final World world, final Chunk chunk, final ExtendedBlockStorage section)
     {
-        if (world.provider.func_191066_m())
+        if (world.provider.hasSkyLight())
         {
             for (int x = 0; x < 16; ++x)
             {
@@ -252,7 +252,7 @@ public class LightingHooks
                     {
                         for (int y = 0; y < 16; ++y)
                         {
-                            section.setExtSkylightValue(x, y, z, EnumSkyBlock.SKY.defaultLightValue);
+                            section.setSkyLight(x, y, z, EnumSkyBlock.SKY.defaultLightValue);
                         }
                     }
                 }
@@ -262,7 +262,7 @@ public class LightingHooks
 
     public static void relightSkylightColumns(final World world, final Chunk chunk, @Nullable int[] oldHeightMap)
     {
-        if (!world.provider.func_191066_m())
+        if (!world.provider.hasSkyLight())
             return;
 
         if (oldHeightMap == null)
@@ -282,8 +282,8 @@ public class LightingHooks
 
         final ExtendedBlockStorage[] sections = chunk.getBlockStorageArray();
 
-        final int xBase = (chunk.xPosition << 4) + x;
-        final int zBase = (chunk.zPosition << 4) + z;
+        final int xBase = (chunk.x << 4) + x;
+        final int zBase = (chunk.z << 4) + z;
 
         scheduleRelightChecksForColumn(world, EnumSkyBlock.SKY, xBase, zBase, yMin, yMax);
 
@@ -306,12 +306,12 @@ public class LightingHooks
         {
             for (final EnumFacing dir : EnumFacing.HORIZONTALS)
             {
-                final int xOffset = dir.getFrontOffsetX();
-                final int zOffset = dir.getFrontOffsetZ();
+                final int xOffset = dir.getXOffset();
+                final int zOffset = dir.getZOffset();
 
                 final boolean neighborColumnExists =
                     (((x + xOffset) | (z + zOffset)) & 16) == 0 //Checks whether the position is at the specified border (the 16 bit is set for both 15+1 and 0-1)
-                        || world.getChunkProvider().getLoadedChunk(chunk.xPosition + xOffset, chunk.zPosition + zOffset) != null;
+                        || world.getChunkProvider().getLoadedChunk(chunk.x + xOffset, chunk.z + zOffset) != null;
 
                 if (neighborColumnExists)
                 {
@@ -369,7 +369,7 @@ public class LightingHooks
     {
         initNeighborLightChecks(chunk);
         chunk.neighborLightChecks[getFlagIndex(lightType, dir, axisDirection, boundaryFacing)] |= sectionMask;
-        chunk.setChunkModified();
+        chunk.markDirty();
     }
 
     public static int getFlagIndex(final EnumSkyBlock lightType, final int xOffset, final int zOffset, final AxisDirection axisDirection, final EnumBoundaryFacing boundaryFacing)
@@ -379,7 +379,7 @@ public class LightingHooks
 
     public static int getFlagIndex(final EnumSkyBlock lightType, final EnumFacing dir, final AxisDirection axisDirection, final EnumBoundaryFacing boundaryFacing)
     {
-        return getFlagIndex(lightType, dir.getFrontOffsetX(), dir.getFrontOffsetZ(), axisDirection, boundaryFacing);
+        return getFlagIndex(lightType, dir.getXOffset(), dir.getZOffset(), axisDirection, boundaryFacing);
     }
 
     private static AxisDirection getAxisDirection(final EnumFacing dir, final int x, final int z)
@@ -391,10 +391,10 @@ public class LightingHooks
     {
         for (final EnumFacing dir : EnumFacing.HORIZONTALS)
         {
-            final int xOffset = dir.getFrontOffsetX();
-            final int zOffset = dir.getFrontOffsetZ();
+            final int xOffset = dir.getXOffset();
+            final int zOffset = dir.getZOffset();
 
-            final Chunk nChunk = world.getChunkProvider().getLoadedChunk(chunk.xPosition + xOffset, chunk.zPosition + zOffset);
+            final Chunk nChunk = world.getChunkProvider().getLoadedChunk(chunk.x + xOffset, chunk.z + zOffset);
 
             if (nChunk == null)
             {
@@ -455,7 +455,7 @@ public class LightingHooks
 
         if (nChunk == null)
         {
-            nChunk = world.getChunkProvider().getLoadedChunk(chunk.xPosition + xOffset, chunk.zPosition + zOffset);
+            nChunk = world.getChunkProvider().getLoadedChunk(chunk.x + xOffset, chunk.z + zOffset);
 
             if (nChunk == null)
             {
@@ -465,7 +465,7 @@ public class LightingHooks
 
         if (sChunk == null)
         {
-            sChunk = world.getChunkProvider().getLoadedChunk(chunk.xPosition + (zOffset != 0 ? axisDir.getOffset() : 0), chunk.zPosition + (xOffset != 0 ? axisDir.getOffset() : 0));
+            sChunk = world.getChunkProvider().getLoadedChunk(chunk.x + (zOffset != 0 ? axisDir.getOffset() : 0), chunk.z + (xOffset != 0 ? axisDir.getOffset() : 0));
 
             if (sChunk == null)
             {
@@ -482,13 +482,13 @@ public class LightingHooks
             nChunk.neighborLightChecks[reverseIndex] = 0; //Clear only now that it's clear that the checks are processed
         }
 
-        chunk.setChunkModified();
-        nChunk.setChunkModified();
+        chunk.markDirty();
+        nChunk.markDirty();
 
         //Get the area to check
         //Start in the corner...
-        int xMin = chunk.xPosition << 4;
-        int zMin = chunk.zPosition << 4;
+        int xMin = chunk.x << 4;
+        int zMin = chunk.z << 4;
 
         //move to other side of chunk if the direction is positive
         if ((xOffset | zOffset) > 0)
@@ -570,7 +570,7 @@ public class LightingHooks
             }
             else
             {
-            	LOGGER.warn("Chunk field {} had invalid length, ignoring it (chunk coordinates: {} {})", neighborLightChecksKey, chunk.xPosition, chunk.zPosition);
+            	LOGGER.warn("Chunk field {} had invalid length, ignoring it (chunk coordinates: {} {})", neighborLightChecksKey, chunk.x, chunk.z);
             }
         }
     }

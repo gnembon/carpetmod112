@@ -28,7 +28,7 @@ public class CommandPlayer extends CommandCarpetBase
     /**
      * Gets the name of the command
      */
-    public String getCommandName()
+    public String getName()
     {
         return "player";
     }
@@ -39,7 +39,7 @@ public class CommandPlayer extends CommandCarpetBase
      *
      * @param sender The ICommandSender who is requesting usage details
      */
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "player <spawn|kill|stop|drop|swapHands|mount|dismount> <player_name>  OR /player <use|attack|jump> <player_name> <once|continuous|interval.. ticks>";
     }
@@ -136,9 +136,9 @@ public class CommandPlayer extends CommandCarpetBase
                 throw new WrongUsageException("player names can only be 3 to 11 chars long");
             }
             Vec3d vec3d = sender.getPositionVector();
-            double d0 = vec3d.xCoord;
-            double d1 = vec3d.yCoord;
-            double d2 = vec3d.zCoord;
+            double d0 = vec3d.x;
+            double d1 = vec3d.y;
+            double d2 = vec3d.z;
             double yaw = 0.0D;
             double pitch = 0.0D;
             World world = sender.getEntityWorld();
@@ -277,7 +277,7 @@ public class CommandPlayer extends CommandCarpetBase
         throw new WrongUsageException("unknown action: "+action);
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
     {
         if (!CarpetSettings.getBool("commandPlayer"))
         {
@@ -285,7 +285,7 @@ public class CommandPlayer extends CommandCarpetBase
         }
         if (args.length == 1)
         {
-            Set<String> players = new HashSet<>(Arrays.asList(server.getAllUsernames()));
+            Set<String> players = new HashSet<>(Arrays.asList(server.getOnlinePlayerNames()));
             players.add("Steve");
             players.add("Alex");
             return getListOfStringsMatchingLastWord(args, players.toArray(new String[0]));

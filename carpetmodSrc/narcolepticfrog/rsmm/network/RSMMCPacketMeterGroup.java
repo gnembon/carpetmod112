@@ -20,7 +20,7 @@ public class RSMMCPacketMeterGroup extends RSMMCPacket {
     public static RSMMCPacketMeterGroup fromBuffer(PacketBuffer buffer) {
         Byte messageId = buffer.readByte();
         assert messageId == MESSAGE_ID;
-        String groupName = buffer.readStringFromBuffer(100);
+        String groupName = buffer.readString(100);
         return new RSMMCPacketMeterGroup(groupName);
     }
 

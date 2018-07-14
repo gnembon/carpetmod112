@@ -1,7 +1,6 @@
 package carpet.utils;
 
 import carpet.CarpetSettings;
-import carpet.utils.Messenger;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;

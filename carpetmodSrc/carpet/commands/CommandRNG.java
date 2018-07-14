@@ -46,7 +46,7 @@ public class CommandRNG extends CommandCarpetBase {
     /**
      * Gets the name of the command
      */
-    public String getCommandName() {
+    public String getName() {
         return "rng";
     }
 
@@ -56,7 +56,7 @@ public class CommandRNG extends CommandCarpetBase {
      * @param sender
      *            The ICommandSender who is requesting usage details
      */
-    public String getCommandUsage(ICommandSender sender) {
+    public String getUsage(ICommandSender sender) {
         return "rng <rule> <value>";
     }
 
@@ -120,7 +120,7 @@ public class CommandRNG extends CommandCarpetBase {
                         }
                     }
 
-                    ((ChunkGeneratorOverworld) gen).field_191060_C.generate(world, x, z, (ChunkPrimer) null);
+                    ((ChunkGeneratorOverworld) gen).woodlandMansionGenerator.generate(world, x, z, (ChunkPrimer) null);
                     notifyCommandListener(sender, this,
                             String.format("Seed at chunk coords: %d %d seed: %d", x, z, world.getRandSeed()));
                 }
@@ -200,15 +200,15 @@ public class CommandRNG extends CommandCarpetBase {
             if (world instanceof WorldServer)
             {
                 int count = 0;
-                for (Iterator<Chunk> iterator = ((WorldServer) world).thePlayerManager.getChunkIterator(); iterator
-                        .hasNext() && chunkCount < iters; ((WorldServer) world).theProfiler.endSection())
+                for (Iterator<Chunk> iterator = ((WorldServer) world).playerChunkMap.getChunkIterator(); iterator
+                        .hasNext() && chunkCount < iters; ((WorldServer) world).profiler.endSection())
                 {
                     Chunk chunk = iterator.next();
                     if (iters != Integer.MAX_VALUE)
                     {
                         chunkCount++;
-                        x = chunk.xPosition;
-                        z = chunk.zPosition;
+                        x = chunk.x;
+                        z = chunk.z;
                     }
                     count++;
                 }
@@ -261,17 +261,17 @@ public class CommandRNG extends CommandCarpetBase {
             if (world instanceof WorldServer)
             {
                 int count = 0;
-                for (Iterator<Chunk> iterator = ((WorldServer) world).thePlayerManager.getChunkIterator(); iterator
-                        .hasNext() && chunkCount < iters; ((WorldServer) world).theProfiler.endSection())
+                for (Iterator<Chunk> iterator = ((WorldServer) world).playerChunkMap.getChunkIterator(); iterator
+                        .hasNext() && chunkCount < iters; ((WorldServer) world).profiler.endSection())
                 {
                     Chunk chunk = iterator.next();
                     if (iters != Integer.MAX_VALUE)
                     {
                         chunkCount++;
-                        x = chunk.xPosition;
-                        z = chunk.zPosition;
+                        x = chunk.x;
+                        z = chunk.z;
                     }
-                    if (!check || (x == chunk.xPosition && z == chunk.zPosition))
+                    if (!check || (x == chunk.x && z == chunk.z))
                     {
                         for (ExtendedBlockStorage extendedblockstorage : chunk.getBlockStorageArray())
                         {
@@ -327,7 +327,7 @@ public class CommandRNG extends CommandCarpetBase {
         }
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args,
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
             @Nullable BlockPos targetPos)
     {
         if (!CarpetSettings.getBool("commandRNG"))
@@ -438,7 +438,7 @@ public class CommandRNG extends CommandCarpetBase {
                     if (!flag && worldServerIn.getWorldBorder().contains(chunkpos))
                     {
                         PlayerChunkMapEntry playerchunkmapentry = worldServerIn.getPlayerChunkMap()
-                                .getEntry(chunkpos.chunkXPos, chunkpos.chunkZPos);
+                                .getEntry(chunkpos.x, chunkpos.z);
 
                         if (playerchunkmapentry != null && playerchunkmapentry.isSentToPlayers())
                         {
@@ -457,7 +457,7 @@ public class CommandRNG extends CommandCarpetBase {
 
         for (ChunkPos chunkpos1 : eligibleChunksForSpawning)
         {
-            BlockPos blockpos = getRandomChunkPosition(worldServerIn, rand, chunkpos1.chunkXPos, chunkpos1.chunkZPos);
+            BlockPos blockpos = getRandomChunkPosition(worldServerIn, rand, chunkpos1.x, chunkpos1.z);
             int k1 = blockpos.getX();
             int l1 = blockpos.getY();
             int i2 = blockpos.getZ();
@@ -466,7 +466,7 @@ public class CommandRNG extends CommandCarpetBase {
 
             if (chunkNum == chunkCount)
             {
-                sb.append("Spawning chunk "+chunkNum+" coords: " + chunkpos1.chunkXPos + "," + chunkpos1.chunkZPos + "\n");
+                sb.append("Spawning chunk "+chunkNum+" coords: " + chunkpos1.x + "," + chunkpos1.z + "\n");
                 sb.append("Block spawning point: " + blockpos + "\n");
                 int l2 = k1;
                 int i3 = l1;
@@ -590,7 +590,7 @@ public class CommandRNG extends CommandCarpetBase {
         {
             BlockPos blockpos = pos.down();
 
-            if (!worldIn.getBlockState(blockpos).isFullyOpaque())
+            if (!worldIn.getBlockState(blockpos).isOpaqueCube())
             {
                 return false;
             }

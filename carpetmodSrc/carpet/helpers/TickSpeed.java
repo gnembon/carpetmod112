@@ -25,17 +25,17 @@ public class TickSpeed
     public static boolean is_superHot = false;
 
     public static void reset_player_active_timeout()
-	{
-		if (player_active_timeout < PLAYER_GRACE)
-		{
-			player_active_timeout = PLAYER_GRACE;
-		}
-	}
+    {
+        if (player_active_timeout < PLAYER_GRACE)
+        {
+            player_active_timeout = PLAYER_GRACE;
+        }
+    }
 
     public static void add_ticks_to_run_in_pause(int ticks)
-	{
-		player_active_timeout = PLAYER_GRACE+ticks;
-	}
+    {
+        player_active_timeout = PLAYER_GRACE+ticks;
+    }
 
     public static void tickrate(float rate)
     {
@@ -52,7 +52,7 @@ public class TickSpeed
     {
         if (0 == advance)
         {
-			tick_warp_callback = null;
+            tick_warp_callback = null;
             tick_warp_sender = null;
             finish_time_warp();
             return "Warp interrupted";
@@ -75,11 +75,11 @@ public class TickSpeed
 
         long completed_ticks = time_warp_scheduled_ticks - time_bias;
         double milis_to_complete = System.nanoTime()-time_warp_start_time;
-		if (milis_to_complete == 0.0)
-		{
-			milis_to_complete = 1.0;
-		}
-		milis_to_complete /= 1000000.0;
+        if (milis_to_complete == 0.0)
+        {
+            milis_to_complete = 1.0;
+        }
+        milis_to_complete /= 1000000.0;
         int tps = (int) (1000.0D*completed_ticks/milis_to_complete);
         double mspt = (1.0*milis_to_complete)/completed_ticks;
         time_warp_scheduled_ticks = 0;
@@ -114,10 +114,10 @@ public class TickSpeed
             Messenger.m(time_advancerer, String.format("gi ... Time warp completed with %d tps, or %.2f mspt",tps, mspt ));
             time_advancerer = null;
         }
-		else
-		{
-		    Messenger.print_server_message(CarpetServer.minecraft_server, String.format("... Time warp completed with %d tps, or %.2f mspt",tps, mspt ));
-		}
+        else
+        {
+            Messenger.print_server_message(CarpetServer.minecraft_server, String.format("... Time warp completed with %d tps, or %.2f mspt",tps, mspt ));
+        }
         time_bias = 0;
 
     }
@@ -126,10 +126,10 @@ public class TickSpeed
     {
         if (time_bias > 0)
         {
-			if (time_bias == time_warp_scheduled_ticks) //first call after previous tick, adjust start time
-			{
-				time_warp_start_time = System.nanoTime();
-			}
+            if (time_bias == time_warp_scheduled_ticks) //first call after previous tick, adjust start time
+            {
+                time_warp_start_time = System.nanoTime();
+            }
             time_bias -= 1;
             return true;
         }
@@ -141,28 +141,28 @@ public class TickSpeed
     }
 
     public static void tick(MinecraftServer server)
-	{
-		process_entities = true;
-		if (player_active_timeout > 0)
-		{
-			player_active_timeout--;
-		}
-		if (is_paused)
-		{
-			if (player_active_timeout < PLAYER_GRACE)
-			{
-				process_entities = false;
-			}
-		}
-		else if (is_superHot)
-		{
-			if (player_active_timeout <= 0)
-			{
-				process_entities = false;
+    {
+        process_entities = true;
+        if (player_active_timeout > 0)
+        {
+            player_active_timeout--;
+        }
+        if (is_paused)
+        {
+            if (player_active_timeout < PLAYER_GRACE)
+            {
+                process_entities = false;
+            }
+        }
+        else if (is_superHot)
+        {
+            if (player_active_timeout <= 0)
+            {
+                process_entities = false;
 
-			}
-		}
+            }
+        }
 
 
-	}
+    }
 }

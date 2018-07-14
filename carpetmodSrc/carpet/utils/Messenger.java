@@ -1,6 +1,5 @@
 package carpet.utils;
 
-//import net.minecraft.client.Minecraft;
 import carpet.CarpetSettings;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
@@ -228,7 +227,7 @@ public class Messenger
             previous_component = comp;
         }
         if (player != null)
-            player.addChatMessage(message);
+            player.sendMessage(message);
         return message;
     }
 
@@ -241,35 +240,35 @@ public class Messenger
         ITextComponent message = new TextComponentString(text);
         _applyStyleToTextComponent(message, style);
         if (player != null)
-            player.addChatMessage(message);
+            player.sendMessage(message);
         return message;
     }
 
     public static void send(EntityPlayer player, ITextComponent ... messages) { send(player, Arrays.asList(messages)); }
     public static void send(EntityPlayer player, List<ITextComponent> list)
     {
-        list.forEach(player::addChatMessage);
+        list.forEach(player::sendMessage);
     }
 
     public static void print_server_message(MinecraftServer server, String message)
     {
         if (server == null)
             CarpetSettings.LOG.error("Message not delivered: "+message);
-        server.addChatMessage(new TextComponentString(message));
+        server.sendMessage(new TextComponentString(message));
         ITextComponent txt = m(null, "gi "+message);
-        for (EntityPlayer entityplayer : server.getPlayerList().getPlayerList())
+        for (EntityPlayer entityplayer : server.getPlayerList().getPlayers())
         {
-            entityplayer.addChatMessage(txt);
+            entityplayer.sendMessage(txt);
         }
     }
     public static void print_server_message(MinecraftServer server, ITextComponent message)
     {
         if (server == null)
             CarpetSettings.LOG.error("Message not delivered: "+message.getUnformattedText());
-        server.addChatMessage(message);
-        for (EntityPlayer entityplayer : server.getPlayerList().getPlayerList())
+        server.sendMessage(message);
+        for (EntityPlayer entityplayer : server.getPlayerList().getPlayers())
         {
-            entityplayer.addChatMessage(message);
+            entityplayer.sendMessage(message);
         }
     }
 }

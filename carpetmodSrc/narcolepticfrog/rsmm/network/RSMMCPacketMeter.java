@@ -148,7 +148,7 @@ public class RSMMCPacketMeter extends RSMMCPacket {
 
         if (fields.get(METER_ID)) packet.setMeterId(buffer.readInt());
         if (fields.get(DIMPOS)) packet.setDimpos(DimPos.readFromBuffer(buffer));
-        if (fields.get(NAME)) packet.setName(buffer.readStringFromBuffer(100));
+        if (fields.get(NAME)) packet.setName(buffer.readString(100));
         if (fields.get(COLOR)) packet.setColor(buffer.readInt());
         if (fields.get(TIME)) packet.setTime(SubtickTime.readFromBuffer(buffer));
         if (fields.get(POWERED)) packet.setPowered(buffer.readBoolean());

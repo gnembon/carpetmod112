@@ -22,7 +22,7 @@ public class CommandTick extends CommandCarpetBase
      * Gets the name of the command
      */
 
-    public String getCommandName()
+    public String getName()
     {
         return "tick";
     }
@@ -30,7 +30,7 @@ public class CommandTick extends CommandCarpetBase
         /**
      * Gets the usage string for the command.
      */
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "Usage: tick rate <tickrate in tps> | warp <time in ticks to skip>";
     }
@@ -43,7 +43,7 @@ public class CommandTick extends CommandCarpetBase
         if (!command_enabled("commandTick", sender)) return;
         if (args.length == 0)
         {
-            throw new WrongUsageException(getCommandUsage(sender));
+            throw new WrongUsageException(getUsage(sender));
         }
         if ("rate".equalsIgnoreCase(args[0]))
         {
@@ -147,10 +147,10 @@ public class CommandTick extends CommandCarpetBase
             CarpetProfiler.prepare_entity_report(step);
             return;
         }
-        throw new WrongUsageException(getCommandUsage(sender), new Object[0]);
+        throw new WrongUsageException(getUsage(sender), new Object[0]);
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.getBool("commandTick"))
         {
