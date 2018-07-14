@@ -27,7 +27,7 @@ public abstract class CommandCarpetBase extends CommandBase
     {
         if (sender instanceof EntityPlayer)
         {
-            for (ITextComponent t: texts) sender.addChatMessage(t);
+            for (ITextComponent t: texts) sender.sendMessage(t);
         }
         else
         {

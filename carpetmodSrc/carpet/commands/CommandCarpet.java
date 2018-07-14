@@ -22,11 +22,11 @@ public class CommandCarpet extends CommandCarpetBase
     /**
      * Gets the name of the command
      */
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "carpet <rule> <value>";
     }
-    public String getCommandName()
+    public String getName()
     {
         return "carpet";
     }
@@ -36,7 +36,7 @@ public class CommandCarpet extends CommandCarpetBase
      */
     public boolean checkPermission(MinecraftServer server, ICommandSender sender)
     {
-        return sender.canCommandSenderUseCommand(this.getRequiredPermissionLevel(), this.getCommandName());
+        return sender.canUseCommand(this.getRequiredPermissionLevel(), this.getName());
     }
     public int getRequiredPermissionLevel()
     {
@@ -155,7 +155,7 @@ public class CommandCarpet extends CommandCarpetBase
                     CarpetSettings.resetToBugFixes();
                     return;
                 }
-                throw new WrongUsageException(getCommandUsage(sender), new Object[0]);
+                throw new WrongUsageException(getUsage(sender), new Object[0]);
             }
 
             if (args.length >= 2 && "list".equalsIgnoreCase(args[0]))
@@ -214,7 +214,7 @@ public class CommandCarpet extends CommandCarpetBase
                 boolean success = CarpetSettings.set(args[0], args[1]);
                 if (!success)
                 {
-                    throw new WrongUsageException(getCommandUsage(sender));
+                    throw new WrongUsageException(getUsage(sender));
                 }
                 CarpetSettingEntry en = CarpetSettings.get(args[0]);
                 msg(sender, Messenger.m(null, "w "+en.toString()+", ", "c [change permanently?]",
@@ -270,11 +270,11 @@ public class CommandCarpet extends CommandCarpetBase
             {
                 throw e;
             }
-            throw new WrongUsageException(getCommandUsage(sender));
+            throw new WrongUsageException(getUsage(sender));
         }
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if (CarpetSettings.locked)
         {

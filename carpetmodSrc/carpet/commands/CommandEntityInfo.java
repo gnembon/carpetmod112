@@ -25,7 +25,7 @@ public class CommandEntityInfo extends CommandCarpetBase
     /**
      * Gets the name of the command
      */
-    public String getCommandName()
+    public String getName()
     {
         return "entityinfo";
     }
@@ -35,18 +35,12 @@ public class CommandEntityInfo extends CommandCarpetBase
      *  
      * @param sender The ICommandSender who is requesting usage details
      */
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "Usage: entityinfo <entity_selector>";
     }
 
-    /**
-     * Callback for when the command is executed
-     *  
-     * @param server The server instance
-     * @param sender The sender who executed the command
-     * @param args The arguments that were passed
-     */
+
     public void print_multi_message(List<String> messages, ICommandSender sender, String grep)
     {
         List<String> actual = new ArrayList<String>();
@@ -81,6 +75,13 @@ public class CommandEntityInfo extends CommandCarpetBase
         }
     }
 
+    /**
+     * Callback for when the command is executed
+     *
+     * @param server The server instance
+     * @param sender The sender who executed the command
+     * @param args The arguments that were passed
+     */
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandEntityInfo", sender)) return;
@@ -122,12 +123,12 @@ public class CommandEntityInfo extends CommandCarpetBase
         return index == 0;
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
     {
         if (!CarpetSettings.getBool("commandEntityInfo"))
         {
             notifyCommandListener(sender, this, "Command is disabled in carpet settings");
         }
-        return args.length == 1 ? getListOfStringsMatchingLastWord(args, server.getAllUsernames()) : Collections.emptyList();
+        return args.length == 1 ? getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames()) : Collections.emptyList();
     }
 }

@@ -25,7 +25,7 @@ public class CommandPerimeter extends CommandCarpetBase
     /**
      * Gets the name of the command
      */
-    public String getCommandName()
+    public String getName()
     {
         return "perimetercheck";
     }
@@ -33,7 +33,7 @@ public class CommandPerimeter extends CommandCarpetBase
     /**
      * Gets the usage string for the command.
      */
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "/perimetercheck <X> <Y> <Z> <target_entity?>";
     }
@@ -46,16 +46,16 @@ public class CommandPerimeter extends CommandCarpetBase
         if (!command_enabled("commandPerimeterInfo", sender)) return;
         if (args.length < 1)
         {
-            throw new WrongUsageException(getCommandUsage(sender));
+            throw new WrongUsageException(getUsage(sender));
         }
         else
         {
             String s = args[0];
             BlockPos blockpos = sender.getPosition();
             Vec3d vec3d = sender.getPositionVector();
-            double d0 = vec3d.xCoord;
-            double d1 = vec3d.yCoord;
-            double d2 = vec3d.zCoord;
+            double d0 = vec3d.x;
+            double d1 = vec3d.y;
+            double d2 = vec3d.z;
             if (args.length >= 3)
             {
                 d0 = parseDouble(d0, args[0], true);
@@ -100,7 +100,7 @@ public class CommandPerimeter extends CommandCarpetBase
         }
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if (args.length == 4)
         {

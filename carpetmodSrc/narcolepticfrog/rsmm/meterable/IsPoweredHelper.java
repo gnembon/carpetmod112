@@ -27,7 +27,7 @@ public class IsPoweredHelper {
         } else if (block instanceof BlockLever) {
             return state.getValue(BlockLever.POWERED);
         } else if (block instanceof BlockObserver) {
-            return state.getValue(BlockObserver.field_190963_a);
+            return state.getValue(BlockObserver.POWERED);
         } else if (block instanceof BlockPistonBase) {
             return ((BlockPistonBase) (block)).shouldBeExtended(world, pos, state.getValue(BlockDirectional.FACING));
         } else if (block instanceof BlockPressurePlateWeighted) {

@@ -305,13 +305,13 @@ public class CarpetSettings
         {
             if(CarpetSettings.getBool("flyingMachineTransparent"))
             {
-                Blocks.field_190976_dk.setLightOpacity(0);
+                Blocks.OBSERVER.setLightOpacity(0);
                 Blocks.REDSTONE_BLOCK.setLightOpacity(0);
                 Blocks.TNT.setLightOpacity(0);
             }
             else
             {
-                Blocks.field_190976_dk.setLightOpacity(255);
+                Blocks.OBSERVER.setLightOpacity(255);
                 Blocks.REDSTONE_BLOCK.setLightOpacity(255);
                 Blocks.TNT.setLightOpacity(255);
             }

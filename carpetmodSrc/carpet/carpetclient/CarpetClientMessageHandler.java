@@ -77,7 +77,7 @@ public class CarpetClientMessageHandler {
 		PacketBuffer data = new PacketBuffer(Unpooled.buffer());
 		data.writeInt(CarpetClientMessageHandler.VILLAGE_MARKERS);
 
-		data.writeNBTTagCompoundToBuffer(compound);
+		data.writeCompoundTag(compound);
 
 		CarpetClientServer.sender(data, sender);
 	}
@@ -86,7 +86,7 @@ public class CarpetClientMessageHandler {
 		PacketBuffer data = new PacketBuffer(Unpooled.buffer());
 		data.writeInt(CarpetClientMessageHandler.BOUNDINGBOX_MARKERS);
 
-		data.writeNBTTagCompoundToBuffer(compound);
+		data.writeCompoundTag(compound);
 
 		CarpetClientServer.sender(data, sender);
 	}

@@ -17,7 +17,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class RedstoneWireTurbo {
+public class RedstoneWireTurbo
+{
     /*
      * This is Helper class for BlockRedstoneWire.  It implements a minimially-invasive
      * bolt-on accelerator that performs a breadth-first search through redstone wire blocks
@@ -664,7 +665,7 @@ public class RedstoneWireTurbo {
                     // already keeping track of all of the neighbor positions
                     // that need to be updated.  All on its own, handling neighbors 
                     // this way reduces block updates by 1/3 (24 instead of 36).
-                    worldIn.func_190524_a(upd.self, wire, upd.parent);
+                    worldIn.neighborChanged(upd.self, wire, upd.parent);
                 }
             }
  

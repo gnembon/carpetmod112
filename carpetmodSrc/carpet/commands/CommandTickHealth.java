@@ -15,13 +15,13 @@ import java.util.List;
 public class CommandTickHealth extends CommandCarpetBase
 {
     @Override
-    public String getCommandName()
+    public String getName()
     {
         return "tickhealth";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "Usage: /tickheath <entities>";
     }
@@ -40,7 +40,7 @@ public class CommandTickHealth extends CommandCarpetBase
         }
 
     }
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.getBool("commandTick"))
         {

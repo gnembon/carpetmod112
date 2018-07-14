@@ -12,7 +12,7 @@ import net.minecraft.item.ItemStack;
 public class CtrlQcrafting {
     public static ItemStack dropAllCrafting(EntityPlayer playerIn, int index, List<Slot> inventorySlotsParam)
     {
-    	ItemStack itemstack = ItemStack.field_190927_a;
+    	ItemStack itemstack = ItemStack.EMPTY;
         Slot slot = inventorySlotsParam.get(index);
 
         if (slot != null && slot.getHasStack())
@@ -25,17 +25,17 @@ public class CtrlQcrafting {
             {
             	playerIn.dropItem(itemstack, true);
             	
-            	itemstack1.func_190920_e(0);
+            	itemstack1.setCount(0);
                 
                 slot.onSlotChange(itemstack1, itemstack);
             }
 
-            if (itemstack1.func_190916_E() == itemstack.func_190916_E())
+            if (itemstack1.getCount() == itemstack.getCount())
             {
-                return ItemStack.field_190927_a;
+                return ItemStack.EMPTY;
             }
 
-            ItemStack itemstack2 = slot.func_190901_a(playerIn, itemstack1);
+            ItemStack itemstack2 = slot.onTake(playerIn, itemstack1);
 
             if (index == 0)
             {

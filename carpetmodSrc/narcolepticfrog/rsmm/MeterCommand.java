@@ -1,22 +1,21 @@
 package narcolepticfrog.rsmm;
 
+import carpet.commands.CommandCarpetBase;
 import narcolepticfrog.rsmm.server.RSMMServer;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentKeybind;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
-import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
-public class MeterCommand extends CommandBase {
+public class MeterCommand extends CommandCarpetBase
+{
     RSMMServer rsmmServer;
 
     public MeterCommand(RSMMServer rsmmServer) {
@@ -24,7 +23,7 @@ public class MeterCommand extends CommandBase {
     }
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "meter";
     }
 
@@ -32,12 +31,14 @@ public class MeterCommand extends CommandBase {
             " /meter group <groupName> OR /meter listGroups";
 
     @Override
-    public String getCommandUsage(ICommandSender sender) {
+    public String getUsage(ICommandSender sender) {
         return USAGE;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    {
+        if (!command_enabled("redstoneMultimeter", sender)) return;
         if (args.length < 1) {
             throw new WrongUsageException(USAGE);
         }
@@ -108,11 +109,11 @@ public class MeterCommand extends CommandBase {
     public void notifySender(ICommandSender sender, String message) {
         TextComponentString messageText = new TextComponentString(message);
         messageText.getStyle().setColor(TextFormatting.GRAY);
-        sender.addChatMessage(messageText);
+        sender.sendMessage(messageText);
     }
 
     @Override
-    public List<String> getTabCompletionOptions(MinecraftServer server,
+    public List<String> getTabCompletions(MinecraftServer server,
                                           ICommandSender sender, String[] args, BlockPos targetPos) {
         if (args.length == 1) {
             return getListOfStringsMatchingLastWord(args, "name", "color", "removeAll", "group", "listGroups");
@@ -122,15 +123,4 @@ public class MeterCommand extends CommandBase {
             return Collections.<String>emptyList();
         }
     }
-
-    @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return true;
-    }
-
-    @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
-    }
-
 }

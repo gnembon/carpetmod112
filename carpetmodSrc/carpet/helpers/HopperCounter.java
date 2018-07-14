@@ -7,7 +7,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.server.MinecraftServer;
 
-import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +31,7 @@ public class HopperCounter
     {
 
         String item_name = new ItemStack(itemstack.getItem(), 1, itemstack.getMetadata()).getDisplayName();
-        int count = itemstack.func_190916_E();
+        int count = itemstack.getCount();
         String color_string = color.toString();
         //LOG.error(String.format("Received %d %s for %s", count, item_name, color_string));
         if (hopper_counter_start_tick.get(color_string) == 0L)

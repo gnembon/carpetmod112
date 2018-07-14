@@ -52,7 +52,7 @@ public class TrajectoryLogHelper
                         Vec3d mot = motions.get(i);
                         line.add("w  x");
                         line.add(String.format("^w Tick: %d\nx: %f\ny: %f\nz: %f\n------------\nmx: %f\nmy: %f\nmz: %f",
-                                i, pos.xCoord, pos.yCoord, pos.zCoord, mot.xCoord, mot.yCoord, mot.yCoord));
+                                i, pos.x, pos.y, pos.z, mot.x, mot.y, mot.z));
                         if ((((i+1) % MAX_TICKS_PER_LINE)==0) || i == positions.size()-1)
                         {
                             comp.add(Messenger.m(null, line.toArray(new Object[0])));
@@ -67,8 +67,8 @@ public class TrajectoryLogHelper
                         Vec3d pos = positions.get(i);
                         Vec3d mot = motions.get(i);
                         comp.add(Messenger.m(null ,
-                                String.format("w tick: %3d pos",i),Messenger.dblt("w",pos.xCoord, pos.yCoord, pos.zCoord),
-                                "w   mot",Messenger.dblt("w",mot.xCoord, mot.yCoord, mot.zCoord)));
+                                String.format("w tick: %3d pos",i),Messenger.dblt("w",pos.x, pos.y, pos.z),
+                                "w   mot",Messenger.dblt("w",mot.x, mot.y, mot.z)));
                     }
                     break;
             }

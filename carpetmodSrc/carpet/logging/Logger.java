@@ -145,7 +145,7 @@ public class Logger
 
     public void sendPlayerMessage(EntityPlayer player, ITextComponent ... messages)
     {
-        Arrays.stream(messages).forEach(player::addChatMessage);
+        Arrays.stream(messages).forEach(player::sendMessage);
     }
 
     /**

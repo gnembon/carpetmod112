@@ -1,6 +1,5 @@
 package carpet.utils;
 
-import carpet.CarpetSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -124,7 +123,7 @@ public class PerimeterDiagnostics
                     }
                     else
                     {
-                        if (iblockstate_down.isFullyOpaque())
+                        if (iblockstate_down.isOpaqueCube())
                         {
                             Block block = iblockstate_down.getBlock();
                             boolean flag = block != Blocks.BEDROCK && block != Blocks.BARRIER;

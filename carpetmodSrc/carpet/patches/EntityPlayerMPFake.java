@@ -8,33 +8,28 @@ package carpet.patches;
  import com.mojang.authlib.GameProfile;
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.text.TextComponentTranslation;
- import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  import net.minecraft.entity.player.EntityPlayerMP;
  import net.minecraft.network.EnumPacketDirection;
   
  import net.minecraft.world.GameType;
- //import org.apache.logging.log4j.LogManager;
- //import org.apache.logging.log4j.Logger;
 
 public class EntityPlayerMPFake extends EntityPlayerMP
 {
-    //private static final Logger LOGGER = LogManager.getLogger();
-
     public static EntityPlayerMPFake createFake(String username, MinecraftServer server, double d0, double d1, double d2, double yaw, double pitch, int dimension, int gamemode)
     {
-        WorldServer worldIn = server.worldServerForDimension(dimension);
+        WorldServer worldIn = server.getWorld(dimension);
         PlayerInteractionManager interactionManagerIn = new PlayerInteractionManager(worldIn);
         GameProfile gameprofile = server.getPlayerProfileCache().getGameProfileForUsername(username);
         EntityPlayerMPFake instance = new EntityPlayerMPFake(server, worldIn, gameprofile, interactionManagerIn);
         server.getPlayerList().initializeConnectionToPlayer(new NetworkManagerFake(EnumPacketDirection.CLIENTBOUND), instance);
         if (instance.dimension != dimension) //player was logged in in a different dimension
         {
-            WorldServer old_world = server.worldServerForDimension(instance.dimension);
+            WorldServer old_world = server.getWorld(instance.dimension);
             instance.dimension = dimension;
             old_world.removeEntityDangerously(instance);
             instance.isDead = false;
-            worldIn.spawnEntityInWorld(instance);
+            worldIn.spawnEntity(instance);
             instance.setWorld(worldIn);
             server.getPlayerList().preparePlayer(instance, worldIn);
             instance.connection.setPlayerLocation(d0, d1, d2, (float)yaw, (float)pitch);
@@ -53,8 +48,8 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     public static EntityPlayerMPFake createShadow(MinecraftServer server, EntityPlayerMP player)
     {
         player.getServer().getPlayerList().playerLoggedOut(player);
-        player.connection.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.duplicate_login"));
-        WorldServer worldIn = server.worldServerForDimension(player.dimension);
+        player.connection.disconnect(new TextComponentTranslation("multiplayer.disconnect.duplicate_login"));
+        WorldServer worldIn = server.getWorld(player.dimension);
         PlayerInteractionManager interactionManagerIn = new PlayerInteractionManager(worldIn);
         GameProfile gameprofile = player.getGameProfile();
         EntityPlayerMPFake playerShadow = new EntityPlayerMPFake(server, worldIn, gameprofile, interactionManagerIn);
