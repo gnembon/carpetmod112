@@ -17,12 +17,12 @@ public class CommandDistance extends CommandCarpetBase
     /**
      * Gets the name of the command
      */
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "Usage: distance <X1> <Y1> <Z1> <X2> <Y2> <Z2>";
     }
 
-    public String getCommandName()
+    public String getName()
     {
         return "distance";
     }
@@ -35,7 +35,7 @@ public class CommandDistance extends CommandCarpetBase
         if (!command_enabled("commandDistance", sender)) return;
         if (args.length != 6)
         {
-            throw new WrongUsageException(getCommandUsage(sender), new Object[0]);
+            throw new WrongUsageException(getUsage(sender), new Object[0]);
         }
         BlockPos blockpos = parseBlockPos(sender, args, 0, false);
         BlockPos blockpos2 = parseBlockPos(sender, args, 3, false);
@@ -43,7 +43,7 @@ public class CommandDistance extends CommandCarpetBase
 
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.getBool("commandDistance"))
         {

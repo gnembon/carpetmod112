@@ -45,9 +45,9 @@
              }
          }
 +
-+    public boolean isTemple(BlockPos p_175798_1_)
++    public boolean isTemple(BlockPos pos)
 +    {
-+        StructureStart structurestart = this.func_175797_c(p_175798_1_);
++        StructureStart structurestart = this.func_175797_c(pos);
 +
 +        if (structurestart != null && structurestart instanceof MapGenScatteredFeature.Start && !structurestart.field_75075_a.isEmpty())
 +        {

@@ -24,12 +24,12 @@ public class CommandLog extends CommandCarpetBase {
     private final String USAGE = "/log (interactive menu) OR /log <logName> <?option> OR /log clear";
 
     @Override
-    public String getCommandName() {
+    public String getName() {
         return "log";
     }
 
     @Override
-    public String getCommandUsage(ICommandSender sender) {
+    public String getUsage(ICommandSender sender) {
         return USAGE;
     }
 
@@ -140,7 +140,7 @@ public class CommandLog extends CommandCarpetBase {
     }
 
     @Override
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos)
     {
         if (!CarpetSettings.getBool("commandLog"))
         {

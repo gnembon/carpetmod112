@@ -21,7 +21,7 @@ public class CarpetClientMarkers {
     public static final int STRONGHOLD = 5;
     public static final int MINESHAFT = 6;
     public static final int MONUMENT = 7;
-    public static final int MANTION = 8;
+    public static final int MANSION = 8;
 
     private static ArrayList<EntityPlayerMP> playersVillageMarkers = new ArrayList<>();
 
@@ -48,7 +48,7 @@ public class CarpetClientMarkers {
 
     public static void updateClientBoundingBoxMarkers(EntityPlayerMP sender, PacketBuffer data) {
         MinecraftServer ms = sender.world.getMinecraftServer();
-        WorldServer ws = ms.worldServerForDimension(sender.dimension);
+        WorldServer ws = ms.getWorld(sender.dimension);
         NBTTagList list = ws.getChunkProvider().getBoundingBoxes(sender);
         NBTTagCompound nbttagcompound = new NBTTagCompound();
 

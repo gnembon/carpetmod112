@@ -1,6 +1,5 @@
 package carpet.utils;
 
-import net.minecraft.command.ICommandManager;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -20,7 +19,6 @@ import net.minecraft.entity.monster.EntityZombieVillager;
 import net.minecraft.entity.passive.AbstractHorse;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.InventoryBasic;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
@@ -55,11 +53,11 @@ public class EntityInfo
 		{
 			return null;
 		}
-		if (item.func_190926_b())
+		if (item.isEmpty()) // func_190926_b()
 		{
 			return null;
-		}
-		String stackname = item.func_190916_E()>1?String.format("%dx%s",item.func_190916_E(), item.getDisplayName()):item.getDisplayName();
+		} // func_190916_E()
+		String stackname = item.getCount()>1?String.format("%dx%s",item.getCount(), item.getDisplayName()):item.getDisplayName();
 		if (item.isItemDamaged())
 		{
 			stackname += String.format(" %d/%d", item.getMaxDamage()-item.getItemDamage(), item.getMaxDamage());
@@ -144,14 +142,14 @@ public class EntityInfo
         if (e.getFire() > 0) { lst.add(String.format(" - Fire for %d ticks",e.getFire())); }
 		if (e.isImmuneToFire() ) { lst.add(" - Immune to fire"); }
 		if (e.timeUntilPortal > 0) { lst.add(String.format(" - Portal cooldown for %d ticks",e.timeUntilPortal)); }
-		if (e.func_190530_aW()) { lst.add(" - Invulnerable"); }
+		if (e.getIsInvulnerable()) { lst.add(" - Invulnerable"); } //  func_190530_aW()
 		if (e.isImmuneToExplosions()) { lst.add(" - Immune to explosions"); }
 
 		if (e instanceof EntityItem)
         {
 			EntityItem ei = (EntityItem)e;
-			ItemStack stack = ei.getEntityItem();
-			String stackname = stack.func_190916_E()>1?String.format("%dx%s",stack.func_190916_E(), stack.getDisplayName()):stack.getDisplayName();
+			ItemStack stack = ei.getItem();// getEntityItem();
+			String stackname = stack.getCount()>1?String.format("%dx%s",stack.getCount(), stack.getDisplayName()):stack.getDisplayName();
 			lst.add(String.format(" - Content: %s", stackname));
 			lst.add(String.format(" - Despawn Timer: %s", makeTime(ei.getAge())));
         }
@@ -179,7 +177,7 @@ public class EntityInfo
         if (e instanceof EntityLivingBase)
         {
             EntityLivingBase elb = (EntityLivingBase)e;
-			lst.add(String.format(" - Despawn timer: %s", makeTime(elb.getAge())));
+			lst.add(String.format(" - Despawn timer: %s", makeTime(elb.getIdleTime())));
 
             lst.add(String.format(" - Health: %.2f/%.2f", elb.getHealth(), elb.getMaxHealth()));
 			if (elb.getEntityAttribute(SharedMonsterAttributes.ARMOR).getAttributeValue() > 0.0)
@@ -207,19 +205,19 @@ public class EntityInfo
 				}
 			}
 			ItemStack mainhand = elb.getHeldItemMainhand();
-			if (!(mainhand.func_190926_b()))
+			if (!(mainhand.isEmpty()))
 			{
 				lst.add(String.format(" - Main hand: %s", display_item(mainhand)));
 			}
 			ItemStack offhand = elb.getHeldItemOffhand();
-			if (!(offhand.func_190926_b()))
+			if (!(offhand.isEmpty()))
 			{
 				lst.add(String.format(" - Off hand: %s", display_item(offhand)));
 			}
 			String armour = "";
 			for (ItemStack armourpiece: elb.getArmorInventoryList())
 			{
-				if (!(armourpiece.func_190926_b()))
+				if (!(armourpiece.isEmpty()))
 				{
 					armour += String.format("\n   * %s", display_item(armourpiece));
 				}
@@ -288,7 +286,7 @@ public class EntityInfo
 							for (int i = 0; i < vinv.getSizeInventory(); ++i)
 							{
 								ItemStack vstack = vinv.getStackInSlot(i);
-								if (!vstack.func_190926_b())
+								if (!vstack.isEmpty())
 								{
 									inventory_content += String.format("\n   * %d: %s", i, display_item(vstack));
 								}

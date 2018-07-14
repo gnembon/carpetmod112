@@ -694,7 +694,7 @@ public class EntityAICrafter extends EntityAIBase {
 					villagerInventory.markDirty();
 				} else {
 					villagerInventory.setInventorySlotContents(foodSlot, inventoryItem.copy());
-					inventoryItem.func_190920_e(0);
+					inventoryItem.setCount(0);
 					villagerInventory.markDirty();
 					dropWrongFoods = true;
 				}
@@ -776,8 +776,8 @@ public class EntityAICrafter extends EntityAIBase {
 	/**
 	 * Returns whether an in-progress EntityAIBase should continue executing
 	 */
-	public boolean continueExecuting() {
-		return this.currentTask >= 0 && super.continueExecuting();
+	public boolean shouldContinueExecuting() {
+		return this.currentTask >= 0 && super.shouldContinueExecuting();
 	}
 
 	/**
@@ -954,7 +954,7 @@ public class EntityAICrafter extends EntityAIBase {
 
 		InventoryBasic villagerInventory = villager.getVillagerInventory();
 		ItemStack food = getFoodStack(villagerInventory);
-		if (foodCooldown <= 0 && food.func_190916_E() < foodSize) {
+		if (foodCooldown <= 0 && food.getCount() < foodSize) {
 			return false;
 		}
 
@@ -971,7 +971,7 @@ public class EntityAICrafter extends EntityAIBase {
 
 			if (crafting != null) {
 				for (Map.Entry<ItemStack, Integer> entry : crafting.entrySet()) {
-					entry.getKey().func_190920_e(entry.getKey().func_190916_E() - entry.getValue());
+					entry.getKey().setCount(entry.getKey().getCount() - entry.getValue());
 				}
 				dropItem(currentTaskRecipe().getCraftingResult(null));
 				crafted = true;
@@ -999,11 +999,11 @@ public class EntityAICrafter extends EntityAIBase {
 		}
 		InventoryBasic villagerInventory = villager.getVillagerInventory();
 		ItemStack food = getFoodStack(villagerInventory);
-		if (food.func_190916_E() < foodSize) {
+		if (food.getCount() < foodSize) {
 			return false;
 		}
 
-		food.func_190920_e(food.func_190916_E() - foodSize);
+		food.setCount(food.getCount() - foodSize);
 		foodCooldown = 160;
 		return true;
 	}
@@ -1028,7 +1028,7 @@ public class EntityAICrafter extends EntityAIBase {
 		for (int i = 0; i < villagerInventory.getSizeInventory() - 2; ++i) {
 			ItemStack itemstack = villagerInventory.getStackInSlot(i);
 			dropItem(itemstack.copy());
-			itemstack.func_190920_e(0);
+			itemstack.setCount(0);
 		}
 	}
 
@@ -1056,7 +1056,7 @@ public class EntityAICrafter extends EntityAIBase {
 
 				if (entry.getValue() > 0 && entry.getKey().getItem() == itemstack.getItem()) {
 					int itemCount = map.get(entry.getKey());
-					int invCount = itemstack.func_190916_E();
+					int invCount = itemstack.getCount();
 					int reduce = Math.min(itemCount, invCount);
 					int remains = itemCount - reduce;
 
@@ -1090,10 +1090,10 @@ public class EntityAICrafter extends EntityAIBase {
 	 */
 	private Map<ItemStack, Integer> genCraftingMap(IRecipe recipe) {
 		Map<ItemStack, Integer> map = new HashMap<ItemStack, Integer>();
-		NonNullList<Ingredient> list = recipe.func_192400_c();
+		NonNullList<Ingredient> list = recipe.getIngredients();
 
 		for (Ingredient ig : list) {
-			ItemStack[] stack = ig.func_193365_a();
+			ItemStack[] stack = ig.getMatchingStacks();
 			if (stack.length > 0) {
 				ItemStack is = stack[0];
 				ItemStack is2 = itemIsInMap(map, is);
@@ -1137,9 +1137,9 @@ public class EntityAICrafter extends EntityAIBase {
 	 */
 	private int getActiveRecipeCount(Item item) {
 		int itemCount = 0;
-		NonNullList<Ingredient> list = currentTaskRecipe().func_192400_c();
+		NonNullList<Ingredient> list = currentTaskRecipe().getIngredients();
 		for (Ingredient ig : list) {
-			for (ItemStack is : ig.func_193365_a()) {
+			for (ItemStack is : ig.getMatchingStacks()) {
 				if (is.getItem() == item) {
 					itemCount++;
 				}
@@ -1157,7 +1157,7 @@ public class EntityAICrafter extends EntityAIBase {
 	 *            The item stack that is being thrown out of the villager.
 	 */
 	private void dropItem(ItemStack itemstack) {
-		if (itemstack.func_190926_b())
+		if (itemstack.isEmpty())
 			return;
 
 		float f1 = villager.rotationYawHead;
@@ -1180,7 +1180,7 @@ public class EntityAICrafter extends EntityAIBase {
 		entityitem.motionZ = (double) (MathHelper.cos(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f);
 		entityitem.motionY = (double) (-MathHelper.sin(f2 * 0.017453292F) * 0.3F + 0.1F);
 		entityitem.setDefaultPickupDelay();
-		villager.world.spawnEntityInWorld(entityitem);
+		villager.world.spawnEntity(entityitem);
 	}
 
 	/**
@@ -1202,7 +1202,7 @@ public class EntityAICrafter extends EntityAIBase {
 		if(!inishilized){
 			return false;
 		}
-		ItemStack itemstack = itemEntity.getEntityItem();
+		ItemStack itemstack = itemEntity.getItem();
 		Item item = itemstack.getItem();
 		if (itemstack.getItem().getUnlocalizedName().equals(Blocks.COMMAND_BLOCK.getUnlocalizedName())) {
 			readoutDebugInfoOnMe();
@@ -1210,7 +1210,7 @@ public class EntityAICrafter extends EntityAIBase {
 			return true;
 		} else if (itemstack.getItem().getUnlocalizedName().equals(Blocks.STRUCTURE_BLOCK.getUnlocalizedName())) {
 			for (int i = 0; i < villagerInventory.getSizeInventory(); ++i) {
-				villagerInventory.getStackInSlot(i).func_190920_e(0);
+				villagerInventory.getStackInSlot(i).setCount(0);
 			}
 			itemEntity.setDead();
 			return true;
@@ -1232,7 +1232,7 @@ public class EntityAICrafter extends EntityAIBase {
 		}
 
 		boolean itemPickedUp = false;
-		if (editedStack != null && editedStack.func_190916_E() != itemstack.func_190916_E()) {
+		if (editedStack != null && editedStack.getCount() != itemstack.getCount()) {
 			craftingCanHappen = true;
 			itemPickedUp = true;
 		}
@@ -1324,25 +1324,25 @@ public class EntityAICrafter extends EntityAIBase {
 		ItemStack groundItem = stack.copy();
 		ItemStack inventoryItem = villagerInventory.getStackInSlot(foodSlot);
 
-		if (inventoryItem.func_190926_b()) {
+		if (inventoryItem.isEmpty()) {
 			villagerInventory.setInventorySlotContents(foodSlot, groundItem);
 			setFoodSpeed(groundItem);
 			calcCooldown();
 			resetIdleTimer();
 			villagerInventory.markDirty();
-			return ItemStack.field_190927_a;
+			return ItemStack.EMPTY;
 		} else {
 			if (ItemStack.areItemsEqual(inventoryItem, groundItem)) {
 				int j = Math.min(villagerInventory.getInventoryStackLimit(), inventoryItem.getMaxStackSize());
-				int k = Math.min(groundItem.func_190916_E(), j - inventoryItem.func_190916_E());
+				int k = Math.min(groundItem.getCount(), j - inventoryItem.getCount());
 
 				if (k > 0) {
-					inventoryItem.func_190917_f(k);
-					groundItem.func_190918_g(k);
+					inventoryItem.grow(k);
+					groundItem.shrink(k);
 
-					if (groundItem.func_190926_b()) {
+					if (groundItem.isEmpty()) {
 						villagerInventory.markDirty();
-						return ItemStack.field_190927_a;
+						return ItemStack.EMPTY;
 					}
 				}
 			} else if (idleTimer <= 0) {
@@ -1352,11 +1352,11 @@ public class EntityAICrafter extends EntityAIBase {
 				calcCooldown();
 				resetIdleTimer();
 				villagerInventory.markDirty();
-				return ItemStack.field_190927_a;
+				return ItemStack.EMPTY;
 			}
 		}
 
-		if (groundItem.func_190916_E() != stack.func_190916_E()) {
+		if (groundItem.getCount() != stack.getCount()) {
 			villagerInventory.markDirty();
 		}
 
@@ -1420,39 +1420,39 @@ public class EntityAICrafter extends EntityAIBase {
 		for (int i = 0; i < villagerInventory.getSizeInventory() - 1; ++i) {
 			inventoryItem = villagerInventory.getStackInSlot(i);
 
-			if (inventoryItem.func_190926_b() && emptySlot == -1) {
+			if (inventoryItem.isEmpty() && emptySlot == -1) {
 				emptySlot = i;
 				continue;
 			}
 
 			if (ItemStack.areItemsEqual(inventoryItem, groundItem)) {
 				int j = Math.min(villagerInventory.getInventoryStackLimit(), inventoryItem.getMaxStackSize());
-				int k = Math.min(groundItem.func_190916_E(), j - inventoryItem.func_190916_E());
+				int k = Math.min(groundItem.getCount(), j - inventoryItem.getCount());
 
 				if (k > 0) {
-					inventoryItem.func_190917_f(k);
-					groundItem.func_190918_g(k);
+					inventoryItem.grow(k);
+					groundItem.shrink(k);
 
-					if (groundItem.func_190926_b()) {
+					if (groundItem.isEmpty()) {
 						resetIdleTimer();
 						villagerInventory.markDirty();
-						return ItemStack.field_190927_a;
+						return ItemStack.EMPTY;
 					}
 				}
 				break;
-			} else if (planks && !inventoryItem.func_190926_b() && plankCheck(inventoryItem)) { // plankmerge
+			} else if (planks && !inventoryItem.isEmpty() && plankCheck(inventoryItem)) { // plankmerge
 				int j = Math.min(villagerInventory.getInventoryStackLimit(), inventoryItem.getMaxStackSize());
-				int k = Math.min(groundItem.func_190916_E(), j - inventoryItem.func_190916_E());
+				int k = Math.min(groundItem.getCount(), j - inventoryItem.getCount());
 
 				if (k > 0) {
 					inventoryItem.setItemDamage(groundItem.getItemDamage());
-					inventoryItem.func_190917_f(k);
-					groundItem.func_190918_g(k);
+					inventoryItem.grow(k);
+					groundItem.shrink(k);
 
-					if (groundItem.func_190926_b()) {
+					if (groundItem.isEmpty()) {
 						resetIdleTimer();
 						villagerInventory.markDirty();
-						return ItemStack.field_190927_a;
+						return ItemStack.EMPTY;
 					}
 				}
 				break;
@@ -1463,10 +1463,10 @@ public class EntityAICrafter extends EntityAIBase {
 			resetIdleTimer();
 			villagerInventory.setInventorySlotContents(emptySlot, groundItem);
 			villagerInventory.markDirty();
-			return ItemStack.field_190927_a;
+			return ItemStack.EMPTY;
 		}
 
-		if (groundItem.func_190916_E() != stack.func_190916_E()) {
+		if (groundItem.getCount() != stack.getCount()) {
 			resetIdleTimer();
 			villagerInventory.markDirty();
 		}
@@ -1497,10 +1497,10 @@ public class EntityAICrafter extends EntityAIBase {
 	 *            item stack.
 	 */
 	private void processItems(EntityItem itemEntity, ItemStack itemEntityStack, ItemStack itemEdited) {
-		if (itemEdited.func_190926_b()) {
+		if (itemEdited.isEmpty()) {
 			itemEntity.setDead();
 		} else {
-			itemEntityStack.func_190920_e(itemEdited.func_190916_E());
+			itemEntityStack.setCount(itemEdited.getCount());
 		}
 	}
 
@@ -1515,9 +1515,9 @@ public class EntityAICrafter extends EntityAIBase {
 	 * @return Returns true if the item type is in the recipe.
 	 */
 	private boolean craftingItemForPickup(Item item, IRecipe irecipe) {
-		NonNullList<Ingredient> list = irecipe.func_192400_c();
+		NonNullList<Ingredient> list = irecipe.getIngredients();
 		for (Ingredient ig : list) {
-			for (ItemStack is : ig.func_193365_a()) {
+			for (ItemStack is : ig.getMatchingStacks()) {
 				if (is.getItem() == item) {
 					return true;
 				}
@@ -1549,7 +1549,7 @@ public class EntityAICrafter extends EntityAIBase {
 	 * @return List of all IRecpie that can be crafted.
 	 */
 	private static List<IRecipe> recipeList() {
-		return Lists.newArrayList(CraftingManager.field_193380_a);
+		return Lists.newArrayList(CraftingManager.REGISTRY);
 	}
 
 	/**
@@ -1560,7 +1560,7 @@ public class EntityAICrafter extends EntityAIBase {
 	 * @return The specific IRecpie being request.
 	 */
 	private static IRecipe getRecipe(String recipe) {
-		return CraftingManager.func_193373_a(new ResourceLocation(recipe));
+		return CraftingManager.getRecipe(new ResourceLocation(recipe));
 	}
 
 	/**
@@ -1588,7 +1588,7 @@ public class EntityAICrafter extends EntityAIBase {
 			sb.append("Inventory: \n");
 			for (int j = 0; j < villagerInventory.getSizeInventory(); ++j) {
 				sb.append("Slot: " + (j + 1) + ": " + villagerInventory.getStackInSlot(j).getDisplayName() + " : "
-						+ villagerInventory.getStackInSlot(j).func_190916_E() + "\n");
+						+ villagerInventory.getStackInSlot(j).getCount() + "\n");
 			}
 		}catch(Exception e){}
 		

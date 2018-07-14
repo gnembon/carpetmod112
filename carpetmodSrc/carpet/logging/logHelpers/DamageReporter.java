@@ -45,7 +45,7 @@ public class DamageReporter
                 target.isPotionActive(MobEffects.FIRE_RESISTANCE)))
             return;
         LoggerRegistry.getLogger("damage").log( (option, player)->
-            verifyAndProduceMessage(option, player, source.getEntity(), target, () ->
+            verifyAndProduceMessage(option, player, source.getTrueSource(), target, () ->
                 Messenger.m(null,
                         target.getDisplayName(),
                         "g  receiving ",
@@ -59,7 +59,7 @@ public class DamageReporter
     {
         if (!LoggerRegistry.__damage) return;
         LoggerRegistry.getLogger("damage").log( (option, player)->
-            verifyAndProduceMessage(option, player, source.getEntity(), target, () ->
+            verifyAndProduceMessage(option, player, source.getTrueSource(), target, () ->
                 Messenger.m(null,
                         "g  - total received ",
                         String.format("r %.2f", amount),
@@ -78,7 +78,7 @@ public class DamageReporter
                 target.isPotionActive(MobEffects.FIRE_RESISTANCE)))
             return;
         LoggerRegistry.getLogger("damage").log( (option, player)->
-            verifyAndProduceMessage(option, player, source.getEntity(), target, () ->
+            verifyAndProduceMessage(option, player, source.getTrueSource(), target, () ->
                 {
                     if (final_amount == 0.0f)
                     {

@@ -254,10 +254,10 @@ public class EntityPlayerActionPack
             return;
         }
         Entity closest = entities.get(0);
-        double distance = player.getDistanceSqToEntity(closest);
+        double distance = player.getDistanceSq(closest);
         for (Entity e: entities)
         {
-            double dd = player.getDistanceToEntity(e);
+            double dd = player.getDistanceSq(e);
             if (dd<distance)
             {
                 distance = dd;
@@ -309,7 +309,7 @@ public class EntityPlayerActionPack
         if (forward != 0.0F)
         {
             //CarpetSettings.LOG.error("moving it forward");
-            player.field_191988_bg = forward*(sneaking?0.3F:1.0F);
+            player.moveVertical = forward*(sneaking?0.3F:1.0F);
         }
         if (strafing != 0.0F)
         {
@@ -361,7 +361,7 @@ public class EntityPlayerActionPack
                 {
                     case ENTITY:
                         Entity target = raytraceresult.entityHit;
-                        Vec3d vec3d = new Vec3d(raytraceresult.hitVec.xCoord - target.posX, raytraceresult.hitVec.yCoord - target.posY, raytraceresult.hitVec.zCoord - target.posZ);
+                        Vec3d vec3d = new Vec3d(raytraceresult.hitVec.x - target.posX, raytraceresult.hitVec.y - target.posY, raytraceresult.hitVec.z - target.posZ);
 
                         boolean flag = player.canEntityBeSeen(target);
                         double d0 = 36.0D;
@@ -371,9 +371,9 @@ public class EntityPlayerActionPack
                             d0 = 9.0D;
                         }
 
-                        if (player.getDistanceSqToEntity(target) < d0)
+                        if (player.getDistanceSq(target) < d0)
                         {
-                            EnumActionResult res = player.func_190775_a(target,enumhand);
+                            EnumActionResult res = player.interactOn(target,enumhand);
                             if (res == EnumActionResult.SUCCESS)
                             {
                                 return true;
@@ -392,13 +392,11 @@ public class EntityPlayerActionPack
 
                         if (player.getEntityWorld().getBlockState(blockpos).getMaterial() != Material.AIR)
                         {
-                            int i = itemstack.func_190916_E();
-
-                            if(itemstack.func_190926_b())
+                            if(itemstack.isEmpty())
                                 continue;
-                            float x = (float) raytraceresult.hitVec.xCoord;
-                            float y = (float) raytraceresult.hitVec.yCoord;
-                            float z = (float) raytraceresult.hitVec.zCoord;
+                            float x = (float) raytraceresult.hitVec.x;
+                            float y = (float) raytraceresult.hitVec.y;
+                            float z = (float) raytraceresult.hitVec.z;
 
                             EnumActionResult res = player.interactionManager.processRightClickBlock(player, player.getEntityWorld(), itemstack, enumhand, blockpos, raytraceresult.sideHit, x, y, z);
                             if (res == EnumActionResult.SUCCESS)
@@ -422,7 +420,7 @@ public class EntityPlayerActionPack
     {
         Vec3d eyeVec = player.getPositionEyes(1.0F);
         Vec3d lookVec = player.getLook(1.0F);
-        Vec3d pointVec = eyeVec.addVector(lookVec.xCoord * blockReachDistance, lookVec.yCoord * blockReachDistance, lookVec.zCoord * blockReachDistance);
+        Vec3d pointVec = eyeVec.add(lookVec.x * blockReachDistance, lookVec.y * blockReachDistance, lookVec.z * blockReachDistance);
         return player.getEntityWorld().rayTraceBlocks(eyeVec, pointVec, false, false, true);
     }
 
@@ -449,11 +447,11 @@ public class EntityPlayerActionPack
         }
 
         Vec3d lookVec = player.getLook(1.0F);
-        Vec3d pointVec = eyeVec.addVector(lookVec.xCoord * reach, lookVec.yCoord * reach, lookVec.zCoord * reach);
+        Vec3d pointVec = eyeVec.add(lookVec.x * reach, lookVec.y * reach, lookVec.z * reach);
         Vec3d hitVec = null;
         List<Entity> list = world.getEntitiesInAABBexcluding(
                 player,
-                player.getEntityBoundingBox().addCoord(lookVec.xCoord * reach, lookVec.yCoord * reach, lookVec.zCoord * reach).expand(1.0D, 1.0D, 1.0D),
+                player.getEntityBoundingBox().expand(lookVec.x * reach, lookVec.y * reach, lookVec.z * reach).grow(1.0D, 1.0D, 1.0D),
                 Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
                         public boolean apply(@Nullable Entity entity)
                         {
@@ -466,10 +464,10 @@ public class EntityPlayerActionPack
         for (int j = 0; j < list.size(); ++j)
         {
             Entity entity1 = list.get(j);
-            AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().expandXyz((double) entity1.getCollisionBorderSize());
+            AxisAlignedBB axisalignedbb = entity1.getEntityBoundingBox().grow((double) entity1.getCollisionBorderSize());
             RayTraceResult raytraceresult = axisalignedbb.calculateIntercept(eyeVec, pointVec);
 
-            if (axisalignedbb.isVecInside(eyeVec))
+            if (axisalignedbb.contains(eyeVec))
             {
                 if (d2 >= 0.0D)
                 {
@@ -530,7 +528,7 @@ public class EntityPlayerActionPack
             {
                 ItemStack itemstack = player.getHeldItemMainhand();
 
-                if (itemstack.func_190926_b())
+                if (itemstack.isEmpty())
                 {
                     return false;
                 }
@@ -657,7 +655,7 @@ public class EntityPlayerActionPack
             {
                 ItemStack itemstack = player.getHeldItemMainhand();
 
-                if (itemstack.func_190926_b())
+                if (itemstack.isEmpty())
                 {
                     return false;
                 }
@@ -669,7 +667,7 @@ public class EntityPlayerActionPack
             }
         }
 
-        if (player.interactionManager.getGameType()==GameType.CREATIVE && !player.getHeldItemMainhand().func_190926_b() && player.getHeldItemMainhand().getItem() instanceof ItemSword)
+        if (player.interactionManager.getGameType()==GameType.CREATIVE && !player.getHeldItemMainhand().isEmpty() && player.getHeldItemMainhand().getItem() instanceof ItemSword)
         {
             return false;
         }
@@ -703,13 +701,13 @@ public class EntityPlayerActionPack
                 {
                     ItemStack itemstack1 = player.getHeldItemMainhand();
 
-                    if (!itemstack1.func_190926_b())
+                    if (!itemstack1.isEmpty())
                     {
                         itemstack1.onBlockDestroyed(world, iblockstate, pos, player);
 
-                        if (itemstack1.func_190926_b())
+                        if (itemstack1.isEmpty())
                         {
-                            player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.field_190927_a);
+                            player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
                         }
                     }
                 }

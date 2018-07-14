@@ -33,7 +33,7 @@
 -    private final Set<ChunkPos> field_193415_c = Collections.<ChunkPos>newSetFromMap(Maps.newConcurrentMap());
 +    //CM removed old structures
 +    //private final Map<ChunkPos, NBTTagCompound> chunksToRemove = Maps.<ChunkPos, NBTTagCompound>newConcurrentMap();
-+    //private final Set<ChunkPos> field_193415_c = Collections.<ChunkPos>newSetFromMap(Maps.newConcurrentMap());
++    //private final Set<ChunkPos> chunksBeingSaved = Collections.<ChunkPos>newSetFromMap(Maps.newConcurrentMap());
 +    //CM added new stuctures that will be managed separately
 +    private final Map<ChunkPos, NBTTagCompound> field_75828_a = new HashMap();
 +    private final Map<ChunkPos, NBTTagCompound> chunksInWrite = new HashMap();
@@ -110,7 +110,7 @@
      {
 -        if (!this.field_193415_c.contains(p_75824_1_))
 +        //CM extended condition to mimic vanilla better
-+        //if (!this.field_193415_c.contains(pos))
++        //if (!this.chunksBeingSaved.contains(pos))
 +        //{
 +        //    this.chunksToRemove.put(pos, compound);
 +        //}
@@ -172,7 +172,7 @@
 +
 +            //try
 +            //{
-+            //   this.field_193415_c.add(chunkpos);
++            //   this.chunksBeingSaved.add(chunkpos);
 +            //    NBTTagCompound nbttagcompound = this.chunksToRemove.remove(chunkpos);
 +
 +            //    if (nbttagcompound != null)
@@ -197,7 +197,7 @@
 +            //}
 +            //finally
 +            //{
-+            //    this.field_193415_c.remove(chunkpos);
++            //    this.chunksBeingSaved.remove(chunkpos);
 +            //}
 +            retireChunkToWrite(chunkpos, nbttagcompound);
  

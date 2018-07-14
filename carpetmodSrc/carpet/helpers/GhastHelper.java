@@ -38,13 +38,13 @@ public class GhastHelper
         }
 
         @Override
-        public boolean continueExecuting()
+        public boolean shouldContinueExecuting()
         {
             if (CarpetSettings.getBool("rideableGhasts") && this.entityLiving.hasCustomName())
             {
                 return false;
             }
-            return super.continueExecuting();
+            return super.shouldContinueExecuting();
         }
 
     }
@@ -55,10 +55,10 @@ public class GhastHelper
     public static boolean holds_yo_tear(EntityPlayer player)
     {
         return (
-                (!player.getHeldItemMainhand().func_190926_b() &&
+                (!player.getHeldItemMainhand().isEmpty() &&
                         player.getHeldItemMainhand().getItem() == Items.GHAST_TEAR)
                         ||
-                (!player.getHeldItemOffhand().func_190926_b() &&
+                (!player.getHeldItemOffhand().isEmpty() &&
                                 player.getHeldItemOffhand().getItem() == Items.GHAST_TEAR)
         );
     }
@@ -69,12 +69,12 @@ public class GhastHelper
         world.playEvent((EntityPlayer)null, 1015, new BlockPos(ghast), 0);
         Vec3d vec3d = player.getLook(1.0F);
         world.playEvent((EntityPlayer)null, 1016, new BlockPos(ghast), 0);
-        EntityLargeFireball entitylargefireball = new EntityLargeFireball(world, player, 30.0*vec3d.xCoord, 30.0*vec3d.yCoord, 30.0*vec3d.zCoord);
+        EntityLargeFireball entitylargefireball = new EntityLargeFireball(world, player, 30.0*vec3d.x, 30.0*vec3d.y, 30.0*vec3d.z);
         entitylargefireball.explosionPower = ghast.getFireballStrength();
-        entitylargefireball.posX = ghast.posX + vec3d.xCoord * 4.0D;
-        entitylargefireball.posY = ghast.posY + (double)(ghast.height / 2.0F) +vec3d.yCoord * 4.0D+ 0.5D;
-        entitylargefireball.posZ = ghast.posZ + vec3d.zCoord * 4.0D;
-        world.spawnEntityInWorld(entitylargefireball);
+        entitylargefireball.posX = ghast.posX + vec3d.x * 4.0D;
+        entitylargefireball.posY = ghast.posY + (double)(ghast.height / 2.0F) +vec3d.y * 4.0D+ 0.5D;
+        entitylargefireball.posZ = ghast.posZ + vec3d.z * 4.0D;
+        world.spawnEntity(entitylargefireball);
     }
 
     /*rided ghast follows rider's tear clues
@@ -124,7 +124,7 @@ public class GhastHelper
         public void updateTask()
         {
             float strafe = rider.moveStrafing;
-            float forward = rider.field_191988_bg;
+            float forward = rider.moveVertical;
             if (forward <= 0.0F)
             {
                 forward *= 0.5F;
@@ -147,15 +147,15 @@ public class GhastHelper
                 //vec3d = vec3d.add(strafe_vec);
                 float c = MathHelper.cos(rider.rotationYaw* 0.017453292F);
                 float s = MathHelper.sin(rider.rotationYaw* 0.017453292F);
-                vec3d = new Vec3d(vec3d.xCoord+c*strafe,vec3d.yCoord,vec3d.zCoord+s*strafe);
+                vec3d = new Vec3d(vec3d.x+c*strafe,vec3d.y,vec3d.z+s*strafe);
             }
             if (rider.getJumping())
             {
-                vec3d = new Vec3d(vec3d.xCoord,vec3d.yCoord+1.0D,vec3d.zCoord);
+                vec3d = new Vec3d(vec3d.x,vec3d.y+1.0D,vec3d.z);
             }
             if (!(vec3d.equals(Vec3d.ZERO)))
             {
-                this.parentEntity.getMoveHelper().setMoveTo(this.parentEntity.posX+vec3d.xCoord, this.parentEntity.posY+vec3d.yCoord,this.parentEntity.posZ+vec3d.zCoord, 1.0D );
+                this.parentEntity.getMoveHelper().setMoveTo(this.parentEntity.posX+vec3d.x, this.parentEntity.posY+vec3d.y,this.parentEntity.posZ+vec3d.z, 1.0D );
             }
             else
             {
@@ -181,11 +181,11 @@ public class GhastHelper
             if (!this.parentEntity.isBeingRidden() && this.parentEntity.hasCustomName())
             {
                 EntityPlayer player = ((WorldServer)this.parentEntity.getEntityWorld()).getMinecraftServer().getPlayerList().getPlayerByUsername(this.parentEntity.getCustomNameTag());
-                if (player != null && player.dimension == this.parentEntity.dimension && this.parentEntity.getDistanceSqToEntity(player) < 300.0D*300.0D)
+                if (player != null && player.dimension == this.parentEntity.dimension && this.parentEntity.getDistanceSq(player) < 300.0D*300.0D)
                 {
                     if (!(player.isRiding() && player.getRidingEntity() instanceof EntityGhast))
                     {
-                        if (this.parentEntity.getDistanceSqToEntity(player) > 10.0D*10.0D && holds_yo_tear(player))
+                        if (this.parentEntity.getDistanceSq(player) > 10.0D*10.0D && holds_yo_tear(player))
                         {
                             return player;
                         }
@@ -230,10 +230,10 @@ public class GhastHelper
         {
             if (owner != null && owner.dimension == this.parentEntity.dimension)
                 {
-                    if (this.parentEntity.getDistanceSqToEntity(owner) > 50D && holds_yo_tear(owner))
+                    if (this.parentEntity.getDistanceSq(owner) > 50D && holds_yo_tear(owner))
                     {
                         Vec3d target = new Vec3d(this.owner.posX-this.parentEntity.posX, this.owner.posY-this.parentEntity.posY,this.owner.posZ-this.parentEntity.posZ).normalize();
-                        this.parentEntity.getMoveHelper().setMoveTo((double)this.parentEntity.posX+target.xCoord, (double)this.parentEntity.posY+target.yCoord, (double)this.parentEntity.posZ+target.zCoord, 1.0D);
+                        this.parentEntity.getMoveHelper().setMoveTo((double)this.parentEntity.posX+target.x, (double)this.parentEntity.posY+target.y, (double)this.parentEntity.posZ+target.z, 1.0D);
                         return true;
                     }
                 }

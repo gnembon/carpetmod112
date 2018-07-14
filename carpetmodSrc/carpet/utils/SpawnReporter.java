@@ -28,9 +28,6 @@ import net.minecraft.entity.passive.EntityOcelot;
 
 import java.lang.Math;
 
-// bugfix restart command **** postponed
-// carpet info command help
-
 public class SpawnReporter
 {
     public static boolean mock_spawns = false;

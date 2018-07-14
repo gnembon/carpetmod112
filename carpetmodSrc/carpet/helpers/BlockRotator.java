@@ -31,8 +31,8 @@ public class BlockRotator
         if (block instanceof BlockObserver)
         {
             return block.getDefaultState()
-                .withProperty(BlockDirectional.FACING, EnumFacing.getFront((int)hitX - 2))
-                .withProperty(BlockObserver.field_190963_a, CarpetSettings.getBool("observersDoNonUpdate"));
+                .withProperty(BlockDirectional.FACING, EnumFacing.byIndex((int)hitX - 2))
+                .withProperty(BlockObserver.POWERED, CarpetSettings.getBool("observersDoNonUpdate"));
         }
         return null;
     }
@@ -43,7 +43,7 @@ public class BlockRotator
         //
         if (block instanceof BlockGlazedTerracotta)
         {
-            facing = EnumFacing.getFront((int)hitX - 2);
+            facing = EnumFacing.byIndex((int)hitX - 2);
             if(facing == EnumFacing.UP || facing == EnumFacing.DOWN)
             {
                 facing = placer.getHorizontalFacing().getOpposite();
@@ -53,12 +53,12 @@ public class BlockRotator
         else if (block instanceof BlockObserver)
         {
             return block.getDefaultState()
-                    .withProperty(BlockDirectional.FACING, EnumFacing.getFront((int)hitX - 2))
-                    .withProperty(BlockObserver.field_190963_a, CarpetSettings.getBool("observersDoNonUpdate"));
+                    .withProperty(BlockDirectional.FACING, EnumFacing.byIndex((int)hitX - 2))
+                    .withProperty(BlockObserver.POWERED, CarpetSettings.getBool("observersDoNonUpdate"));
         }
         else if (block instanceof BlockRedstoneRepeater)
         {
-            facing = EnumFacing.getFront((((int)hitX) % 10) - 2);
+            facing = EnumFacing.byIndex((((int)hitX) % 10) - 2);
             if(facing == EnumFacing.UP || facing == EnumFacing.DOWN)
             {
                 facing = placer.getHorizontalFacing().getOpposite();
@@ -71,14 +71,14 @@ public class BlockRotator
         else if (block instanceof BlockTrapDoor)
         {
             return block.getDefaultState()
-                    .withProperty(BlockTrapDoor.FACING, EnumFacing.getFront((((int)hitX) % 10) - 2))
+                    .withProperty(BlockTrapDoor.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2))
                     .withProperty(BlockTrapDoor.OPEN, Boolean.FALSE)
                     .withProperty(BlockTrapDoor.HALF, (hitX > 10) ? BlockTrapDoor.DoorHalf.TOP : BlockTrapDoor.DoorHalf.BOTTOM)
                     .withProperty(BlockTrapDoor.OPEN, worldIn.isBlockPowered(pos));
         }
         else if (block instanceof BlockRedstoneComparator)
         {
-            facing = EnumFacing.getFront((((int)hitX) % 10) - 2);
+            facing = EnumFacing.byIndex((((int)hitX) % 10) - 2);
             if((facing == EnumFacing.UP) || (facing == EnumFacing.DOWN))
             {
                 facing = placer.getHorizontalFacing().getOpposite();
@@ -92,19 +92,19 @@ public class BlockRotator
         else if (block instanceof BlockDispenser)
         {
             return block.getDefaultState()
-                    .withProperty(BlockDispenser.FACING, EnumFacing.getFront((int)hitX - 2))
+                    .withProperty(BlockDispenser.FACING, EnumFacing.byIndex((int)hitX - 2))
                     .withProperty(BlockDispenser.TRIGGERED, Boolean.FALSE);
         }
         else if (block instanceof BlockPistonBase)
         {
             return block.getDefaultState()
-                    .withProperty(BlockDirectional.FACING,EnumFacing.getFront((int)hitX - 2) )
+                    .withProperty(BlockDirectional.FACING,EnumFacing.byIndex((int)hitX - 2) )
                     .withProperty(BlockPistonBase.EXTENDED, Boolean.FALSE);
         }
         else if (block instanceof BlockStairs)
         {
-            return block.onBlockPlaced(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
-                    .withProperty(BlockStairs.FACING, EnumFacing.getFront((((int)hitX) % 10) - 2))
+            return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
+                    .withProperty(BlockStairs.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2))
                     .withProperty(BlockStairs.HALF, ( hitX > 10)?BlockStairs.EnumHalf.TOP : BlockStairs.EnumHalf.BOTTOM);
         }
         return null;
@@ -211,7 +211,7 @@ public class BlockRotator
     }
     private static boolean player_holds_cactus_mainhand(EntityPlayer playerIn)
     {
-        return (!playerIn.getHeldItemMainhand().func_190926_b()
+        return (!playerIn.getHeldItemMainhand().isEmpty()
                 && playerIn.getHeldItemMainhand().getItem() instanceof ItemBlock &&
                 ((ItemBlock) (playerIn.getHeldItemMainhand().getItem())).getBlock() == Blocks.CACTUS);
     }
@@ -221,7 +221,7 @@ public class BlockRotator
                 && (entity instanceof EntityPlayer))
         {
             EntityPlayer player = (EntityPlayer)entity;
-            return (!player.getHeldItemOffhand().func_190926_b()
+            return (!player.getHeldItemOffhand().isEmpty()
                     && player.getHeldItemOffhand().getItem() instanceof ItemBlock &&
                     ((ItemBlock) (player.getHeldItemOffhand().getItem())).getBlock() == Blocks.CACTUS);
         }

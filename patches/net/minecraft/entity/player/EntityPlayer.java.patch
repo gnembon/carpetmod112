@@ -45,7 +45,7 @@
                  }
  
 -                this.func_192030_dh();
-+                //this.func_192030_dh();
++                //this.spawnShoulderEntities();
 +                //CM optionally dismount parrots
 +                if (CarpetSettings.getBool("persistentParrots") && !this.func_70093_af())
 +                {

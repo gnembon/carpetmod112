@@ -470,7 +470,7 @@
      }
 +
 +    // NewLight PHIPRO-CARPET
-+    public int getCachedLightFor(EnumSkyBlock p_177413_1_, BlockPos pos)
++    public int getCachedLightFor(EnumSkyBlock type, BlockPos pos)
 +    {
 +        int i = pos.func_177958_n() & 15;
 +        int j = pos.func_177956_o();
@@ -479,15 +479,15 @@
 +
 +        if (extendedblockstorage == field_186036_a)
 +        {
-+            return this.func_177444_d(pos) ? p_177413_1_.field_77198_c : 0;
++            return this.func_177444_d(pos) ? type.field_77198_c : 0;
 +        }
-+        else if (p_177413_1_ == EnumSkyBlock.SKY)
++        else if (type == EnumSkyBlock.SKY)
 +        {
 +            return !this.field_76637_e.field_73011_w.func_191066_m() ? 0 : extendedblockstorage.func_76670_c(i, j & 15, k);
 +        }
 +        else
 +        {
-+            return p_177413_1_ == EnumSkyBlock.BLOCK ? extendedblockstorage.func_76674_d(i, j & 15, k) : p_177413_1_.field_77198_c;
++            return type == EnumSkyBlock.BLOCK ? extendedblockstorage.func_76674_d(i, j & 15, k) : type.field_77198_c;
 +        }
 +    }
  }

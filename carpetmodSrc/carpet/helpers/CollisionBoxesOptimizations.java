@@ -27,7 +27,7 @@ public class CollisionBoxesOptimizations
         final int endZ = MathHelper.ceil(aabb.maxZ) + 1;
         WorldBorder worldborder = world.getWorldBorder();
         boolean flag = entityIn != null && entityIn.isOutsideBorder();
-        boolean flag1 = entityIn != null && world.func_191503_g(entityIn);
+        boolean flag1 = entityIn != null && world.isInsideWorldBorder(entityIn);
         IBlockState stateStone = Blocks.STONE.getDefaultState();
         BlockPos.PooledMutableBlockPos posMutable = BlockPos.PooledMutableBlockPos.retain();
 

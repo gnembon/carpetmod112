@@ -8,7 +8,7 @@ public class PortalHelper
 {
     public static boolean player_holds_obsidian(EntityPlayer playerIn)
     {
-        if ( (!playerIn.getHeldItemMainhand().func_190926_b()
+        if ( (!playerIn.getHeldItemMainhand().isEmpty()
             && playerIn.getHeldItemMainhand().getItem() instanceof ItemBlock &&
             ((ItemBlock)(playerIn.getHeldItemMainhand().getItem())).getBlock() == Blocks.OBSIDIAN   ))
         {

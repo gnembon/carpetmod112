@@ -120,8 +120,8 @@
 +        }
 +    }
 +
-+    public void func_189540_a(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos p_189540_5_) {
-+        super.func_189540_a(state, worldIn, pos, blockIn, p_189540_5_);
++    public void func_189540_a(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
++        super.func_189540_a(state, worldIn, pos, blockIn, fromPos);
 +        // Check to see if we need to add receivers for any channels.
 +        getReceiveChannel(worldIn, pos, state);
 +    }

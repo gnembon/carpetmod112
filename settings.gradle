@@ -12,7 +12,7 @@ gradle.ext.side = 'server'
 gradle.ext.mcVersion = '1.12'
 
 // The MCP mappings to use
-gradle.ext.mappings = 'snapshot_20161116' // Same as MCP 4.10 snapshot_20161116
+gradle.ext.mappings = 'snapshot_20180713' // Same as MCP 9.40 snapshot_20161116
 
 // Whether the source should contain javadocs. false is recommended, set to true for compatibility with MCP.
 gradle.ext.useJavadocs = true

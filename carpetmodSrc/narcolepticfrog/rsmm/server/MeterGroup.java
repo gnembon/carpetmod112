@@ -140,7 +140,7 @@ public class MeterGroup implements RSMMSPacketHandler {
      * Should be called at the start of each tick.
      */
     public void onTickStart(int tick) {
-        currentTick = server.getMinecraftServer().worldServerForDimension(0).getTotalWorldTime();
+        currentTick = server.getMinecraftServer().getWorld(0).getTotalWorldTime();
         subtickIndex = 0;
     }
 
@@ -218,7 +218,7 @@ public class MeterGroup implements RSMMSPacketHandler {
             String name = "Meter " + (meterNameIndex++);
             int color = ColorUtils.nextColor();
             boolean movable = packet.isMovable();
-            World w = server.getMinecraftServer().worldServerForDimension(dimpos.getDim());
+            World w = server.getMinecraftServer().getWorld(dimpos.getDim());
             IBlockState blockState = w.getBlockState(dimpos.getPos());
             boolean powered = IsPoweredHelper.isPowered(blockState, w, dimpos.getPos());
 

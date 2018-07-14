@@ -27,11 +27,11 @@ public class CommandSpawn extends CommandCarpetBase
     /**
      * Gets the name of the command
      */
-    public String getCommandUsage(ICommandSender sender)
+    public String getUsage(ICommandSender sender)
     {
         return "Usage:\nspawn list <X> <Y> <Z>\nspawn entities/rates <... | passive | hostile | ambient | water>\nspawn mobcaps <set <num>, nether, overworld, end>\nspawn tracking <.../stop/start/hostile/passive/water/ambient>\nspawn mocking <true/false>";
     }
-    public String getCommandName()
+    public String getName()
     {
         return "spawn";
     }
@@ -44,7 +44,7 @@ public class CommandSpawn extends CommandCarpetBase
         if (!command_enabled("commandSpawn", sender)) return;
         if (args.length == 0)
         {
-            throw new WrongUsageException(getCommandUsage(sender), new Object[0]);
+            throw new WrongUsageException(getUsage(sender), new Object[0]);
         }
         World world = sender.getEntityWorld();
         if ("list".equalsIgnoreCase(args[0]))
@@ -237,11 +237,11 @@ public class CommandSpawn extends CommandCarpetBase
                 return;
             }
         }
-        throw new WrongUsageException(getCommandUsage(sender), new Object[0]);
+        throw new WrongUsageException(getUsage(sender), new Object[0]);
 
     }
 
-    public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.getBool("commandSpawn"))
         {
