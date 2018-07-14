@@ -124,7 +124,7 @@ public class GhastHelper
         public void updateTask()
         {
             float strafe = rider.moveStrafing;
-            float forward = rider.moveVertical;
+            float forward = rider.moveForward;
             if (forward <= 0.0F)
             {
                 forward *= 0.5F;

@@ -309,7 +309,7 @@ public class EntityPlayerActionPack
         if (forward != 0.0F)
         {
             //CarpetSettings.LOG.error("moving it forward");
-            player.moveVertical = forward*(sneaking?0.3F:1.0F);
+            player.moveForward = forward*(sneaking?0.3F:1.0F);
         }
         if (strafing != 0.0F)
         {
