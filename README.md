@@ -20,5 +20,8 @@ Use `gradlew setupCarpetmod`
 Use `gradlew createRelease`. The release will be a ZIP file containing all modified classes, obfuscated, in the `build/distributions` folder.
 ### To run the server locally
 Use `mktest.cmd` to run the modified server with generated patches as a localhost server. It requires `gradlew createRelease` to finish successfully as well as using default paths for your minecraft installation folder.
+
 In case you use different paths, you might need to modify the build script.
 This will leave a ready server jar file in your saves folder.
+
+It requires to have 7za, rm, cp, mv available in paths
