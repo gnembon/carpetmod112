@@ -123,7 +123,7 @@ public class CarpetSettings
   rule("combineXPOrbs",         "creative", "XP orbs combine with other into bigger orbs"),
   rule("stackableEmptyShulkerBoxes", "survival", "Empty shulker boxes can stack to 64 when dropped on the ground")
                                 .extraInfo("To move them around between inventories, use shift click to move entire stacks"),
-  rule("relaxedBlcokPlacement", "creative", "Pumpkins and fence gates can be placed in mid air")
+  rule("relaxedBlockPlacement", "creative", "Pumpkins and fence gates can be placed in mid air")
                                 .extraInfo("Needs carpet client. Fixed in 1.13"),
   rule("rideableGhasts",        "survival feature", "Named ghasts won't attack players and allow to be ridden and controlled")
                                 .extraInfo("Hold a ghast tear to bring a tamed ghast close to you",
