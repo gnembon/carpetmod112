@@ -102,7 +102,7 @@ public class CommandUnload extends CommandCarpetBase
 
         if (order)
         {
-            List<String> orders = UnloadOrder.check_unload_order(pos, pos2);
+            List<String> orders = UnloadOrder.check_unload_order((WorldServer)sender.getEntityWorld(), pos, pos2);
             print_multi_message(orders, sender);
             return;
         }
