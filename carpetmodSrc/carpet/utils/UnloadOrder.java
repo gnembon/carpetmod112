@@ -152,21 +152,16 @@ public class UnloadOrder
     {
         return (HashCommon.mix(ChunkPos.asLong(chpos.x, chpos.z))) & (hashsize-1L);
     }
-    public static long nextPowerOfTwo(long value)
-    {
-        return HashCommon.nextPowerOfTwo(value);
-    }
 
     public static List<String> check_unload_order(WorldServer server, BlockPos pos, BlockPos pos1)
     {
-        List<String> rep = new ArrayList<String>();
+        List<String> rep = new ArrayList<>();
         int size = getCurrentHashSize(server);
         if (pos1 == null)
         {
             ChunkPos chpos = new ChunkPos(pos);
-            //int o = getChunkOrder(chpos, size);
-            int o = (int)getChunkOrder(chpos, size);
-            rep.add("Chunks order of "+chpos+" is "+o+" / "+size);//+", or "+Integer.toBinaryString(o));
+            int o = getChunkOrder(chpos, size);
+            rep.add("Chunks order of "+chpos+" is "+o+" / "+size);
             return rep;
         }
         ChunkPos chpos1 = new ChunkPos(pos);
@@ -175,21 +170,20 @@ public class UnloadOrder
         int maxx = (chpos1.x > chpos2.x) ? chpos1.x : chpos2.x;
         int minz = (chpos1.z < chpos2.z) ? chpos1.z : chpos2.z;
         int maxz = (chpos1.z > chpos2.z) ? chpos1.z : chpos2.z;
-        HashMap<Integer,Integer> stat = new HashMap<Integer,Integer>();
+        HashMap<Integer,Integer> stat = new HashMap<>();
         int total = 0;
         for (int chposx = minx; chposx <= maxx; chposx++)
         {
             for (int chposz = minz; chposz <= maxz; chposz++)
             {
-                //int o1 = getChunkOrder(new ChunkPos(chposx, chposz),size);
-                int o1 = (int)getChunkOrder(new ChunkPos(chposx, chposz),size);
+                int o1 = getChunkOrder(new ChunkPos(chposx, chposz),size);
                 int count = stat.containsKey(o1) ? stat.get(o1) : 0;
                 stat.put(o1, count + 1);
                 total ++;
             }
         }
         rep.add("Counts of chunks with specific unload order / "+size+" ("+total+" total)");
-        SortedSet<Integer> keys = new TreeSet<Integer>(stat.keySet());
+        SortedSet<Integer> keys = new TreeSet<>(stat.keySet());
         for (int key : keys)
         {
             rep.add(" - order "+key+": "+stat.get(key));
@@ -200,12 +194,11 @@ public class UnloadOrder
     }
     public static List<String> check_unload_order_13(WorldServer server, BlockPos pos, BlockPos pos1)
     {
-        List<String> rep = new ArrayList<String>();
+        List<String> rep = new ArrayList<>();
         int size = getCurrentHashSize(server);
         if (pos1 == null)
         {
             ChunkPos chpos = new ChunkPos(pos);
-            //int o = getChunkOrder(chpos, size);
             int o = (int)get_chunk_order_113(chpos, size);
             int olong = (int)get_chunk_order_113(chpos, 1<<20);
             rep.add("Chunks order of "+chpos+" is "+o+" / "+size+", or part of "+Integer.toBinaryString(olong));
@@ -217,13 +210,12 @@ public class UnloadOrder
         int maxx = (chpos1.x > chpos2.x) ? chpos1.x : chpos2.x;
         int minz = (chpos1.z < chpos2.z) ? chpos1.z : chpos2.z;
         int maxz = (chpos1.z > chpos2.z) ? chpos1.z : chpos2.z;
-        HashMap<Integer,Integer> stat = new HashMap<Integer,Integer>();
+        HashMap<Integer,Integer> stat = new HashMap<>();
         int total = 0;
         for (int chposx = minx; chposx <= maxx; chposx++)
         {
             for (int chposz = minz; chposz <= maxz; chposz++)
             {
-                //int o1 = getChunkOrder(new ChunkPos(chposx, chposz),size);
                 int o1 = (int)get_chunk_order_113(new ChunkPos(chposx, chposz),size);
                 int count = stat.containsKey(o1) ? stat.get(o1) : 0;
                 stat.put(o1, count + 1);
@@ -231,7 +223,7 @@ public class UnloadOrder
             }
         }
         rep.add("Counts of chunks with specific unload order / "+size+" ("+total+" total)");
-        SortedSet<Integer> keys = new TreeSet<Integer>(stat.keySet());
+        SortedSet<Integer> keys = new TreeSet<>(stat.keySet());
         for (int key : keys)
         {
             rep.add(" - order "+key+": "+stat.get(key));
@@ -276,7 +268,7 @@ public class UnloadOrder
             }
         }
         rep.add("Counts of chunks with specific unload order out of "+size+" ("+total+" total chunks to protect)");
-        SortedSet<Integer> keys = new TreeSet<Integer>(stat.keySet());
+        SortedSet<Integer> keys = new TreeSet<>(stat.keySet());
         String chunklist = "";
         int order_to_protect = 1;
         for (int key : keys)
@@ -346,31 +338,13 @@ public class UnloadOrder
         {
             rep.add("You can't protect this configuration with less than 10000 chunks around");
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         return rep;
-
     }
 
 
-    /* carpet mod */
     public static String stringify_chunk_id(ChunkProviderServer provider, int index, Long olong, int size)
     {
-        Chunk chunk = (Chunk)provider.id2ChunkMap.get(olong);
+        Chunk chunk = provider.id2ChunkMap.get(olong);
 
         return String.format(" - %4d: (%d, %d) at X %d, Z %d (order: %d / %d)",
                 index+1,
@@ -381,10 +355,9 @@ public class UnloadOrder
         );
     }
 
-    /* carpet mod */
     public static String stringify_chunk_id_113(ChunkProviderServer provider, int index, Long olong, int size)
     {
-        Chunk chunk = (Chunk)provider.id2ChunkMap.get(olong);
+        Chunk chunk = provider.id2ChunkMap.get(olong);
 
         return String.format(" - %4d: (%d, %d) at X %d, Z %d (order: %d / %d)",
                 index+1,
@@ -395,11 +368,10 @@ public class UnloadOrder
         );
     }
 
-    /* carpet mod */
     public static List<String> tick_reportive_no_action(WorldServer world, BlockPos pos, boolean verbose)
     {
         ChunkProviderServer provider = world.getChunkProvider();
-        List<String> rep = new ArrayList<String>();
+        List<String> rep = new ArrayList<>();
         int test_chunk_xpos = 0;
         int test_chunk_zpos = 0;
         if (pos != null)
@@ -412,25 +384,19 @@ public class UnloadOrder
         {
             if (!provider.droppedChunksSet.isEmpty())
             {
-                int total_chunks = provider.droppedChunksSet.size();
                 Iterator<Long> iterator = provider.droppedChunksSet.iterator();
-                List<Long> chunks_ids_order = new ArrayList<Long>();
+                List<Long> chunks_ids_order = new ArrayList<>();
                 int selected_chunk = -1;
                 int iti = 0;
                 int i = 0;
                 for (i = 0; iterator.hasNext(); iterator.remove())
                 {
-                    Long olong = (Long)iterator.next();
-                    Chunk chunk = (Chunk)provider.id2ChunkMap.get(olong);
+                    Long olong = iterator.next();
+                    Chunk chunk = provider.id2ChunkMap.get(olong);
 
                     if (chunk != null && chunk.unloadQueued)
                     {
-                        int chunk_xpos = chunk.x * 16;
-                        int chunk_zpos = chunk.z * 16;
-                        if ( pos != null && chunk.x == test_chunk_xpos && chunk.z == test_chunk_zpos)
-                        {
-                            selected_chunk = i;
-                        }
+                        if ( pos != null && chunk.x == test_chunk_xpos && chunk.z == test_chunk_zpos) selected_chunk = i;
                         chunks_ids_order.add(olong);
                         ++i;
                     }
@@ -447,14 +413,7 @@ public class UnloadOrder
                 if (total <= 100)
                 {
                     rep.add(String.format("There is only %d chunks to unload, all will be unloaded", total));
-                    if (total > 5)
-                    {
-                        llll = Arrays.asList(0, 1, -1,total-2, total -1 );
-                    }
-                    else
-                    {
-                        llll = Arrays.asList(-2);
-                    }
+                    llll = (total > 5)?Arrays.asList(0, 1, -1, total - 2, total - 1):Arrays.asList(-2);
                 }
                 if (verbose)
                 {
@@ -514,11 +473,10 @@ public class UnloadOrder
     }
 
 
-    /* carpet mod */
     public static List<String> tick_reportive_no_action_113(WorldServer world, BlockPos pos, boolean verbose)
     {
         ChunkProviderServer provider = world.getChunkProvider();
-        List<String> rep = new ArrayList<String>();
+        List<String> rep = new ArrayList<>();
         int test_chunk_xpos = 0;
         int test_chunk_zpos = 0;
         if (pos != null)
@@ -530,9 +488,8 @@ public class UnloadOrder
         {
             if (!droppedChunksSet_new.isEmpty())
             {
-                int total_chunks = droppedChunksSet_new.size();
                 Iterator<Long> iterator = droppedChunksSet_new.iterator();
-                List<Long> chunks_ids_order = new ArrayList<Long>();
+                List<Long> chunks_ids_order = new ArrayList<>();
                 Map<Long,Integer> chunk_to_len = new HashMap<>();
                 int selected_chunk = -1;
                 int iti = 0;
@@ -541,19 +498,13 @@ public class UnloadOrder
                 for (i = 0; iterator.hasNext(); iterator.remove())
                 {
 
-                    Long olong = (Long)iterator.next();
-                    Chunk chunk = (Chunk)provider.id2ChunkMap.get(olong);
+                    Long olong = iterator.next();
+                    Chunk chunk = provider.id2ChunkMap.get(olong);
                     provider.droppedChunksSet.remove(olong);
 
                     if (chunk != null && chunk.unloadQueued)
                     {
-                        int chunk_xpos = chunk.x * 16;
-                        int chunk_zpos = chunk.z * 16;
-                        if ( pos != null && chunk.x == test_chunk_xpos && chunk.z == test_chunk_zpos)
-                        {
-                            selected_chunk = i;
-                        }
-
+                        if ( pos != null && chunk.x == test_chunk_xpos && chunk.z == test_chunk_zpos) selected_chunk = i;
                         chunks_ids_order.add(olong);
                         chunk_to_len.put(olong, current_size);
                         current_size = UnloadOrder.getCurrentHashSize_113();
@@ -572,14 +523,7 @@ public class UnloadOrder
                 if (total <= 100)
                 {
                     rep.add(String.format("There is only %d chunks to unload, all will be unloaded", total));
-                    if (total > 5)
-                    {
-                        llll = Arrays.asList(0, 1, -1,total-2, total -1 );
-                    }
-                    else
-                    {
-                        llll = Arrays.asList(-2);
-                    }
+                    llll = (total > 5)?Arrays.asList(0, 1, -1,total-2, total -1 ):Arrays.asList(-2);
                 }
                 if (verbose)
                 {
@@ -638,5 +582,4 @@ public class UnloadOrder
         }
         return rep;
     }
-
 }
