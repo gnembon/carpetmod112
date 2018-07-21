@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -27,11 +27,18 @@
+@@ -27,13 +27,23 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -11,6 +11,9 @@
 +import carpet.utils.UnloadOrder;
 +import net.minecraft.entity.Entity;
 +
++import it.unimi.dsi.fastutil.longs.LongSet;
++import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
++
  public class ChunkProviderServer implements IChunkProvider
  {
      private static final Logger field_147417_b = LogManager.getLogger();
@@ -19,174 +22,30 @@
 +    public final Set<Long> field_73248_b = Sets.<Long>newHashSet();
 +    public final IChunkGenerator field_186029_c;
      private final IChunkLoader field_73247_e;
-     private final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192);
+-    private final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192);
++    public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192); // CM changed to public for commandUnload
      private final WorldServer field_73251_h;
-@@ -185,6 +192,8 @@
+ 
+     public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
+@@ -185,6 +195,8 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
-+    	// NewLight PHIPRO-CARPET
-+    	if (CarpetSettings.newLight) this.field_73251_h.lightingEngine.procLightUpdates();
++        // NewLight PHIPRO-CARPET
++        if (CarpetSettings.newLight) this.field_73251_h.lightingEngine.procLightUpdates();
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -224,6 +233,8 @@
+@@ -224,6 +236,8 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
-+            	// NewLight PHIPRO-CARPET
-+            	if (CarpetSettings.newLight) this.field_73251_h.lightingEngine.procLightUpdates();
++                // NewLight PHIPRO-CARPET
++                if (CarpetSettings.newLight) this.field_73251_h.lightingEngine.procLightUpdates();
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -248,6 +259,146 @@
-         return false;
-     }
- 
-+    /* carpet mod  */
-+    /*
-+    UNUSED OLD JAVA HASHING BEHAVIOUR
-+    public int get_hash_chunkpos(Chunk chunk)
-+    {
-+        Long key = ChunkPos.asLong(chunk.xPosition, chunk.zPosition);
-+        int int_key = (int)(key ^ (key >>> 32L));
-+        int_key ^= (int_key >>> 20) ^ (int_key >>> 12);
-+        int retval = int_key ^ (int_key >>> 7) ^ (int_key >>> 4);
-+        return retval;
-+    }*/
-+
-+    /* carpet mod */
-+    public String stringify_chunk_id(int index, Long olong)
-+    {
-+        Chunk chunk = (Chunk)this.field_73244_f.get(olong);
-+
-+        return String.format(" - %4d: (%d, %d) at X %d, Z %d (order: %d)",
-+            index+1,
-+            chunk.field_76635_g, chunk.field_76647_h,
-+            chunk.field_76635_g * 16+7, chunk.field_76647_h*16+7,
-+            UnloadOrder.get_chunk_order(new ChunkPos(chunk.field_76635_g, chunk.field_76647_h))
-+        );
-+    }
-+    /* carpet mod */
-+    public List<String> tick_reportive_no_action(BlockPos pos, boolean verbose)
-+    {
-+        List<String> rep = new ArrayList<String>();
-+        int test_chunk_xpos = 0;
-+        int test_chunk_zpos = 0;
-+        if (pos != null)
-+        {
-+            test_chunk_xpos = pos.func_177958_n() >> 4;
-+            test_chunk_zpos = pos.func_177952_p() >> 4;
-+        }
-+        if (!this.field_73251_h.field_73058_d)
-+        {
-+            if (!this.field_73248_b.isEmpty())
-+            {
-+                int total_chunks = this.field_73248_b.size();
-+                Iterator<Long> iterator = this.field_73248_b.iterator();
-+                List<Long> chunks_ids_order = new ArrayList<Long>();
-+                int selected_chunk = -1;
-+                int iti = 0;
-+                int i = 0;
-+                for (i = 0; iterator.hasNext(); iterator.remove())
-+                {
-+                    Long olong = (Long)iterator.next();
-+                    Chunk chunk = (Chunk)this.field_73244_f.get(olong);
-+
-+                    if (chunk != null && chunk.field_189550_d)
-+                    {
-+                        int chunk_xpos = chunk.field_76635_g * 16;
-+                        int chunk_zpos = chunk.field_76647_h * 16;
-+                        if ( pos != null && chunk.field_76635_g == test_chunk_xpos && chunk.field_76647_h == test_chunk_zpos)
-+                        {
-+                            selected_chunk = i;
-+                        }
-+                        chunks_ids_order.add(olong);
-+                        ++i;
-+                    }
-+                    ++iti;
-+                }
-+                if (i != iti)
-+                {
-+                    rep.add("There were some ineligible chunks to be unloaded,");
-+                    rep.add("so the actual 100 chunk mark might not be accurate");
-+                }
-+                int total = chunks_ids_order.size();
-+                List<Integer> llll = Arrays.asList(0, 1,2, -1, 97, 98, 99, -2, 100, 101, 102, -1,
-+                   total-3, total-2, total-1);
-+                if (total <= 100)
-+                {
-+                    rep.add(String.format("There is only %d chunks to unload, all will be unloaded", total));
-+                    if (total > 5)
-+                    {
-+                        llll = Arrays.asList(0, 1, -1,total-2, total -1 );
-+                    }
-+                    else
-+                    {
-+                        llll = Arrays.asList(-2);
-+                    }
-+                }
-+                if (verbose)
-+                {
-+                    for (int iii=0; iii<chunks_ids_order.size(); iii++)
-+                    {
-+                        rep.add(stringify_chunk_id(iii, chunks_ids_order.get(iii)));
-+                    }
-+                }
-+                else
-+                {
-+                    for (int idx: llll)
-+                    {
-+                        if (idx < 0)
-+                        {
-+                            if (idx == -1)
-+                            {
-+                                rep.add("    ....");
-+                            }
-+                            else
-+                            {
-+                                rep.add("--------");
-+                            }
-+                        }
-+                        else
-+                        {
-+                            if (idx >= total)
-+                            {
-+                                continue;
-+                            }
-+                            rep.add(stringify_chunk_id(idx, chunks_ids_order.get(idx)));
-+                        }
-+                    }
-+                }
-+                if (pos != null)
-+                {
-+
-+                    if (selected_chunk == -1)
-+                    {
-+                        rep.add("Selected chunk was not marked for unloading");
-+                    }
-+                    else
-+                    {
-+                        rep.add(String.format("Selected chunk was %d on the list", selected_chunk+1) );
-+                    }
-+                }
-+            }
-+            else
-+            {
-+                rep.add("There are no chunks to get unloaded");
-+            }
-+            this.field_73247_e.func_75817_a();
-+        }
-+        else
-+        {
-+            rep.add("Level Saving is disabled.");
-+        }
-+        return rep;
-+    }
-     public boolean func_73157_c()
-     {
-         return !this.field_73251_h.field_73058_d;
-@@ -288,4 +439,7 @@
+@@ -288,4 +302,7 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_191062_1_, p_191062_2_)) || this.field_73247_e.func_191063_a(p_191062_1_, p_191062_2_);
      }

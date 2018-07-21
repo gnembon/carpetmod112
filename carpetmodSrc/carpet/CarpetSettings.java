@@ -84,6 +84,7 @@ public class CarpetSettings
     public static boolean doubleRetraction = false;
     public static boolean netherRNG = false;
     public static boolean endRNG = false;
+
     public static long setSeed = 0;
 
     private static CarpetSettingEntry rule(String s1, String s2, String s3) { return CarpetSettingEntry.create(s1,s2,s3);}
@@ -248,7 +249,8 @@ public class CarpetSettings
   rule("netherRNG",             "creative", "Turning nether RNG manipulation on or off.")
                                 .extraInfo("Turning nether RNG manipulation on or off."),
   rule("endRNG",                "creative", "Turning end RNG manipulation on or off.")
-                                .extraInfo("Turning end RNG manipulation on or off.")
+                                .extraInfo("Turning end RNG manipulation on or off."),
+
         };
         for (CarpetSettingEntry rule: RuleList)
         {
@@ -289,6 +291,7 @@ public class CarpetSettings
         doubleRetraction = CarpetSettings.getBool("doubleRetraction");
         netherRNG = CarpetSettings.getBool("netherRNG");
         endRNG = CarpetSettings.getBool("endRNG");
+
         if ("pistonGhostBlocksFix".equalsIgnoreCase(rule))
         {
             pistonGhostBlocksFix = 0;
