@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -27,13 +27,20 @@
+@@ -27,13 +27,23 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -10,6 +10,9 @@
 +import carpet.CarpetSettings;
 +import carpet.utils.UnloadOrder;
 +import net.minecraft.entity.Entity;
++
++import it.unimi.dsi.fastutil.longs.LongSet;
++import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 +
  public class ChunkProviderServer implements IChunkProvider
  {
@@ -24,7 +27,7 @@
      private final WorldServer field_73251_h;
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
-@@ -185,6 +192,8 @@
+@@ -185,6 +195,8 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
@@ -33,7 +36,7 @@
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -224,6 +233,8 @@
+@@ -224,6 +236,8 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
@@ -42,7 +45,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -288,4 +299,7 @@
+@@ -288,4 +302,7 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_191062_1_, p_191062_2_)) || this.field_73247_e.func_191063_a(p_191062_1_, p_191062_2_);
      }
