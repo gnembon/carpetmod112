@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/command/ServerCommandManager.java
 +++ ../src-work/minecraft/net/minecraft/command/ServerCommandManager.java
-@@ -33,6 +33,24 @@
+@@ -33,6 +33,25 @@
  import net.minecraft.util.text.TextComponentTranslation;
  import net.minecraft.util.text.TextFormatting;
  
@@ -19,13 +19,14 @@
 +import carpet.commands.CommandTick;
 +import carpet.commands.CommandTickHealth;
 +import carpet.commands.CommandUnload;
++import carpet.commands.CommandUnload13;
 +import narcolepticfrog.rsmm.MeterCommand;
 +import carpet.CarpetServer;
 + 
  public class ServerCommandManager extends CommandHandler implements ICommandListener
  {
      private final MinecraftServer field_184880_a;
-@@ -89,7 +107,29 @@
+@@ -89,7 +108,30 @@
          this.func_71560_a(new CommandLocate());
          this.func_71560_a(new CommandReload());
          this.func_71560_a(new CommandFunction());
@@ -40,6 +41,7 @@
 +        this.func_71560_a(new CommandCarpet());
 +        this.func_71560_a(new CommandCounter());
 +        this.func_71560_a(new CommandUnload());
++        this.func_71560_a(new CommandUnload13());
 +        this.func_71560_a(new CommandGMC());
 +        this.func_71560_a(new CommandGMS());
 +        this.func_71560_a(new CommandLog());
