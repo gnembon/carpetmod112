@@ -19,8 +19,6 @@ import it.unimi.dsi.fastutil.HashCommon;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
 
-import javax.swing.text.Caret;
-
 public class UnloadOrder
 {
     public static final LongSet droppedChunksSet_new = new LongOpenHashSet();
