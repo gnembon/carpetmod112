@@ -255,6 +255,8 @@ public class UnloadOrder
         int maxx = (chpos1.x > chpos2.x) ? chpos1.x : chpos2.x;
         int minz = (chpos1.z < chpos2.z) ? chpos1.z : chpos2.z;
         int maxz = (chpos1.z > chpos2.z) ? chpos1.z : chpos2.z;
+        int lenx = maxx-minx+1;
+        int lenz = maxz-minz+1;
         HashMap<Integer,Integer> stat = new HashMap<>();
         int total = 0;
         for (int chposx = minx; chposx <= maxx; chposx++)
@@ -283,17 +285,18 @@ public class UnloadOrder
         int best_config_maxx = 0;
         int best_config_minz = 0;
         int best_config_maxz = 0;
+        int protect_limit = (int)(0.75*size);
         for (int xdir = -1; xdir <= 1; xdir+= 2)
         {
             for (int zdir = -1; zdir <= 1; zdir += 2)
             {
 
-                for (int ex = 1; ex < 10000; ex++)
+                for (int ex = 1; ex < protect_limit; ex++)
                 {
-                    for (int ez = 1; ez < 10000; ez++)
+                    for (int ez = 1; ez < protect_limit; ez++)
                     {
-                        if ((ex)*(ez) > 10000) break;
-                        if ((ex)*(ez) > best_config_chunks) break;
+                        if ((lenx+ex)*(lenz+ez) > protect_limit) break;
+                        if ((lenx+ex)*(lenz+ez) > best_config_chunks) break;
                         int cminx = xdir<0?minx-ex:minx;
                         int cminz = zdir<0?minz-ez:minz;
                         int cmaxx = xdir<0?maxx:maxx+ex;
@@ -336,7 +339,7 @@ public class UnloadOrder
         }
         else
         {
-            rep.add("You can't protect this configuration with less than 10000 chunks around");
+            rep.add("You can't protect this configuration with less than "+protect_limit+" chunks around");
         }
         return rep;
     }
