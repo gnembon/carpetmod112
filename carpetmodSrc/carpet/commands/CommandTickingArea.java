@@ -231,7 +231,7 @@ public class CommandTickingArea extends CommandBase
             if (args.length == 2)
             {
                 List<String> completions = tabCompleteChunkPos(sender, targetPos, args, 2);
-                Collections.addAll(completions, "square", "circle");
+                Collections.addAll(completions, "square", "circle", "spawnChunks");
                 return getListOfStringsMatchingLastWord(args, completions);
             }
             int index = "square".equals(args[1]) || "circle".equals(args[1]) ? 3 : 2;
