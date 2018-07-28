@@ -87,11 +87,12 @@ public abstract class TickingArea
             {
                 count = 0;
             }
+            config.remove(dim + "_ticking_areas");
             
             List<TickingArea> areas = tickingAreas(world);
             for (int i = 0; i < count; i++)
             {
-                String val = config.get(dim + "_ticking_area_" + i);
+                String val = config.remove(dim + "_ticking_area_" + i);
                 if (val == null)
                     continue;
                 
