@@ -172,7 +172,7 @@ public abstract class TickingArea
             {
                 for (TickingArea area : tickingAreas(world))
                 {
-                    String val = String.join(" ", area.writeToConfig());
+                    String val = String.join(" ", Arrays.stream(area.writeToConfig()).filter(arg -> arg != null).toArray(String[]::new));
                     writer.println(val);
                 }
                 writer.flush();
