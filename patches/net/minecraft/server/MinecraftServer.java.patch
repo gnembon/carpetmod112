@@ -1,18 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -85,6 +85,11 @@
+@@ -85,6 +85,12 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-+import carpet.CarpetSettings;
 +import carpet.CarpetServer;
++import carpet.CarpetSettings;
 +import carpet.helpers.TickSpeed;
 +import carpet.utils.CarpetProfiler;
++import carpet.utils.TickingArea;
 +
  public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
  {
      private static final Logger field_147145_h = LogManager.getLogger();
-@@ -143,6 +148,7 @@
+@@ -143,6 +149,7 @@
  
      public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
      {
@@ -20,7 +21,37 @@
          this.field_110456_c = p_i47054_2_;
          this.field_152364_T = p_i47054_4_;
          this.field_147143_S = p_i47054_5_;
-@@ -449,18 +455,33 @@
+@@ -284,6 +291,12 @@
+         int i1 = 0;
+         this.func_71192_d("menu.generatingTerrain");
+         int j1 = 0;
++        if (CarpetSettings.getBool("tickingAreas"))
++        {
++            TickingArea.initialChunkLoad(this, true);
++        }
++        else
++        {
+         field_147145_h.info("Preparing start region for level 0");
+         WorldServer worldserver = this.field_71305_c[0];
+         BlockPos blockpos = worldserver.func_175694_M();
+@@ -305,6 +318,7 @@
+                 worldserver.func_72863_F().func_186025_d(blockpos.func_177958_n() + l1 >> 4, blockpos.func_177952_p() + i2 >> 4);
+             }
+         }
++        }
+ 
+         this.func_71243_i();
+     }
+@@ -340,7 +354,7 @@
+ 
+     public abstract boolean func_183002_r();
+ 
+-    protected void func_71216_a_(String p_71216_1_, int p_71216_2_)
++    public void func_71216_a_(String p_71216_1_, int p_71216_2_) // CM changed visibility to public
+     {
+         this.field_71302_d = p_71216_1_;
+         this.field_71303_e = p_71216_2_;
+@@ -449,18 +463,33 @@
              {
                  this.field_175591_ab = func_130071_aq();
                  long i = 0L;
@@ -56,7 +87,7 @@
                          j = 2000L;
                          this.field_71299_R = this.field_175591_ab;
                      }
-@@ -473,6 +494,7 @@
+@@ -473,6 +502,7 @@
  
                      i += j;
                      this.field_175591_ab = k;
@@ -64,7 +95,7 @@
  
                      if (this.field_71305_c[0].func_73056_e())
                      {
-@@ -481,14 +503,29 @@
+@@ -481,14 +511,29 @@
                      }
                      else
                      {
@@ -97,7 +128,7 @@
                      this.field_71296_Q = true;
                  }
              }
-@@ -592,6 +629,11 @@
+@@ -592,6 +637,11 @@
      {
          long i = System.nanoTime();
          ++this.field_71315_w;
@@ -109,7 +140,7 @@
  
          if (this.field_71295_T)
          {
-@@ -621,12 +663,17 @@
+@@ -621,12 +671,17 @@
  
          if (this.field_71315_w % 900 == 0)
          {
@@ -127,7 +158,7 @@
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
          this.field_71304_b.func_76319_b();
-@@ -644,6 +691,10 @@
+@@ -644,6 +699,10 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -138,7 +169,7 @@
      }
  
      public void func_71190_q()
-@@ -710,10 +761,12 @@
+@@ -710,10 +769,12 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  

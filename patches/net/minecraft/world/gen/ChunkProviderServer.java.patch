@@ -1,11 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -27,13 +27,17 @@
+@@ -27,13 +27,18 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import net.minecraft.nbt.NBTTagList;
 +import carpet.CarpetSettings;
++import carpet.utils.TickingArea;
 +import net.minecraft.entity.Entity;
 +
  public class ChunkProviderServer implements IChunkProvider
@@ -21,7 +22,7 @@
      private final WorldServer field_73251_h;
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
-@@ -185,6 +189,8 @@
+@@ -185,6 +190,8 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
@@ -30,7 +31,7 @@
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -224,6 +230,8 @@
+@@ -224,6 +231,8 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
@@ -39,7 +40,15 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -288,4 +296,7 @@
+@@ -231,6 +240,7 @@
+                     Long olong = iterator.next();
+                     Chunk chunk = (Chunk)this.field_73244_f.get(olong);
+ 
++                    if (!CarpetSettings.getBool("tickingAreas") || !TickingArea.isTickingChunk(field_73251_h, chunk.field_76635_g, chunk.field_76647_h))
+                     if (chunk != null && chunk.field_189550_d)
+                     {
+                         chunk.func_76623_d();
+@@ -288,4 +298,7 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_191062_1_, p_191062_2_)) || this.field_73247_e.func_191063_a(p_191062_1_, p_191062_2_);
      }

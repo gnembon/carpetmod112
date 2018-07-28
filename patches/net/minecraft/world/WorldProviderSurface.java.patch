@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldProviderSurface.java
++++ ../src-work/minecraft/net/minecraft/world/WorldProviderSurface.java
+@@ -1,5 +1,8 @@
+ package net.minecraft.world;
+ 
++import carpet.CarpetSettings;
++import carpet.utils.TickingArea;
++
+ public class WorldProviderSurface extends WorldProvider
+ {
+     public DimensionType func_186058_p()
+@@ -9,6 +12,9 @@
+ 
+     public boolean func_186056_c(int p_186056_1_, int p_186056_2_)
+     {
++        if (CarpetSettings.getBool("tickingAreas"))
++            return !TickingArea.isTickingChunk(field_76579_a, p_186056_1_, p_186056_2_);
++        else
+         return !this.field_76579_a.func_72916_c(p_186056_1_, p_186056_2_);
+     }
+ }

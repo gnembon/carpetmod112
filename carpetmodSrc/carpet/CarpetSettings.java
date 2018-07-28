@@ -18,6 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import carpet.carpetclient.CarpetClientRuleChanger;
+import carpet.utils.TickingArea;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.init.Blocks;
@@ -250,6 +251,9 @@ public class CarpetSettings
                                 .extraInfo("Turning nether RNG manipulation on or off."),
   rule("endRNG",                "creative", "Turning end RNG manipulation on or off.")
                                 .extraInfo("Turning end RNG manipulation on or off."),
+  rule("tickingAreas",          "creative", "Enable use of ticking areas.")
+                                .extraInfo("As set by the /tickingarea comamnd.",
+                                "Ticking areas work as if they are the spawn chunks.")
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -258,14 +262,14 @@ public class CarpetSettings
         }
     }
 
-    public static void reload_all_statics()
+    public static void reload_all_statics(boolean serverLoading)
     {
         for (String rule: settings_store.keySet())
         {
-            reload_stat(rule);
+            reload_stat(rule, serverLoading);
         }
     }
-    public static void reload_stat(String rule)
+    public static void reload_stat(String rule, boolean serverLoading)
     {
         extendedConnectivity = CarpetSettings.getBool("extendedConnectivity");
         quasiConnectivity = CarpetSettings.getBool("quasiConnectivity");
@@ -378,6 +382,13 @@ public class CarpetSettings
                 shulkerSpawningInEndCities = false;
             }
         }
+        else if ("tickingAreas".equalsIgnoreCase(rule))
+        {
+            if (CarpetSettings.getBool("tickingAreas") && !serverLoading)
+            {
+                TickingArea.initialChunkLoad(CarpetServer.minecraft_server, false);
+            }
+        }
     }
     public static void apply_settings_from_conf(MinecraftServer server)
     {
@@ -388,6 +399,7 @@ public class CarpetSettings
         {
             LOG.info("[CM]: Carpet Mod is locked by the administrator");
         }
+        TickingArea.readFromConfig(conf);
         for (String key: conf.keySet())
         {
             set(key, conf.get(key));
@@ -455,6 +467,7 @@ public class CarpetSettings
     private static void write_conf(MinecraftServer server, Map<String, String> values)
     {
         if (locked) return;
+        TickingArea.writeToConfig(values);
         try
         {
             File settings_file = server.getActiveAnvilConverter().getFile(server.getFolderName(), "carpet.conf");
@@ -508,7 +521,7 @@ public class CarpetSettings
         if (en != FalseEntry)
         {
             en.set(string_value);
-            reload_stat(setting_name);
+            reload_stat(setting_name, false);
             CarpetClientRuleChanger.updateCarpetClientsRule(setting_name, string_value);
             return true;
         }
@@ -601,7 +614,7 @@ public class CarpetSettings
         for (String rule: settings_store.keySet())
         {
             get(rule).reset();
-            reload_stat(rule);
+            reload_stat(rule, false);
         }
     }
     
