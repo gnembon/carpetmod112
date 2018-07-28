@@ -390,7 +390,7 @@ public class CarpetSettings
             }
         }
     }
-    public static void apply_settings_from_conf(MinecraftServer server)
+    public static void apply_settings_from_conf(MinecraftServer server, boolean serverLoading)
     {
         Map<String, String> conf = read_conf(server);
         boolean is_locked = locked;
@@ -399,10 +399,9 @@ public class CarpetSettings
         {
             LOG.info("[CM]: Carpet Mod is locked by the administrator");
         }
-        TickingArea.readFromConfig(conf);
         for (String key: conf.keySet())
         {
-            set(key, conf.get(key));
+            set(key, conf.get(key), serverLoading);
             LOG.info("[CM]: loaded setting "+key+" as "+conf.get(key)+" from carpet.conf");
         }
         locked = is_locked;
@@ -467,7 +466,6 @@ public class CarpetSettings
     private static void write_conf(MinecraftServer server, Map<String, String> values)
     {
         if (locked) return;
-        TickingArea.writeToConfig(values);
         try
         {
             File settings_file = server.getActiveAnvilConverter().getFile(server.getFolderName(), "carpet.conf");
@@ -515,13 +513,14 @@ public class CarpetSettings
     }
 
     //changes setting temporarily
-    public static boolean set(String setting_name, String string_value)
+    public static boolean set(String setting_name, String string_value) {return set(setting_name, string_value, false);}
+    public static boolean set(String setting_name, String string_value, boolean serverLoading)
     {
         CarpetSettingEntry en = get(setting_name);
         if (en != FalseEntry)
         {
             en.set(string_value);
-            reload_stat(setting_name, false);
+            reload_stat(setting_name, serverLoading);
             CarpetClientRuleChanger.updateCarpetClientsRule(setting_name, string_value);
             return true;
         }
@@ -621,7 +620,7 @@ public class CarpetSettings
     public static void resetToUserDefaults(MinecraftServer server)
     {
         resetToVanilla();
-        apply_settings_from_conf(server);
+        apply_settings_from_conf(server, false);
     }
     
     public static void resetToCreative()

@@ -48,11 +48,14 @@
                      if (chunk != null && chunk.field_189550_d)
                      {
                          chunk.func_76623_d();
-@@ -288,4 +298,7 @@
+@@ -288,4 +298,10 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_191062_1_, p_191062_2_)) || this.field_73247_e.func_191063_a(p_191062_1_, p_191062_2_);
      }
 +
 +    // Retrieval method to get the bounding boxes CARPET-XCOM
 +    public NBTTagList getBoundingBoxes(Entity entity) { return this.field_186029_c.getBoundingBoxes(entity); }
++    
++    // CM: added getter
++    public IChunkLoader getChunkLoader() { return this.field_73247_e; }
  }

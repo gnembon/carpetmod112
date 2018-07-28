@@ -1,23 +1,35 @@
 package carpet.utils;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import carpet.CarpetServer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraft.world.chunk.storage.IChunkLoader;
+import net.minecraft.world.gen.ChunkProviderServer;
 
 public abstract class TickingArea
 {
@@ -73,69 +85,101 @@ public abstract class TickingArea
         return !tickingAreas(world).isEmpty();
     }
     
-    public static void readFromConfig(Map<String, String> config)
+    // CONFIG
+    
+    private static void setDefaultConfig(World world)
     {
-        for (World world : CarpetServer.minecraft_server.worlds)
+        if (world.provider.isSurfaceWorld())
+            tickingAreas(world).add(new SpawnChunks());
+    }
+    
+    public static void loadConfig(MinecraftServer server)
+    {
+        for (World world : server.worlds)
         {
-            String dim = world.provider.getDimensionType().getName();
-            int count;
-            try
-            {
-                count = Integer.parseInt(config.getOrDefault(dim + "_ticking_areas", "0"));
-            }
-            catch (NumberFormatException e)
-            {
-                count = 0;
-            }
-            config.remove(dim + "_ticking_areas");
+            tickingAreas(world).clear();
             
-            List<TickingArea> areas = tickingAreas(world);
-            for (int i = 0; i < count; i++)
+            IChunkProvider chunkProvider = world.getChunkProvider();
+            if (!(chunkProvider instanceof ChunkProviderServer))
             {
-                String val = config.remove(dim + "_ticking_area_" + i);
-                if (val == null)
-                    continue;
-                
-                String[] args = val.split(" ");
-                TickingArea area;
-                switch (args[0])
-                {
-                case "square":
-                    area = new Square();
-                    break;
-                case "circle":
-                    area = new Circle();
-                    break;
-                case "spawnChunks":
-                    area = new SpawnChunks();
-                    break;
-                default:
-                    continue;
-                }
-                
-                if (!area.readFromConfig(args))
-                    continue;
-                
-                areas.add(area);
+                setDefaultConfig(world);
+                continue;
+            }
+            IChunkLoader chunkLoader = ((ChunkProviderServer) chunkProvider).getChunkLoader();
+            if (!(chunkLoader instanceof AnvilChunkLoader))
+            {
+                setDefaultConfig(world);
+                continue;
+            }
+            
+            File configFile = new File(((AnvilChunkLoader) chunkLoader).getChunkSaveLocation(), "tickingareas.conf");
+            if (!configFile.isFile())
+            {
+                setDefaultConfig(world);
+                continue;
+            }
+            
+            try (BufferedReader reader = new BufferedReader(new FileReader(configFile)))
+            {
+                reader.lines().forEach(line -> {
+                    String[] args = line.split(" ");
+                    TickingArea area;
+                    switch (args[0])
+                    {
+                    case "square":
+                        area = new Square();
+                        break;
+                    case "circle":
+                        area = new Circle();
+                        break;
+                    case "spawnChunks":
+                        area = new SpawnChunks();
+                        break;
+                    default:
+                        LOGGER.error("[CM]: Invalid ticking area type in config file, skipping");
+                        return;
+                    }
+                    if (!area.readFromConfig(args))
+                    {
+                        LOGGER.error("[CM]: Error in ticking area parameters, skipping");
+                        return;
+                    }
+                    tickingAreas(world).add(area);
+                });
+            }
+            catch (IOException e)
+            {
+                LOGGER.error("[CM]: Couldn't load ticking area config", e);
+                setDefaultConfig(world);
             }
         }
     }
     
-    public static void writeToConfig(Map<String, String> config)
+    public static void saveConfig(MinecraftServer server)
     {
-        for (World world : CarpetServer.minecraft_server.worlds)
+        for (World world : server.worlds)
         {
-            if (hasTickingArea(world))
+            IChunkProvider chunkProvider = world.getChunkProvider();
+            if (!(chunkProvider instanceof ChunkProviderServer))
+                continue;
+            IChunkLoader chunkLoader = ((ChunkProviderServer) chunkProvider).getChunkLoader();
+            if (!(chunkLoader instanceof AnvilChunkLoader))
+                continue;
+            
+            File configFile = new File(((AnvilChunkLoader) chunkLoader).getChunkSaveLocation(), "tickingareas.conf");
+            
+            try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(configFile))))
             {
-                List<TickingArea> areas = tickingAreas(world);
-                String dim = world.provider.getDimensionType().getName();
-                config.put(dim + "_ticking_areas", String.valueOf(areas.size()));
-                for (int i = 0; i < areas.size(); i++)
+                for (TickingArea area : tickingAreas(world))
                 {
-                    TickingArea area = areas.get(i);
                     String val = String.join(" ", area.writeToConfig());
-                    config.put(dim + "_ticking_area_" + i, val);
+                    writer.println(val);
                 }
+                writer.flush();
+            }
+            catch (IOException e)
+            {
+                LOGGER.error("[CM]: Couldn't save ticking area config", e);
             }
         }
     }
@@ -149,7 +193,7 @@ public abstract class TickingArea
             if (TickingArea.hasTickingArea(world))
             {
                 if (log)
-                    LOGGER.info("Preparing start region for level " + world.provider.getDimensionType().getId());
+                    LOGGER.info("[CM]: Preparing start region for level " + world.provider.getDimensionType().getId());
                 
                 TreeSet<ChunkPos> chunksToLoad = new TreeSet<>(Comparator.<ChunkPos>comparingInt(chunk -> chunk.x).thenComparingInt(chunk -> chunk.z));
                 for (TickingArea area : TickingArea.getTickingAreas(world))
@@ -169,7 +213,7 @@ public abstract class TickingArea
                     if (time - lastTime > 1000)
                     {
                         if (log)
-                            server.outputPercentRemaining("Preparing spawn area", count * 100 / chunksToLoad.size());
+                            server.outputPercentRemaining("[CM]: Preparing spawn area", count * 100 / chunksToLoad.size());
                         lastTime = time;
                     }
                     
@@ -246,12 +290,14 @@ public abstract class TickingArea
         @Override
         public String[] writeToConfig()
         {
-            return new String[] {"spawnChunks"};
+            return new String[] {"spawnChunks", getName()};
         }
 
         @Override
         public boolean readFromConfig(String[] args)
         {
+            if (args.length > 1)
+                setName(Arrays.stream(args).skip(1).collect(Collectors.joining(" ")));
             return true;
         }
     }
@@ -301,7 +347,7 @@ public abstract class TickingArea
         @Override
         public String[] writeToConfig()
         {
-            return new String[] {"square", String.valueOf(min.x), String.valueOf(min.z), String.valueOf(max.x), String.valueOf(max.z)};
+            return new String[] {"square", String.valueOf(min.x), String.valueOf(min.z), String.valueOf(max.x), String.valueOf(max.z), getName()};
         }
 
         @Override
@@ -327,6 +373,9 @@ public abstract class TickingArea
             {
                 return false;
             }
+            
+            if (args.length > 5)
+                setName(Arrays.stream(args).skip(5).collect(Collectors.joining(" ")));
             
             return true;
         }
@@ -381,7 +430,7 @@ public abstract class TickingArea
         @Override
         public String[] writeToConfig()
         {
-            return new String[] {"circle", String.valueOf(center.x), String.valueOf(center.z), String.valueOf(radius)};
+            return new String[] {"circle", String.valueOf(center.x), String.valueOf(center.z), String.valueOf(radius), getName()};
         }
 
         @Override
@@ -405,6 +454,9 @@ public abstract class TickingArea
             {
                 return false;
             }
+            
+            if (args.length > 4)
+                setName(Arrays.stream(args).skip(4).collect(Collectors.joining(" ")));
             
             return true;
         }
