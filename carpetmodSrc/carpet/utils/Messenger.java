@@ -201,7 +201,7 @@ public class Messenger
         else
         {
             text = String.format("%s [ %.2f, %.2f, %.2f]",style, x, y, z);
-            command = String.format("!/tp %f %f %f]",x, y, z);
+            command = String.format("!/tp %f %f %f",x, y, z);
         }
         return m(null, text, command);
     }
