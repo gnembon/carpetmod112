@@ -39,7 +39,7 @@ import net.minecraft.init.Blocks;
 public class CarpetSettings
 {
     public static boolean locked = false;
-    public static final String carpetVersion = "v18_07_27";
+    public static final String carpetVersion = "v18_07_31";
 
     public static final Logger LOG = LogManager.getLogger();
     private static final Map<String, CarpetSettingEntry> settings_store;
