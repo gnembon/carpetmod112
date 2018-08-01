@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import carpet.CarpetSettings;
 import carpet.utils.TickingArea;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -115,10 +116,13 @@ public class CommandTickingArea extends CommandCarpetBase
         
         TickingArea.addTickingArea(sender.getEntityWorld(), area);
         
-        for (ChunkPos chunk : area.listIncludedChunks(sender.getEntityWorld()))
+        if (CarpetSettings.getBool("tickingAreas"))
         {
-            // Load chunk
-            sender.getEntityWorld().getChunkFromChunkCoords(chunk.x, chunk.z);
+            for (ChunkPos chunk : area.listIncludedChunks(sender.getEntityWorld()))
+            {
+                // Load chunk
+                sender.getEntityWorld().getChunkFromChunkCoords(chunk.x, chunk.z);
+            }
         }
         
         notifyCommandListener(sender, this, "Added ticking area");
