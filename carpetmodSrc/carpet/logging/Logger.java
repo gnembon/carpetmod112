@@ -184,7 +184,7 @@ public class Logger
 
     public String getAcceptedOption(String arg)
     {
-        if (Arrays.asList(options).contains(arg)) return arg;
+        if (options != null && Arrays.asList(options).contains(arg)) return arg;
         return null;
     }
 }

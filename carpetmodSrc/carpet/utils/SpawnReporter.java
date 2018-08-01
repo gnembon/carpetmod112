@@ -244,7 +244,7 @@ public class SpawnReporter
             if ((!(entity instanceof EntityLiving) || !((EntityLiving)entity).isNoDespawnRequired()) && cls.isAssignableFrom(entity.getClass()))
             {
                 lst.add(Messenger.m(null,
-                        "w  - ",Messenger.tp("b", entity.posX, entity.posY, entity.posZ),"w  : "+EntityList.getEntityString(entity)));
+                        "w  - ",Messenger.tp("w", entity.posX, entity.posY, entity.posZ),"w  : "+EntityList.getEntityString(entity)));
             }
         }
         if (lst.size()==1)
