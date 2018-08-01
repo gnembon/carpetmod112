@@ -263,14 +263,14 @@ public class CarpetSettings
         }
     }
 
-    public static void reload_all_statics(boolean serverLoading)
+    public static void reload_all_statics()
     {
         for (String rule: settings_store.keySet())
         {
-            reload_stat(rule, serverLoading);
+            reload_stat(rule);
         }
     }
-    public static void reload_stat(String rule, boolean serverLoading)
+    public static void reload_stat(String rule)
     {
         extendedConnectivity = CarpetSettings.getBool("extendedConnectivity");
         quasiConnectivity = CarpetSettings.getBool("quasiConnectivity");
@@ -385,13 +385,13 @@ public class CarpetSettings
         }
         else if ("tickingAreas".equalsIgnoreCase(rule))
         {
-            if (CarpetSettings.getBool("tickingAreas") && !serverLoading)
+            if (CarpetSettings.getBool("tickingAreas") && CarpetServer.minecraft_server.worlds != null)
             {
                 TickingArea.initialChunkLoad(CarpetServer.minecraft_server, false);
             }
         }
     }
-    public static void apply_settings_from_conf(MinecraftServer server, boolean serverLoading)
+    public static void apply_settings_from_conf(MinecraftServer server)
     {
         Map<String, String> conf = read_conf(server);
         boolean is_locked = locked;
@@ -402,7 +402,7 @@ public class CarpetSettings
         }
         for (String key: conf.keySet())
         {
-            set(key, conf.get(key), serverLoading);
+            set(key, conf.get(key));
             LOG.info("[CM]: loaded setting "+key+" as "+conf.get(key)+" from carpet.conf");
         }
         locked = is_locked;
@@ -514,14 +514,13 @@ public class CarpetSettings
     }
 
     //changes setting temporarily
-    public static boolean set(String setting_name, String string_value) {return set(setting_name, string_value, false);}
-    public static boolean set(String setting_name, String string_value, boolean serverLoading)
+    public static boolean set(String setting_name, String string_value)
     {
         CarpetSettingEntry en = get(setting_name);
         if (en != FalseEntry)
         {
             en.set(string_value);
-            reload_stat(setting_name, serverLoading);
+            reload_stat(setting_name);
             CarpetClientRuleChanger.updateCarpetClientsRule(setting_name, string_value);
             return true;
         }
@@ -614,14 +613,14 @@ public class CarpetSettings
         for (String rule: settings_store.keySet())
         {
             get(rule).reset();
-            reload_stat(rule, false);
+            reload_stat(rule);
         }
     }
     
     public static void resetToUserDefaults(MinecraftServer server)
     {
         resetToVanilla();
-        apply_settings_from_conf(server, false);
+        apply_settings_from_conf(server);
     }
     
     public static void resetToCreative()
