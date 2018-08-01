@@ -6,7 +6,6 @@ import java.util.List;
 import com.google.common.collect.Lists;
 
 import carpet.utils.TickingArea;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.NumberInvalidException;
@@ -17,7 +16,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
-public class CommandTickingArea extends CommandBase
+public class CommandTickingArea extends CommandCarpetBase
 {
 
     private static final String USAGE = "/tickingarea <add|remove|remove_all|list> ...";
@@ -41,6 +40,9 @@ public class CommandTickingArea extends CommandBase
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
+        if (!command_enabled("commandTickingArea", sender))
+            return;
+        
         if (args.length < 1)
             throw new WrongUsageException(USAGE);
         

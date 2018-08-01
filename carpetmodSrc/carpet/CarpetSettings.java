@@ -207,6 +207,7 @@ public class CarpetSettings
   rule("commandPerimeterInfo",  "commands", "Enables /perimeterinfo command that scans the area around the block for potential spawnable spots").defaultTrue(),
   rule("commandPlayer",         "commands", "Enables /player command to control players").defaultTrue(),
   rule("commandRNG",            "commands", "Enables /rng command to manipulate and query rng").defaultTrue(),
+  rule("commandTickingArea",    "commands", "Enables /tickingarea command to control ticking areas").defaultTrue(),
   rule("newLight",              "optimizations", "Uses alternative lighting engine by PhiPros. AKA NewLight mod"),
   rule("carpets",               "survival", "Placing carpets may issue carpet commands for non-op players"),
   rule("missingTools",          "survival", "Pistons, Glass and Sponge can be broken faster with their appropriate tools"),
@@ -253,7 +254,7 @@ public class CarpetSettings
                                 .extraInfo("Turning end RNG manipulation on or off."),
   rule("tickingAreas",          "creative", "Enable use of ticking areas.")
                                 .extraInfo("As set by the /tickingarea comamnd.",
-                                "Ticking areas work as if they are the spawn chunks.")
+                                "Ticking areas work as if they are the spawn chunks."),
 
         };
         for (CarpetSettingEntry rule: RuleList)
