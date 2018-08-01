@@ -24,7 +24,7 @@
          int i = 0;
  
 +        // CM
-+        DamageReporter.register_damage_attacker((EntityLivingBase) p_70652_1_, this, f);
++        DamageReporter.register_damage_attacker( p_70652_1_, this, f);
 +        float ff = f;
 +        // end CM
 +        
@@ -32,7 +32,7 @@
          {
              f += EnchantmentHelper.func_152377_a(this.func_184614_ca(), ((EntityLivingBase)p_70652_1_).func_70668_bt());
              i += EnchantmentHelper.func_77501_a(this);
-+            DamageReporter.modify_damage((EntityLivingBase)p_70652_1_, null, ff, f, "attacker enchants"); // CM
++            DamageReporter.modify_damage((EntityLivingBase)p_70652_1_, DamageSource.func_76358_a(this), ff, f, "attacker enchants"); // CM
          }
  
          boolean flag = p_70652_1_.func_70097_a(DamageSource.func_76358_a(this), f);
