@@ -37,7 +37,7 @@
 +        {
 +            TickingArea.initialChunkLoad(this, true);
 +        }
-+        else
++        if (!CarpetSettings.getBool("disableSpawnChunks"))
 +        {
          field_147145_h.info("Preparing start region for level 0");
          WorldServer worldserver = this.field_71305_c[0];

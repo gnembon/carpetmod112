@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import carpet.CarpetSettings;
 import carpet.utils.TickingArea;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -181,6 +182,9 @@ public class CommandTickingArea extends CommandCarpetBase
     
     private void listAreas(ICommandSender sender, World world)
     {
+        if (world.provider.isSurfaceWorld() && !CarpetSettings.getBool("disableSpawnChunks"))
+            sender.sendMessage(new TextComponentString("Spawn chunks are enabled"));
+        
         sender.sendMessage(new TextComponentString("Ticking areas in " + world.provider.getDimensionType().getName() + ":"));
         
         for (TickingArea area : TickingArea.getTickingAreas(world))

@@ -103,12 +103,6 @@ public abstract class TickingArea
     
     // CONFIG
     
-    private static void setDefaultConfig(World world)
-    {
-        if (world.provider.isSurfaceWorld())
-            addTickingArea(world, new SpawnChunks());
-    }
-    
     public static void loadConfig(MinecraftServer server)
     {
         for (World world : server.worlds)
@@ -118,20 +112,17 @@ public abstract class TickingArea
             IChunkProvider chunkProvider = world.getChunkProvider();
             if (!(chunkProvider instanceof ChunkProviderServer))
             {
-                setDefaultConfig(world);
                 continue;
             }
             IChunkLoader chunkLoader = ((ChunkProviderServer) chunkProvider).chunkLoader;
             if (!(chunkLoader instanceof AnvilChunkLoader))
             {
-                setDefaultConfig(world);
                 continue;
             }
             
             File configFile = new File(((AnvilChunkLoader) chunkLoader).chunkSaveLocation, "tickingareas.conf");
             if (!configFile.isFile())
             {
-                setDefaultConfig(world);
                 continue;
             }
             
@@ -166,7 +157,6 @@ public abstract class TickingArea
             catch (IOException e)
             {
                 LOGGER.error("[CM]: Couldn't load ticking area config", e);
-                setDefaultConfig(world);
             }
         }
     }
