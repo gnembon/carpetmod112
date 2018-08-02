@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import carpet.CarpetSettings;
 import carpet.utils.TickingArea;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -41,7 +40,7 @@ public class CommandTickingArea extends CommandCarpetBase
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
-        if (!command_enabled("commandTickingArea", sender))
+        if (!command_enabled("tickingAreas", sender))
             return;
         
         if (args.length < 1)
@@ -116,13 +115,10 @@ public class CommandTickingArea extends CommandCarpetBase
         
         TickingArea.addTickingArea(sender.getEntityWorld(), area);
         
-        if (CarpetSettings.getBool("tickingAreas"))
+        for (ChunkPos chunk : area.listIncludedChunks(sender.getEntityWorld()))
         {
-            for (ChunkPos chunk : area.listIncludedChunks(sender.getEntityWorld()))
-            {
-                // Load chunk
-                sender.getEntityWorld().getChunkFromChunkCoords(chunk.x, chunk.z);
-            }
+            // Load chunk
+            sender.getEntityWorld().getChunkFromChunkCoords(chunk.x, chunk.z);
         }
         
         notifyCommandListener(sender, this, "Added ticking area");

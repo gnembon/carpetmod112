@@ -121,14 +121,14 @@ public abstract class TickingArea
                 setDefaultConfig(world);
                 continue;
             }
-            IChunkLoader chunkLoader = ((ChunkProviderServer) chunkProvider).getChunkLoader();
+            IChunkLoader chunkLoader = ((ChunkProviderServer) chunkProvider).chunkLoader;
             if (!(chunkLoader instanceof AnvilChunkLoader))
             {
                 setDefaultConfig(world);
                 continue;
             }
             
-            File configFile = new File(((AnvilChunkLoader) chunkLoader).getChunkSaveLocation(), "tickingareas.conf");
+            File configFile = new File(((AnvilChunkLoader) chunkLoader).chunkSaveLocation, "tickingareas.conf");
             if (!configFile.isFile())
             {
                 setDefaultConfig(world);
@@ -178,11 +178,11 @@ public abstract class TickingArea
             IChunkProvider chunkProvider = world.getChunkProvider();
             if (!(chunkProvider instanceof ChunkProviderServer))
                 continue;
-            IChunkLoader chunkLoader = ((ChunkProviderServer) chunkProvider).getChunkLoader();
+            IChunkLoader chunkLoader = ((ChunkProviderServer) chunkProvider).chunkLoader;
             if (!(chunkLoader instanceof AnvilChunkLoader))
                 continue;
             
-            File configFile = new File(((AnvilChunkLoader) chunkLoader).getChunkSaveLocation(), "tickingareas.conf");
+            File configFile = new File(((AnvilChunkLoader) chunkLoader).chunkSaveLocation, "tickingareas.conf");
             
             try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(configFile))))
             {

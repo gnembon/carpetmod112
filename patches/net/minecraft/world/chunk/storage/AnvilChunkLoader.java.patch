@@ -18,7 +18,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.Block;
  import net.minecraft.entity.Entity;
-@@ -34,11 +34,61 @@
+@@ -34,12 +34,62 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -31,6 +31,7 @@
      private static final Logger field_151505_a = LogManager.getLogger();
 -    private final Map<ChunkPos, NBTTagCompound> field_75828_a = Maps.<ChunkPos, NBTTagCompound>newConcurrentMap();
 -    private final Set<ChunkPos> field_193415_c = Collections.<ChunkPos>newSetFromMap(Maps.newConcurrentMap());
+-    private final File field_75825_d;
 +    //CM removed old structures
 +    //private final Map<ChunkPos, NBTTagCompound> chunksToRemove = Maps.<ChunkPos, NBTTagCompound>newConcurrentMap();
 +    //private final Set<ChunkPos> chunksBeingSaved = Collections.<ChunkPos>newSetFromMap(Maps.newConcurrentMap());
@@ -79,9 +80,10 @@
 +    /* --- end of new code for MC-119971 --- */
 +
 +
-     private final File field_75825_d;
++    public final File field_75825_d; // CM changed to public for ticking areas
      private final DataFixer field_193416_e;
      private boolean field_183014_e;
+ 
 @@ -53,7 +103,8 @@
      public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
      {
@@ -232,10 +234,3 @@
          if (p_75823_2_.func_150297_b("Biomes", 7))
          {
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
-@@ -563,4 +654,6 @@
-             return entity;
-         }
-     }
-+    
-+    public File getChunkSaveLocation() {return field_75825_d;} // CM: added getter
- }

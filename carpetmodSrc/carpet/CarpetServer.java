@@ -2,6 +2,8 @@ package carpet;
 
 import carpet.utils.HUDController;
 import carpet.utils.PluginChannelTracker;
+import carpet.utils.TickingArea;
+
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import java.util.List;
@@ -38,6 +40,14 @@ public class CarpetServer // static for now - easier to handle all around the co
         CarpetSettings.apply_settings_from_conf(server);
         CarpetSettings.reload_all_statics();
         LoggerRegistry.initLoggers(server);
+    }
+    public static void onLoadAllWorlds(MinecraftServer server)
+    {
+        TickingArea.loadConfig(server);
+    }
+    public static void onWorldsSaved(MinecraftServer server)
+    {
+        TickingArea.saveConfig(server);
     }
 
     public static void tick(MinecraftServer server)

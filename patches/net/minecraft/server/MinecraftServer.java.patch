@@ -25,7 +25,7 @@
  
          this.field_71318_t.func_72364_a(this.field_71305_c);
          this.func_147139_a(this.func_147135_j());
-+        TickingArea.loadConfig(this);
++        CarpetServer.onLoadAllWorlds(this);
          this.func_71222_d();
      }
  
@@ -63,7 +63,7 @@
                  }
              }
          }
-+        TickingArea.saveConfig(this);
++        CarpetServer.onWorldsSaved(this);
      }
  
      protected void func_71260_j()

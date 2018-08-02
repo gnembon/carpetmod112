@@ -14,10 +14,11 @@
      private static final Logger field_147417_b = LogManager.getLogger();
 -    private final Set<Long> field_73248_b = Sets.<Long>newHashSet();
 -    private final IChunkGenerator field_186029_c;
+-    private final IChunkLoader field_73247_e;
+-    private final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192);
 +    public final Set<Long> field_73248_b = Sets.<Long>newHashSet();
 +    public final IChunkGenerator field_186029_c;
-     private final IChunkLoader field_73247_e;
--    private final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192);
++    public final IChunkLoader field_73247_e; // CM changed to public for ticking areas
 +    public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192); // CM changed to public for commandUnload
      private final WorldServer field_73251_h;
  
@@ -54,14 +55,11 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -288,4 +302,10 @@
+@@ -288,4 +302,7 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_191062_1_, p_191062_2_)) || this.field_73247_e.func_191063_a(p_191062_1_, p_191062_2_);
      }
 +
 +    // Retrieval method to get the bounding boxes CARPET-XCOM
 +    public NBTTagList getBoundingBoxes(Entity entity) { return this.field_186029_c.getBoundingBoxes(entity); }
-+    
-+    // CM: added getter
-+    public IChunkLoader getChunkLoader() { return this.field_73247_e; }
  }
