@@ -115,6 +115,20 @@ task('setup' + capitalizedName) {
 task('createRelease')
 project.afterEvaluate { createRelease.dependsOn tasks.getByName(project.name + 'OutputJar') }
 
+gradle.taskGraph.whenReady
+{ graph ->
+	if (graph.hasTask(':copyCodeToSrc'))
+		warnOverwrite()
+}
+
+void warnOverwrite()
+{
+	ant.input(message: 'WARNING: this will overwrite your working changes. Continue? (y/n)', addproperty: 'answer', defaultValue: 'y')
+	def answer = ant.properties.answer.toLowerCase()
+	if (answer != 'y' && answer != 'yes')
+		throw new Exception('User canceled execution')
+}
+
 
 // ===== MODIFY EXISTING TASKS =====
 
