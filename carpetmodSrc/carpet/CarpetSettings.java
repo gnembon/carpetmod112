@@ -66,6 +66,7 @@ public class CarpetSettings
     public static float tntRandomRange = -1;
     public static int pushLimit = 12;
     public static int railPowerLimit = 8;
+    public static int waterFlow = 0;
     public static boolean wirelessRedstone;
     public static boolean optimizedTileEntities = false;
     public static boolean mergeTNT = false;
@@ -203,12 +204,11 @@ public class CarpetSettings
                                 .extraInfo("Also enables gray carpet placement action if 'carpets' rule is turned on as well"),
   rule("commandEntityInfo",     "commands", "Enables /entityinfo command").defaultTrue()
                                 .extraInfo("Also enables yellow carpet placement action if 'carpets' rule is turned on as well"),
-  rule("commandSummonPlayer",   "commands", "Enables /summonplayer command").defaultTrue(),
   rule("commandUnload",         "commands", "Enables /unload command to control game speed").defaultTrue(),
   rule("commandCameramode",     "commands", "Enables /c and /s commands to quickly switch between camera and survival modes").defaultTrue()
                                 .extraInfo("/c and /s commands are available to all players regardless of their permission levels"),
   rule("commandPerimeterInfo",  "commands", "Enables /perimeterinfo command that scans the area around the block for potential spawnable spots").defaultTrue(),
-  rule("commandPlayer",         "commands", "Enables /player command to control players").defaultTrue(),
+  rule("commandPlayer",         "commands", "Enables /player command to control/spawn players").defaultTrue(),
   rule("commandRNG",            "commands", "Enables /rng command to manipulate and query rng").defaultTrue(),
   rule("newLight",              "optimizations", "Uses alternative lighting engine by PhiPros. AKA NewLight mod"),
   rule("carpets",               "survival", "Placing carpets may issue carpet commands for non-op players"),
@@ -232,6 +232,8 @@ public class CarpetSettings
                                 .extraInfo("true(serverOnly) option works with all clients, including vanilla",
                                 "clientAndServer option requires compatible carpet clients and messes up flying machines")
                                 .choices("false","false true clientAndServer"),
+  rule("waterFlow",             "optimizations", "fixes water flowing issues")
+                                .choices("vanilla","vanilla optimized correct"),
   rule("hardcodeTNTangle",      "tnt", "Sets the horizontal random angle on TNT for debugging of TNT contraptions")
                                 .extraInfo("Set to -1 for default behaviour")
                                 .choices("-1","-1")
@@ -245,6 +247,7 @@ public class CarpetSettings
                                 .choices("100","0 10 50 100").setNotStrict(),
   rule("spongeRandom",          "experimental feature", "sponge responds to random ticks"),
   rule("customMOTD",            "creative","Sets a different motd message on client trying to connect to the server")
+                                .extraInfo("use '_' to use the startup setting from server.properties")
                                 .choices("_","_").setNotStrict(),
   rule("doubleRetraction",      "experimental", "1.8 double retraction from pistons.")
                                 .extraInfo("Gives pistons the ability to double retract without side effects."),
@@ -256,7 +259,7 @@ public class CarpetSettings
                                 .extraInfo("Turning end RNG manipulation on or off."),
   rule("viewDistance",          "creative", "Changes the view distance of the server.")
                                 .extraInfo("Set to 0 to not override the value in server settings.")
-                                .choices("0", "12 16 32 64").setNotStrict(),
+                                .choices("0", "0 12 16 32 64").setNotStrict(),
   rule("tickingAreas",          "creative", "Enable use of ticking areas.")
                                 .extraInfo("As set by the /tickingarea comamnd.",
                                 "Ticking areas work as if they are the spawn chunks."),
@@ -376,6 +379,18 @@ public class CarpetSettings
             // Rail limit -1 because 8 is the code default. But counted to 9 including the source in human terms.
             railPowerLimit = getInt("railPowerLimit") - 1;
         }
+        else if("waterFlow".equalsIgnoreCase(rule))
+        {
+            waterFlow = 0;
+            if ("optimized".equalsIgnoreCase(getString("waterFlow")))
+            {
+                waterFlow = 3;
+            }
+            if ("correct".equalsIgnoreCase(getString("waterFlow")))
+            {
+                waterFlow = 1;
+            }
+        }
         else if("shulkerSpawningInEndCities".equalsIgnoreCase(rule))
         {
             if(CarpetSettings.getBool("shulkerSpawningInEndCities"))
@@ -398,6 +413,7 @@ public class CarpetSettings
                 viewDistance = 64;
             if (viewDistance != CarpetServer.minecraft_server.getPlayerList().getViewDistance())
                 CarpetServer.minecraft_server.getPlayerList().setViewDistance(viewDistance);
+        }
         else if ("tickingAreas".equalsIgnoreCase(rule))
         {
             if (CarpetSettings.getBool("tickingAreas") && CarpetServer.minecraft_server.worlds != null)
