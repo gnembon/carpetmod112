@@ -19,7 +19,7 @@ Use `gradlew setupCarpetmod`. It WILL overwrite your local changes to src, so be
 ### To create a release / patch files
 In case you made changes to the local copy of the code in `src`, run `genPatches` to update the project according to your src.
 Use `gradlew createRelease`. The release will be a ZIP file containing all modified classes, obfuscated, in the `build/distributions` folder.
-### To run the server locally
+### To run the server locally (Windows)
 Use `mktest.cmd` to run the modified server with generated patches as a localhost server. It requires `gradlew createRelease` to finish successfully as well as using default paths for your minecraft installation folder.
 
 In case you use different paths, you might need to modify the build script.

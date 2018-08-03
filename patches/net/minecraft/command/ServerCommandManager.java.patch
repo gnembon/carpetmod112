@@ -1,32 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/command/ServerCommandManager.java
 +++ ../src-work/minecraft/net/minecraft/command/ServerCommandManager.java
-@@ -33,6 +33,25 @@
+@@ -33,6 +33,10 @@
  import net.minecraft.util.text.TextComponentTranslation;
  import net.minecraft.util.text.TextFormatting;
  
-+import carpet.commands.CommandBlockInfo;
-+import carpet.commands.CommandCarpet;
-+import carpet.commands.CommandCounter;
-+import carpet.commands.CommandDistance;
-+import carpet.commands.CommandEntityInfo;
-+import carpet.commands.CommandGMC;
-+import carpet.commands.CommandGMS;
-+import carpet.commands.CommandLog;
-+import carpet.commands.CommandPerimeter;
-+import carpet.commands.CommandPlayer;
-+import carpet.commands.CommandRNG;
-+import carpet.commands.CommandSpawn;
-+import carpet.commands.CommandTick;
-+import carpet.commands.CommandTickHealth;
-+import carpet.commands.CommandUnload;
-+import carpet.commands.CommandUnload13;
++import carpet.commands.*;
 +import narcolepticfrog.rsmm.MeterCommand;
 +import carpet.CarpetServer;
 + 
  public class ServerCommandManager extends CommandHandler implements ICommandListener
  {
      private final MinecraftServer field_184880_a;
-@@ -89,7 +108,30 @@
+@@ -89,7 +93,31 @@
          this.func_71560_a(new CommandLocate());
          this.func_71560_a(new CommandReload());
          this.func_71560_a(new CommandFunction());
@@ -47,6 +32,7 @@
 +        this.func_71560_a(new CommandLog());
 +        this.func_71560_a(new CommandPerimeter());
 +        this.func_71560_a(new CommandRNG());
++        this.func_71560_a(new CommandTickingArea());
  
 +        this.func_71560_a(new CommandPlayer());
 +        /* end */

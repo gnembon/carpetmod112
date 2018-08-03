@@ -41,6 +41,7 @@ import net.minecraftforge.gradle.patcher.PatcherConstants
 import net.minecraftforge.gradle.patcher.TaskReobfuscate
 import net.minecraftforge.gradle.patcher.TaskSubprojectCall
 import net.minecraftforge.gradle.util.json.version.OS
+import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 
 
@@ -113,6 +114,20 @@ task('setup' + capitalizedName) {
  */
 task('createRelease')
 project.afterEvaluate { createRelease.dependsOn tasks.getByName(project.name + 'OutputJar') }
+
+gradle.taskGraph.whenReady
+{ graph ->
+	if (graph.hasTask(':copyCodeToSrc'))
+		warnOverwrite()
+}
+
+void warnOverwrite()
+{
+	ant.input(message: 'WARNING: this will overwrite your working changes. Continue? (y/n)', addproperty: 'answer', defaultValue: 'y')
+	def answer = ant.properties.answer.toLowerCase()
+	if (answer != 'y' && answer != 'yes')
+		throw new Exception('User canceled execution')
+}
 
 
 // ===== MODIFY EXISTING TASKS =====
@@ -275,7 +290,7 @@ outputJar.destinationDir = file('build/localCache/outputTrash')
 
 // ===== MAKE ALL SOURCES IN SAME DIRECTORY =====
 
-task('copy' + capitalizedName + 'FromSrc', type: Copy) {
+task('copy' + capitalizedName + 'FromSrc', type: Sync) {
 	from('src/')
 	{
 		eachFile
@@ -288,7 +303,7 @@ task('copy' + capitalizedName + 'FromSrc', type: Copy) {
 	includeEmptyDirs = false
 	dependsOn extractCleanSources
 }
-task(copyMcFromSrc, type: Copy) {
+task(copyMcFromSrc, type: Sync) {
 	from('src/')
 	{
 		include 'mcp/**'
@@ -306,17 +321,14 @@ task(copyMcFromSrc, type: Copy) {
 	includeEmptyDirs = false
 	dependsOn extractCleanSources
 }
-task('copy' + capitalizedName + 'ToSrc', type: Copy) {
+task('copyCodeToSrc', type: Sync) {
 	from project.name + 'Src/'
-	into 'src/'
-}
-task(copyMcToSrc, type: Copy) {
 	from "projects/${capitalizedName}/src/main/java"
 	into 'src/'
 	dependsOn tasks.getByName('extract' + capitalizedName + 'Sources')
 	includeEmptyDirs = false
 }
-task(copyResources, type: Copy) {
+task(copyResources, type: Sync) {
 	from "projects/${capitalizedName}/src/main/resources"
 	into 'resources/'
 	dependsOn tasks.getByName('extract' + capitalizedName + 'Resources')
@@ -324,7 +336,7 @@ task(copyResources, type: Copy) {
 }
 
 tasks.getByName('makeJar' + capitalizedName).dependsOn tasks.getByName('copy' + capitalizedName + 'FromSrc'), copyMcFromSrc
-genIdeProjects.dependsOn tasks.getByName('copy' + capitalizedName + 'ToSrc'), copyMcToSrc, copyResources
+genIdeProjects.dependsOn copyCodeToSrc, copyResources
 
 clean {
 	delete 'src'
@@ -356,6 +368,30 @@ if (gradle.useJavadocs)
 	
 	retromap.out = 'build/localCache/retromapped/retromapped.zip'
 	project.afterEvaluate { tasks.getByName('gen' + capitalizedName + 'Patches').dependsOn stripJavadoc }
+}
+
+task(deleteUnnecessaryPatches) << {
+	fileTree('patches/').visit
+	{ file ->
+		def fileName = file.getPath()
+		if (fileName.endsWith('.patch'))
+		{
+			fileName = fileName.substring(0, fileName.length() - 6)
+			if (FileUtils.contentEquals(project.file('src/' + fileName), project.file('projects/Clean/src/main/java/' + fileName)))
+			{
+				delete file.getFile()
+			}
+		}
+	}
+}
+deleteUnnecessaryPatches.dependsOn extractCleanSources
+afterEvaluate {
+	tasks.getByName('gen' + capitalizedName + 'Patches').dependsOn.each { deleteUnnecessaryPatches.dependsOn it }
+	tasks.each
+	{ task ->
+		if (task.dependsOn.contains(tasks.getByName('gen' + capitalizedName + 'Patches')))
+			task.dependsOn deleteUnnecessaryPatches
+	}
 }
 
 

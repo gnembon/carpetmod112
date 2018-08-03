@@ -18,9 +18,13 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import carpet.carpetclient.CarpetClientRuleChanger;
+import carpet.utils.TickingArea;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.init.Blocks;
+import net.minecraft.world.World;
+import net.minecraft.util.math.ChunkPos;
 
 // gnembon to do: rename settings
 // /s /c commands tp players back where they started
@@ -253,6 +257,13 @@ public class CarpetSettings
                                 .extraInfo("Turning nether RNG manipulation on or off."),
   rule("endRNG",                "creative", "Turning end RNG manipulation on or off.")
                                 .extraInfo("Turning end RNG manipulation on or off."),
+  rule("viewDistance",          "creative", "Changes the view distance of the server.")
+                                .extraInfo("Set to 0 to not override the value in server settings.")
+                                .choices("0", "12 16 32 64").setNotStrict(),
+  rule("tickingAreas",          "creative", "Enable use of ticking areas.")
+                                .extraInfo("As set by the /tickingarea comamnd.",
+                                "Ticking areas work as if they are the spawn chunks."),
+  rule("disableSpawnChunks",    "creative", "Removes the spawn chunks."),
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -391,6 +402,33 @@ public class CarpetSettings
             {
                 net.minecraft.world.gen.structure.MapGenEndCity.shulkerSpawning(false);
                 shulkerSpawningInEndCities = false;
+            }
+        }
+        else if ("viewDistance".equalsIgnoreCase(rule))
+        {
+            int viewDistance = getInt("viewDistance");
+            if (viewDistance < 2)
+                viewDistance = ((DedicatedServer) CarpetServer.minecraft_server).getIntProperty("view-distance", 10);
+            if (viewDistance > 64)
+                viewDistance = 64;
+            if (viewDistance != CarpetServer.minecraft_server.getPlayerList().getViewDistance())
+                CarpetServer.minecraft_server.getPlayerList().setViewDistance(viewDistance);
+        else if ("tickingAreas".equalsIgnoreCase(rule))
+        {
+            if (CarpetSettings.getBool("tickingAreas") && CarpetServer.minecraft_server.worlds != null)
+            {
+                TickingArea.initialChunkLoad(CarpetServer.minecraft_server, false);
+            }
+        }
+        else if ("disableSpawnChunks".equalsIgnoreCase(rule))
+        {
+            if (!CarpetSettings.getBool("disableSpawnChunks") && CarpetServer.minecraft_server.worlds != null)
+            {
+                World overworld = CarpetServer.minecraft_server.worlds[0];
+                for (ChunkPos chunk : new TickingArea.SpawnChunks().listIncludedChunks(overworld))
+                {
+                    overworld.getChunkProvider().provideChunk(chunk.x, chunk.z);
+                }
             }
         }
     }
