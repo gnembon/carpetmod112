@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import carpet.carpetclient.CarpetClientRuleChanger;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.init.Blocks;
 
@@ -250,6 +251,9 @@ public class CarpetSettings
                                 .extraInfo("Turning nether RNG manipulation on or off."),
   rule("endRNG",                "creative", "Turning end RNG manipulation on or off.")
                                 .extraInfo("Turning end RNG manipulation on or off."),
+  rule("viewDistance",          "creative", "Changes the view distance of the server.")
+                                .extraInfo("Set to 0 to not override the value in server settings.")
+                                .choices("0", "12 16 32 64").setNotStrict(),
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -377,6 +381,16 @@ public class CarpetSettings
                 net.minecraft.world.gen.structure.MapGenEndCity.shulkerSpawning(false);
                 shulkerSpawningInEndCities = false;
             }
+        }
+        else if ("viewDistance".equalsIgnoreCase(rule))
+        {
+            int viewDistance = getInt("viewDistance");
+            if (viewDistance < 2)
+                viewDistance = ((DedicatedServer) CarpetServer.minecraft_server).getIntProperty("view-distance", 10);
+            if (viewDistance > 64)
+                viewDistance = 64;
+            if (viewDistance != CarpetServer.minecraft_server.getPlayerList().getViewDistance())
+                CarpetServer.minecraft_server.getPlayerList().setViewDistance(viewDistance);
         }
     }
     public static void apply_settings_from_conf(MinecraftServer server)
