@@ -37,7 +37,7 @@
 +        int maxflow = 1;
 +        if (CarpetSettings.waterFlow > 0 && level < 8)
 +        {
-+            maxflow = level - CarpetSettings.waterFlow; // possibly 3
++            maxflow = level - CarpetSettings.waterFlow; // level = 7 is the shallowest water
 +            if (maxflow < 1) maxflow = 1;
 +        }
 +
