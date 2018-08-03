@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDynamicLiquid.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDynamicLiquid.java
-@@ -3,6 +3,8 @@
+@@ -3,11 +3,14 @@
  import java.util.EnumSet;
  import java.util.Random;
  import java.util.Set;
@@ -9,7 +9,13 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.init.Blocks;
-@@ -134,7 +136,7 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.math.BlockPos;
++import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.World;
+ 
+ public class BlockDynamicLiquid extends BlockLiquid
+@@ -134,7 +137,7 @@
          }
          else if (i >= 0 && (i == 0 || this.func_176372_g(p_180650_1_, p_180650_2_.func_177977_b(), iblockstate1)))
          {
@@ -18,7 +24,7 @@
              int k1 = i + j;
  
              if (i >= 8)
-@@ -213,23 +215,30 @@
+@@ -213,23 +216,31 @@
          return this.field_149764_J == Material.field_151587_i && !p_185698_1_.field_73011_w.func_177500_n() ? 2 : 4;
      }
  
@@ -29,9 +35,10 @@
          Set<EnumFacing> set = EnumSet.<EnumFacing>noneOf(EnumFacing.class);
  
 +        int maxflow = 1;
-+        if (CarpetSettings.waterFlow > 0 && level < 8 && level >= 3)
++        if (CarpetSettings.waterFlow > 0 && level < 8)
 +        {
 +            maxflow = level - CarpetSettings.waterFlow; // possibly 3
++            if (maxflow < 1) maxflow = 1;
 +        }
 +
 +
