@@ -22,7 +22,7 @@ import java.util.Set;
 
 public class CommandLog extends CommandCarpetBase {
 
-    private final String USAGE = "/log (interactive menu) OR /log <logName> <?option> <player> OR /log clear <player>";
+    private final String USAGE = "/log (interactive menu) OR /log <logName> <?option> <player> OR /log <logName> clear <player>";
 
     @Override
     public String getName() {

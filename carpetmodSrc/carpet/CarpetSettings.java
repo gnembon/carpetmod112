@@ -62,6 +62,7 @@ public class CarpetSettings
     public static float tntRandomRange = -1;
     public static int pushLimit = 12;
     public static int railPowerLimit = 8;
+    public static int waterFlow = 0;
     public static boolean wirelessRedstone;
     public static boolean optimizedTileEntities = false;
     public static boolean mergeTNT = false;
@@ -228,6 +229,8 @@ public class CarpetSettings
                                 .extraInfo("true(serverOnly) option works with all clients, including vanilla",
                                 "clientAndServer option requires compatible carpet clients and messes up flying machines")
                                 .choices("false","false true clientAndServer"),
+  rule("waterFlow",             "optimizations", "fixes water flowing issues")
+                                .choices("vanilla","vanilla optimized correct"),
   rule("hardcodeTNTangle",      "tnt", "Sets the horizontal random angle on TNT for debugging of TNT contraptions")
                                 .extraInfo("Set to -1 for default behaviour")
                                 .choices("-1","-1")
@@ -364,6 +367,18 @@ public class CarpetSettings
         {
             // Rail limit -1 because 8 is the code default. But counted to 9 including the source in human terms.
             railPowerLimit = getInt("railPowerLimit") - 1;
+        }
+        else if("waterFlow".equalsIgnoreCase(rule))
+        {
+            waterFlow = 0;
+            if ("optimized".equalsIgnoreCase(getString("waterFlow")))
+            {
+                waterFlow = 2;
+            }
+            if ("correct".equalsIgnoreCase(getString("waterFlow")))
+            {
+                waterFlow = 1;
+            }
         }
         else if("shulkerSpawningInEndCities".equalsIgnoreCase(rule))
         {
