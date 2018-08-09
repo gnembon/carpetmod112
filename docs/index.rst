@@ -3,13 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to carpetmod's documentation!
-=====================================
+=================
+Carpet Mod Manual
+=================
+
+Welcome to the manual for `Carpet Mod`_, a powerful and configurable toolbox
+for technical Minecraft.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :caption: Contents
 
+   usage/install
+
+.. _`Carpet Mod`: https://github.com/gnembon/carpetmod
 
 
 Indices and tables
