@@ -3,17 +3,18 @@ package carpet.commands;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.apache.logging.log4j.LogManager;
 
@@ -239,25 +240,34 @@ public class CommandStructure extends CommandCarpetBase
         Pattern pattern = Pattern.compile(".*assets/(\\w+)/structures/([\\w/]+)\\.nbt");
         try
         {
-            Path root;
             try
             {
                 // try zip file first
-                FileSystem fs = FileSystems.newFileSystem(MinecraftServer.class.getProtectionDomain().getCodeSource().getLocation().toURI(), null);
-                root = fs.getPath("/");
+                ZipFile zip = new ZipFile(new File(MinecraftServer.class.getProtectionDomain().getCodeSource().getLocation().toURI()));
+                Enumeration<? extends ZipEntry> entries = zip.entries();
+                while (entries.hasMoreElements())
+                {
+                    String entryName = entries.nextElement().getName();
+                    Matcher matcher = pattern.matcher(entryName);
+                    if (matcher.matches())
+                    {
+                        templates.add(matcher.group(1) + ":" + matcher.group(2));
+                    }
+                }
+                zip.close();
             }
             catch (Exception e)
             {
                 // try folder
-                root = Paths.get(MinecraftServer.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+                Path root = Paths.get(MinecraftServer.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+                Files.find(root, Integer.MAX_VALUE,
+                        (path, attr) -> attr.isRegularFile() && pattern.matcher(path.toString().replace(File.separator, "/")).matches())
+                .forEach(path -> {
+                    Matcher matcher = pattern.matcher(path.toString().replace(File.separator, "/"));
+                    matcher.matches(); // == true
+                    templates.add(matcher.group(1) + ":" + matcher.group(2));
+                });
             }
-            Files.find(root, Integer.MAX_VALUE,
-                    (path, attr) -> attr.isRegularFile() && pattern.matcher(path.toString().replace(File.separator, "/")).matches())
-            .forEach(path -> {
-                Matcher matcher = pattern.matcher(path.toString().replace(File.separator, "/"));
-                matcher.matches(); // == true
-                templates.add(matcher.group(1) + ":" + matcher.group(2));
-            });
         }
         catch (IOException | URISyntaxException e)
         {
