@@ -75,7 +75,28 @@
                              }
                          }
  
-@@ -1816,5 +1837,9 @@
+@@ -1732,13 +1753,14 @@
+                     String s8 = packetbuffer5.func_150789_c(32);
+                     tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
+                     tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
+-                    int i2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -32, 32);
+-                    int j2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -32, 32);
+-                    int k2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -32, 32);
++                    int sbl = CarpetSettings.structureBlockLimit;
++                    int i2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -sbl, sbl);
++                    int j2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -sbl, sbl);
++                    int k2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -sbl, sbl);
+                     tileentitystructure.func_184414_b(new BlockPos(i2, j2, k2));
+-                    int l2 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, 32);
+-                    int i3 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, 32);
+-                    int j = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, 32);
++                    int l2 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, sbl);
++                    int i3 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, sbl);
++                    int j = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, sbl);
+                     tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
+                     String s2 = packetbuffer5.func_150789_c(32);
+                     tileentitystructure.func_184411_a(Mirror.valueOf(s2));
+@@ -1816,5 +1838,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }

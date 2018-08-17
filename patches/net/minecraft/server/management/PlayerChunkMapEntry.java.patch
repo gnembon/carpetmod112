@@ -1,0 +1,40 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerChunkMapEntry.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerChunkMapEntry.java
+@@ -19,6 +19,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import carpet.helpers.IPlayerSensitiveTileEntity;
++
+ public class PlayerChunkMapEntry
+ {
+     private static final Logger field_187281_a = LogManager.getLogger();
+@@ -248,12 +250,28 @@
+     {
+         if (p_187273_1_ != null)
+         {
++            if (p_187273_1_ instanceof IPlayerSensitiveTileEntity)
++            {
++                if (field_187290_j)
++                {
++                    for (int i = 0; i < field_187283_c.size(); i++)
++                    {
++                        EntityPlayerMP player = field_187283_c.get(i);
++                        SPacketUpdateTileEntity packet = ((IPlayerSensitiveTileEntity) p_187273_1_).getUpdatePacketPlayerSensitive(player);
++                        if (packet != null)
++                            player.field_71135_a.func_147359_a(packet);
++                    }
++                }
++            }
++            else
++            {
+             SPacketUpdateTileEntity spacketupdatetileentity = p_187273_1_.func_189518_D_();
+ 
+             if (spacketupdatetileentity != null)
+             {
+                 this.func_187267_a(spacketupdatetileentity);
+             }
++            }
+         }
+     }
+ 

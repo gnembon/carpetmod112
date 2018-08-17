@@ -89,6 +89,7 @@ public class CarpetSettings
     public static boolean doubleRetraction = false;
     public static boolean netherRNG = false;
     public static boolean endRNG = false;
+    public static int structureBlockLimit = 32;
 
     public static long setSeed = 0;
 
@@ -264,6 +265,8 @@ public class CarpetSettings
                                 .extraInfo("As set by the /tickingarea comamnd.",
                                 "Ticking areas work as if they are the spawn chunks."),
   rule("disableSpawnChunks",    "creative", "Removes the spawn chunks."),
+  rule("structureBlockLimit",   "creative", "Changes the structure block dimension limit.")
+                                .choices("32", "32 50 200 1000").setNotStrict(),
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -305,6 +308,7 @@ public class CarpetSettings
         doubleRetraction = CarpetSettings.getBool("doubleRetraction");
         netherRNG = CarpetSettings.getBool("netherRNG");
         endRNG = CarpetSettings.getBool("endRNG");
+        structureBlockLimit = CarpetSettings.getInt("structureBlockLimit");
 
         if ("pistonGhostBlocksFix".equalsIgnoreCase(rule))
         {
