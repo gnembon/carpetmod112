@@ -228,9 +228,12 @@ public class CommandStructure extends CommandCarpetBase
         Path baseFolder = Paths.get(manager.baseFolder);
         try
         {
-            Files.find(baseFolder, Integer.MAX_VALUE,
-                    (path, attr) -> attr.isRegularFile() && path.getFileName().toString().endsWith(".nbt"))
-            .forEach(path -> templates.add(baseFolder.relativize(path).toString().replace(File.separator, "/").replace(".nbt", "")));
+            if (Files.exists(baseFolder))
+            {
+                Files.find(baseFolder, Integer.MAX_VALUE,
+                        (path, attr) -> attr.isRegularFile() && path.getFileName().toString().endsWith(".nbt"))
+                .forEach(path -> templates.add(baseFolder.relativize(path).toString().replace(File.separator, "/").replace(".nbt", "")));
+            }
         }
         catch (IOException e)
         {
