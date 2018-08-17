@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/structure/template/TemplateManager.java
++++ ../src-work/minecraft/net/minecraft/world/gen/structure/template/TemplateManager.java
+@@ -20,7 +20,7 @@
+ public class TemplateManager
+ {
+     private final Map<String, Template> field_186240_a = Maps.<String, Template>newHashMap();
+-    private final String field_186241_b;
++    public final String field_186241_b; // CM: changed to public
+     private final DataFixer field_191154_c;
+ 
+     public TemplateManager(String p_i47239_1_, DataFixer p_i47239_2_)
