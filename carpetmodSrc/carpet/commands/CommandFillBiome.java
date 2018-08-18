@@ -1,5 +1,8 @@
 package carpet.commands;
 
+import java.util.Collections;
+import java.util.List;
+
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -103,6 +106,37 @@ public class CommandFillBiome extends CommandCarpetBase
         }
         
         notifyCommandListener(sender, this, ((maxX - minX + 1) * (maxZ - minZ + 1)) + " biome blocks changed");
+    }
+
+    @Override
+    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos)
+    {
+        if (args.length == 0)
+        {
+            return Collections.emptyList();
+        }
+        else if (args.length == 1 || args.length == 3)
+        {
+            if (targetPos == null)
+                return getListOfStringsMatchingLastWord(args, "~");
+            else
+                return getListOfStringsMatchingLastWord(args, String.valueOf(targetPos.getX()));
+        }
+        else if (args.length == 2 || args.length == 4)
+        {
+            if (targetPos == null)
+                return getListOfStringsMatchingLastWord(args, "~");
+            else
+                return getListOfStringsMatchingLastWord(args, String.valueOf(targetPos.getZ()));
+        }
+        else if (args.length == 5)
+        {
+            return getListOfStringsMatchingLastWord(args, Biome.REGISTRY.getKeys());
+        }
+        else
+        {
+            return Collections.emptyList();
+        }
     }
 
 }
