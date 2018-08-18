@@ -23,6 +23,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
@@ -84,8 +85,11 @@ public class CommandStructure extends CommandCarpetBase
         if (args.length < 2)
             throw new WrongUsageException(USAGE_LOAD);
         
+        String structureName = args[1];
+        for (char illegal : ChatAllowedCharacters.ILLEGAL_STRUCTURE_CHARACTERS)
+            structureName = structureName.replace(illegal, '_');
         TemplateManager manager = server.worlds[0].getStructureTemplateManager();
-        Template template = manager.get(server, new ResourceLocation(args[1]));
+        Template template = manager.get(server, new ResourceLocation(structureName));
         if (template == null)
             throw new CommandException("Template \"" + args[1] + "\" doesn't exist");
         
@@ -187,13 +191,16 @@ public class CommandStructure extends CommandCarpetBase
             ignoreEntities = parseBoolean(args[8]);
         }
         
+        String structureName = args[1];
+        for (char illegal : ChatAllowedCharacters.ILLEGAL_STRUCTURE_CHARACTERS)
+            structureName = structureName.replace(illegal, '_');
         TemplateManager manager = server.worlds[0].getStructureTemplateManager();
-        Template template = manager.getTemplate(server, new ResourceLocation(args[1]));
+        Template template = manager.getTemplate(server, new ResourceLocation(structureName));
         template.takeBlocksFromWorld(sender.getEntityWorld(), origin, size, !ignoreEntities, Blocks.STRUCTURE_VOID);
         template.setAuthor(sender.getName());
-        manager.writeTemplate(server, new ResourceLocation(args[1]));
+        manager.writeTemplate(server, new ResourceLocation(structureName));
         
-        notifyCommandListener(sender, this, "Successfully saved structure " + args[1]);
+        notifyCommandListener(sender, this, "Successfully saved structure " + structureName);
     }
     
     private void listStructure(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
