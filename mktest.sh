@@ -67,14 +67,15 @@ else
     fi
 fi
 
-if false; then
-    echo "Extracting patches ..."
-    mkdir -p "$BUILD_DIR/patches"
-    unzip "$PATCH_PATH" -d "$BUILD_DIR/patches" || { echo "failed to extract patches!" && exit 1; }
-fi
+echo "Extracting patches ..."
+rm -rf "$BUILD_DIR/patches"
+mkdir -p "$BUILD_DIR/patches"
+unzip -q "$PATCH_PATH" -d "$BUILD_DIR/patches" || { echo "failed to extract patches!" && exit 1; }
 
 echo "Patch work ..."
-zip -q "$PATCH_PATH" "*" -u -o "$MC_JAR"
+pushd "$BUILD_DIR/patches"
+zip -q -u "$MC_JAR" `find . -name '*'`
+popd
 
 echo "Cleanup ..."
 pushd "$BUILD_DIR"
