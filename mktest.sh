@@ -2,6 +2,7 @@
 
 # Parse command line args
 TEST=0
+EULA=0
 while [ $# -gt 0 ]; do
 
     key="$1"
@@ -21,15 +22,21 @@ while [ $# -gt 0 ]; do
             TEST=1
             shift
             ;;
+        -e|--eula)
+            EULA=1
+            shift
+            ;;
         -h|--help)
             # immediately print help
-            echo "$0 [-d,--download URL] [-o,--outfile OUTFILE]"
+            echo "$0 [-h] [-d URL] [-o OUTFILE] [-t] [-e]"
             echo " install and test Carpet patches"
             echo ""
             echo "options:"
+            echo " -h,--help            print this help and exit"
             echo " -d,--download URL    download patches from given URL"
             echo " -o,--outfile OUTFILE output to given file"
             echo " -t,--test            run a test"
+            echo " -e,--eula            agree to Mojang EULA"
             exit 0
             shift
             shift
@@ -91,11 +98,8 @@ if [ "$TEST" = "1" ]; then
     echo "Starting server ..."
     rm -rf "test"
     mkdir -p "test"
-    read -p "Do you agree to the Minecraft EULA? [y/n]" eula
-    if [ "$eula" = "y" ]; then
+    if [ "$EULA" = "1" ]; then
         echo "eula=true" > "test/eula.txt"
-    else
-        echo "You'll have to edit 'test/eula.txt' to run the server."
     fi
     cp "build/$carpet_name" "test/$carpet_name"
     pushd "test"
