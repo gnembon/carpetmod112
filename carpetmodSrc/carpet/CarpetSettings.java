@@ -210,6 +210,7 @@ public class CarpetSettings
   rule("commandPerimeterInfo",  "commands", "Enables /perimeterinfo command that scans the area around the block for potential spawnable spots").defaultTrue(),
   rule("commandPlayer",         "commands", "Enables /player command to control/spawn players").defaultTrue(),
   rule("commandRNG",            "commands", "Enables /rng command to manipulate and query rng").defaultTrue(),
+  rule("commandFillBiome",      "commands", "Enabled /fillbiome command to change the biome of an area").defaultTrue(),
   rule("newLight",              "optimizations", "Uses alternative lighting engine by PhiPros. AKA NewLight mod"),
   rule("carpets",               "survival", "Placing carpets may issue carpet commands for non-op players"),
   rule("missingTools",          "survival", "Pistons, Glass and Sponge can be broken faster with their appropriate tools"),
