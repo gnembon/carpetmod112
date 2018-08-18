@@ -90,6 +90,12 @@ if [ "$TEST" = "1" ]; then
     echo "Starting server ..."
     rm -rf "test"
     mkdir -p "test"
+    read -p "Do you agree to the Minecraft EULA? [y/n]" eula
+    if [ "$eula" = "y" ]; then
+        echo "eula=true" > "test/eula.txt"
+    else
+        echo "You'll have to edit 'test/eula.txt' to run the server."
+    fi
     cp "build/$carpet_name" "test/$carpet_name"
     pushd "test"
     java -jar "$carpet_name" --nogui
