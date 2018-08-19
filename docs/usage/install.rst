@@ -2,17 +2,27 @@
 Installation
 ============
 
-Carpet and Carpet Client are not installed in the same way. As of this version,
-you do not need Carpet Client to log into a Carpet server. However, running
-Carpet Client with a Carpet server enables features such as village markers.
+To use Carpet, you must first have the Carpet patches. You can either
+build the patches as detailed in the ``README.md`` file at the root of the
+git repository, or download them from the
+`releases page <https://github.com/gnembon/carpetmod/releases>`_.
 
-Client
-======
+Patching automatically
+======================
 
-Undocumented.
+For Linux, a ``mktest.sh`` script is provided in the Carpet git
+repository. Simply clone the repository or just download the script
+and run it. Run ``./mktest.sh -h`` for help.
 
-Server
-======
+A simple recipe for its usage would be to copy the latest Carpet patch
+download URL, and run ``./mktest.sh -d <carpet patch url> -o carpet.jar``.
+
+For Windows, a ``mktest.cmd`` script is provided, but it currently lacks
+the functionality of ``mktest.sh``. It is intended for building patches
+after doing development locally.
+
+Patching manually
+=================
 
 Carpet is distributed as a patch for the Minecraft server jar, so it can
 be installed by splicing all files from the Carpet archive into the Minecraft
@@ -83,10 +93,11 @@ the following commands for our example.
           alternatively use the ``zip`` command, but that is currently
           undocumented.
 
-Finish and run
---------------
+Running the server
+==================
 
 You should now have a proper Carpet installation in the Carpet jar. This is
 runnable like any other Java Minecraft server.
 
 See `Sponge's launch script documentation <https://docs.spongepowered.org/latest/en/server/getting-started/launch-script.html>`_.
+

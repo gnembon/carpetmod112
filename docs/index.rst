@@ -15,6 +15,7 @@ for technical Minecraft.
    :caption: Contents
 
    usage/install
+   usage/logging
 
 .. _`Carpet Mod`: https://github.com/gnembon/carpetmod
 
