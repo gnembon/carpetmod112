@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerChunkMapEntry.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerChunkMapEntry.java
-@@ -19,6 +19,8 @@
+@@ -19,11 +19,13 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,6 +9,12 @@
  public class PlayerChunkMapEntry
  {
      private static final Logger field_187281_a = LogManager.getLogger();
+     private final PlayerChunkMap field_187282_b;
+-    private final List<EntityPlayerMP> field_187283_c = Lists.<EntityPlayerMP>newArrayList();
++    public final List<EntityPlayerMP> field_187283_c = Lists.<EntityPlayerMP>newArrayList(); // CM: changed to public
+     private final ChunkPos field_187284_d;
+     private final short[] field_187285_e = new short[64];
+     @Nullable
 @@ -248,12 +250,28 @@
      {
          if (p_187273_1_ != null)
