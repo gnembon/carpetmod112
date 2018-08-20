@@ -1,26 +1,25 @@
 package carpet;
 
-import carpet.utils.HUDController;
-import carpet.utils.PluginChannelTracker;
-import carpet.utils.TickingArea;
-
-import com.google.common.base.Charsets;
-import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Random;
 
+import com.google.common.base.Charsets;
+import com.google.common.collect.Lists;
+
+import carpet.carpetclient.CarpetClientServer;
+import carpet.helpers.TickSpeed;
+import carpet.logging.LoggerRegistry;
+import carpet.utils.HUDController;
+import carpet.utils.PluginChannelTracker;
+import carpet.utils.TickingArea;
 import narcolepticfrog.rsmm.events.PlayerConnectionEventDispatcher;
 import narcolepticfrog.rsmm.events.ServerPacketEventDispatcher;
 import narcolepticfrog.rsmm.events.TickStartEventDispatcher;
 import narcolepticfrog.rsmm.server.RSMMServer;
-
-import carpet.carpetclient.CarpetClientServer;
-
-import carpet.helpers.TickSpeed;
 import net.minecraft.entity.player.EntityPlayerMP;
-import carpet.logging.LoggerRegistry;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CPacketCustomPayload;
+import net.minecraft.network.play.server.SPacketKeepAlive;
 import net.minecraft.server.MinecraftServer;
 
 public class CarpetServer // static for now - easier to handle all around the code, its one anyways
@@ -29,6 +28,9 @@ public class CarpetServer // static for now - easier to handle all around the co
     private static CarpetClientServer CCServer;
     public static RSMMServer rsmmServer;
     public static MinecraftServer minecraft_server;
+    
+    public static final int VANILLA_CHECK_PING_ID = -999;
+    
     public static void init(MinecraftServer server) //aka constructor of this static singleton class
     {
         CCServer = new CarpetClientServer(server);
@@ -65,6 +67,16 @@ public class CarpetServer // static for now - easier to handle all around the co
             PlayerConnectionEventDispatcher.dispatchPlayerConnectEvent(player);
         LoggerRegistry.playerConnected(player);
         CCServer.onPlayerConnect(player);
+        
+        // If we receive the response packet without having received the response to the
+        // preceding REGISTER packets, we know for sure that we have a vanilla client connected
+        player.connection.sendPacket(new SPacketKeepAlive(VANILLA_CHECK_PING_ID));
+    }
+    public static void receiveVanillaCheck(EntityPlayerMP player)
+    {
+        // At this point we know for certain whether the client is vanilla or not, do
+        // the initialization stuff that depends on that here
+        player.getRecipeBook().init(player);
     }
 
     public static void playerDisconnected(EntityPlayerMP player)
@@ -72,8 +84,8 @@ public class CarpetServer // static for now - easier to handle all around the co
         if (CarpetSettings.redstoneMultimeter) // optionally send anyways (Frog's decision) decision
         {
             PlayerConnectionEventDispatcher.dispatchPlayerDisconnectEvent(player);
-            PluginChannelTracker.unregisterAll(player);
         }
+        PluginChannelTracker.unregisterAll(player);
         LoggerRegistry.playerDisconnected(player);
         CCServer.onPlayerDisconnect(player);
     }

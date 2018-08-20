@@ -93,7 +93,19 @@
                              }
                          }
  
-@@ -1816,5 +1846,9 @@
+@@ -1384,6 +1414,11 @@
+             int i = (int)(this.func_147363_d() - this.field_147379_i);
+             this.field_147369_b.field_71138_i = (this.field_147369_b.field_71138_i * 3 + i) / 4;
+         }
++        else if (p_147353_1_.func_149460_c() == CarpetServer.VANILLA_CHECK_PING_ID)
++        {
++            PacketThreadUtil.func_180031_a(p_147353_1_, this, this.field_147369_b.func_71121_q());
++            CarpetServer.receiveVanillaCheck(field_147369_b);
++        }
+     }
+ 
+     private long func_147363_d()
+@@ -1816,5 +1851,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }

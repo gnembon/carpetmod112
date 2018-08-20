@@ -21,6 +21,15 @@
          nethandlerplayserver.func_147359_a(new SPacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.func_186058_p().func_186068_a(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
          nethandlerplayserver.func_147359_a(new SPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
          nethandlerplayserver.func_147359_a(new SPacketServerDifficulty(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
+@@ -133,7 +138,7 @@
+         nethandlerplayserver.func_147359_a(new SPacketHeldItemChange(p_72355_2_.field_71071_by.field_70461_c));
+         this.func_187243_f(p_72355_2_);
+         p_72355_2_.func_147099_x().func_150877_d();
+-        p_72355_2_.func_192037_E().func_192826_c(p_72355_2_);
++        //playerIn.getRecipeBook().init(playerIn); // CM: this depends on whether the client is vanilla, wait until we know
+         this.func_96456_a((ServerScoreboard)worldserver.func_96441_U(), p_72355_2_);
+         this.field_72400_f.func_147132_au();
+         TextComponentTranslation textcomponenttranslation;
 @@ -343,6 +348,8 @@
  
          worldserver.func_72838_d(p_72377_1_);
