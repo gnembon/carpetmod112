@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/network/play/server/SPacketRecipeBook.java
 +++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketRecipeBook.java
-@@ -16,18 +16,20 @@
+@@ -9,6 +9,8 @@
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.network.play.INetHandlerPlayClient;
+ 
++import java.util.stream.Collectors;
++
+ public class SPacketRecipeBook implements Packet<INetHandlerPlayClient>
+ {
+     private SPacketRecipeBook.State field_193646_a;
+@@ -16,18 +18,28 @@
      private List<IRecipe> field_193647_c;
      private boolean field_192598_c;
      private boolean field_192599_d;
@@ -18,15 +27,23 @@
 -        this.field_193647_c = p_i47597_3_;
 -        this.field_192598_c = p_i47597_4_;
 +        this.field_193646_a = stateIn;
++        if (vanilla)
++        {
++            this.field_192596_a = recipesIn.stream().filter(CraftingManager::isVanilla).collect(Collectors.toList());
++            this.field_193647_c = displayedRecipesIn.stream().filter(CraftingManager::isVanilla).collect(Collectors.toList());
++        }
++        else
++        {
 +        this.field_192596_a = recipesIn;
 +        this.field_193647_c = displayedRecipesIn;
++        }
 +        this.field_192598_c = isGuiOpen;
          this.field_192599_d = p_i47597_5_;
 +        this.vanilla = vanilla;
      }
  
      public void func_148833_a(INetHandlerPlayClient p_148833_1_)
-@@ -69,7 +71,7 @@
+@@ -69,7 +81,7 @@
  
          for (IRecipe irecipe : this.field_192596_a)
          {
@@ -35,7 +52,7 @@
          }
  
          if (this.field_193646_a == SPacketRecipeBook.State.INIT)
-@@ -78,7 +80,7 @@
+@@ -78,7 +90,7 @@
  
              for (IRecipe irecipe1 : this.field_193647_c)
              {
