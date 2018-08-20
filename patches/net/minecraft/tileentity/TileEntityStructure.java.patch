@@ -1,0 +1,59 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityStructure.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityStructure.java
+@@ -31,7 +31,13 @@
+ import net.minecraft.world.gen.structure.template.Template;
+ import net.minecraft.world.gen.structure.template.TemplateManager;
+ 
+-public class TileEntityStructure extends TileEntity
++import carpet.CarpetSettings;
++import carpet.carpetclient.CarpetClientServer;
++import carpet.helpers.IPlayerSensitiveTileEntity;
++import carpet.utils.PluginChannelTracker;
++import net.minecraft.entity.player.EntityPlayerMP;
++
++public class TileEntityStructure extends TileEntity implements IPlayerSensitiveTileEntity
+ {
+     private String field_184420_a = "";
+     private String field_184421_f = "";
+@@ -78,13 +84,14 @@
+         this.func_184404_a(p_145839_1_.func_74779_i("name"));
+         this.field_184421_f = p_145839_1_.func_74779_i("author");
+         this.field_184422_g = p_145839_1_.func_74779_i("metadata");
+-        int i = MathHelper.func_76125_a(p_145839_1_.func_74762_e("posX"), -32, 32);
+-        int j = MathHelper.func_76125_a(p_145839_1_.func_74762_e("posY"), -32, 32);
+-        int k = MathHelper.func_76125_a(p_145839_1_.func_74762_e("posZ"), -32, 32);
++        int sbl = CarpetSettings.structureBlockLimit;
++        int i = MathHelper.func_76125_a(p_145839_1_.func_74762_e("posX"), -sbl, sbl);
++        int j = MathHelper.func_76125_a(p_145839_1_.func_74762_e("posY"), -sbl, sbl);
++        int k = MathHelper.func_76125_a(p_145839_1_.func_74762_e("posZ"), -sbl, sbl);
+         this.field_184423_h = new BlockPos(i, j, k);
+-        int l = MathHelper.func_76125_a(p_145839_1_.func_74762_e("sizeX"), 0, 32);
+-        int i1 = MathHelper.func_76125_a(p_145839_1_.func_74762_e("sizeY"), 0, 32);
+-        int j1 = MathHelper.func_76125_a(p_145839_1_.func_74762_e("sizeZ"), 0, 32);
++        int l = MathHelper.func_76125_a(p_145839_1_.func_74762_e("sizeX"), 0, sbl);
++        int i1 = MathHelper.func_76125_a(p_145839_1_.func_74762_e("sizeY"), 0, sbl);
++        int j1 = MathHelper.func_76125_a(p_145839_1_.func_74762_e("sizeZ"), 0, sbl);
+         this.field_184424_i = new BlockPos(l, i1, j1);
+ 
+         try
+@@ -151,6 +158,20 @@
+     {
+         return new SPacketUpdateTileEntity(this.field_174879_c, 7, this.func_189517_E_());
+     }
++    
++    // Carpet: make sure the rendering isn't messed up for non-carpet-client clients when size is greater than vanilla limit
++    @Override
++    public SPacketUpdateTileEntity getUpdatePacketPlayerSensitive(EntityPlayerMP player)
++    {
++        NBTTagCompound updateTag = func_189517_E_();
++        if (!PluginChannelTracker.isRegistered(player, CarpetClientServer.CARPET_CHANNEL_NAME) && (field_184424_i.func_177958_n() > 32 || field_184424_i.func_177956_o() > 32 || field_184424_i.func_177952_p() > 32))
++        {
++            updateTag.func_74768_a("sizeX", 0);
++            updateTag.func_74768_a("sizeY", 0);
++            updateTag.func_74768_a("sizeZ", 0);
++        }
++        return new SPacketUpdateTileEntity(field_174879_c, 7, updateTag);
++    }
+ 
+     public NBTTagCompound func_189517_E_()
+     {

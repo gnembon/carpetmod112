@@ -1,12 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -120,11 +120,15 @@
+@@ -120,11 +120,16 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
 +import carpet.helpers.TickSpeed;
++import net.minecraft.world.gen.structure.template.Template;
 +
  public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
  {
@@ -17,7 +18,7 @@
      public EntityPlayerMP field_147369_b;
      private int field_147368_e;
      private int field_147378_h;
-@@ -249,7 +253,7 @@
+@@ -249,7 +254,7 @@
          }
      }
  
@@ -26,7 +27,7 @@
      {
          this.field_184349_l = this.field_147369_b.field_70165_t;
          this.field_184350_m = this.field_147369_b.field_70163_u;
-@@ -287,6 +291,11 @@
+@@ -287,6 +292,11 @@
      {
          PacketThreadUtil.func_180031_a(p_147358_1_, this, this.field_147369_b.func_71121_q());
          this.field_147369_b.func_110430_a(p_147358_1_.func_149620_c(), p_147358_1_.func_192620_b(), p_147358_1_.func_149618_e(), p_147358_1_.func_149617_f());
@@ -38,7 +39,7 @@
      }
  
      private static boolean func_183006_b(CPacketPlayer p_183006_0_)
-@@ -490,6 +499,10 @@
+@@ -490,6 +500,10 @@
                          double d10 = this.field_147369_b.field_70159_w * this.field_147369_b.field_70159_w + this.field_147369_b.field_70181_x * this.field_147369_b.field_70181_x + this.field_147369_b.field_70179_y * this.field_147369_b.field_70179_y;
                          double d11 = d7 * d7 + d8 * d8 + d9 * d9;
  
@@ -49,7 +50,7 @@
                          if (this.field_147369_b.func_70608_bn())
                          {
                              if (d11 > 1.0D)
-@@ -508,7 +521,7 @@
+@@ -508,7 +522,7 @@
                                  i = 1;
                              }
  
@@ -58,7 +59,7 @@
                              {
                                  float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
  
-@@ -1200,7 +1213,15 @@
+@@ -1200,7 +1214,15 @@
                              }
                              else
                              {
@@ -75,7 +76,46 @@
                              }
                          }
  
-@@ -1816,5 +1837,9 @@
+@@ -1732,13 +1754,14 @@
+                     String s8 = packetbuffer5.func_150789_c(32);
+                     tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
+                     tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
+-                    int i2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -32, 32);
+-                    int j2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -32, 32);
+-                    int k2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -32, 32);
++                    int sbl = CarpetSettings.structureBlockLimit;
++                    int i2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -sbl, sbl);
++                    int j2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -sbl, sbl);
++                    int k2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -sbl, sbl);
+                     tileentitystructure.func_184414_b(new BlockPos(i2, j2, k2));
+-                    int l2 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, 32);
+-                    int i3 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, 32);
+-                    int j = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, 32);
++                    int l2 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, sbl);
++                    int i3 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, sbl);
++                    int j = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, sbl);
+                     tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
+                     String s2 = packetbuffer5.func_150789_c(32);
+                     tileentitystructure.func_184411_a(Mirror.valueOf(s2));
+@@ -1775,6 +1798,17 @@
+                         }
+                         else
+                         {
++                            boolean structureTooBig = false;
++                            Template template = field_147367_d.field_71305_c[0].func_184163_y().func_189942_b(field_147367_d, new ResourceLocation(s4));
++                            if (template != null)
++                            {
++                                BlockPos size = template.func_186259_a();
++                                if (size.func_177958_n() > sbl || size.func_177956_o() > sbl || size.func_177952_p() > sbl)
++                                    structureTooBig = true;
++                            }
++                            if (structureTooBig)
++                                field_147369_b.func_146105_b(new TextComponentString("Structure is too big for structure limit"), false);
++                            else
+                             this.field_147369_b.func_146105_b(new TextComponentTranslation("structure_block.load_prepare", new Object[] {s4}), false);
+                         }
+                     }
+@@ -1816,5 +1850,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }
