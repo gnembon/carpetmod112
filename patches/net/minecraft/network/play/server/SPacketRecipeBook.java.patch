@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketRecipeBook.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketRecipeBook.java
+@@ -16,18 +16,20 @@
+     private List<IRecipe> field_193647_c;
+     private boolean field_192598_c;
+     private boolean field_192599_d;
++    private boolean vanilla;
+ 
+     public SPacketRecipeBook()
+     {
+     }
+ 
+-    public SPacketRecipeBook(SPacketRecipeBook.State p_i47597_1_, List<IRecipe> p_i47597_2_, List<IRecipe> p_i47597_3_, boolean p_i47597_4_, boolean p_i47597_5_)
++    public SPacketRecipeBook(SPacketRecipeBook.State stateIn, List<IRecipe> recipesIn, List<IRecipe> displayedRecipesIn, boolean isGuiOpen, boolean p_i47597_5_, boolean vanilla)
+     {
+-        this.field_193646_a = p_i47597_1_;
+-        this.field_192596_a = p_i47597_2_;
+-        this.field_193647_c = p_i47597_3_;
+-        this.field_192598_c = p_i47597_4_;
++        this.field_193646_a = stateIn;
++        this.field_192596_a = recipesIn;
++        this.field_193647_c = displayedRecipesIn;
++        this.field_192598_c = isGuiOpen;
+         this.field_192599_d = p_i47597_5_;
++        this.vanilla = vanilla;
+     }
+ 
+     public void func_148833_a(INetHandlerPlayClient p_148833_1_)
+@@ -69,7 +71,7 @@
+ 
+         for (IRecipe irecipe : this.field_192596_a)
+         {
+-            p_148840_1_.func_150787_b(CraftingManager.func_193375_a(irecipe));
++            p_148840_1_.func_150787_b(vanilla ? CraftingManager.getVanillaId(irecipe) : CraftingManager.func_193375_a(irecipe));
+         }
+ 
+         if (this.field_193646_a == SPacketRecipeBook.State.INIT)
+@@ -78,7 +80,7 @@
+ 
+             for (IRecipe irecipe1 : this.field_193647_c)
+             {
+-                p_148840_1_.func_150787_b(CraftingManager.func_193375_a(irecipe1));
++                p_148840_1_.func_150787_b(vanilla ? CraftingManager.getVanillaId(irecipe1) : CraftingManager.func_193375_a(irecipe1));
+             }
+         }
+     }

@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/network/play/client/CPacketRecipeInfo.java
++++ ../src-work/minecraft/net/minecraft/network/play/client/CPacketRecipeInfo.java
+@@ -13,6 +13,7 @@
+     private IRecipe field_193649_d;
+     private boolean field_192631_e;
+     private boolean field_192632_f;
++    public int recipeId;
+ 
+     public CPacketRecipeInfo()
+     {
+@@ -30,7 +31,7 @@
+ 
+         if (this.field_194157_a == CPacketRecipeInfo.Purpose.SHOWN)
+         {
+-            this.field_193649_d = CraftingManager.func_193374_a(p_148837_1_.readInt());
++            this.recipeId = p_148837_1_.readInt();
+         }
+         else if (this.field_194157_a == CPacketRecipeInfo.Purpose.SETTINGS)
+         {

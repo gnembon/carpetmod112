@@ -1,12 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -120,11 +120,15 @@
+@@ -120,11 +120,19 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
++import carpet.carpetclient.CarpetClientServer;
 +import carpet.helpers.TickSpeed;
++import carpet.utils.PluginChannelTracker;
++import net.minecraft.item.crafting.CraftingManager;
++import net.minecraft.item.crafting.IRecipe;
 +
  public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
  {
@@ -17,7 +21,7 @@
      public EntityPlayerMP field_147369_b;
      private int field_147368_e;
      private int field_147378_h;
-@@ -249,7 +253,7 @@
+@@ -249,7 +257,7 @@
          }
      }
  
@@ -26,7 +30,7 @@
      {
          this.field_184349_l = this.field_147369_b.field_70165_t;
          this.field_184350_m = this.field_147369_b.field_70163_u;
-@@ -287,6 +291,11 @@
+@@ -287,6 +295,11 @@
      {
          PacketThreadUtil.func_180031_a(p_147358_1_, this, this.field_147369_b.func_71121_q());
          this.field_147369_b.func_110430_a(p_147358_1_.func_149620_c(), p_147358_1_.func_192620_b(), p_147358_1_.func_149618_e(), p_147358_1_.func_149617_f());
@@ -38,7 +42,21 @@
      }
  
      private static boolean func_183006_b(CPacketPlayer p_183006_0_)
-@@ -490,6 +499,10 @@
+@@ -412,7 +425,12 @@
+ 
+         if (p_191984_1_.func_194156_a() == CPacketRecipeInfo.Purpose.SHOWN)
+         {
+-            this.field_147369_b.func_192037_E().func_194074_f(p_191984_1_.func_193648_b());
++            IRecipe recipe;
++            if (PluginChannelTracker.isRegistered(field_147369_b, CarpetClientServer.CARPET_CHANNEL_NAME))
++                recipe = CraftingManager.func_193374_a(p_191984_1_.recipeId);
++            else
++                recipe = CraftingManager.getByVanillaId(p_191984_1_.recipeId);
++            this.field_147369_b.func_192037_E().func_194074_f(recipe);
+         }
+         else if (p_191984_1_.func_194156_a() == CPacketRecipeInfo.Purpose.SETTINGS)
+         {
+@@ -490,6 +508,10 @@
                          double d10 = this.field_147369_b.field_70159_w * this.field_147369_b.field_70159_w + this.field_147369_b.field_70181_x * this.field_147369_b.field_70181_x + this.field_147369_b.field_70179_y * this.field_147369_b.field_70179_y;
                          double d11 = d7 * d7 + d8 * d8 + d9 * d9;
  
@@ -49,7 +67,7 @@
                          if (this.field_147369_b.func_70608_bn())
                          {
                              if (d11 > 1.0D)
-@@ -508,7 +521,7 @@
+@@ -508,7 +530,7 @@
                                  i = 1;
                              }
  
@@ -58,7 +76,7 @@
                              {
                                  float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
  
-@@ -1200,7 +1213,15 @@
+@@ -1200,7 +1222,15 @@
                              }
                              else
                              {
@@ -75,7 +93,7 @@
                              }
                          }
  
-@@ -1816,5 +1837,9 @@
+@@ -1816,5 +1846,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }

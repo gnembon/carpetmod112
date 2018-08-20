@@ -1,26 +1,82 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/CraftingManager.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/CraftingManager.java
-@@ -32,6 +32,8 @@
+@@ -32,16 +32,30 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import carpet.helpers.FireworksCraftingRecipes;
++import com.google.common.collect.BiMap;
++import com.google.common.collect.HashBiMap;
 +
  public class CraftingManager
  {
      private static final Logger field_192422_a = LogManager.getLogger();
-@@ -42,6 +44,14 @@
+     private static int field_193381_c;
+     public static final RegistryNamespaced<ResourceLocation, IRecipe> field_193380_a = new RegistryNamespaced<ResourceLocation, IRecipe>();
++    public static final BiMap<Integer, Integer> CARPET_TO_VANILLA = HashBiMap.create();
++    private static int nextVanillaId;
+ 
+     public static boolean func_193377_a()
      {
          try
          {
 +        	// Added rockets to the list of crafting recipes CARPET-XCOM
 +            // will add later if found a way to hide popups for vanilla clients
 +        	FireworksCraftingRecipes.createRockets();
-+        	func_193379_a("rocket1", FireworksCraftingRecipes.rocketOne);
-+        	func_193379_a("rocket2", FireworksCraftingRecipes.rocketTwo);
-+        	func_193379_a("rocket3", FireworksCraftingRecipes.rocketThree);
++        	register(new ResourceLocation("rocket1"), FireworksCraftingRecipes.rocketOne, false);
++        	register(new ResourceLocation("rocket2"), FireworksCraftingRecipes.rocketTwo, false);
++        	register(new ResourceLocation("rocket3"), FireworksCraftingRecipes.rocketThree, false);
 +        	// End
 +        	
              func_193379_a("armordye", new RecipesArmorDyes());
              func_193379_a("bookcloning", new RecipeBookCloning());
              func_193379_a("mapcloning", new RecipesMapCloning());
+@@ -177,16 +191,24 @@
+     {
+         func_193372_a(new ResourceLocation(p_193379_0_), p_193379_1_);
+     }
+-
++    
+     public static void func_193372_a(ResourceLocation p_193372_0_, IRecipe p_193372_1_)
+     {
+-        if (field_193380_a.func_148741_d(p_193372_0_))
++        register(p_193372_0_, p_193372_1_, true);
++    }
++
++    public static void register(ResourceLocation name, IRecipe recipe, boolean vanilla)
++    {
++        if (field_193380_a.func_148741_d(name))
+         {
+-            throw new IllegalStateException("Duplicate recipe ignored with ID " + p_193372_0_);
++            throw new IllegalStateException("Duplicate recipe ignored with ID " + name);
+         }
+         else
+         {
+-            field_193380_a.func_177775_a(field_193381_c++, p_193372_0_, p_193372_1_);
++            int id = field_193381_c++;
++            field_193380_a.func_177775_a(id, name, recipe);
++            if (vanilla)
++                CARPET_TO_VANILLA.put(id, nextVanillaId++);
+         }
+     }
+ 
+@@ -253,4 +275,19 @@
+     {
+         return field_193380_a.func_148754_a(p_193374_0_);
+     }
++    
++    public static int getVanillaId(IRecipe recipe)
++    {
++        return CARPET_TO_VANILLA.get(func_193375_a(recipe));
++    }
++    
++    public static boolean isVanilla(IRecipe recipe)
++    {
++        return CARPET_TO_VANILLA.containsKey(func_193375_a(recipe));
++    }
++    
++    public static IRecipe getByVanillaId(int id)
++    {
++        return func_193374_a(CARPET_TO_VANILLA.inverse().get(id));
++    }
+ }
