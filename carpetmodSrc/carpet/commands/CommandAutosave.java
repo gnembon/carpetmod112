@@ -29,7 +29,6 @@ public class CommandAutosave extends CommandCarpetBase {
 
 	@Override
 	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-		// TODO Auto-generated method stub
 		if (!command_enabled("commandAutosave", sender)) return;
 		
 		if(args.length < 1)
