@@ -213,6 +213,7 @@ public class CarpetSettings
   rule("commandRNG",            "commands", "Enables /rng command to manipulate and query rng").defaultTrue(),
   rule("commandStructure",      "commands", "Enables /structure to manage NBT structures used by structure blocks").defaultTrue(),
   rule("commandFillBiome",      "commands", "Enabled /fillbiome command to change the biome of an area").defaultTrue(),
+  rule("commandAutosave",       "commands", "Enables /autosave command to query information about the autosave and execute commands relative to the autosave").defaultTrue(),
   rule("newLight",              "optimizations", "Uses alternative lighting engine by PhiPros. AKA NewLight mod"),
   rule("carpets",               "survival", "Placing carpets may issue carpet commands for non-op players"),
   rule("missingTools",          "survival", "Pistons, Glass and Sponge can be broken faster with their appropriate tools"),
