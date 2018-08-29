@@ -1,9 +1,11 @@
 package carpet.worldedit;
 
 import carpet.CarpetSettings;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -81,5 +83,23 @@ public class WorldEditBridge
     {
         if (worldEditEnabled())
             WECUIPacketHandler.onCustomPayload(packet, player);
+    }
+    
+    public static void startEditSession(EntityPlayerMP player)
+    {
+        if (worldEditEnabled())
+            CarpetWorldEdit.inst.startEditSession(player);
+    }
+    
+    public static void finishEditSession(EntityPlayerMP player)
+    {
+        if (worldEditEnabled())
+            CarpetWorldEdit.inst.finishEditSession(player);
+    }
+    
+    public static void recordBlockEdit(EntityPlayerMP player, World world, BlockPos pos, IBlockState newBlock, NBTTagCompound newTileEntity)
+    {
+        if (worldEditEnabled())
+            CarpetWorldEdit.inst.recordBlockEdit(player, world, pos, newBlock, newTileEntity);
     }
 }
