@@ -1,5 +1,6 @@
 package carpet.worldedit;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -69,7 +70,7 @@ class CarpetBiomeRegistry implements BiomeRegistry {
      * Cached biome data information.
      */
     private static class CarpetBiomeData implements BiomeData {
-        private final Biome biome;
+        private final String name;
 
         /**
          * Create a new instance.
@@ -77,12 +78,30 @@ class CarpetBiomeRegistry implements BiomeRegistry {
          * @param biome the base biome
          */
         private CarpetBiomeData(Biome biome) {
-            this.biome = biome;
+            this.name = getName(biome);
+        }
+        
+        private static String getName(Biome biome) {
+            // Adding members to the Biome class caused strange behaviour with a switch map, so use reflection I guess
+            Field nameField = null;
+            for (Field field : Biome.class.getDeclaredFields()) {
+                if (field.getType() == String.class) {
+                    nameField = field;
+                    break;
+                }
+            }
+            nameField.setAccessible(true);
+            try {
+                return (String) nameField.get(biome);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
         }
 
         @Override
         public String getName() {
-            return biome.biomeName;
+            return name;
         }
     }
 

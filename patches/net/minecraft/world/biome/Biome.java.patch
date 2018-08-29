@@ -1,14 +1,5 @@
 --- ../src-base/minecraft/net/minecraft/world/biome/Biome.java
 +++ ../src-work/minecraft/net/minecraft/world/biome/Biome.java
-@@ -64,7 +64,7 @@
-     protected static final WorldGenBigTree field_76758_O = new WorldGenBigTree(false);
-     protected static final WorldGenSwamp field_76763_Q = new WorldGenSwamp();
-     public static final RegistryNamespaced<ResourceLocation, Biome> field_185377_q = new RegistryNamespaced<ResourceLocation, Biome>();
--    private final String field_76791_y;
-+    public final String field_76791_y; // CM: changed to public
-     private final float field_76748_D;
-     private final float field_76749_E;
-     private final float field_76750_F;
 @@ -520,6 +520,12 @@
                  this.field_76299_d = p_i1970_4_;
              }
