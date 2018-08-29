@@ -1,5 +1,6 @@
 package carpet.worldedit;
 
+import carpet.CarpetSettings;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -28,27 +29,32 @@ public class WorldEditBridge
         }
     }
     
+    private static boolean worldEditEnabled()
+    {
+        return CarpetSettings.getBool("worldEdit") && worldEdit;
+    }
+    
     public static void onServerLoaded(MinecraftServer server)
     {
-        if (worldEdit)
+        if (worldEditEnabled())
             CarpetWorldEdit.inst.onServerLoaded(server);
     }
     
     public static void onStartTick()
     {
-        if (worldEdit)
+        if (worldEditEnabled())
             CarpetWorldEdit.inst.onStartTick();
     }
     
     public static void onCommand(ICommand command, ICommandSender sender, String[] args)
     {
-        if (worldEdit)
+        if (worldEditEnabled())
             CarpetWorldEdit.inst.onCommand(command, sender, args);
     }
     
     public static boolean onLeftClickBlock(World world, BlockPos pos, EntityPlayerMP player)
     {
-        if (worldEdit)
+        if (worldEditEnabled())
             return CarpetWorldEdit.inst.onLeftClickBlock(world, pos, player);
         else
             return true;
@@ -56,7 +62,7 @@ public class WorldEditBridge
     
     public static boolean onRightClickBlock(World world, BlockPos pos, EntityPlayerMP player)
     {
-        if (worldEdit)
+        if (worldEditEnabled())
             return CarpetWorldEdit.inst.onRightClickBlock(world, pos, player);
         else
             return true;
@@ -64,7 +70,7 @@ public class WorldEditBridge
     
     public static boolean onRightClickAir(World world, EntityPlayerMP player)
     {
-        if (worldEdit)
+        if (worldEditEnabled())
             return CarpetWorldEdit.inst.onRightClickAir(world, player);
         else
             return true;
@@ -73,7 +79,7 @@ public class WorldEditBridge
     
     public static void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player)
     {
-        if (worldEdit)
+        if (worldEditEnabled())
             WECUIPacketHandler.onCustomPayload(packet, player);
     }
 }

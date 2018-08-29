@@ -269,6 +269,8 @@ public class CarpetSettings
   rule("disableSpawnChunks",    "creative", "Removes the spawn chunks."),
   rule("structureBlockLimit",   "creative", "Changes the structure block dimension limit.")
                                 .choices("32", "32 50 200 1000").setNotStrict(),
+  rule("worldEdit",             "creative", "Enables/disables WorldEdit.")
+                                .extraInfo("Only works in WorldEdit is in the classpath."),
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -681,7 +683,7 @@ public class CarpetSettings
         set("flippinCactus","true");
         set("hopperCounters","true");
         set("antiCheatSpeed","true");
-        
+        set("worldEdit","true");
     }
     public static void resetToSurvival()
     {
