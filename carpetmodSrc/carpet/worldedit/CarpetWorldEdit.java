@@ -48,7 +48,7 @@ class CarpetWorldEdit {
     public void onServerLoaded(MinecraftServer server) {
         logger = LogManager.getLogger("WorldEdit");
 
-        config = new CarpetConfiguration(new File("worldedit.properties"));
+        config = new CarpetConfiguration(new File("worldedit.properties").getAbsoluteFile());
         config.load();
         
         CarpetBiomeRegistry.populate();
