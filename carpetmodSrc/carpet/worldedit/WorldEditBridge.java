@@ -17,34 +17,34 @@ import net.minecraft.world.World;
  */
 public class WorldEditBridge
 {
-    private static boolean worldEdit;
+    private static boolean worldEditPresent;
     static
     {
         try
         {
             Class.forName("com.sk89q.worldedit.WorldEdit");
-            worldEdit = true;
+            worldEditPresent = true;
         }
         catch (ClassNotFoundException e)
         {
-            worldEdit = false;
+            worldEditPresent = false;
         }
     }
     
     private static boolean worldEditEnabled()
     {
-        return CarpetSettings.getBool("worldEdit") && worldEdit;
+        return CarpetSettings.getBool("worldEdit") && worldEditPresent;
     }
     
     public static void onServerLoaded(MinecraftServer server)
     {
-        if (worldEditEnabled())
+        if (worldEditPresent)
             CarpetWorldEdit.inst.onServerLoaded(server);
     }
     
     public static void onStartTick()
     {
-        if (worldEditEnabled())
+        if (worldEditPresent)
             CarpetWorldEdit.inst.onStartTick();
     }
     
