@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandHandler.java
++++ ../src-work/minecraft/net/minecraft/command/CommandHandler.java
+@@ -17,6 +17,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import carpet.worldedit.WorldEditBridge;
++
+ public abstract class CommandHandler implements ICommandManager
+ {
+     private static final Logger field_147175_a = LogManager.getLogger();
+@@ -50,6 +52,7 @@
+             }
+             else if (icommand.func_184882_a(this.func_184879_a(), p_71556_1_))
+             {
++                WorldEditBridge.onCommand(icommand, p_71556_1_, astring);
+                 if (j > -1)
+                 {
+                     List<Entity> list = EntitySelector.<Entity>func_179656_b(p_71556_1_, astring[j], Entity.class);

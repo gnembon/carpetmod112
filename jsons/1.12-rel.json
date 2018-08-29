@@ -1,3 +1,20 @@
 {
-	"inheritsFrom": "1.12"
+	"inheritsFrom": "1.12",
+	"libraries": [
+		{
+			"name": "com.sk89q.worldedit:worldedit-core:6.1",
+			"url": "https://maven.sk89q.com/repo"
+		},
+		{
+			"name": "com.sk89q:jchronic:0.2.4a",
+			"url": "https://maven.sk89q.com/repo"
+		},
+		{
+			"name": "com.thoughtworks.paranamer:paranamer:2.6"
+		},
+		{
+			"name": "com.sk89q.lib:jlibnoise:1.0.0",
+			"url": "https://maven.sk89q.com/repo"
+		}
+	]
 }
