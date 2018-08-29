@@ -134,11 +134,13 @@ class CarpetWorld extends AbstractWorld {
             }
         }
 
+        BlockPos pos = new BlockPos(x, y, z);
         if (notifyAndLight) {
-            BlockPos pos = new BlockPos(x, y, z);
             if (newState.getLightOpacity() != oldState.getLightOpacity() || newState.getLightValue() != oldState.getLightValue())
                 world.checkLight(pos);
-            world.notifyBlockUpdate(pos, oldState, newState, 3);
+        }
+        world.notifyBlockUpdate(pos, oldState, newState, 3);
+        if (notifyAndLight) {
             world.notifyNeighborsRespectDebug(pos, oldState.getBlock(), true);
 
             if (newState.hasComparatorInputOverride()) {
