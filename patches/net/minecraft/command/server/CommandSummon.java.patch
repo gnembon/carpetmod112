@@ -1,18 +1,29 @@
 --- ../src-base/minecraft/net/minecraft/command/server/CommandSummon.java
 +++ ../src-work/minecraft/net/minecraft/command/server/CommandSummon.java
-@@ -22,6 +22,11 @@
+@@ -22,6 +22,13 @@
  import net.minecraft.world.World;
  import net.minecraft.world.chunk.storage.AnvilChunkLoader;
  
 +import net.minecraft.world.DifficultyInstance;
 +import net.minecraft.world.WorldServer;
 +import net.minecraft.entity.passive.EntitySkeletonHorse;
++import net.minecraft.entity.player.EntityPlayerMP;
 +import carpet.CarpetSettings;
++import carpet.worldedit.WorldEditBridge;
 +
  public class CommandSummon extends CommandBase
  {
      public String func_71517_b()
-@@ -70,7 +75,31 @@
+@@ -63,6 +70,8 @@
+             }
+ 
+             World world = p_184881_2_.func_130014_f_();
++            
++            EntityPlayerMP worldEditPlayer = p_184881_2_ instanceof EntityPlayerMP ? (EntityPlayerMP) p_184881_2_ : null;
+ 
+             if (!world.func_175667_e(blockpos))
+             {
+@@ -70,7 +79,33 @@
              }
              else if (EntityList.field_191307_a.equals(new ResourceLocation(s)))
              {
@@ -35,6 +46,8 @@
 +                            entityskeletonhorse.func_70107_b((double)bp.func_177958_n(), (double)bp.func_177956_o(), (double)bp.func_177952_p());
 +                            world.func_72838_d(entityskeletonhorse);
 +                            world.func_72942_c(new EntityLightningBolt(world, (double)bp.func_177958_n(), (double)bp.func_177956_o(), (double)bp.func_177952_p(), true));
++                            
++                            WorldEditBridge.recordEntityCreation(worldEditPlayer, world, entityskeletonhorse);
 +                        }
 +                        else
 +                        {
@@ -45,3 +58,12 @@
                  func_152373_a(p_184881_2_, this, "commands.summon.success", new Object[0]);
              }
              else
+@@ -108,6 +143,8 @@
+                     {
+                         ((EntityLiving)entity).func_180482_a(world.func_175649_E(new BlockPos(entity)), (IEntityLivingData)null);
+                     }
++                    
++                    WorldEditBridge.recordEntityCreation(worldEditPlayer, world, entity);
+ 
+                     func_152373_a(p_184881_2_, this, "commands.summon.success", new Object[0]);
+                 }

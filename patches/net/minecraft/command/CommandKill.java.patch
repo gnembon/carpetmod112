@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandKill.java
++++ ../src-work/minecraft/net/minecraft/command/CommandKill.java
+@@ -8,6 +8,9 @@
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.math.BlockPos;
+ 
++import carpet.worldedit.WorldEditBridge;
++import net.minecraft.entity.player.EntityPlayerMP;
++
+ public class CommandKill extends CommandBase
+ {
+     public String func_71517_b()
+@@ -37,6 +40,13 @@
+         {
+             Entity entity = func_184885_b(p_184881_1_, p_184881_2_, p_184881_3_[0]);
+             entity.func_174812_G();
++            
++            if (!(entity instanceof EntityPlayerMP))
++            {
++                EntityPlayerMP worldEditPlayer = p_184881_2_ instanceof EntityPlayerMP ? (EntityPlayerMP) p_184881_2_ : null;
++                WorldEditBridge.recordEntityRemoval(worldEditPlayer, p_184881_2_.func_130014_f_(), entity);
++            }
++            
+             func_152373_a(p_184881_2_, this, "commands.kill.successful", new Object[] {entity.func_145748_c_()});
+         }
+     }

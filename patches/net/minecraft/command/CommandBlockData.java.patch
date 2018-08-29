@@ -10,14 +10,12 @@
  public class CommandBlockData extends CommandBase
  {
      public String func_71517_b()
-@@ -80,6 +83,11 @@
+@@ -80,6 +83,9 @@
                      }
                      else
                      {
 +                        EntityPlayerMP worldEditPlayer = p_184881_2_ instanceof EntityPlayerMP ? (EntityPlayerMP) p_184881_2_ : null;
-+                        WorldEditBridge.startEditSession(worldEditPlayer);
 +                        WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos, iblockstate, nbttagcompound2);
-+                        WorldEditBridge.finishEditSession(worldEditPlayer);
 +                        
                          tileentity.func_145839_a(nbttagcompound);
                          tileentity.func_70296_d();

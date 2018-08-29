@@ -4,6 +4,7 @@ import carpet.CarpetSettings;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.client.CPacketCustomPayload;
@@ -101,5 +102,17 @@ public class WorldEditBridge
     {
         if (worldEditEnabled())
             CarpetWorldEdit.inst.recordBlockEdit(player, world, pos, newBlock, newTileEntity);
+    }
+    
+    public static void recordEntityCreation(EntityPlayerMP player, World world, Entity created)
+    {
+        if (worldEditEnabled())
+            CarpetWorldEdit.inst.recordEntityCreation(player, world, created);
+    }
+    
+    public static void recordEntityRemoval(EntityPlayerMP player, World world, Entity removed)
+    {
+        if (worldEditEnabled())
+            CarpetWorldEdit.inst.recordEntityRemoval(player, world, removed);
     }
 }
