@@ -1,11 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -27,13 +27,18 @@
+@@ -27,13 +27,19 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import net.minecraft.nbt.NBTTagList;
 +import carpet.CarpetSettings;
++import carpet.utils.Chunklogger;
 +import carpet.utils.TickingArea;
 +import net.minecraft.entity.Entity;
 +
@@ -23,7 +24,7 @@
      private final WorldServer field_73251_h;
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
-@@ -50,7 +55,12 @@
+@@ -50,8 +56,14 @@
  
      public void func_189549_a(Chunk p_189549_1_)
      {
@@ -35,9 +36,37 @@
 +            canDrop |= !TickingArea.isTickingChunk(field_73251_h, p_189549_1_.field_76635_g, p_189549_1_.field_76647_h);
 +        if (canDrop)
          {
++        	Chunklogger.logChunkQueued(this.field_73251_h,p_189549_1_.field_76635_g,p_189549_1_.field_76647_h);
              this.field_73248_b.add(Long.valueOf(ChunkPos.func_77272_a(p_189549_1_.field_76635_g, p_189549_1_.field_76647_h)));
              p_189549_1_.field_189550_d = true;
-@@ -185,6 +195,8 @@
+         }
+@@ -76,6 +88,9 @@
+ 
+         if (chunk != null)
+         {
++        	if(chunk.field_189550_d) {
++        		Chunklogger.logChunkUnloadingCanceled(field_73251_h, p_186026_1_, p_186026_2_);
++        	}
+             chunk.field_189550_d = false;
+         }
+ 
+@@ -93,6 +108,7 @@
+ 
+             if (chunk != null)
+             {
++            	Chunklogger.logChunkLoading(this.field_73251_h, p_186028_1_, p_186028_2_);
+                 this.field_73244_f.put(ChunkPos.func_77272_a(p_186028_1_, p_186028_2_), chunk);
+                 chunk.func_76631_c();
+                 chunk.func_186030_a(this, this.field_186029_c);
+@@ -124,6 +140,7 @@
+                 throw new ReportedException(crashreport);
+             }
+ 
++            Chunklogger.logChunkLoading(this.field_73251_h, p_186025_1_, p_186025_2_);
+             this.field_73244_f.put(i, chunk);
+             chunk.func_76631_c();
+             chunk.func_186030_a(this, this.field_186029_c);
+@@ -185,6 +202,8 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
@@ -46,7 +75,7 @@
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -224,6 +236,8 @@
+@@ -224,6 +243,8 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
@@ -55,7 +84,25 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -288,4 +302,7 @@
+@@ -233,6 +254,7 @@
+ 
+                     if (chunk != null && chunk.field_189550_d)
+                     {
++                    	Chunklogger.logChunkUnloading(field_73251_h, (int) (olong & 0xffffffff), (int) (olong>>32));
+                         chunk.func_76623_d();
+                         this.func_73242_b(chunk);
+                         this.func_73243_a(chunk);
+@@ -283,9 +305,17 @@
+     {
+         return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
+     }
++    
++    public boolean isChunkUnloadScheduled(int x, int z) {
++    	long chunk = ChunkPos.func_77272_a(x, z);
++    	return this.field_73248_b.contains(chunk);
++    }
+ 
+     public boolean func_191062_e(int p_191062_1_, int p_191062_2_)
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_191062_1_, p_191062_2_)) || this.field_73247_e.func_191063_a(p_191062_1_, p_191062_2_);
      }
