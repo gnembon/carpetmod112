@@ -18,14 +18,13 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.Block;
  import net.minecraft.entity.Entity;
-@@ -34,12 +34,63 @@
+@@ -34,12 +34,62 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import java.util.HashMap;
 +import java.util.Iterator;
 +import carpet.CarpetSettings;
-+import carpet.utils.MaybeLinkedHashMap;
 +
  public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
  {
@@ -85,7 +84,7 @@
      private final DataFixer field_193416_e;
      private boolean field_183014_e;
  
-@@ -53,7 +104,8 @@
+@@ -53,7 +103,8 @@
      public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
      {
          ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
@@ -95,7 +94,7 @@
  
          if (nbttagcompound == null)
          {
-@@ -73,7 +125,10 @@
+@@ -73,7 +124,10 @@
      public boolean func_191063_a(int p_191063_1_, int p_191063_2_)
      {
          ChunkPos chunkpos = new ChunkPos(p_191063_1_, p_191063_2_);
@@ -107,7 +106,7 @@
          return nbttagcompound != null ? true : RegionFileCache.func_191064_f(this.field_75825_d, p_191063_1_, p_191063_2_);
      }
  
-@@ -132,37 +187,63 @@
+@@ -132,37 +186,63 @@
  
      protected void func_75824_a(ChunkPos p_75824_1_, NBTTagCompound p_75824_2_)
      {
@@ -183,7 +182,7 @@
                      try
                      {
                          this.func_183013_b(chunkpos, nbttagcompound);
-@@ -171,17 +252,19 @@
+@@ -171,17 +251,19 @@
                      {
                          field_151505_a.error("Failed to save chunk", (Throwable)exception);
                      }
@@ -212,7 +211,7 @@
      }
  
      private void func_183013_b(ChunkPos p_183013_1_, NBTTagCompound p_183013_2_) throws IOException
-@@ -295,6 +378,10 @@
+@@ -295,6 +377,10 @@
          }
  
          p_75820_3_.func_74782_a("Sections", nbttaglist);
@@ -223,22 +222,7 @@
          p_75820_3_.func_74773_a("Biomes", p_75820_1_.func_76605_m());
          p_75820_1_.func_177409_g(false);
          NBTTagList nbttaglist1 = new NBTTagList();
-@@ -316,7 +403,13 @@
-         p_75820_3_.func_74782_a("Entities", nbttaglist1);
-         NBTTagList nbttaglist2 = new NBTTagList();
- 
--        for (TileEntity tileentity : p_75820_1_.func_177434_r().values())
-+        // CM: reload update order fix
-+        java.util.Collection<TileEntity> tes;
-+        if (CarpetSettings.getBool("reloadUpdateOrderFix"))
-+            tes = ((MaybeLinkedHashMap<BlockPos, TileEntity>) p_75820_1_.func_177434_r()).valuesOrdered();
-+        else
-+            tes = p_75820_1_.func_177434_r().values();
-+        for (TileEntity tileentity : tes)
-         {
-             NBTTagCompound nbttagcompound3 = tileentity.func_189515_b(new NBTTagCompound());
-             nbttaglist2.func_74742_a(nbttagcompound3);
-@@ -383,6 +476,11 @@
+@@ -383,6 +469,11 @@
  
          chunk.func_76602_a(aextendedblockstorage);
  
