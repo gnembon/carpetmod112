@@ -269,6 +269,9 @@ public class CarpetSettings
   rule("disableSpawnChunks",    "creative", "Removes the spawn chunks."),
   rule("structureBlockLimit",   "creative", "Changes the structure block dimension limit.")
                                 .choices("32", "32 50 200 1000").setNotStrict(),
+  rule("pistonSerializationFix","fix", "Fixes bug with piston serialization"),
+  rule("reloadUpdateOrderFix",  "fix", "Fixes reload update order for tile entities")
+                                .extraInfo("Fixes instant wires randomly breaking"),
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -716,6 +719,8 @@ public class CarpetSettings
         set("unloadedEntityFix","true");
         set("hopperDuplicationFix","true");
         set("calmNetherFires","true");
+        set("pistonSerializationFix","true");
+        set("reloadUpdateOrderFix","true");
     }
 
     public static class CarpetSettingEntry 

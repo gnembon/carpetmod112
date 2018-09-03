@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/network/play/server/SPacketChunkData.java
 +++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketChunkData.java
-@@ -15,6 +15,8 @@
+@@ -15,6 +15,9 @@
  import net.minecraft.world.chunk.Chunk;
  import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
  
 +import carpet.CarpetSettings;
++import carpet.utils.MaybeLinkedHashMap;
 +
  public class SPacketChunkData implements Packet<INetHandlerPlayClient>
  {
      private int field_149284_a;
-@@ -30,6 +32,7 @@
+@@ -30,6 +33,7 @@
  
      public SPacketChunkData(Chunk p_i47124_1_, int p_i47124_2_)
      {
@@ -17,3 +18,18 @@
          this.field_149284_a = p_i47124_1_.field_76635_g;
          this.field_149282_b = p_i47124_1_.field_76647_h;
          this.field_149279_g = p_i47124_2_ == 65535;
+@@ -38,7 +42,13 @@
+         this.field_186948_c = this.func_189555_a(new PacketBuffer(this.func_186945_f()), p_i47124_1_, flag, p_i47124_2_);
+         this.field_189557_e = Lists.<NBTTagCompound>newArrayList();
+ 
+-        for (Entry<BlockPos, TileEntity> entry : p_i47124_1_.func_177434_r().entrySet())
++        // CM: reload update order fix
++        java.util.Set<Entry<BlockPos, TileEntity>> entries;
++        if (CarpetSettings.getBool("reloadUpdateOrderFix"))
++            entries = ((MaybeLinkedHashMap<BlockPos, TileEntity>) p_i47124_1_.func_177434_r()).entrySetOrdered();
++        else
++            entries = p_i47124_1_.func_177434_r().entrySet();
++        for (Entry<BlockPos, TileEntity> entry : entries)
+         {
+             BlockPos blockpos = entry.getKey();
+             TileEntity tileentity = entry.getValue();
