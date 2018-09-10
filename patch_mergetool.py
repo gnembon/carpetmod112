@@ -1,13 +1,34 @@
 #!/usr/bin/python3
 
+# This interactive script resolves merge conflicts in the patch files
+# patch_mergetool.py <patchFiles...>
+
 import os
 import re
 import sys
 
+# Classes
+
+# Fields:
+#  header
+#  hunks
 class PatchFile:
 	pass
+
+# Fields:
+#  start_a
+#  len_a
+#  start_b
+#  len_b
+#  suffix
+#  lines
+#  is_duplicate (set later)
 class Hunk:
 	pass
+
+# Fields:
+#  content
+#  added
 class Line:
 	def __init__(self, content, added):
 		self.content = content
@@ -15,8 +36,10 @@ class Line:
 	def __eq__(self, other):
 		return self.content == other.content and self.added == other.added
 
+# Matches the @@ hunk headers @@
 hunk_header_pattern = re.compile(r"^@@ -(\d+),(\d+) \+(\d+),(\d+) @@(.*)$", flags = re.DOTALL)
 
+# Separates a file with conflict markers into the two files that are trying to be merged
 def get_each_content(content):
 	content_a = []
 	content_b = []
@@ -42,6 +65,7 @@ def get_each_content(content):
 				content_b.append(Line(line, False))
 	return (content_a, content_b)
 
+# Parses the lines of a patch file into a patch file object
 def parse_file(lines):
 	patch = PatchFile()
 	patch.hunks = []
@@ -65,24 +89,31 @@ def parse_file(lines):
 			current_lines.append(line)
 	return patch
 
+# Takes old file content, returns new content, unless merging failed, then it returns None
 def process_file(content):
+	# Split Content
 	lines_a, lines_b = get_each_content(content)
+	
+	# Parse files
 	file_a = parse_file(lines_a)
 	file_b = parse_file(lines_b)
+	
+	# Header conflicts unresolvable
 	if file_a.header != file_b.header:
 		return None
+	
+	# Get list of all hunks, sorted in order of where the patches are applied in the original file
 	sorted_hunks = file_a.hunks + file_b.hunks
-	for hunk in sorted_hunks:
-		hunk.changed = any(line.added for line in hunk.lines)
 	sorted_hunks.sort(key = lambda hunk: hunk.start_a)
 	
+	# Resolve conflicts (hunks applied in the same place which differ) and automatically resolve duplicates (hunks applied in the same place which don't differ)
 	last_hunk = None
 	conflict_count = 0
 	for hunk in sorted_hunks:
 		hunk.is_duplicate = False
 		if last_hunk != None:
-			if hunk.start_a < last_hunk.start_a + last_hunk.len_a:
-				if hunk.start_a != last_hunk.start_a or hunk.len_a != last_hunk.len_a or hunk.len_b != last_hunk.len_b or hunk.lines != last_hunk.lines:
+			if hunk.start_a < last_hunk.start_a + last_hunk.len_a: # if hunks overlap
+				if hunk.start_a != last_hunk.start_a or hunk.len_a != last_hunk.len_a or hunk.len_b != last_hunk.len_b or hunk.lines != last_hunk.lines: # if hunks conflict
 					conflict_count += 1
 					print("Conflict #" + str(conflict_count) + ":")
 					print("  Hunk A:")
@@ -98,17 +129,19 @@ def process_file(content):
 						last_hunk.is_duplicate = True
 					else:
 						return None
-				else:
+				else: # if hunks are non-conflicting duplicates
 					hunk.is_duplicate = True
 		last_hunk = hunk
-	
+	# Remove hunks marked to be removed
 	sorted_hunks = [hunk for hunk in sorted_hunks if not hunk.is_duplicate]
 	
+	# Fix the new offsets
 	offset = 0
 	for hunk in sorted_hunks:
 		hunk.start_b = hunk.start_a + offset
 		offset += hunk.len_b - hunk.len_a
 	
+	# Build output
 	output = ""
 	for line in file_a.header:
 		output += line.content
