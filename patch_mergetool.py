@@ -76,17 +76,27 @@ def process_file(content):
 	sorted_hunks.sort(key = lambda hunk: hunk.start_a)
 	
 	last_hunk = None
+	conflict_count = 0
 	for hunk in sorted_hunks:
 		hunk.is_duplicate = False
 		if last_hunk != None:
 			if hunk.start_a < last_hunk.start_a + last_hunk.len_a:
 				if hunk.start_a != last_hunk.start_a or hunk.len_a != last_hunk.len_a or hunk.len_b != last_hunk.len_b or hunk.lines != last_hunk.lines:
-					if hunk.changed and last_hunk.changed:
-						return None
-					elif hunk.changed:
+					conflict_count += 1
+					print("Conflict #" + str(conflict_count) + ":")
+					print("  Hunk A:")
+					for line in last_hunk.lines:
+						print("    " + line.content)
+					print("  Hunk B:")
+					for line in hunk.lines:
+						print("    " + line.content)
+					answer = input("  Which hunk should be preferred (A/B)? Or press enter to abort the merge: ").lower()
+					if answer.startswith("a"):
+						hunk.is_duplicate = True
+					elif answer.startswith("b"):
 						last_hunk.is_duplicate = True
 					else:
-						hunk.is_duplicate = True
+						return None
 				else:
 					hunk.is_duplicate = True
 		last_hunk = hunk
@@ -112,6 +122,7 @@ def main(files):
 	for filename in files:
 		with open(filename) as f:
 			content = f.read()
+		print("Resolving conflicts in file " + filename)
 		content = process_file(content)
 		if content == None:
 			print("Could not resolve conflicts in file " + filename)
