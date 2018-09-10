@@ -7,6 +7,7 @@ import carpet.logging.logHelpers.PacketCounter;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.network.play.server.SPacketPlayerListHeaderFooter;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Tuple;
@@ -15,6 +16,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -53,31 +55,18 @@ public class HUDController
         player_huds.clear();
 
         if (LoggerRegistry.__tps)
-            LoggerRegistry.getLogger("tps").log(()-> send_tps_display(server));
+            log_tps(server);
 
         if (LoggerRegistry.__mobcaps)
-            LoggerRegistry.getLogger("mobcaps").log((option, player) -> {
-                int dim = player.dimension;
-                switch (option)
-                {
-                    case "overworld":
-                        dim = 0;
-                        break;
-                    case "nether":
-                        dim = -1;
-                        break;
-                    case "end":
-                        dim = 1;
-                        break;
-                }
-                return send_mobcap_display(dim);
-            });
+            log_mobcaps();
 
         if(LoggerRegistry.__counter)
-            LoggerRegistry.getLogger("counter").log((option)->send_counter_info(server, option));
+            log_counter(server);
 
         if (LoggerRegistry.__packets)
-            LoggerRegistry.getLogger("packets").log(()-> packetCounter());
+            LoggerRegistry.getLogger("packets").log(()-> packetCounter(),
+                    "TOTAL_IN", PacketCounter.totalIn,
+                    "TOTAL_OUT", PacketCounter.totalOut);
 
         for (EntityPlayer player: player_huds.keySet())
         {
@@ -87,14 +76,45 @@ public class HUDController
             ((EntityPlayerMP)player).connection.sendPacket(packet);
         }
     }
-    private static ITextComponent [] send_tps_display(MinecraftServer server)
+    private static void log_tps(MinecraftServer server)
     {
         double MSPT = MathHelper.average(server.tickTimeArray) * 1.0E-6D;
         double TPS = 1000.0D / Math.max((TickSpeed.time_warp_start_time != 0)?0.0:TickSpeed.mspt, MSPT);
         String color = Messenger.heatmap_color(MSPT,TickSpeed.mspt);
-        return new ITextComponent[]{Messenger.m(null,
+        ITextComponent[] message = new ITextComponent[]{Messenger.m(null,
                 "g TPS: ", String.format(Locale.US, "%s %.1f",color, TPS),
                 "g  MSPT: ", String.format(Locale.US,"%s %.1f", color, MSPT))};
+        LoggerRegistry.getLogger("tps").log(() -> message, "MSPT", MSPT, "TPS", TPS);
+    }
+    
+    private static void log_mobcaps()
+    {
+        List<Object> commandParams = new ArrayList<>();
+        for (int dim = -1; dim <= 1; dim++)
+        {
+            for (EnumCreatureType type : EnumCreatureType.values())
+            {
+                Tuple<Integer, Integer> counts = SpawnReporter.mobcaps.get(dim).getOrDefault(type, new Tuple<>(0, 0));
+                int actual = counts.getFirst(), limit = counts.getSecond();
+                Collections.addAll(commandParams, type.name() + "_ACTUAL_DIM_" + dim, actual, type.name() + "_ACTUAL_LIMIT_" + dim, limit);
+            }
+        }
+        LoggerRegistry.getLogger("mobcaps").log((option, player) -> {
+            int dim = player.dimension;
+            switch (option)
+            {
+                case "overworld":
+                    dim = 0;
+                    break;
+                case "nether":
+                    dim = -1;
+                    break;
+                case "end":
+                    dim = 1;
+                    break;
+            }
+            return send_mobcap_display(dim);
+        }, commandParams.toArray());
     }
 
     private static ITextComponent [] send_mobcap_display(int dim)
@@ -112,6 +132,14 @@ public class HUDController
         }
         components.remove(components.size()-1);
         return new ITextComponent[]{Messenger.m(null, components.toArray(new Object[0]))};
+    }
+    
+    private static void log_counter(MinecraftServer server)
+    {
+        List<Object> commandParams = new ArrayList<>();
+        for (EnumDyeColor color : EnumDyeColor.values())
+            Collections.addAll(commandParams, color.getName().toUpperCase(Locale.ENGLISH), HopperCounter.get_total_items(color.getName()));
+        LoggerRegistry.getLogger("counter").log((option)->send_counter_info(server, option), commandParams);
     }
 
     private static ITextComponent [] send_counter_info(MinecraftServer server, String color)

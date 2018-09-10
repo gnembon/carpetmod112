@@ -128,7 +128,7 @@
                              }
  
 +                            if (LoggerRegistry.__kills)
-+                                KillLogHelper.onSweep(this.func_146103_bH().getName(), mobs_smashed);
++                                KillLogHelper.onSweep(this, mobs_smashed);
 +
                              this.field_70170_p.func_184148_a((EntityPlayer)null, this.field_70165_t, this.field_70163_u, this.field_70161_v, SoundEvents.field_187730_dW, this.func_184176_by(), 1.0F, 1.0F);
                              this.func_184810_cG();
@@ -136,7 +136,7 @@
 +                        else
 +                        {
 +                            if (LoggerRegistry.__kills)
-+                                KillLogHelper.onNonSweepAttack(this.func_146103_bH().getName());
++                                KillLogHelper.onNonSweepAttack(this);
 +                        }
  
 +
@@ -151,7 +151,7 @@
 +            else
 +            {
 +                if (LoggerRegistry.__kills)
-+                    KillLogHelper.onDudHit(this.func_146103_bH().getName());
++                    KillLogHelper.onDudHit(this);
 +            }
 +            //CM END
          }

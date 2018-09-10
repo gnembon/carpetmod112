@@ -120,6 +120,7 @@ public class Logger
      */
     @FunctionalInterface
     public interface lMessage { ITextComponent [] get(String playerOption, EntityPlayer player);}
+    public void logNoCommand(lMessage messagePromise) {log(messagePromise, (Object[])null);}
     public void log(lMessage messagePromise, Object... commandParams)
     {
         for (Map.Entry<String,String> en : subscribedOnlinePlayers.entrySet())
@@ -140,6 +141,7 @@ public class Logger
      */
     @FunctionalInterface
     public interface lMessageIgnorePlayer { ITextComponent [] get(String playerOption);}
+    public void logNoCommand(lMessageIgnorePlayer messagePromise) {log(messagePromise, (Object[])null);}
     public void log(lMessageIgnorePlayer messagePromise, Object... commandParams)
     {
         Map<String, ITextComponent[]> cannedMessages = new HashMap<>();
@@ -162,6 +164,7 @@ public class Logger
     /**
      * guarantees that message is evaluated once, so independent from the player and chosen option
      */
+    public void logNoCommand(Supplier<ITextComponent[]> messagePromise) {log(messagePromise, (Object[])null);}
     public void log(Supplier<ITextComponent[]> messagePromise, Object... commandParams)
     {
         ITextComponent [] cannedMessages = null;
@@ -178,7 +181,7 @@ public class Logger
 
     public void sendPlayerMessage(String playerName, EntityPlayerMP player, ITextComponent[] messages, Object[] commandParams)
     {
-        handlers.getOrDefault(playerName, defaultHandler).handle(player, messages, commandParams, commandParams);
+        handlers.getOrDefault(playerName, defaultHandler).handle(player, messages, commandParams);
     }
 
     /**

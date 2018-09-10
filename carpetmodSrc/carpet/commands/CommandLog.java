@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import carpet.CarpetSettings;
 import carpet.logging.LogHandler;
 import carpet.logging.Logger;
@@ -23,7 +25,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class CommandLog extends CommandCarpetBase {
 
-    private final String USAGE = "/log (interactive menu) OR /log <logName> [?option] [player] [handler] OR /log <logName> clear [player]";
+    private final String USAGE = "/log (interactive menu) OR /log <logName> [?option] [player] [handler ...] OR /log <logName> clear [player]";
 
     @Override
     public String getName() {
@@ -143,7 +145,7 @@ public class CommandLog extends CommandCarpetBase {
             LogHandler handler = null;
             if (args.length >= 4)
             {
-                handler = LogHandler.getHandlerByName(args[3]);
+                handler = LogHandler.createHandler(args[3], ArrayUtils.subarray(args, 4, args.length));
                 if (handler == null)
                 {
                     throw new CommandException("Invalid handler");

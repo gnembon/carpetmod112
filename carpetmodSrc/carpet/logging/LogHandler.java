@@ -17,7 +17,7 @@ public abstract class LogHandler
     public static final LogHandler CHAT = new LogHandler()
     {
         @Override
-        public void handle(EntityPlayerMP player, ITextComponent[] message, Object... commandParams)
+        public void handle(EntityPlayerMP player, ITextComponent[] message, Object[] commandParams)
         {
             Arrays.stream(message).forEach(player::sendMessage);
         }
@@ -25,7 +25,7 @@ public abstract class LogHandler
     public static final LogHandler HUD = new LogHandler()
     {
         @Override
-        public void handle(EntityPlayerMP player, ITextComponent[] message, Object... commandParams)
+        public void handle(EntityPlayerMP player, ITextComponent[] message, Object[] commandParams)
         {
             for (ITextComponent m : message)
                 HUDController.addMessage(player, m);
@@ -40,30 +40,37 @@ public abstract class LogHandler
         }
     };
 
-    private static final Map<String, LogHandler> REGISTRY = new HashMap<>();
+    private static final Map<String, LogHandlerCreator> CREATORS = new HashMap<>();
     
     static
     {
-        register("chat", CHAT);
-        register("hud", HUD);
+        registerCreator("chat", extraArgs -> CHAT);
+        registerCreator("hud", extraArgs -> HUD);
+        registerCreator("command", CommandLogHandler::new);
     }
     
-    private static void register(String name, LogHandler handler)
+    @FunctionalInterface
+    private static interface LogHandlerCreator
     {
-        REGISTRY.put(name, handler);
+        LogHandler create(String... extraArgs);
     }
     
-    public static LogHandler getHandlerByName(String name)
+    private static void registerCreator(String name, LogHandlerCreator creator)
     {
-        return REGISTRY.get(name);
+        CREATORS.put(name, creator);
+    }
+    
+    public static LogHandler createHandler(String name, String... extraArgs)
+    {
+        return CREATORS.get(name).create(extraArgs);
     }
     
     public static List<String> getHandlerNames()
     {
-        return REGISTRY.keySet().stream().sorted().collect(Collectors.toList());
+        return CREATORS.keySet().stream().sorted().collect(Collectors.toList());
     }
     
-    public abstract void handle(EntityPlayerMP player, ITextComponent[] message, Object... commandParams);
+    public abstract void handle(EntityPlayerMP player, ITextComponent[] message, Object[] commandParams);
     
     public void onAddPlayer(String playerName) {}
     

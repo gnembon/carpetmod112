@@ -329,7 +329,7 @@
              {
                  return false;
              }
-@@ -2149,6 +2288,13 @@
+@@ -2149,6 +2288,16 @@
                          {
                              this.field_72986_A.func_76090_f(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -338,12 +338,15 @@
 +                        {
 +                            LoggerRegistry.getLogger("weather").log(()-> new ITextComponent[]{
 +                                    Messenger.s(null, "Thunder is set to: " + this.field_72986_A.func_76061_m() + " time: " + this.field_72986_A.func_76071_n())
-+                            });
++                            },
++                            "TYPE", "Thunder",
++                            "THUNDERING", this.field_72986_A.func_76061_m(),
++                            "TIME", this.field_72986_A.func_76071_n());
 +                        }
                      }
                      else
                      {
-@@ -2173,6 +2319,13 @@
+@@ -2173,6 +2322,16 @@
                          {
                              this.field_72986_A.func_76080_g(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -352,12 +355,15 @@
 +                        {
 +                            LoggerRegistry.getLogger("weather").log(()-> new ITextComponent[]{
 +                                    Messenger.s(null, "Rain is set to: " + this.field_72986_A.func_76059_o() + " time: " + this.field_72986_A.func_76083_p())
-+                            });
++                            },
++                            "TYPE", "Rain",
++                            "RAINING", this.field_72986_A.func_76059_o(),
++                            "TIME", this.field_72986_A.func_76083_p());
 +                        }
                      }
                      else
                      {
-@@ -2383,6 +2536,11 @@
+@@ -2383,6 +2542,11 @@
  
      public boolean func_180500_c(EnumSkyBlock p_180500_1_, BlockPos p_180500_2_)
      {
@@ -369,7 +375,7 @@
          if (!this.func_175648_a(p_180500_2_, 17, false))
          {
              return false;
-@@ -3263,30 +3421,44 @@
+@@ -3263,30 +3427,44 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
@@ -426,7 +432,7 @@
      }
  
      public DifficultyInstance func_175649_E(BlockPos p_175649_1_)
-@@ -3357,4 +3529,17 @@
+@@ -3357,4 +3535,17 @@
      {
          return null;
      }
