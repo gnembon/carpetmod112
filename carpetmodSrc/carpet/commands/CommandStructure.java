@@ -7,12 +7,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -85,7 +87,10 @@ public class CommandStructure extends CommandCarpetBase
         if (args.length < 2)
             throw new WrongUsageException(USAGE_LOAD);
         
+        args = replaceQuotes(args);
+        
         String structureName = args[1];
+
         for (char illegal : ChatAllowedCharacters.ILLEGAL_STRUCTURE_CHARACTERS)
             structureName = structureName.replace(illegal, '_');
         TemplateManager manager = server.worlds[0].getStructureTemplateManager();
@@ -177,6 +182,8 @@ public class CommandStructure extends CommandCarpetBase
     {
         if (args.length < 8)
             throw new WrongUsageException(USAGE_SAVE);
+        
+        args = replaceQuotes(args);
         
         BlockPos pos1 = parseBlockPos(sender, args, 2, false);
         BlockPos pos2 = parseBlockPos(sender, args, 5, false);
@@ -302,11 +309,37 @@ public class CommandStructure extends CommandCarpetBase
         }
         else if ("load".equals(args[0]) || "save".equals(args[0]))
         {
-            if (args.length == 2)
+            if (args[1].startsWith("\""))
             {
-                return getListOfStringsMatchingLastWord(args, listStructures(server.worlds[0].getStructureTemplateManager()));
+                boolean replaced = false;
+                try
+                {
+                    if (!args[args.length - 1].endsWith("\""))
+                    {
+                        args = replaceQuotes(args);
+                        replaced = true;
+                    }
+                }
+                catch (CommandException e)
+                {
+                }
+                if (!replaced)
+                {
+                    String commonPrefix = Arrays.stream(args).skip(1).limit(args.length - 2).collect(Collectors.joining(" "));
+                    List<String> structs = listStructures(server.worlds[0].getStructureTemplateManager());
+                    structs = structs.stream().map(s -> "\"" + s + "\"").collect(Collectors.toList());
+                    if (!commonPrefix.isEmpty())
+                        structs = structs.stream().filter(s -> s.startsWith(commonPrefix + " ")).map(s -> s.substring(commonPrefix.length() + 1)).collect(Collectors.toList());
+                    structs = structs.stream().map(s -> s.split(" ")[0]).collect(Collectors.toList());
+                    return getListOfStringsMatchingLastWord(args, structs);
+                }
             }
-            else if (args.length >= 3 && args.length <= 5)
+            else if (args.length == 2)
+            {
+                return getListOfStringsMatchingLastWord(args, listStructures(server.worlds[0].getStructureTemplateManager()).stream().filter(s -> !s.contains(" ")).collect(Collectors.toList()));
+            }
+            
+            if (args.length >= 3 && args.length <= 5)
             {
                 return getTabCompletionCoordinate(args, 2, targetPos);
             }
@@ -348,6 +381,30 @@ public class CommandStructure extends CommandCarpetBase
         else
         {
             return Collections.emptyList();
+        }
+    }
+    
+    private static String[] replaceQuotes(String[] args) throws CommandException
+    {
+        String structureName = args[1];
+        if (structureName.startsWith("\""))
+        {
+            int i = 2;
+            while (!structureName.endsWith("\"") && i < args.length) {
+                structureName += " " + args[i++];
+            }
+            if (!structureName.endsWith("\""))
+                throw new CommandException("Unbalanced \"\" quotes");
+            structureName = structureName.substring(1, structureName.length() - 1);
+            String[] newArgs = new String[args.length - (i - 2)];
+            newArgs[0] = args[0];
+            newArgs[1] = structureName;
+            System.arraycopy(args, i, newArgs, 2, newArgs.length - 2);
+            return newArgs;
+        }
+        else
+        {
+            return args;
         }
     }
 
