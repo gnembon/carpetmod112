@@ -32,7 +32,7 @@
 +        if (CarpetSettings.getBool("disableSpawnChunks"))
 +            canDrop = true;
 +        if (CarpetSettings.getBool("tickingAreas"))
-+            canDrop |= !TickingArea.isTickingChunk(field_73251_h, p_189549_1_.field_76635_g, p_189549_1_.field_76647_h);
++            canDrop &= !TickingArea.isTickingChunk(field_73251_h, p_189549_1_.field_76635_g, p_189549_1_.field_76647_h);
 +        if (canDrop)
          {
              this.field_73248_b.add(Long.valueOf(ChunkPos.func_77272_a(p_189549_1_.field_76635_g, p_189549_1_.field_76647_h)));
