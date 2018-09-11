@@ -52,7 +52,7 @@ public class CarpetClientServer {
         return players;
     }
 
-    public static void sender(PacketBuffer data)
+    public static boolean sender(PacketBuffer data)
     {
         try
         {
@@ -60,23 +60,27 @@ public class CarpetClientServer {
             for (EntityPlayerMP player : CarpetClientServer.getRegisteredPlayers()) {
                 player.connection.sendPacket(packet);
             }
+            return true;
         }
         catch (IllegalArgumentException exc)
         {
-            CarpetSettings.LOG.error("Village payload too large - skipping ...");
+            // Payload too large
+            return false;
         }
     }
 
-    public static void sender(PacketBuffer data, EntityPlayerMP player)
+    public static boolean sender(PacketBuffer data, EntityPlayerMP player)
     {
         try
         {
             SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
             player.connection.sendPacket(packet);
+            return true;
         }
         catch (IllegalArgumentException exc)
         {
-            CarpetSettings.LOG.error("Village payload too large - skipping ...");
+            // Payload too large
+            return false;
         }
     }
 
