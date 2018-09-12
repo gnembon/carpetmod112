@@ -1,14 +1,16 @@
 package carpet.carpetclient;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.EntityPlayerMP;
 import carpet.CarpetSettings;
 import carpet.CarpetSettings.CarpetSettingEntry;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
 import carpet.helpers.TickSpeed;
+import io.netty.buffer.Unpooled;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.PacketBuffer;
 
 public class CarpetClientMessageHandler {
 	// Main packet data names
@@ -17,6 +19,10 @@ public class CarpetClientMessageHandler {
 	public static final int VILLAGE_MARKERS = 2;
 	public static final int BOUNDINGBOX_MARKERS = 3;
 	public static final int TICKRATE_CHANGES = 4;
+	public static final int LARGE_VILLAGE_MARKERS_START = 5;
+	public static final int LARGE_VILLAGE_MARKERS = 6;
+	public static final int LARGE_BOUNDINGBOX_MARKERS_START = 7;
+	public static final int LARGE_BOUNDINGBOX_MARKERS = 8;
 
 	public static void handler(EntityPlayerMP sender, PacketBuffer data) {
 		int type = data.readInt();
@@ -79,7 +85,25 @@ public class CarpetClientMessageHandler {
 
 		data.writeCompoundTag(compound);
 
-		CarpetClientServer.sender(data, sender);
+		if (!CarpetClientServer.sender(data, sender)) {
+		    // Payload was too large, try large packets for newer CC versions
+		    NBTTagList villages = compound.getTagList("Villages", 10);
+		    
+		    data = new PacketBuffer(Unpooled.buffer());
+		    data.writeInt(CarpetClientMessageHandler.LARGE_VILLAGE_MARKERS_START);
+		    data.writeVarInt(villages.tagCount());
+		    CarpetClientServer.sender(data, sender);
+		    
+		    for (int i = 0; i < villages.tagCount(); i += 256) {
+		        data = new PacketBuffer(Unpooled.buffer());
+		        data.writeInt(CarpetClientMessageHandler.LARGE_VILLAGE_MARKERS);
+		        data.writeByte(Math.min(villages.tagCount() - i - 1, 255));
+		        for (int j = i; j < villages.tagCount() && j < i + 256; j++) {
+		            data.writeCompoundTag(villages.getCompoundTagAt(j));
+		        }
+		        CarpetClientServer.sender(data, sender);
+		    }
+		}
 	}
 
 	public static void sendNBTBoundingboxData(EntityPlayerMP sender, NBTTagCompound compound) {
@@ -88,7 +112,33 @@ public class CarpetClientMessageHandler {
 
 		data.writeCompoundTag(compound);
 
-		CarpetClientServer.sender(data, sender);
+		if (!CarpetClientServer.sender(data, sender)) {
+		    // Payload was too large, try large packets for newer CC versions
+		    NBTTagList boxes = compound.getTagList("Boxes", 9);
+		    compound.removeTag("Boxes");
+		    List<NBTTagCompound> allBoxes = new ArrayList<>();
+		    for (int i = 0; i < boxes.tagCount(); i++) {
+		        NBTTagList list = (NBTTagList) boxes.get(i);
+		        for (int j = 0; j < list.tagCount(); j++) {
+		            allBoxes.add(list.getCompoundTagAt(j));
+		        }
+		    }
+		    
+		    data = new PacketBuffer(Unpooled.buffer());
+		    data.writeInt(CarpetClientMessageHandler.LARGE_BOUNDINGBOX_MARKERS_START);
+		    data.writeCompoundTag(compound);
+		    data.writeVarInt(allBoxes.size());
+		    CarpetClientServer.sender(data, sender);
+		    
+		    for (int i = 0; i < allBoxes.size(); i += 256) {
+		        data = new PacketBuffer(Unpooled.buffer());
+		        data.writeInt(CarpetClientMessageHandler.LARGE_BOUNDINGBOX_MARKERS);
+		        data.writeByte(Math.min(allBoxes.size() - i - 1, 255));
+		        for (int j = i; j < allBoxes.size() && j < i + 256; j++)
+		            data.writeCompoundTag(allBoxes.get(j));
+		        CarpetClientServer.sender(data, sender);
+		    }
+		}
 	}
 
 	public static void sendTickRateChanges() {
