@@ -270,6 +270,8 @@ public class CarpetSettings
   rule("disableSpawnChunks",    "creative", "Removes the spawn chunks."),
   rule("structureBlockLimit",   "creative", "Changes the structure block dimension limit.")
                                 .choices("32", "32 50 200 1000").setNotStrict(),
+  rule("leashFix",              "fix",      "Fixes to leashes.")
+                                .choices("false", "false casual cool"),
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -717,6 +719,7 @@ public class CarpetSettings
         set("unloadedEntityFix","true");
         set("hopperDuplicationFix","true");
         set("calmNetherFires","true");
+        set("leashFix","true");
     }
 
     public static class CarpetSettingEntry 
