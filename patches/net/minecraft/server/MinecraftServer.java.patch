@@ -6,9 +6,9 @@
  
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
++import carpet.carpetclient.CarpetClientChunkLogger;
 +import carpet.helpers.TickSpeed;
 +import carpet.utils.CarpetProfiler;
-+import carpet.utils.Chunklogger;
 +import carpet.utils.TickingArea;
 +
  public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
@@ -145,13 +145,14 @@
                      this.field_71296_Q = true;
                  }
              }
-@@ -592,6 +640,16 @@
+@@ -592,6 +640,17 @@
      {
          long i = System.nanoTime();
          ++this.field_71315_w;
 +        
++        // ChunkLogger - 0x-CARPET
 +    	for(World w: this.field_71305_c) {
-+    		Chunklogger.clearAll(w);
++    		w.chunklogger.startTick();
 +    	}
 +    	
 +        CarpetServer.tick(this);
@@ -162,7 +163,7 @@
  
          if (this.field_71295_T)
          {
-@@ -621,12 +679,17 @@
+@@ -621,12 +680,17 @@
  
          if (this.field_71315_w % 900 == 0)
          {
@@ -180,21 +181,25 @@
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
          this.field_71304_b.func_76319_b();
-@@ -644,6 +707,13 @@
+@@ -644,6 +708,17 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
++        
++        // ChunkLogger - 0x-CARPET
++    	for(World w: this.field_71305_c) {
++    		w.chunklogger.checkChunkStatus(w);
++    	}
++    	CarpetClientChunkLogger.sendAll();
++        
 +        if (CarpetProfiler.tick_health_requested != 0L)
 +        {
 +            CarpetProfiler.end_tick_profiling(this);
 +        }
-+    	for(World w: this.field_71305_c) {
-+    		Chunklogger.logAll(w);
-+    	}
      }
  
      public void func_71190_q()
-@@ -710,10 +780,12 @@
+@@ -710,10 +785,12 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  

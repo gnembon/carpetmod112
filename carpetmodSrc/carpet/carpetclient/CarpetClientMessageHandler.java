@@ -17,7 +17,8 @@ public class CarpetClientMessageHandler {
 	public static final int VILLAGE_MARKERS = 2;
 	public static final int BOUNDINGBOX_MARKERS = 3;
 	public static final int TICKRATE_CHANGES = 4;
-
+	public static final int CHUNK_LOGGER = 5;
+	
 	public static void handler(EntityPlayerMP sender, PacketBuffer data) {
 		int type = data.readInt();
 
@@ -29,6 +30,8 @@ public class CarpetClientMessageHandler {
 			registerVillagerMarkers(sender, data);
 		} else if (BOUNDINGBOX_MARKERS == type) {
 			boundingboxRequest(sender, data);
+		} else if (CHUNK_LOGGER == type) {
+			CarpetClientChunkLogger.serializer.registePlayer(sender, data);
 		}
 	}
 
@@ -98,4 +101,13 @@ public class CarpetClientMessageHandler {
 
 		CarpetClientServer.sender(data);
 	}
+	
+    public static void sendNBTChunkData(EntityPlayerMP sender, int dataType, NBTTagCompound compound) {
+        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+        data.writeInt(CarpetClientMessageHandler.CHUNK_LOGGER);
+        data.writeInt(dataType);
+        data.writeCompoundTag(compound);
+
+        CarpetClientServer.sender(data);
+    }
 }
