@@ -35,6 +35,7 @@
 +        this.func_71560_a(new CommandTickingArea());
 +        this.func_71560_a(new CommandStructure());
 +        this.func_71560_a(new CommandFillBiome());
++        this.func_71560_a(new CommandPing());
  
 +        this.func_71560_a(new CommandPlayer());
 +        this.func_71560_a(new CommandAutosave());
