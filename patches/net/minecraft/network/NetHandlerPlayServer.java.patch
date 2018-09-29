@@ -15,7 +15,7 @@
      private static final Logger field_147370_c = LogManager.getLogger();
      public final NetworkManager field_147371_a;
 -    private final MinecraftServer field_147367_d;
-+    protected final MinecraftServer field_147367_d; // CM changed from private
++    public final MinecraftServer field_147367_d; // CM changed from private
      public EntityPlayerMP field_147369_b;
      private int field_147368_e;
      private int field_147378_h;

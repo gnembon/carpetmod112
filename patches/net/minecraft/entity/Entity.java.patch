@@ -129,7 +129,7 @@
          return EnumFacing.func_176731_b(MathHelper.func_76128_c((double)(this.field_70177_z * 4.0F / 360.0F) + 0.5D) & 3);
      }
  
-@@ -2886,4 +2933,14 @@
+@@ -2886,4 +2933,18 @@
      {
          return 1;
      }
@@ -141,6 +141,10 @@
 +    }
 +    
 +    public void postLoad()
++    {
++    }
++
++    public void postReadFromNBT()
 +    {
 +    }
  }

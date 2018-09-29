@@ -6,6 +6,7 @@ package carpet.patches;
  import net.minecraft.server.MinecraftServer;
  import net.minecraft.server.management.PlayerInteractionManager;
  import com.mojang.authlib.GameProfile;
+ import net.minecraft.tileentity.TileEntitySkull;
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.text.TextComponentTranslation;
  import net.minecraft.world.WorldServer;
@@ -16,11 +17,28 @@ package carpet.patches;
 
 public class EntityPlayerMPFake extends EntityPlayerMP
 {
-    public static EntityPlayerMPFake createFake(String username, MinecraftServer server, double d0, double d1, double d2, double yaw, double pitch, int dimension, int gamemode)
+    private double oldPosX;
+    private double oldPosY;
+    private double oldPosZ;
+
+    private static double setX;
+    private static double setY;
+    private static double setZ;
+    private static float setYaw;
+    private static float setPitch;
+    
+    public static EntityPlayerMPFake createFake(String username, MinecraftServer server, double x, double y, double z, double yaw, double pitch, int dimension, int gamemode)
     {
+        setX = x;
+        setY = y;
+        setZ = z;
+        setYaw = (float)yaw;
+        setPitch = (float)pitch;
+        
         WorldServer worldIn = server.getWorld(dimension);
         PlayerInteractionManager interactionManagerIn = new PlayerInteractionManager(worldIn);
         GameProfile gameprofile = server.getPlayerProfileCache().getGameProfileForUsername(username);
+        gameprofile = profileCasher(gameprofile);
         EntityPlayerMPFake instance = new EntityPlayerMPFake(server, worldIn, gameprofile, interactionManagerIn);
         server.getPlayerList().initializeConnectionToPlayer(new NetworkManagerFake(EnumPacketDirection.CLIENTBOUND), instance);
         if (instance.dimension != dimension) //player was logged in in a different dimension
@@ -32,12 +50,11 @@ public class EntityPlayerMPFake extends EntityPlayerMP
             worldIn.spawnEntity(instance);
             instance.setWorld(worldIn);
             server.getPlayerList().preparePlayer(instance, worldIn);
-            instance.connection.setPlayerLocation(d0, d1, d2, (float)yaw, (float)pitch);
+            instance.connection.setPlayerLocation(x, y, z, (float)yaw, (float)pitch);
             instance.interactionManager.setWorld(worldIn);
         }
         instance.setHealth(20.0F);
         instance.isDead = false;
-        instance.connection.setPlayerLocation(d0, d1, d2, (float)yaw, (float)pitch);
         instance.stepHeight = 0.6F;
         interactionManagerIn.setGameType(GameType.getByID(gamemode));
         server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityHeadLook(instance, (byte)(instance.rotationYawHead * 256 / 360) ),instance.dimension);
@@ -67,6 +84,17 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         return playerShadow;
     }
 
+    private static GameProfile profileCasher(GameProfile gameprofile){
+        if(!profileWithTexture(gameprofile) ) {
+            gameprofile = TileEntitySkull.updateGameprofile(gameprofile);
+        }
+        return gameprofile;
+    }
+
+    private static boolean profileWithTexture(GameProfile gameprofile) {
+        return gameprofile.getProperties().containsKey("textures");
+    }
+
     private EntityPlayerMPFake(MinecraftServer server, WorldServer worldIn, GameProfile profile, PlayerInteractionManager interactionManagerIn)
     {
         super(server, worldIn, profile, interactionManagerIn);
@@ -82,6 +110,16 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     {
         super.onUpdate();
         this.onUpdateEntity();
+        playerMoved();
+    }
+
+    private void playerMoved() {
+        if(posX != oldPosX || posY != oldPosY || posZ != oldPosZ){
+            connection.server.getPlayerList().serverUpdateMovingPlayer(this);
+        }
+        oldPosX = posX;
+        oldPosY = posY;
+        oldPosZ = posZ;
     }
 
     @Override
@@ -89,5 +127,9 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     {
         super.onDeath(cause);
         getServer().getPlayerList().playerLoggedOut(this);
+    }
+
+    public void postReadFromNBT(){
+        this.setLocationAndAngles(setX, setY, setZ, setYaw, setPitch);
     }
 }
