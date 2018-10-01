@@ -65,16 +65,16 @@ public class CommandAstral extends CommandCarpetBase {
                 }
             } else if (type.equals("rightClick")) {
                 if (args.length >= 2) {
-                    rightSpeed = parseInt(args[2]);
+                    rightSpeed = parseInt(args[1]);
                 } else {
                     rightSpeed = 4;
                 }
             } else if (type.equals("leftAndRight")) {
                 if (args.length == 2) {
-                    leftSpeed = rightSpeed = parseInt(args[2]);
+                    leftSpeed = rightSpeed = parseInt(args[1]);
                 } else if (args.length >= 3) {
-                    leftSpeed = parseInt(args[2]);
-                    rightSpeed = parseInt(args[3]);
+                    leftSpeed = parseInt(args[1]);
+                    rightSpeed = parseInt(args[2]);
                 } else {
                     leftSpeed = 20;
                     rightSpeed = 4;
