@@ -257,6 +257,7 @@ public class CarpetClientChunkLogger{
 		
 		public static final int PACKET_EVENTS = 0;
 		public static final int PACKET_STACKTRACE = 1;
+		public static final int PACKET_STACKTRACE_ALL = 2;
 
 		private HashSet<EntityPlayerMP> playersLoggingChunks = new HashSet();
 		private HashSet<EntityPlayerMP> playersGettingStackTraces = new HashSet();
@@ -294,9 +295,9 @@ public class CarpetClientChunkLogger{
 		}
 		
 		private void sendInitalStackTraces(EntityPlayerMP sender) {
-			NBTTagCompound stackData = serializeStackTraces(stackTraces.getInitialStackTracesForNewClient(),0);
+			NBTTagCompound stackData = serializeStackTraceAll(stackTraces.getInitialStackTracesForNewClient());
 			if(stackData != null) {
-				CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_STACKTRACE, stackData);
+				CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_STACKTRACE_ALL, stackData);
 			}
 		}
 		
@@ -321,7 +322,7 @@ public class CarpetClientChunkLogger{
 			}
 			ArrayList<String> traces = stackTraces.getNewStackTraces();
 			int tracesStartId = stackTraces.getStackTracesCount() - traces.size();
-			NBTTagCompound stackData = serializeStackTraces(traces, tracesStartId);
+			NBTTagCompound stackData = serializeStackTrace(traces, tracesStartId);
 			if(stackData != null) {
 				for(EntityPlayerMP player: this.playersGettingStackTraces) {
 					CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_STACKTRACE, stackData);
@@ -365,22 +366,32 @@ public class CarpetClientChunkLogger{
 			}
 			chunkData.setTag("chunkData", list);
 			chunkData.setInteger("dimension", dimension);
-			chunkData.setTag("data", chunkData);
 			return chunkData;
 		}
 
-		private NBTTagCompound serializeStackTraces(ArrayList<String> traces, int startId) {
-			if(traces.isEmpty()) {
+		private NBTTagCompound serializeStackTrace(ArrayList<String> traces, int id) {
+			if (traces.isEmpty()) {
+				return null;
+			}
+			String s;
+			try {
+				s = traces.get(id);
+			} catch (Exception e) {
+				return null;
+			}
+			NBTTagCompound stackTrace = new NBTTagCompound();
+			stackTrace.setInteger("id", id);
+			stackTrace.setString("stack", s);
+			return stackTrace;
+		}
+
+		private NBTTagCompound serializeStackTraceAll(ArrayList<String> traces) {
+			if (traces.isEmpty()) {
 				return null;
 			}
 			NBTTagList list = new NBTTagList();
-			int i = 0;
-			for(String s: traces) {
-				NBTTagCompound stackTrace = new NBTTagCompound();
-				stackTrace.setInteger("id", startId+i);
-				stackTrace.setString("stack", s);
-				list.appendTag(stackTrace);
-				++i;
+			for(int i = 0; i < traces.size(); i++){
+				list.appendTag(serializeStackTrace(traces, i) );
 			}
 			NBTTagCompound stackList = new NBTTagCompound();
 			stackList.setTag("stackList", list);

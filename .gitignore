@@ -26,6 +26,7 @@
 /src__/
 /test/
 /resources/
+/out/
 
 # Patch rejects
 /patches-/
