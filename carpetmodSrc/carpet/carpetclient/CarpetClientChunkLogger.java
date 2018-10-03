@@ -16,6 +16,7 @@ import net.minecraft.world.gen.ChunkProviderServer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.function.BiFunction;
 
@@ -257,8 +258,8 @@ public class CarpetClientChunkLogger{
 		public static final int PACKET_EVENTS = 0;
 		public static final int PACKET_STACKTRACE = 1;
 
-		private ArrayList<EntityPlayerMP> playersLoggingChunks = new ArrayList<>();
-		private ArrayList<EntityPlayerMP> playersGettingStackTraces = new ArrayList<>();
+		private HashSet<EntityPlayerMP> playersLoggingChunks = new HashSet();
+		private HashSet<EntityPlayerMP> playersGettingStackTraces = new HashSet();
 		
 		private final BiFunction<World,Integer,NBTTagCompound> initalChunksSerializer = (World w, Integer dimension) -> {
 			return serializeEvents(w.chunklogger.getInitialChunksForNewClient(), dimension);
@@ -267,18 +268,18 @@ public class CarpetClientChunkLogger{
 			return serializeEvents(w.chunklogger.getEventsThisGametick(), dimension);
 		};
 		
-		public void registePlayer(EntityPlayerMP sender, PacketBuffer data) {
+		public void registerPlayer(EntityPlayerMP sender, PacketBuffer data) {
 			boolean addPlayer = data.readBoolean();
 			boolean getStackTraces = data.readBoolean();
 			if (addPlayer) {
-				playersLoggingChunks.add(sender);
-				
 				if(getStackTraces) {
 					playersGettingStackTraces.add(sender);
-					stackTraces.getInitialStackTracesForNewClient();
+					this.sendInitalStackTraces(sender);
 				}
+				playersLoggingChunks.add(sender);
+				this.sendInitalChunks(sender);
 			} else {
-				playersLoggingChunks.remove(sender);
+				this.unregisterPlayer(sender);
 			}
 		}
 		
@@ -307,7 +308,7 @@ public class CarpetClientChunkLogger{
 			if(this.playersLoggingChunks.isEmpty()) {
 				return;
 			}
-			MinecraftServer server = this.playersLoggingChunks.get(0).server;
+			MinecraftServer server = this.playersLoggingChunks.iterator().next().server;
 			NBTTagCompound chunkData = serializeAllDimensions(server, updateChunksSerializer);
 			if(chunkData != null) {
 				for(EntityPlayerMP player: this.playersLoggingChunks) {

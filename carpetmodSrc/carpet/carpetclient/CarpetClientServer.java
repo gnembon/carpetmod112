@@ -46,6 +46,7 @@ public class CarpetClientServer {
     public void onPlayerDisconnect(EntityPlayerMP player) {
         players.remove(player);
         CarpetClientMarkers.unregisterPlayerVillageMarkers(player);
+        CarpetClientChunkLogger.serializer.unregisterPlayer(player);
     }
 
     static public ArrayList<EntityPlayerMP> getRegisteredPlayers() {
