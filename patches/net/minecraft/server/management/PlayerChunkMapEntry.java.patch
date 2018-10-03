@@ -1,9 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerChunkMapEntry.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerChunkMapEntry.java
-@@ -19,11 +19,13 @@
+@@ -19,11 +19,14 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
++import carpet.carpetclient.CarpetClientChunkLogger;
 +import carpet.helpers.IPlayerSensitiveTileEntity;
 +
  public class PlayerChunkMapEntry
@@ -15,7 +16,27 @@
      private final ChunkPos field_187284_d;
      private final short[] field_187285_e = new short[64];
      @Nullable
-@@ -248,12 +250,28 @@
+@@ -53,6 +56,9 @@
+         }
+         else
+         {
++            // ChunkLogger - 0x-CARPET
++        	CarpetClientChunkLogger.log(this.field_187282_b.func_72688_a(),field_187284_d.field_77276_a,field_187284_d.field_77275_b,CarpetClientChunkLogger.Event.PLAYER_ENTERS);
++
+             if (this.field_187283_c.isEmpty())
+             {
+                 this.field_187289_i = this.field_187282_b.func_72688_a().func_82737_E();
+@@ -80,6 +86,9 @@
+ 
+             if (this.field_187283_c.isEmpty())
+             {
++                // ChunkLogger - 0x-CARPET
++            	CarpetClientChunkLogger.log(this.field_187282_b.func_72688_a(),field_187284_d.field_77276_a,field_187284_d.field_77275_b,CarpetClientChunkLogger.Event.PLAYER_LEAVES);
++            	
+                 this.field_187282_b.func_187305_b(this);
+             }
+         }
+@@ -248,12 +257,28 @@
      {
          if (p_187273_1_ != null)
          {
