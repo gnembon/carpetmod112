@@ -438,7 +438,7 @@
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
              {
 +        		// ChunkLogger 0x-CARPET
-+        		CarpetClientChunkLogger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.GENERATING_STRUCTURES);
++        		CarpetClientChunkLogger.logger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.GENERATING_STRUCTURES);
 +        		
                  this.func_76630_e();
              }
@@ -453,7 +453,7 @@
 +        		this.func_150809_p();
 +        	}
 +    		// ChunkLogger 0x-CARPET
-+    		CarpetClientChunkLogger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.POPULATING);
++    		CarpetClientChunkLogger.logger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.POPULATING);
 +    		
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
              this.func_76630_e();

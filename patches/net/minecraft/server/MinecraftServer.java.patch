@@ -145,15 +145,13 @@
                      this.field_71296_Q = true;
                  }
              }
-@@ -592,6 +640,17 @@
+@@ -592,6 +640,15 @@
      {
          long i = System.nanoTime();
          ++this.field_71315_w;
 +        
 +        // ChunkLogger - 0x-CARPET
-+    	for(World w: this.field_71305_c) {
-+    		w.chunklogger.startTick();
-+    	}
++    	CarpetClientChunkLogger.logger.startTick();
 +    	
 +        CarpetServer.tick(this);
 +        if (CarpetProfiler.tick_health_requested != 0L)
@@ -163,7 +161,7 @@
  
          if (this.field_71295_T)
          {
-@@ -621,12 +680,17 @@
+@@ -621,12 +678,14 @@
  
          if (this.field_71315_w % 900 == 0)
          {
@@ -174,23 +172,19 @@
              this.field_71304_b.func_76319_b();
 +            CarpetProfiler.end_current_section();
          }
+-
 +        
- 
-+
-+
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
          this.field_71304_b.func_76319_b();
-@@ -644,6 +708,17 @@
+@@ -644,6 +703,15 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
 +        
 +        // ChunkLogger - 0x-CARPET
-+    	for(World w: this.field_71305_c) {
-+    		w.chunklogger.checkChunkStatus(w);
-+    	}
-+    	CarpetClientChunkLogger.sendAll();
++    	CarpetClientChunkLogger.logger.checkChunkState(this);;
++    	CarpetClientChunkLogger.logger.sendAll();;
 +        
 +        if (CarpetProfiler.tick_health_requested != 0L)
 +        {
@@ -199,7 +193,7 @@
      }
  
      public void func_71190_q()
-@@ -710,10 +785,12 @@
+@@ -710,10 +778,12 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  

@@ -18,14 +18,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.BiFunction;
 
 import carpet.helpers.StackTraceDeobfuscator;
 
 public class CarpetClientChunkLogger{
 	
-	static StackTraces stackTraces;
-	static ChunkLoggerSerializer serializer;
+	public static CarpetClientChunkLogger logger = new CarpetClientChunkLogger();
+	
+	boolean enabled = true;
+	boolean allowStacktraces = true;
+	StackTraces stackTraces;
+	ChunkLoggerSerializer clients;
 
 	public static enum Event {
 		MISSED_EVENT_ERROR,
@@ -41,29 +47,63 @@ public class CarpetClientChunkLogger{
 		GENERATING_STRUCTURES;
 	}
 
-	class ChunkLogEvent {
+	class ChunkLogCoords {
 		int chunkX;
 		int chunkZ;
-		Event event;
-		int stackTraceIndex;
+		int chunkDimension;
+		
+		ChunkLogCoords(int x, int z, int d){
+			chunkX = x;
+			chunkZ = z;
+			chunkDimension = d;
+		}
 		
 		@Override
-		public String toString() {
-			return String.format("Chunk %d %d: %s, Trace:\n%s", chunkX, chunkZ, event.toString(),stackTraces.getString(stackTraceIndex));
+		public boolean equals(Object oo) {
+			if(oo instanceof ChunkLogCoords){
+				ChunkLogCoords o = (ChunkLogCoords) oo;
+				return this.chunkX == o.chunkX && this.chunkZ == o.chunkZ && this.chunkDimension == o.chunkDimension;
+			}
+			return false;
+		}
+		
+		@Override
+		public int hashCode() {
+			return (chunkX*1281773681) | (chunkZ*1298815619) | (chunkDimension*2022620329); 
 		}
 	}
 	
-	ArrayList<ChunkLogEvent> eventsThisGametick;
-	HashMap<Long, ChunkLogEvent> lastEventForChunk;
-	HashMap<Long, ChunkLogEvent> lastPlayerEventForChunk;
+	class ChunkLogEvent {
+		Event event;
+		int stackTraceIndex;
+		
+		ChunkLogEvent(Event e, int trace) {
+			event = e;
+			stackTraceIndex = trace;
+		}
+	}
+	
+	class ChunkLog {
+		ChunkLogCoords coords;
+		ChunkLogEvent event;
+		
+		ChunkLog(ChunkLogCoords c, ChunkLogEvent e){
+			coords = c;
+			event = e;
+		}
+	}
+	
+	ArrayList<ChunkLog> eventsThisGametick;
+	HashMap<ChunkLogCoords, ChunkLogEvent> lastEventForChunk;
+	HashMap<ChunkLogCoords, ChunkLogEvent> lastPlayerEventForChunk;
 	
 	public CarpetClientChunkLogger(){
 		if(stackTraces == null) {
 			stackTraces = new StackTraces();
 			stackTraces.internString("");
 		}
-		if(serializer == null) {
-			this.serializer = new ChunkLoggerSerializer();
+		if(clients == null) {
+			this.clients = new ChunkLoggerSerializer();
 		}
 		String nullTrace = "";
 		
@@ -72,112 +112,146 @@ public class CarpetClientChunkLogger{
 		this.lastPlayerEventForChunk = new HashMap();
 	}
 	
-	public ArrayList<ChunkLogEvent> getInitialChunksForNewClient(){
-		ArrayList<ChunkLogEvent> forNewClient = new ArrayList(this.lastEventForChunk.values());
-		forNewClient.addAll(this.lastPlayerEventForChunk.values());
+	public ArrayList<ChunkLog> getInitialChunksForNewClient(){
+		ArrayList<ChunkLog> forNewClient = new ArrayList();
+		for(Entry<ChunkLogCoords, ChunkLogEvent> log:lastEventForChunk.entrySet()) {
+			ChunkLogCoords coords = log.getKey();
+			ChunkLogEvent event = log.getValue();
+			ChunkLog log2 = new ChunkLog(coords, event);
+			forNewClient.add(log2);
+		}
+		for(Entry<ChunkLogCoords, ChunkLogEvent> log:lastPlayerEventForChunk.entrySet()) {
+			ChunkLogCoords coords = log.getKey();
+			ChunkLogEvent event = log.getValue();
+			ChunkLog log2 = new ChunkLog(coords, event);
+			forNewClient.add(log2);
+		}
 		return forNewClient;
 	}
 	
-	public ArrayList<ChunkLogEvent> getEventsThisGametick() {
+	public ArrayList<ChunkLog> getEventsThisGametick() {
 		return this.eventsThisGametick;
 	}
 	
-	void log(int x, int z, Event event, int stackTrace) {
-		ChunkLogEvent e = new ChunkLogEvent();
-		e.chunkX = x;
-		e.chunkZ = z;
-		e.event = event;
-		e.stackTraceIndex = stackTrace;
-		this.eventsThisGametick.add(e);
-		long l = ChunkPos.asLong(x, z);
+	void log(int x, int z, int d, Event event, int stackTrace) {
+		ChunkLogCoords c = new ChunkLogCoords(x,z,d);
+		ChunkLogEvent e = new ChunkLogEvent(event, stackTrace);
+		this.eventsThisGametick.add(new ChunkLog(c,e));
 		switch(event) {
 		case MISSED_EVENT_ERROR:
 			break;
 		case PLAYER_LEAVES:
-			this.lastPlayerEventForChunk.remove(l);
+			this.lastPlayerEventForChunk.remove(c);
 			break;
 		case PLAYER_ENTERS:
-			this.lastPlayerEventForChunk.put(l, e);
+			this.lastPlayerEventForChunk.put(c, e);
 			break;
 		case UNLOADING:
-			this.lastEventForChunk.remove(l);
+			this.lastEventForChunk.remove(c);
 			break;
 		default:
-			this.lastEventForChunk.put(l, e);
+			this.lastEventForChunk.put(c, e);
 		}
 	}
 	
-	void logError(int x, int z, String customerror) {
-		this.log(x, z, Event.MISSED_EVENT_ERROR, stackTraces.internString(customerror));
+	int getWorldIndex(World w) {
+		int i = 0;
+		for(World o:w.getMinecraftServer().worlds) {
+			if(o==w) {
+				return i;
+			}
+			i++;
+		}
+		return -1;
+	}
+	
+	void logError(int x, int z, int d, String customerror) {
+		this.log(x, z, d, Event.MISSED_EVENT_ERROR, stackTraces.internString(customerror));
+	}
+	
+	public void log(World w, int x, int z, Event e) {
+		if(!enabled || !clients.hasListeners() ) {
+			return;
+		}
+		int stacktraceid = 0;
+		if(allowStacktraces && clients.hasStackTraceListeners()) {
+			stacktraceid = stackTraces.internStackTrace();
+		}
+		log(x, z, getWorldIndex(w), e, stacktraceid);
 	}
 
-	public void checkChunkStatus(World ww) {
+	public void checkChunkState(World ww, int d) {
 		WorldServer w = (WorldServer) ww;
 		ChunkProviderServer cp = (ChunkProviderServer)(w.getChunkProvider());
 		PlayerChunkMap chunkmap = w.getPlayerChunkMap();
 		Iterator<Chunk> i = chunkmap.getChunkIterator();
 		
+		ChunkLogCoords coords = new ChunkLogCoords(0,0,d);
 		while(i.hasNext()) {
-			Chunk c = i.next();
-			int x = c.x;
-			int z = c.z;
-			long l = ChunkPos.asLong(x, z);
-			ChunkLogEvent currentEntry = this.lastEventForChunk.get(l);
-			ChunkLogEvent currentPlayerEntry = this.lastPlayerEventForChunk.get(l);
+			Chunk chunk = i.next();
+			int x = chunk.x;
+			int z = chunk.z;
+			coords.chunkX = x;
+			coords.chunkZ = z;
+			
+			ChunkLogEvent currentEntry = lastEventForChunk.get(coords);
+			ChunkLogEvent currentPlayerEntry = this.lastPlayerEventForChunk.get(coords);
 			
 			boolean contains = chunkmap.contains(x, z);
 			if((currentPlayerEntry == null) && contains){
-				logError(x,z,"PLAYER_ENTER");
+				logError(x,z,d,"PLAYER_ENTER");
 			}
 			else if((currentPlayerEntry != null) && !contains) {
-				logError(x,z,"PLAYER_LEAVE");
+				logError(x,z,d,"PLAYER_LEAVE");
 			}
 			if(currentEntry == null) {
-				 logError(x,z,"LOADING");
+				 logError(x,z,d,"LOADING");
 			}
 			else {
 				if(cp.isChunkUnloadScheduled(x, z)) {
-					if(c.unloadQueued) {
+					if(chunk.unloadQueued) {
 						if(currentEntry.event != Event.QUEUE_UNLOAD) {
-							logError(x,z,"QUEUE_UNLOAD");
+							logError(x,z,d,"QUEUE_UNLOAD");
 						}
 					}
 					else {
 						if(currentEntry.event != Event.CANCEL_UNLOAD) {
-							logError(x,z,"CANCEL_UNLOAD");
+							logError(x,z,d,"CANCEL_UNLOAD");
 						}
 					}
 				}
 				else {
 					if(currentEntry.event == Event.QUEUE_UNLOAD ||
 					   currentEntry.event == Event.CANCEL_UNLOAD) {
-						logError(x,z,"UNQUEUE_UNLOAD");
+						logError(x,z,d,"UNQUEUE_UNLOAD");
 					}
 				}
 			}
-			for(ChunkLogEvent event:this.lastEventForChunk.values()) {
-				if(!cp.chunkExists(event.chunkX, event.chunkZ)){
-					logError(x,z,"UNLOAD");
-				}
+		}
+		for(ChunkLogCoords coords2:this.lastEventForChunk.keySet()) {
+			if(!cp.chunkExists(coords2.chunkX, coords2.chunkZ)){
+				logError(coords2.chunkX,coords2.chunkZ,d,"UNLOAD");
 			}
 		}
 	}
 	
+	public void checkChunkState(MinecraftServer server) {
+		if(!enabled || !this.clients.hasListeners()) {
+			return;
+		}
+		int d = 0;
+		for(World w: server.worlds) {
+			checkChunkState(w,d++);
+		}
+	}
+
 	public void startTick() {
 		this.eventsThisGametick.clear();
 		stackTraces.startTick();
 	}
 	
-	public static void sendAll() {
-		serializer.sendUpdates();
-	}
-
-	public static void log(World w, int x, int z, Event e) {
-		int stacktraceid = 0;
-		if(serializer.hasStackTraceListeners()) {
-			stacktraceid = stackTraces.internStackTrace();
-		}
-		w.chunklogger.log(x, z, e, stacktraceid);
+	public void sendAll() {
+		clients.sendUpdates();
 	}
 
 	public class StackTraces {
@@ -257,17 +331,9 @@ public class CarpetClientChunkLogger{
 		
 		public static final int PACKET_EVENTS = 0;
 		public static final int PACKET_STACKTRACE = 1;
-		public static final int PACKET_STACKTRACE_ALL = 2;
 
 		private HashSet<EntityPlayerMP> playersLoggingChunks = new HashSet();
 		private HashSet<EntityPlayerMP> playersGettingStackTraces = new HashSet();
-		
-		private final BiFunction<World,Integer,NBTTagCompound> initalChunksSerializer = (World w, Integer dimension) -> {
-			return serializeEvents(w.chunklogger.getInitialChunksForNewClient(), dimension);
-		};
-		private final BiFunction<World,Integer,NBTTagCompound> updateChunksSerializer = (World w, Integer dimension) -> {
-			return serializeEvents(w.chunklogger.getEventsThisGametick(), dimension);
-		};
 		
 		public void registerPlayer(EntityPlayerMP sender, PacketBuffer data) {
 			boolean addPlayer = data.readBoolean();
@@ -283,22 +349,26 @@ public class CarpetClientChunkLogger{
 				this.unregisterPlayer(sender);
 			}
 		}
-		
+
 		public void unregisterPlayer(EntityPlayerMP player) {
 			playersLoggingChunks.remove(player);
 			playersGettingStackTraces.remove(player);
 		}
 		
 		private void sendInitalChunks(EntityPlayerMP sender) {
-			NBTTagCompound data = serializeAllDimensions(sender.getServer(), initalChunksSerializer);
+			NBTTagCompound data = serializeEvents(sender.getServer(), getInitialChunksForNewClient());
 			CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_EVENTS, data);
 		}
 		
 		private void sendInitalStackTraces(EntityPlayerMP sender) {
-			NBTTagCompound stackData = serializeStackTraceAll(stackTraces.getInitialStackTracesForNewClient());
+			NBTTagCompound stackData = serializeStackTraces(stackTraces.getInitialStackTracesForNewClient(),0);
 			if(stackData != null) {
-				CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_STACKTRACE_ALL, stackData);
+				CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_STACKTRACE, stackData);
 			}
+		}
+
+		public boolean hasListeners() {
+			return !this.playersLoggingChunks.isEmpty();
 		}
 		
 		private boolean hasStackTraceListeners() {
@@ -310,7 +380,7 @@ public class CarpetClientChunkLogger{
 				return;
 			}
 			MinecraftServer server = this.playersLoggingChunks.iterator().next().server;
-			NBTTagCompound chunkData = serializeAllDimensions(server, updateChunksSerializer);
+			NBTTagCompound chunkData = serializeEvents(server, getEventsThisGametick());
 			if(chunkData != null) {
 				for(EntityPlayerMP player: this.playersLoggingChunks) {
 					CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_EVENTS, chunkData);
@@ -322,7 +392,7 @@ public class CarpetClientChunkLogger{
 			}
 			ArrayList<String> traces = stackTraces.getNewStackTraces();
 			int tracesStartId = stackTraces.getStackTracesCount() - traces.size();
-			NBTTagCompound stackData = serializeStackTrace(traces, tracesStartId);
+			NBTTagCompound stackData = serializeStackTraces(traces, tracesStartId);
 			if(stackData != null) {
 				for(EntityPlayerMP player: this.playersGettingStackTraces) {
 					CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_STACKTRACE, stackData);
@@ -330,72 +400,44 @@ public class CarpetClientChunkLogger{
 			}
 		}
 		
-		private NBTTagCompound serializeAllDimensions(MinecraftServer server, BiFunction<World,Integer,NBTTagCompound> f) {
-			NBTTagList list = new NBTTagList();
-			int i = 0;
-			for(World w : server.worlds) {
-				NBTTagCompound c = f.apply(w,i);
-				if(c != null) {
-					list.appendTag(c);
-				}
-				++i;
-			}
-			if(list.isEmpty()) {
-				return null;
-			}
-			NBTTagCompound data = new NBTTagCompound();
-			int time = server.getTickCounter();
-			data.setTag("dimensionData", list);
-			data.setInteger("time", time);
-			return data;
-		}
-		
-		private NBTTagCompound serializeEvents(ArrayList<ChunkLogEvent> events, int dimension) {
+		private NBTTagCompound serializeEvents(MinecraftServer server, ArrayList<ChunkLog> events) {
 			if(events.isEmpty()) {
 				return null;
 			}
 			NBTTagCompound chunkData = new NBTTagCompound();
 			NBTTagList list = new NBTTagList();
-			for (ChunkLogEvent event : events) {
+			for (ChunkLog log : events) {
 				NBTTagCompound data = new NBTTagCompound();
-				data.setInteger("chunkX", event.chunkX);
-				data.setInteger("chunkZ", event.chunkZ);
-				data.setInteger("status", event.event.ordinal());
-				data.setInteger("stackTraceIndex", event.stackTraceIndex);
+				data.setInteger("x", log.coords.chunkX);
+				data.setInteger("z", log.coords.chunkZ);
+				data.setInteger("d", log.coords.chunkDimension);
+				data.setInteger("event", log.event.event.ordinal());
+				data.setInteger("trace", log.event.stackTraceIndex);
 				list.appendTag(data);
 			}
-			chunkData.setTag("chunkData", list);
-			chunkData.setInteger("dimension", dimension);
+			chunkData.setTag("data", list);
+			chunkData.setInteger("time", server.getTickCounter());
 			return chunkData;
 		}
 
-		private NBTTagCompound serializeStackTrace(ArrayList<String> traces, int id) {
-			if (traces.isEmpty()) {
-				return null;
-			}
-			String s;
-			try {
-				s = traces.get(id);
-			} catch (Exception e) {
-				return null;
-			}
-			NBTTagCompound stackTrace = new NBTTagCompound();
-			stackTrace.setInteger("id", id);
-			stackTrace.setString("stack", s);
-			return stackTrace;
-		}
-
-		private NBTTagCompound serializeStackTraceAll(ArrayList<String> traces) {
-			if (traces.isEmpty()) {
+		private NBTTagCompound serializeStackTraces(ArrayList<String> traces, int startId) {
+			if(traces.isEmpty()) {
 				return null;
 			}
 			NBTTagList list = new NBTTagList();
-			for(int i = 0; i < traces.size(); i++){
-				list.appendTag(serializeStackTrace(traces, i) );
+			int i = 0;
+			for(String s: traces) {
+				NBTTagCompound stackTrace = new NBTTagCompound();
+				stackTrace.setInteger("id", startId+i);
+				stackTrace.setString("stack", s);
+				list.appendTag(stackTrace);
+				++i;
 			}
 			NBTTagCompound stackList = new NBTTagCompound();
 			stackList.setTag("stackList", list);
 			return stackList;
 		}
 	}
+
+
 }

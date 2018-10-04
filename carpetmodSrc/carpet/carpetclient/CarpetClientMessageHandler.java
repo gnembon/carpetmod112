@@ -37,7 +37,7 @@ public class CarpetClientMessageHandler {
 		} else if (BOUNDINGBOX_MARKERS == type) {
 			boundingboxRequest(sender, data);
 		} else if (CHUNK_LOGGER == type) {
-			CarpetClientChunkLogger.serializer.registerPlayer(sender, data);
+			CarpetClientChunkLogger.logger.clients.registerPlayer(sender, data);
 		}
 	}
 
