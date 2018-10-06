@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/item/crafting/CraftingManager.java
++++ ../src-work/minecraft/net/minecraft/item/crafting/CraftingManager.java
+@@ -32,6 +32,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import carpet.helpers.NewCrafting;
++
+ public class CraftingManager
+ {
+     private static final Logger field_192422_a = LogManager.getLogger();
+@@ -53,7 +55,9 @@
+             func_193379_a("banneraddpattern", new RecipesBanners.RecipeAddPattern());
+             func_193379_a("shielddecoration", new ShieldRecipes.Decoration());
+             func_193379_a("shulkerboxcoloring", new ShulkerBoxRecipes.ShulkerBoxColoring());
+-            return func_192420_c();
++            boolean result = func_192420_c();
++            NewCrafting.registerRecipes();
++            return result;
+         }
+         catch (Throwable var1)
+         {

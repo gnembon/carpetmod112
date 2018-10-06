@@ -27,7 +27,7 @@ public class DamageReporter
     public static boolean register_damage_attacker(Entity target, EntityLivingBase source, float amount)
     {
         if (!LoggerRegistry.__damage) return true;
-        LoggerRegistry.getLogger("damage").log( (option, player)->
+        LoggerRegistry.getLogger("damage").logNoCommand( (option, player)->
             verifyAndProduceMessage(option, player, source, target, () ->
                 Messenger.m(null,
                         source.getDisplayName(),
@@ -44,7 +44,7 @@ public class DamageReporter
         if (source.isFireDamage() && (target.isImmuneToFire() ||
                 target.isPotionActive(MobEffects.FIRE_RESISTANCE)))
             return;
-        LoggerRegistry.getLogger("damage").log( (option, player)->
+        LoggerRegistry.getLogger("damage").logNoCommand( (option, player)->
             verifyAndProduceMessage(option, player, source.getTrueSource(), target, () ->
                 Messenger.m(null,
                         target.getDisplayName(),
@@ -64,7 +64,11 @@ public class DamageReporter
                         "g  - total received ",
                         String.format("r %.2f", amount),
                         "g  points of damage")
-            )
+            ),
+            "ATTACKER", source.getTrueSource() == null ? null : source.getTrueSource().getCachedUniqueIdString(),
+            "TARGET", target.getCachedUniqueIdString(),
+            "AMOUNT", amount,
+            "DAMAGE_TYPE", source.getDamageType()
         );
     }
 
@@ -77,7 +81,7 @@ public class DamageReporter
         if (source.isFireDamage() && (target.isImmuneToFire() ||
                 target.isPotionActive(MobEffects.FIRE_RESISTANCE)))
             return;
-        LoggerRegistry.getLogger("damage").log( (option, player)->
+        LoggerRegistry.getLogger("damage").logNoCommand( (option, player)->
             verifyAndProduceMessage(option, player, source.getTrueSource(), target, () ->
                 {
                     if (final_amount == 0.0f)

@@ -11,7 +11,7 @@
  public class Chunk
  {
      private static final Logger field_150817_t = LogManager.getLogger();
-@@ -66,6 +70,10 @@
+@@ -66,13 +70,17 @@
      private final ConcurrentLinkedQueue<BlockPos> field_177447_w;
      public boolean field_189550_d;
  
@@ -22,6 +22,14 @@
      public Chunk(World p_i1995_1_, int p_i1995_2_, int p_i1995_3_)
      {
          this.field_76652_q = new ExtendedBlockStorage[16];
+         this.field_76651_r = new byte[256];
+         this.field_76638_b = new int[256];
+         this.field_76639_c = new boolean[256];
+-        this.field_150816_i = Maps.<BlockPos, TileEntity>newHashMap();
++        this.field_150816_i = CarpetSettings.getBool("reloadUpdateOrderFix") ? Maps.newLinkedHashMap() : Maps.newHashMap(); // CM: reload update order fix
+         this.field_76649_t = 4096;
+         this.field_177447_w = Queues.<BlockPos>newConcurrentLinkedQueue();
+         this.field_76645_j = (ClassInheritanceMultiMap[])(new ClassInheritanceMultiMap[16]);
 @@ -188,38 +196,43 @@
  
                  if (this.field_76637_e.field_73011_w.func_191066_m())

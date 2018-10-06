@@ -2,25 +2,32 @@ package carpet.logging.logHelpers;
 
 import carpet.logging.LoggerRegistry;
 import carpet.utils.Messenger;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.text.ITextComponent;
 
 public class KillLogHelper {
 
-    public static void onSweep(String name, int count)
+    public static void onSweep(EntityPlayer player, int count)
     {
         LoggerRegistry.getLogger("kills").log( () -> new ITextComponent[]{
-                Messenger.m(null, "g "+name+" smacked ","r "+count,"g  entities with sweeping")});
+                Messenger.m(null, "g "+player.getGameProfile().getName()+" smacked ","r "+count,"g  entities with sweeping")},
+                "ATTACKER", player.getCachedUniqueIdString(),
+                "COUNT", count);
     }
 
-    public static void onNonSweepAttack(String name)
+    public static void onNonSweepAttack(EntityPlayer player)
     {
         LoggerRegistry.getLogger("kills").log( () -> new ITextComponent[]{
-                Messenger.m(null, "g "+name+" smacked ","r 1","g  (no sweeping)")});
+                Messenger.m(null, "g "+player.getGameProfile().getName()+" smacked ","r 1","g  (no sweeping)")},
+                "ATTACKER", player.getCachedUniqueIdString(),
+                "COUNT", 1);
     }
 
-    public static void onDudHit(String name)
+    public static void onDudHit(EntityPlayer player)
     {
         LoggerRegistry.getLogger("kills").log( () -> new ITextComponent[]{
-                Messenger.m(null, "g "+name+" dud hot = no one affected")});
+                Messenger.m(null, "g "+player.getGameProfile().getName()+" dud hot = no one affected")},
+                "ATTACKER", player.getCachedUniqueIdString(),
+                "COUNT", 0);
     }
 }
