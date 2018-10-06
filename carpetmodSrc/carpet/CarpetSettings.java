@@ -90,6 +90,7 @@ public class CarpetSettings
     public static boolean netherRNG = false;
     public static boolean endRNG = false;
     public static int structureBlockLimit = 32;
+    public static boolean disablePlayerCollision = false;
 
     public static long setSeed = 0;
 
@@ -213,6 +214,8 @@ public class CarpetSettings
   rule("commandRNG",            "commands", "Enables /rng command to manipulate and query rng").defaultTrue(),
   rule("commandStructure",      "commands", "Enables /structure to manage NBT structures used by structure blocks").defaultTrue(),
   rule("commandFillBiome",      "commands", "Enabled /fillbiome command to change the biome of an area").defaultTrue(),
+  rule("commandAutosave",       "commands", "Enables /autosave command to query information about the autosave and execute commands relative to the autosave").defaultTrue(),
+  rule("commandPing",           "commands", "Enables /ping for players to get their ping").defaultTrue(),
   rule("newLight",              "optimizations", "Uses alternative lighting engine by PhiPros. AKA NewLight mod"),
   rule("carpets",               "survival", "Placing carpets may issue carpet commands for non-op players"),
   rule("missingTools",          "survival", "Pistons, Glass and Sponge can be broken faster with their appropriate tools"),
@@ -273,6 +276,9 @@ public class CarpetSettings
   rule("reloadUpdateOrderFix",  "fix", "Fixes reload update order for tile entities")
                                 .extraInfo("Fixes instant wires randomly breaking.",
                                            "Effective after chunk reload."),
+  rule("leashFix",              "fix",      "Fixes to leashes.")
+                                .choices("false", "false casual cool"),
+  rule("disablePlayerCollision","creative", "Disables player entity collision."),
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -315,6 +321,7 @@ public class CarpetSettings
         netherRNG = CarpetSettings.getBool("netherRNG");
         endRNG = CarpetSettings.getBool("endRNG");
         structureBlockLimit = CarpetSettings.getInt("structureBlockLimit");
+        disablePlayerCollision = CarpetSettings.getBool("disablePlayerCollision");
 
         if ("pistonGhostBlocksFix".equalsIgnoreCase(rule))
         {
@@ -722,6 +729,7 @@ public class CarpetSettings
         set("calmNetherFires","true");
         set("pistonSerializationFix","true");
         set("reloadUpdateOrderFix","true");
+        set("leashFix","true");
     }
 
     public static class CarpetSettingEntry 

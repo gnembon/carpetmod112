@@ -4,23 +4,19 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-+import carpet.helpers.FireworksCraftingRecipes;
++import carpet.helpers.NewCrafting;
 +
  public class CraftingManager
  {
      private static final Logger field_192422_a = LogManager.getLogger();
-@@ -42,6 +44,14 @@
-     {
-         try
+@@ -53,7 +55,9 @@
+             func_193379_a("banneraddpattern", new RecipesBanners.RecipeAddPattern());
+             func_193379_a("shielddecoration", new ShieldRecipes.Decoration());
+             func_193379_a("shulkerboxcoloring", new ShulkerBoxRecipes.ShulkerBoxColoring());
+-            return func_192420_c();
++            boolean result = func_192420_c();
++            NewCrafting.registerRecipes();
++            return result;
+         }
+         catch (Throwable var1)
          {
-+        	// Added rockets to the list of crafting recipes CARPET-XCOM
-+            // will add later if found a way to hide popups for vanilla clients
-+        	FireworksCraftingRecipes.createRockets();
-+        	func_193379_a("rocket1", FireworksCraftingRecipes.rocketOne);
-+        	func_193379_a("rocket2", FireworksCraftingRecipes.rocketTwo);
-+        	func_193379_a("rocket3", FireworksCraftingRecipes.rocketThree);
-+        	// End
-+        	
-             func_193379_a("armordye", new RecipesArmorDyes());
-             func_193379_a("bookcloning", new RecipeBookCloning());
-             func_193379_a("mapcloning", new RecipesMapCloning());
