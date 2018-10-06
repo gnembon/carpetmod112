@@ -1,17 +1,14 @@
 package carpet.carpetclient;
 
-import net.minecraft.command.CommandException;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerChunkMap;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
 
 import java.util.ArrayList;
@@ -28,13 +25,15 @@ public class CarpetClientChunkLogger{
 	
 	public static CarpetClientChunkLogger logger = new CarpetClientChunkLogger();
 	
+	// TODO implement enable/disable
 	boolean enabled = true;
+	// TODO only initialize stackTraces if enabled, delete when disabled
 	boolean allowStacktraces = true;
 	StackTraces stackTraces;
 	ChunkLoggerSerializer clients;
 
 	public static enum Event {
-		MISSED_EVENT_ERROR,
+		ERROR,
 		UNLOADING,
 		LOADING,
 		PLAYER_ENTERS,
@@ -91,16 +90,17 @@ public class CarpetClientChunkLogger{
 			coords = c;
 			event = e;
 		}
+		ChunkLog(int x, int z, int d, Event event, int stacktraceId) {
+			this.coords = new ChunkLogCoords(x,z,d);
+			this.event = new ChunkLogEvent(event,stacktraceId);
+		}
 	}
 	
 	ArrayList<ChunkLog> eventsThisGametick;
-	HashMap<ChunkLogCoords, ChunkLogEvent> lastEventForChunk;
-	HashMap<ChunkLogCoords, ChunkLogEvent> lastPlayerEventForChunk;
 	
 	public CarpetClientChunkLogger(){
 		if(stackTraces == null) {
 			stackTraces = new StackTraces();
-			stackTraces.internString("");
 		}
 		if(clients == null) {
 			this.clients = new ChunkLoggerSerializer();
@@ -108,23 +108,29 @@ public class CarpetClientChunkLogger{
 		String nullTrace = "";
 		
 		this.eventsThisGametick = new ArrayList();
-		this.lastEventForChunk = new HashMap();
-		this.lastPlayerEventForChunk = new HashMap();
 	}
 	
-	public ArrayList<ChunkLog> getInitialChunksForNewClient(){
+	public ArrayList<ChunkLog> getInitialChunksForNewClient(MinecraftServer server){
 		ArrayList<ChunkLog> forNewClient = new ArrayList();
-		for(Entry<ChunkLogCoords, ChunkLogEvent> log:lastEventForChunk.entrySet()) {
-			ChunkLogCoords coords = log.getKey();
-			ChunkLogEvent event = log.getValue();
-			ChunkLog log2 = new ChunkLog(coords, event);
-			forNewClient.add(log2);
-		}
-		for(Entry<ChunkLogCoords, ChunkLogEvent> log:lastPlayerEventForChunk.entrySet()) {
-			ChunkLogCoords coords = log.getKey();
-			ChunkLogEvent event = log.getValue();
-			ChunkLog log2 = new ChunkLog(coords, event);
-			forNewClient.add(log2);
+		int dimension = -1;
+		for(World w: server.worlds) {
+			ChunkProviderServer provider = (ChunkProviderServer)(w.getChunkProvider());
+			for(Chunk c : provider.getLoadedChunks()) {
+				forNewClient.add(new ChunkLog(c.x,c.z,dimension,Event.LOADING,0));
+				if(provider.isChunkUnloadScheduled(c.x, c.z)) {
+					forNewClient.add(new ChunkLog(c.x,c.z,dimension,Event.QUEUE_UNLOAD,0));
+					if(!c.unloadQueued) {
+						forNewClient.add(new ChunkLog(c.x,c.z,dimension,Event.CANCEL_UNLOAD,0));
+					}
+				}
+			}
+			dimension++;
+			PlayerChunkMap chunkmap = ((WorldServer)w).getPlayerChunkMap();
+			Iterator<Chunk> i = chunkmap.getChunkIterator();
+			while(i.hasNext()) {
+				Chunk c = i.next();
+				forNewClient.add(new ChunkLog(c.x,c.z,dimension,Event.PLAYER_ENTERS,0));
+			}
 		}
 		return forNewClient;
 	}
@@ -137,21 +143,6 @@ public class CarpetClientChunkLogger{
 		ChunkLogCoords c = new ChunkLogCoords(x,z,d);
 		ChunkLogEvent e = new ChunkLogEvent(event, stackTrace);
 		this.eventsThisGametick.add(new ChunkLog(c,e));
-		switch(event) {
-		case MISSED_EVENT_ERROR:
-			break;
-		case PLAYER_LEAVES:
-			this.lastPlayerEventForChunk.remove(c);
-			break;
-		case PLAYER_ENTERS:
-			this.lastPlayerEventForChunk.put(c, e);
-			break;
-		case UNLOADING:
-			this.lastEventForChunk.remove(c);
-			break;
-		default:
-			this.lastEventForChunk.put(c, e);
-		}
 	}
 	
 	int getWorldIndex(World w) {
@@ -165,10 +156,6 @@ public class CarpetClientChunkLogger{
 		return -1;
 	}
 	
-	void logError(int x, int z, int d, String customerror) {
-		this.log(x, z, d, Event.MISSED_EVENT_ERROR, stackTraces.internString(customerror));
-	}
-	
 	public void log(World w, int x, int z, Event e) {
 		if(!enabled || !clients.hasListeners() ) {
 			return;
@@ -178,71 +165,6 @@ public class CarpetClientChunkLogger{
 			stacktraceid = stackTraces.internStackTrace();
 		}
 		log(x, z, getWorldIndex(w), e, stacktraceid);
-	}
-
-	public void checkChunkState(World ww, int d) {
-		WorldServer w = (WorldServer) ww;
-		ChunkProviderServer cp = (ChunkProviderServer)(w.getChunkProvider());
-		PlayerChunkMap chunkmap = w.getPlayerChunkMap();
-		Iterator<Chunk> i = chunkmap.getChunkIterator();
-		
-		ChunkLogCoords coords = new ChunkLogCoords(0,0,d);
-		while(i.hasNext()) {
-			Chunk chunk = i.next();
-			int x = chunk.x;
-			int z = chunk.z;
-			coords.chunkX = x;
-			coords.chunkZ = z;
-			
-			ChunkLogEvent currentEntry = lastEventForChunk.get(coords);
-			ChunkLogEvent currentPlayerEntry = this.lastPlayerEventForChunk.get(coords);
-			
-			boolean contains = chunkmap.contains(x, z);
-			if((currentPlayerEntry == null) && contains){
-				logError(x,z,d,"PLAYER_ENTER");
-			}
-			else if((currentPlayerEntry != null) && !contains) {
-				logError(x,z,d,"PLAYER_LEAVE");
-			}
-			if(currentEntry == null) {
-				 logError(x,z,d,"LOADING");
-			}
-			else {
-				if(cp.isChunkUnloadScheduled(x, z)) {
-					if(chunk.unloadQueued) {
-						if(currentEntry.event != Event.QUEUE_UNLOAD) {
-							logError(x,z,d,"QUEUE_UNLOAD");
-						}
-					}
-					else {
-						if(currentEntry.event != Event.CANCEL_UNLOAD) {
-							logError(x,z,d,"CANCEL_UNLOAD");
-						}
-					}
-				}
-				else {
-					if(currentEntry.event == Event.QUEUE_UNLOAD ||
-					   currentEntry.event == Event.CANCEL_UNLOAD) {
-						logError(x,z,d,"UNQUEUE_UNLOAD");
-					}
-				}
-			}
-		}
-		for(ChunkLogCoords coords2:this.lastEventForChunk.keySet()) {
-			if(!cp.chunkExists(coords2.chunkX, coords2.chunkZ)){
-				logError(coords2.chunkX,coords2.chunkZ,d,"UNLOAD");
-			}
-		}
-	}
-	
-	public void checkChunkState(MinecraftServer server) {
-		if(!enabled || !this.clients.hasListeners()) {
-			return;
-		}
-		int d = 0;
-		for(World w: server.worlds) {
-			checkChunkState(w,d++);
-		}
 	}
 
 	public void startTick() {
@@ -261,6 +183,17 @@ public class CarpetClientChunkLogger{
 		ArrayList<String> allTracesDeobfuscated = new ArrayList();
 		ArrayList<String> newTracesDeobfuscated = new ArrayList();
 
+		public StackTraces() {
+			clear();
+		}
+		
+		public void clear() {
+			stackTraceToIndex.clear();
+			allTracesDeobfuscated.clear();
+			newTracesDeobfuscated.clear();
+			this.internString("");
+		}
+		
 		public void startTick() {
 			this.newTracesDeobfuscated.clear();
 		}
@@ -353,10 +286,14 @@ public class CarpetClientChunkLogger{
 		public void unregisterPlayer(EntityPlayerMP player) {
 			playersLoggingChunks.remove(player);
 			playersGettingStackTraces.remove(player);
+			if(!hasStackTraceListeners()) {
+				stackTraces.clear();
+			}
 		}
 		
 		private void sendInitalChunks(EntityPlayerMP sender) {
-			NBTTagCompound data = serializeEvents(sender.getServer(), getInitialChunksForNewClient());
+			MinecraftServer server = sender.getServer();
+			NBTTagCompound data = serializeEvents(sender.getServer(), getInitialChunksForNewClient(server),server.getTickCounter()-1);
 			CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_EVENTS, data);
 		}
 		
@@ -380,7 +317,7 @@ public class CarpetClientChunkLogger{
 				return;
 			}
 			MinecraftServer server = this.playersLoggingChunks.iterator().next().server;
-			NBTTagCompound chunkData = serializeEvents(server, getEventsThisGametick());
+			NBTTagCompound chunkData = serializeEvents(server, getEventsThisGametick(), server.getTickCounter());
 			if(chunkData != null) {
 				for(EntityPlayerMP player: this.playersLoggingChunks) {
 					CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_EVENTS, chunkData);
@@ -400,7 +337,7 @@ public class CarpetClientChunkLogger{
 			}
 		}
 		
-		private NBTTagCompound serializeEvents(MinecraftServer server, ArrayList<ChunkLog> events) {
+		private NBTTagCompound serializeEvents(MinecraftServer server, ArrayList<ChunkLog> events, int gametick) {
 			if(events.isEmpty()) {
 				return null;
 			}
@@ -416,7 +353,7 @@ public class CarpetClientChunkLogger{
 				list.appendTag(data);
 			}
 			chunkData.setTag("data", list);
-			chunkData.setInteger("time", server.getTickCounter());
+			chunkData.setInteger("time", gametick);
 			return chunkData;
 		}
 
