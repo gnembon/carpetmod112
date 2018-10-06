@@ -178,3 +178,17 @@
      private void func_192026_k(@Nullable NBTTagCompound p_192026_1_)
      {
          if (!this.field_70170_p.field_72995_K && !p_192026_1_.func_82582_d())
+@@ -2307,6 +2385,13 @@
+     {
+         return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
+     }
++    
++    // CM: player collision
++    @Override
++    public boolean func_70104_M()
++    {
++        return !CarpetSettings.disablePlayerCollision;
++    }
+ 
+     public static enum EnumChatVisibility
+     {
