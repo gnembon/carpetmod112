@@ -42,3 +42,4 @@ whitelist.json
 /logs/
 /world/
 /crash-reports/
+/worldedit.properties

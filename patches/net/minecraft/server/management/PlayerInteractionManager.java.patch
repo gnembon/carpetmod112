@@ -1,16 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -26,6 +26,9 @@
+@@ -26,6 +26,10 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
 +import carpet.helpers.BlockRotator;
 +import carpet.CarpetSettings;
++import carpet.worldedit.WorldEditBridge;
 +
  public class PlayerInteractionManager
  {
      public World field_73092_a;
-@@ -191,6 +194,11 @@
+@@ -137,6 +141,12 @@
+ 
+     public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
+     {
++        boolean worldEditResult = WorldEditBridge.onLeftClickBlock(field_73092_a, p_180784_1_, field_73090_b);
++        if (!worldEditResult)
++        {
++            field_73090_b.field_71135_a.func_147359_a(new SPacketBlockChange(field_73092_a, p_180784_1_));
++            return;
++        }
+         if (this.func_73083_d())
+         {
+             if (!this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_))
+@@ -191,6 +201,11 @@
                  this.field_73088_d = true;
                  this.field_180240_f = p_180784_1_;
                  int i = (int)(f * 10.0F);
@@ -22,7 +36,17 @@
                  this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), p_180784_1_, i);
                  this.field_73094_o = i;
              }
-@@ -406,6 +414,12 @@
+@@ -402,10 +417,22 @@
+         }
+         else
+         {
++            boolean worldEditResult = WorldEditBridge.onRightClickBlock(field_73092_a, p_187251_5_, this.field_73090_b);
++            if (!worldEditResult)
++            {
++                this.field_73090_b.field_71135_a.func_147359_a(new SPacketBlockChange(field_73092_a, p_187251_5_));
++                return EnumActionResult.FAIL;
++            }
+             if (!p_187251_1_.func_70093_af() || p_187251_1_.func_184614_ca().func_190926_b() && p_187251_1_.func_184592_cb().func_190926_b())
              {
                  IBlockState iblockstate = p_187251_2_.func_180495_p(p_187251_5_);
  

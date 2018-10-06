@@ -1,12 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -120,11 +120,16 @@
+@@ -120,11 +120,17 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
 +import carpet.helpers.TickSpeed;
++import carpet.worldedit.WorldEditBridge;
 +import net.minecraft.world.gen.structure.template.Template;
 +
  public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
@@ -18,7 +19,7 @@
      public EntityPlayerMP field_147369_b;
      private int field_147368_e;
      private int field_147378_h;
-@@ -249,7 +254,7 @@
+@@ -249,7 +255,7 @@
          }
      }
  
@@ -27,7 +28,7 @@
      {
          this.field_184349_l = this.field_147369_b.field_70165_t;
          this.field_184350_m = this.field_147369_b.field_70163_u;
-@@ -287,6 +292,11 @@
+@@ -287,6 +293,11 @@
      {
          PacketThreadUtil.func_180031_a(p_147358_1_, this, this.field_147369_b.func_71121_q());
          this.field_147369_b.func_110430_a(p_147358_1_.func_149620_c(), p_147358_1_.func_192620_b(), p_147358_1_.func_149618_e(), p_147358_1_.func_149617_f());
@@ -39,7 +40,7 @@
      }
  
      private static boolean func_183006_b(CPacketPlayer p_183006_0_)
-@@ -490,6 +500,10 @@
+@@ -490,6 +501,10 @@
                          double d10 = this.field_147369_b.field_70159_w * this.field_147369_b.field_70159_w + this.field_147369_b.field_70181_x * this.field_147369_b.field_70181_x + this.field_147369_b.field_70179_y * this.field_147369_b.field_70179_y;
                          double d11 = d7 * d7 + d8 * d8 + d9 * d9;
  
@@ -50,7 +51,7 @@
                          if (this.field_147369_b.func_70608_bn())
                          {
                              if (d11 > 1.0D)
-@@ -508,7 +522,7 @@
+@@ -508,7 +523,7 @@
                                  i = 1;
                              }
  
@@ -59,7 +60,15 @@
                              {
                                  float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
  
-@@ -1200,7 +1214,15 @@
+@@ -745,6 +760,7 @@
+ 
+         if (!itemstack.func_190926_b())
+         {
++            if (WorldEditBridge.onRightClickAir(worldserver, field_147369_b))
+             this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, worldserver, itemstack, enumhand);
+         }
+     }
+@@ -1200,7 +1216,15 @@
                              }
                              else
                              {
@@ -76,7 +85,7 @@
                              }
                          }
  
-@@ -1732,13 +1754,14 @@
+@@ -1732,13 +1756,14 @@
                      String s8 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
                      tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
@@ -97,7 +106,7 @@
                      tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
                      String s2 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184411_a(Mirror.valueOf(s2));
-@@ -1775,6 +1798,17 @@
+@@ -1775,6 +1800,17 @@
                          }
                          else
                          {
@@ -115,7 +124,7 @@
                              this.field_147369_b.func_146105_b(new TextComponentTranslation("structure_block.load_prepare", new Object[] {s4}), false);
                          }
                      }
-@@ -1816,5 +1850,9 @@
+@@ -1816,5 +1852,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }

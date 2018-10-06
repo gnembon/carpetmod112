@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandReplaceItem.java
++++ ../src-work/minecraft/net/minecraft/command/CommandReplaceItem.java
+@@ -20,6 +20,10 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ 
++import carpet.worldedit.WorldEditBridge;
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.nbt.NBTTagCompound;
++
+ public class CommandReplaceItem extends CommandBase
+ {
+     private static final Map<String, Integer> field_175785_a = Maps.<String, Integer>newHashMap();
+@@ -133,6 +137,9 @@
+                     throw new CommandException("commands.replaceitem.noContainer", new Object[] {blockpos.func_177958_n(), blockpos.func_177956_o(), blockpos.func_177952_p()});
+                 }
+ 
++                EntityPlayerMP worldEditPlayer = p_184881_2_ instanceof EntityPlayerMP ? (EntityPlayerMP) p_184881_2_ : null;
++                WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos, world.func_180495_p(blockpos), tileentity.func_189515_b(new NBTTagCompound()));
++                
+                 IInventory iinventory = (IInventory)tileentity;
+ 
+                 if (j >= 0 && j < iinventory.func_70302_i_())

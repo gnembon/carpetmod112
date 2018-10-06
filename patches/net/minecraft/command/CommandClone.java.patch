@@ -5,8 +5,8 @@
  import net.minecraft.world.gen.structure.StructureBoundingBox;
  
 +import carpet.CarpetSettings;
-+
-+ import carpet.CarpetSettings;
++import carpet.worldedit.WorldEditBridge;
++import net.minecraft.entity.player.EntityPlayerMP;
 +
  public class CommandClone extends CommandBase
  {
@@ -23,7 +23,21 @@
              }
              else
              {
-@@ -154,12 +158,12 @@
+@@ -143,10 +147,13 @@
+                                 }
+                             }
+ 
++                            EntityPlayerMP worldEditPlayer = p_184881_2_ instanceof EntityPlayerMP ? (EntityPlayerMP) p_184881_2_ : null;
++                            
+                             if (flag)
+                             {
+                                 for (BlockPos blockpos6 : deque)
+                                 {
++                                    WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos6, Blocks.field_150350_a.func_176223_P(), null);
+                                     TileEntity tileentity1 = world.func_175625_s(blockpos6);
+ 
+                                     if (tileentity1 instanceof IInventory)
+@@ -154,12 +161,12 @@
                                          ((IInventory)tileentity1).func_174888_l();
                                      }
  
@@ -38,7 +52,15 @@
                                  }
                              }
  
-@@ -178,19 +182,18 @@
+@@ -171,6 +178,7 @@
+ 
+                             for (CommandClone.StaticCloneData commandclone$staticclonedata : list4)
+                             {
++                                WorldEditBridge.recordBlockEdit(worldEditPlayer, world, commandclone$staticclonedata.field_179537_a, commandclone$staticclonedata.field_179535_b, commandclone$staticclonedata.field_184953_c);
+                                 TileEntity tileentity2 = world.func_175625_s(commandclone$staticclonedata.field_179537_a);
+ 
+                                 if (tileentity2 instanceof IInventory)
+@@ -178,19 +186,18 @@
                                      ((IInventory)tileentity2).func_174888_l();
                                  }
  
@@ -60,11 +82,12 @@
                              for (CommandClone.StaticCloneData commandclone$staticclonedata2 : list1)
                              {
                                  TileEntity tileentity3 = world.func_175625_s(commandclone$staticclonedata2.field_179537_a);
-@@ -206,7 +209,10 @@
+@@ -206,7 +213,11 @@
  
                                  world.func_180501_a(commandclone$staticclonedata2.field_179537_a, commandclone$staticclonedata2.field_179535_b, 2);
                              }
 -
++                            
 +                            /*carpet mod */
 +                            if (CarpetSettings.getBool("fillUpdates"))
 +                            {
@@ -72,7 +95,7 @@
                              for (CommandClone.StaticCloneData commandclone$staticclonedata3 : list4)
                              {
                                  world.func_175722_b(commandclone$staticclonedata3.field_179537_a, commandclone$staticclonedata3.field_179535_b.func_177230_c(), false);
-@@ -225,7 +231,8 @@
+@@ -225,7 +236,8 @@
                                      }
                                  }
                              }
