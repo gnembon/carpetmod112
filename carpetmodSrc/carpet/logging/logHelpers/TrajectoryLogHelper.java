@@ -38,7 +38,7 @@ public class TrajectoryLogHelper
     public void onFinish()
     {
         if (!doLog) return;
-        logger.log( (option) -> {
+        logger.logNoCommand( (option) -> {
             List<ITextComponent> comp = new ArrayList<>();
             switch (option)
             {

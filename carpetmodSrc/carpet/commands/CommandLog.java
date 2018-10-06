@@ -1,16 +1,5 @@
 package carpet.commands;
 
-import carpet.CarpetSettings;
-import carpet.utils.Messenger;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayer;
-import carpet.logging.Logger;
-import carpet.logging.LoggerRegistry;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,9 +9,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
+
+import carpet.CarpetSettings;
+import carpet.logging.LogHandler;
+import carpet.logging.Logger;
+import carpet.logging.LoggerRegistry;
+import carpet.utils.Messenger;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
+
 public class CommandLog extends CommandCarpetBase {
 
-    private final String USAGE = "/log (interactive menu) OR /log <logName> <?option> <player> OR /log <logName> clear <player>";
+    private final String USAGE = "/log (interactive menu) OR /log <logName> [?option] [player] [handler ...] OR /log <logName> clear [player]";
 
     @Override
     public String getName() {
@@ -139,6 +142,15 @@ public class CommandLog extends CommandCarpetBase {
             {
                 throw new WrongUsageException("No player specified");
             }
+            LogHandler handler = null;
+            if (args.length >= 4)
+            {
+                handler = LogHandler.createHandler(args[3], ArrayUtils.subarray(args, 4, args.length));
+                if (handler == null)
+                {
+                    throw new CommandException("Invalid handler");
+                }
+            }
             boolean subscribed = true;
             if (args.length >= 2 && "clear".equalsIgnoreCase(args[1]))
             {
@@ -147,11 +159,11 @@ public class CommandLog extends CommandCarpetBase {
             }
             else if (option == null)
             {
-                subscribed = LoggerRegistry.togglePlayerSubscription(player.getName(), logger.getLogName());
+                subscribed = LoggerRegistry.togglePlayerSubscription(player.getName(), logger.getLogName(), handler);
             }
             else
             {
-                LoggerRegistry.subscribePlayer(player.getName(), logger.getLogName(), option);
+                LoggerRegistry.subscribePlayer(player.getName(), logger.getLogName(), option, handler);
             }
             if (subscribed)
             {
@@ -205,6 +217,10 @@ public class CommandLog extends CommandCarpetBase {
         {
             List<String> players = Arrays.asList(server.getOnlinePlayerNames());
             return getListOfStringsMatchingLastWord(args, players.toArray(new String[0]));
+        }
+        else if (args.length == 4)
+        {
+            return getListOfStringsMatchingLastWord(args, LogHandler.getHandlerNames());
         }
 
         return Collections.<String>emptyList();

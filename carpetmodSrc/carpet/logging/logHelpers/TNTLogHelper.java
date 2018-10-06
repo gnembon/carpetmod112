@@ -34,7 +34,14 @@ public class TNTLogHelper
                             "r  E ",Messenger.dblf("r",x, y, z))};
             }
             return null;
-        });
+        },
+        "PRIMED_X", primedX,
+        "PRIMED_Y", primedY,
+        "PRIMED_Z", primedZ,
+        "PRIMED_ANGLE", primedAngle,
+        "EXPLODE_X", x,
+        "EXPLODE_Y", y,
+        "EXPLODE_Z", z);
     }
 
 }
