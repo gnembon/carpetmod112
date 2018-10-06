@@ -38,6 +38,7 @@
 +        this.func_71560_a(new CommandPing());
  
 +        this.func_71560_a(new CommandPlayer());
++        this.func_71560_a(new CommandAutosave());
 +        /* end */
 +        // ----- RSMM Start ----- //
 +        this.func_71560_a(new MeterCommand(CarpetServer.rsmmServer));
