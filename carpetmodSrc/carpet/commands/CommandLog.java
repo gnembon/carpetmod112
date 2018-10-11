@@ -78,7 +78,7 @@ public class CommandLog extends CommandCarpetBase {
                     else
                     {
                         comp.add(color + " [Subscribe] ");
-                        comp.add("^w subscribe to " + lname);
+                        comp.add("^w toggle subscription to " + lname);
                         comp.add("!/log " + lname);
                     }
                 }
@@ -92,7 +92,7 @@ public class CommandLog extends CommandCarpetBase {
                         } else
                         {
                             comp.add(color + " [" + option + "] ");
-                            comp.add("^w subscribe to " + lname + " " + option);
+                            comp.add("^w toggle subscription to " + lname + " " + option);
                             comp.add("!/log " + lname + " " + option);
                         }
 
@@ -101,7 +101,7 @@ public class CommandLog extends CommandCarpetBase {
                 if (subs.containsKey(lname))
                 {
                     comp.add("nb [X]");
-                    comp.add("^w Click to unsubscribe");
+                    comp.add("^w Click to toggle subscription");
                     comp.add("!/log "+lname);
                 }
                 Messenger.m(player,comp.toArray(new Object[0]));
