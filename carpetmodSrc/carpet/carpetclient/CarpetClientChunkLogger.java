@@ -34,14 +34,13 @@ public class CarpetClientChunkLogger {
     ChunkLoggerSerializer clients;
 
     public static enum Event {
-        ERROR,
+        NONE,
         UNLOADING,
         LOADING,
         PLAYER_ENTERS,
         PLAYER_LEAVES,
         QUEUE_UNLOAD,
         CANCEL_UNLOAD,
-        UNQUEUE_UNLOAD,
         GENERATING,
         POPULATING,
         GENERATING_STRUCTURES;

@@ -104,23 +104,19 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -238,7 +270,15 @@
+@@ -238,6 +270,11 @@
                          this.func_73243_a(chunk);
                          this.field_73244_f.remove(olong);
                          ++i;
 +                     
 +                    	// ChunkLogger - 0x-CARPET
-+                        if(CarpetClientChunkLogger.logger.enabled)
-+                    	CarpetClientChunkLogger.logger.log(this.field_73251_h,chunk.field_76635_g,chunk.field_76647_h,CarpetClientChunkLogger.Event.UNLOADING);
++                        if(CarpetClientChunkLogger.logger.enabled) {
++                            CarpetClientChunkLogger.logger.log(this.field_73251_h,chunk.field_76635_g,chunk.field_76647_h,CarpetClientChunkLogger.Event.UNLOADING);
++                        }
                      }
-+                   	// ChunkLogger - 0x-CARPET
-+                    else if(CarpetClientChunkLogger.logger.enabled && chunk != null){
-+                    	CarpetClientChunkLogger.logger.log(this.field_73251_h,chunk.field_76635_g,chunk.field_76647_h,CarpetClientChunkLogger.Event.UNQUEUE_UNLOAD);
-+                    }
                  }
              }
- 
-@@ -283,9 +323,17 @@
+@@ -283,9 +320,17 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
      }
