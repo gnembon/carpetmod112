@@ -90,6 +90,7 @@ public class CarpetSettings
     public static boolean netherRNG = false;
     public static boolean endRNG = false;
     public static int structureBlockLimit = 32;
+    public static boolean chunkDebugTool = false;
 
     public static long setSeed = 0;
 
@@ -270,7 +271,7 @@ public class CarpetSettings
   rule("disableSpawnChunks",    "creative", "Removes the spawn chunks."),
   rule("structureBlockLimit",   "creative", "Changes the structure block dimension limit.")
                                 .choices("32", "32 50 200 1000").setNotStrict(),
-
+                rule("chunkDebugTool", "creative", "Enables chunk debug on carpet client.")
         };
         for (CarpetSettingEntry rule: RuleList)
         {
@@ -312,6 +313,8 @@ public class CarpetSettings
         netherRNG = CarpetSettings.getBool("netherRNG");
         endRNG = CarpetSettings.getBool("endRNG");
         structureBlockLimit = CarpetSettings.getInt("structureBlockLimit");
+        chunkDebugTool = CarpetSettings.getBool("chunkDebugTool");
+        mergeTNT = CarpetSettings.getBool("mergeTNT");
 
         if ("pistonGhostBlocksFix".equalsIgnoreCase(rule))
         {
@@ -438,6 +441,8 @@ public class CarpetSettings
                     overworld.getChunkProvider().provideChunk(chunk.x, chunk.z);
                 }
             }
+        } else if (!chunkDebugTool) {
+            CarpetClientChunkLogger.logger.clear();
         }
     }
     public static void apply_settings_from_conf(MinecraftServer server)
