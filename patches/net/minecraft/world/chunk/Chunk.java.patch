@@ -440,13 +440,14 @@
      }
  
      public void func_76623_d()
-@@ -964,12 +1035,25 @@
+@@ -964,12 +1035,27 @@
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
              {
 +        		// ChunkLogger 0x-CARPET
-+                if(CarpetClientChunkLogger.logger.enabled)
-+        		CarpetClientChunkLogger.logger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.GENERATING_STRUCTURES);
++                if(CarpetClientChunkLogger.logger.enabled) {
++                	CarpetClientChunkLogger.logger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.GENERATING_STRUCTURES);
++                }
 +        		
                  this.func_76630_e();
              }
@@ -461,13 +462,14 @@
 +        		this.func_150809_p();
 +        	}
 +    		// ChunkLogger 0x-CARPET
-+            if(CarpetClientChunkLogger.logger.enabled)
-+    		CarpetClientChunkLogger.logger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.POPULATING);
++            if(CarpetClientChunkLogger.logger.enabled) {
++            	CarpetClientChunkLogger.logger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.POPULATING);
++            }
 +    		
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
              this.func_76630_e();
          }
-@@ -1018,10 +1102,13 @@
+@@ -1018,10 +1104,13 @@
  
          this.field_150815_m = true;
  
@@ -485,7 +487,7 @@
  
          while (!this.field_177447_w.isEmpty())
          {
-@@ -1389,4 +1476,26 @@
+@@ -1389,4 +1478,26 @@
          QUEUED,
          CHECK;
      }

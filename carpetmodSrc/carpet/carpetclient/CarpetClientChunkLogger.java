@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerChunkMap;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -46,12 +47,12 @@ public class CarpetClientChunkLogger {
         GENERATING_STRUCTURES;
     }
 
-    class ChunkLogCoords {
-        int chunkX;
-        int chunkZ;
-        int chunkDimension;
+    public static class ChunkLogCoords {
+        final int chunkX;
+        final int chunkZ;
+        final int chunkDimension;
 
-        ChunkLogCoords(int x, int z, int d) {
+        public ChunkLogCoords(int x, int z, int d) {
             chunkX = x;
             chunkZ = z;
             chunkDimension = d;
@@ -64,11 +65,6 @@ public class CarpetClientChunkLogger {
                 return this.chunkX == o.chunkX && this.chunkZ == o.chunkZ && this.chunkDimension == o.chunkDimension;
             }
             return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return (chunkX * 1281773681) | (chunkZ * 1298815619) | (chunkDimension * 2022620329);
         }
     }
 
@@ -93,6 +89,11 @@ public class CarpetClientChunkLogger {
 
         ChunkLog(int x, int z, int d, Event event, int stacktraceId) {
             this.coords = new ChunkLogCoords(x, z, d);
+            this.event = new ChunkLogEvent(event, stacktraceId);
+        }
+        
+        ChunkLog(ChunkLogCoords coords, Event event, int stacktraceId) {
+        	this.coords = coords;
             this.event = new ChunkLogEvent(event, stacktraceId);
         }
     }
@@ -127,10 +128,10 @@ public class CarpetClientChunkLogger {
                 }
             }
             PlayerChunkMap chunkmap = ((WorldServer) w).getPlayerChunkMap();
-            Iterator<Chunk> i = chunkmap.getChunkIterator();
+            Iterator<ChunkPos> i = chunkmap.carpetGetAllChunkCoordinates();
             while (i.hasNext()) {
-                Chunk c = i.next();
-                forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.PLAYER_ENTERS, 0));
+                ChunkPos pos = i.next();
+                forNewClient.add(new ChunkLog(pos.x, pos.z, dimension, Event.PLAYER_ENTERS, 0));
             }
         }
         return forNewClient;
@@ -146,7 +147,7 @@ public class CarpetClientChunkLogger {
         this.eventsThisGametick.add(new ChunkLog(c, e));
     }
 
-    int getWorldIndex(World w) {
+    static int getWorldIndex(World w) {
         int i = 0;
         for (World o : w.getMinecraftServer().worlds) {
             if (o == w) {
