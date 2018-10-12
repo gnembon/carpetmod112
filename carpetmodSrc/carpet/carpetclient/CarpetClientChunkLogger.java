@@ -230,7 +230,7 @@ public class CarpetClientChunkLogger {
                     continue;
                 }
                 if (!stacktrace.isEmpty()) {
-                    stacktrace += System.lineSeparator();
+                    stacktrace += "\n";
                 }
                 stacktrace += e.toString();
             }
@@ -381,9 +381,6 @@ public class CarpetClientChunkLogger {
                 NBTTagCompound stackTrace = new NBTTagCompound();
                 stackTrace.setInteger("id", id);
                 stackTrace.setString("stack", s);
-                //System.out.println("------------------------");
-                //System.out.println("Sending stacktrace " + id);
-                //System.out.println(s);
                 list.appendTag(stackTrace);
             }
             NBTTagCompound stackList = new NBTTagCompound();
