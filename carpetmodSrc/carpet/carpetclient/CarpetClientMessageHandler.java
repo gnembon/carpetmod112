@@ -88,7 +88,7 @@ public class CarpetClientMessageHandler {
 
 		data.writeCompoundTag(compound);
 
-		if (!CarpetClientServer.sender(data, sender)) {
+		if (!CarpetClientServer.sendProtected(data, sender)) {
 		    // Payload was too large, try large packets for newer CC versions
 		    NBTTagList villages = compound.getTagList("Villages", 10);
 		    
@@ -115,7 +115,7 @@ public class CarpetClientMessageHandler {
 
 		data.writeCompoundTag(compound);
 
-		if (!CarpetClientServer.sender(data, sender)) {
+		if (!CarpetClientServer.sendProtected(data, sender)) {
 		    // Payload was too large, try large packets for newer CC versions
 		    NBTTagList boxes = compound.getTagList("Boxes", 9);
 		    compound.removeTag("Boxes");
