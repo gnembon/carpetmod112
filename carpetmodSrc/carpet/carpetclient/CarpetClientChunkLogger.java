@@ -47,54 +47,19 @@ public class CarpetClientChunkLogger {
         GENERATING_STRUCTURES;
     }
 
-    public static class ChunkLogCoords {
-        final int chunkX;
+    class ChunkLog {
+    	final int chunkX;
         final int chunkZ;
         final int chunkDimension;
+        final Event event;
+        final int stackTraceIndex;
 
-        public ChunkLogCoords(int x, int z, int d) {
-            chunkX = x;
-            chunkZ = z;
-            chunkDimension = d;
-        }
-
-        @Override
-        public boolean equals(Object oo) {
-            if (oo instanceof ChunkLogCoords) {
-                ChunkLogCoords o = (ChunkLogCoords) oo;
-                return this.chunkX == o.chunkX && this.chunkZ == o.chunkZ && this.chunkDimension == o.chunkDimension;
-            }
-            return false;
-        }
-    }
-
-    class ChunkLogEvent {
-        Event event;
-        int stackTraceIndex;
-
-        ChunkLogEvent(Event e, int trace) {
-            event = e;
-            stackTraceIndex = trace;
-        }
-    }
-
-    class ChunkLog {
-        ChunkLogCoords coords;
-        ChunkLogEvent event;
-
-        ChunkLog(ChunkLogCoords c, ChunkLogEvent e) {
-            coords = c;
-            event = e;
-        }
-
-        ChunkLog(int x, int z, int d, Event event, int stacktraceId) {
-            this.coords = new ChunkLogCoords(x, z, d);
-            this.event = new ChunkLogEvent(event, stacktraceId);
-        }
-        
-        ChunkLog(ChunkLogCoords coords, Event event, int stacktraceId) {
-        	this.coords = coords;
-            this.event = new ChunkLogEvent(event, stacktraceId);
+        ChunkLog(int x, int z, int d, Event e, int trace) {
+        	this.chunkX = x;
+        	this.chunkZ = z;
+        	this.chunkDimension = d;
+            this.event = e;
+            this.stackTraceIndex = trace;
         }
     }
 
@@ -142,9 +107,7 @@ public class CarpetClientChunkLogger {
     }
 
     void log(int x, int z, int d, Event event, int stackTrace) {
-        ChunkLogCoords c = new ChunkLogCoords(x, z, d);
-        ChunkLogEvent e = new ChunkLogEvent(event, stackTrace);
-        this.eventsThisGametick.add(new ChunkLog(c, e));
+        this.eventsThisGametick.add(new ChunkLog(x, z, d, event, stackTrace));
     }
 
     static int getWorldIndex(World w) {
@@ -346,7 +309,7 @@ public class CarpetClientChunkLogger {
         		return;
         	}
         	for(ChunkLog log : events) {
-        		int id = log.event.stackTraceIndex;
+        		int id = log.stackTraceIndex;
         		if(!sentTraces.contains(id)) {
         			sentTraces.add(id);
         			missingTraces.add(id);
@@ -370,11 +333,11 @@ public class CarpetClientChunkLogger {
             NBTTagList list = new NBTTagList();
             for (ChunkLog log : events) {
                 NBTTagCompound data = new NBTTagCompound();
-                data.setInteger("x", log.coords.chunkX);
-                data.setInteger("z", log.coords.chunkZ);
-                data.setInteger("d", log.coords.chunkDimension);
-                data.setInteger("event", log.event.event.ordinal());
-                data.setInteger("trace", log.event.stackTraceIndex);
+                data.setInteger("x", log.chunkX);
+                data.setInteger("z", log.chunkZ);
+                data.setInteger("d", log.chunkDimension);
+                data.setInteger("event", log.event.ordinal());
+                data.setInteger("trace", log.stackTraceIndex);
                 list.appendTag(data);
             }
             chunkData.setTag("data", list);
