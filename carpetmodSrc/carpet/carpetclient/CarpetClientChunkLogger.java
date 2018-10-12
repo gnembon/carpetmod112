@@ -259,7 +259,7 @@ public class CarpetClientChunkLogger {
         public static final int PACKET_ACCESS_DENIED = 2;
         
         static final int stacktracesBatchSize = 10;
-        static final int logsBatchSize = 10;
+        static final int logsBatchSize = 1000;
 
         private HashSet<EntityPlayerMP> playersLoggingChunks = new HashSet();
         private HashMap<EntityPlayerMP, HashSet<Integer>> sentTracesForPlayer = new HashMap();
@@ -272,6 +272,9 @@ public class CarpetClientChunkLogger {
             boolean getStackTraces = data.readBoolean();
             if (addPlayer) {
                 enabled = true;
+                if(getStackTraces) {
+                	this.sentTracesForPlayer.put(sender, new HashSet<Integer>());
+                }
                 playersLoggingChunks.add(sender);
                 this.sendInitalChunks(sender);
             } else {
@@ -391,9 +394,9 @@ public class CarpetClientChunkLogger {
                 NBTTagCompound stackTrace = new NBTTagCompound();
                 stackTrace.setInteger("id", id);
                 stackTrace.setString("stack", s);
-                System.out.println("------------------------");
-                System.out.println("Sending stacktrace " + id);
-                System.out.println(s);
+                //System.out.println("------------------------");
+                //System.out.println("Sending stacktrace " + id);
+                //System.out.println(s);
                 list.appendTag(stackTrace);
             }
             NBTTagCompound stackList = new NBTTagCompound();
