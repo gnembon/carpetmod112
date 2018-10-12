@@ -183,7 +183,12 @@ public class CarpetClientChunkLogger {
         }
 
         private String getString(int i) {
-            return this.allTracesDeobfuscated.get(i);
+        	if((i<0) && (i>=this.allTracesDeobfuscated.size())) {
+        		return null;
+        	}
+        	else {
+        		return this.allTracesDeobfuscated.get(i);
+        	}
         }
 
         private ArrayList<String> getInitialStackTracesForNewClient() {
@@ -391,8 +396,9 @@ public class CarpetClientChunkLogger {
         private void kickAllPlayers() {
             for (EntityPlayerMP player : playersLoggingChunks) {
                 CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_ACCESS_DENIED, new NBTTagCompound());
-                unregisterPlayer(player);
             }
+            this.playersLoggingChunks.clear();
+            this.sentTracesForPlayer.clear();
         }
     }
 }
