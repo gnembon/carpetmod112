@@ -230,6 +230,7 @@ public class CarpetClientChunkLogger {
         public void registerPlayer(EntityPlayerMP sender, PacketBuffer data) {
             if (!CarpetSettings.chunkDebugTool) {
                 CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_ACCESS_DENIED, new NBTTagCompound());
+                return;
             }
             boolean addPlayer = data.readBoolean();
             boolean getStackTraces = data.readBoolean();
