@@ -370,8 +370,8 @@ public class CarpetClientChunkLogger {
         void clearPlayers() {
             for (EntityPlayerMP player : playersLoggingChunks) {
                 CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_ACCESS_DENIED, new NBTTagCompound());
+                unregisterPlayer(player);
             }
-            playersLoggingChunks.clear();
         }
     }
 }
