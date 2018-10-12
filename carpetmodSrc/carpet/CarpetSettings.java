@@ -92,6 +92,7 @@ public class CarpetSettings
     public static boolean endRNG = false;
     public static int structureBlockLimit = 32;
     public static boolean chunkDebugTool = false;
+    public static boolean disablePlayerCollision = false;
 
     public static long setSeed = 0;
 
@@ -215,6 +216,7 @@ public class CarpetSettings
   rule("commandRNG",            "commands", "Enables /rng command to manipulate and query rng").defaultTrue(),
   rule("commandStructure",      "commands", "Enables /structure to manage NBT structures used by structure blocks").defaultTrue(),
   rule("commandFillBiome",      "commands", "Enabled /fillbiome command to change the biome of an area").defaultTrue(),
+  rule("commandAutosave",       "commands", "Enables /autosave command to query information about the autosave and execute commands relative to the autosave").defaultTrue(),
   rule("commandPing",           "commands", "Enables /ping for players to get their ping").defaultTrue(),
   rule("newLight",              "optimizations", "Uses alternative lighting engine by PhiPros. AKA NewLight mod"),
   rule("carpets",               "survival", "Placing carpets may issue carpet commands for non-op players"),
@@ -272,7 +274,17 @@ public class CarpetSettings
   rule("disableSpawnChunks",    "creative", "Removes the spawn chunks."),
   rule("structureBlockLimit",   "creative", "Changes the structure block dimension limit.")
                                 .choices("32", "32 50 200 1000").setNotStrict(),
-                rule("chunkDebugTool", "creative", "Enables chunk debug on carpet client.")
+  rule("chunkDebugTool", "creative", "Enables chunk debug on carpet client."),
+  rule("worldEdit",             "creative", "Enables/disables WorldEdit.")
+                                .extraInfo("Only works in WorldEdit is in the classpath."),
+  rule("pistonSerializationFix","fix", "Fixes bug with piston serialization"),
+  rule("reloadUpdateOrderFix",  "fix", "Fixes reload update order for tile entities")
+                                .extraInfo("Fixes instant wires randomly breaking.",
+                                           "Effective after chunk reload."),
+  rule("leashFix",              "fix",      "Fixes to leashes.")
+                                .choices("false", "false casual cool"),
+  rule("disablePlayerCollision","creative", "Disables player entity collision."),
+
         };
         for (CarpetSettingEntry rule: RuleList)
         {
@@ -316,6 +328,7 @@ public class CarpetSettings
         structureBlockLimit = CarpetSettings.getInt("structureBlockLimit");
         chunkDebugTool = CarpetSettings.getBool("chunkDebugTool");
         mergeTNT = CarpetSettings.getBool("mergeTNT");
+        disablePlayerCollision = CarpetSettings.getBool("disablePlayerCollision");
 
         if ("pistonGhostBlocksFix".equalsIgnoreCase(rule))
         {
@@ -688,7 +701,7 @@ public class CarpetSettings
         set("flippinCactus","true");
         set("hopperCounters","true");
         set("antiCheatSpeed","true");
-        
+        set("worldEdit","true");
     }
     public static void resetToSurvival()
     {
@@ -723,6 +736,9 @@ public class CarpetSettings
         set("unloadedEntityFix","true");
         set("hopperDuplicationFix","true");
         set("calmNetherFires","true");
+        set("pistonSerializationFix","true");
+        set("reloadUpdateOrderFix","true");
+        set("leashFix","true");
     }
 
     public static class CarpetSettingEntry 

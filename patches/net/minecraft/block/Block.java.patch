@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -235,7 +235,7 @@
+@@ -47,6 +47,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import carpet.helpers.CapturedDrops;
++
+ public class Block
+ {
+     private static final ResourceLocation field_176230_a = new ResourceLocation("air");
+@@ -235,7 +237,7 @@
          return this;
      }
  
@@ -9,7 +18,7 @@
      {
          this.field_149786_r = p_149713_1_;
          return this;
-@@ -327,7 +327,7 @@
+@@ -327,7 +329,7 @@
          return this.field_149782_v;
      }
  
@@ -18,3 +27,12 @@
      {
          this.field_149789_z = p_149675_1_;
          return this;
+@@ -490,6 +492,8 @@
+             EntityItem entityitem = new EntityItem(p_180635_0_, (double)p_180635_1_.func_177958_n() + d0, (double)p_180635_1_.func_177956_o() + d1, (double)p_180635_1_.func_177952_p() + d2, p_180635_2_);
+             entityitem.func_174869_p();
+             p_180635_0_.func_72838_d(entityitem);
++            if (CapturedDrops.isCapturingDrops())
++                CapturedDrops.captureDrop(entityitem);
+         }
+     }
+ 

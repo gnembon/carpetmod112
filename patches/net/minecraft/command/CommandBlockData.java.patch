@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandBlockData.java
++++ ../src-work/minecraft/net/minecraft/command/CommandBlockData.java
+@@ -12,6 +12,9 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ 
++import carpet.worldedit.WorldEditBridge;
++import net.minecraft.entity.player.EntityPlayerMP;
++
+ public class CommandBlockData extends CommandBase
+ {
+     public String func_71517_b()
+@@ -80,6 +83,9 @@
+                     }
+                     else
+                     {
++                        EntityPlayerMP worldEditPlayer = p_184881_2_ instanceof EntityPlayerMP ? (EntityPlayerMP) p_184881_2_ : null;
++                        WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos, iblockstate, nbttagcompound2);
++                        
+                         tileentity.func_145839_a(nbttagcompound);
+                         tileentity.func_70296_d();
+                         world.func_184138_a(blockpos, iblockstate, iblockstate, 3);

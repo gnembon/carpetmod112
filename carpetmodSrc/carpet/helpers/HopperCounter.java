@@ -157,4 +157,11 @@ public class HopperCounter
         }
         return lst;
     }
+    
+    public static long get_total_items(String color)
+    {
+        if (hopper_counter.get(color) == null)
+            return 0;
+        return hopper_counter.get(color).values().stream().mapToLong(Long::longValue).sum();
+    }
 }

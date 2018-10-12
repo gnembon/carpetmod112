@@ -1,15 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandFill.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandFill.java
-@@ -16,6 +16,8 @@
+@@ -16,6 +16,12 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  
 +import carpet.CarpetSettings;
++import carpet.helpers.CapturedDrops;
++import carpet.worldedit.WorldEditBridge;
++import net.minecraft.entity.item.EntityItem;
++import net.minecraft.entity.player.EntityPlayerMP;
 +
  public class CommandFill extends CommandBase
  {
      public String func_71517_b()
-@@ -60,9 +62,9 @@
+@@ -60,9 +66,9 @@
              BlockPos blockpos3 = new BlockPos(Math.max(blockpos.func_177958_n(), blockpos1.func_177958_n()), Math.max(blockpos.func_177956_o(), blockpos1.func_177956_o()), Math.max(blockpos.func_177952_p(), blockpos1.func_177952_p()));
              int i = (blockpos3.func_177958_n() - blockpos2.func_177958_n() + 1) * (blockpos3.func_177956_o() - blockpos2.func_177956_o() + 1) * (blockpos3.func_177952_p() - blockpos2.func_177952_p() + 1);
  
@@ -21,7 +25,47 @@
              }
              else if (blockpos2.func_177956_o() >= 0 && blockpos3.func_177956_o() < 256)
              {
-@@ -152,7 +154,7 @@
+@@ -96,6 +102,9 @@
+                         throw new CommandException("commands.fill.tagError", new Object[] {nbtexception.getMessage()});
+                     }
+                 }
++                
++                EntityPlayerMP worldEditPlayer = p_184881_2_ instanceof EntityPlayerMP ? (EntityPlayerMP) p_184881_2_ : null;
++                NBTTagCompound worldEditTag = flag ? nbttagcompound : null;
+ 
+                 List<BlockPos> list = Lists.<BlockPos>newArrayList();
+                 i = 0;
+@@ -114,7 +123,13 @@
+                                 {
+                                     if ("destroy".equals(p_184881_3_[8]))
+                                     {
++                                        WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos4, Blocks.field_150350_a.func_176223_P(), worldEditTag);
++                                        CapturedDrops.setCapturingDrops(true);
+                                         world.func_175655_b(blockpos4, true);
++                                        CapturedDrops.setCapturingDrops(false);
++                                        for (EntityItem drop : CapturedDrops.getCapturedDrops())
++                                            WorldEditBridge.recordEntityCreation(worldEditPlayer, world, drop);
++                                        CapturedDrops.clearCapturedDrops();
+                                     }
+                                     else if ("keep".equals(p_184881_3_[8]))
+                                     {
+@@ -137,6 +152,7 @@
+                                 {
+                                     if ("hollow".equals(p_184881_3_[8]))
+                                     {
++                                        WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos4, Blocks.field_150350_a.func_176223_P(), worldEditTag);
+                                         world.func_180501_a(blockpos4, Blocks.field_150350_a.func_176223_P(), 2);
+                                         list.add(blockpos4);
+                                     }
+@@ -145,6 +161,7 @@
+                                 }
+                             }
+ 
++                            WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos4, iblockstate, worldEditTag);
+                             TileEntity tileentity1 = world.func_175625_s(blockpos4);
+ 
+                             if (tileentity1 != null && tileentity1 instanceof IInventory)
+@@ -152,7 +169,7 @@
                                  ((IInventory)tileentity1).func_174888_l();
                              }
  
@@ -30,11 +74,12 @@
                              {
                                  list.add(blockpos4);
                                  ++i;
-@@ -173,12 +175,16 @@
+@@ -173,12 +190,17 @@
                          }
                      }
                  }
 -
++                
 +                /*carpet mod */
 +                if (CarpetSettings.getBool("fillUpdates"))
 +                {

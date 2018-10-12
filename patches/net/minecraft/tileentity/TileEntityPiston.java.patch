@@ -215,8 +215,12 @@
              }
          }
          else
-@@ -333,6 +482,15 @@
+@@ -331,8 +480,19 @@
+         this.field_174931_f = EnumFacing.func_82600_a(p_145839_1_.func_74762_e("facing"));
+         this.field_145873_m = p_145839_1_.func_74760_g("progress");
          this.field_145870_n = this.field_145873_m;
++        if (CarpetSettings.getBool("pistonSerializationFix") && p_145839_1_.func_150297_b("lastProgress", 5)) // CM: piston serialization fix
++            this.field_145870_n = p_145839_1_.func_74760_g("lastProgress");
          this.field_145875_k = p_145839_1_.func_74767_n("extending");
          this.field_145872_l = p_145839_1_.func_74767_n("source");
 +
@@ -231,8 +235,19 @@
      }
  
      public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
-@@ -344,6 +502,13 @@
+@@ -341,9 +501,24 @@
+         p_189515_1_.func_74768_a("blockId", Block.func_149682_b(this.field_174932_a.func_177230_c()));
+         p_189515_1_.func_74768_a("blockData", this.field_174932_a.func_177230_c().func_176201_c(this.field_174932_a));
+         p_189515_1_.func_74768_a("facing", this.field_174931_f.func_176745_a());
++        if (CarpetSettings.getBool("pistonSerializationFix")) // CM: piston serialization fix
++        {
++            p_189515_1_.func_74776_a("progress", this.field_145873_m);
++            p_189515_1_.func_74776_a("lastProgress", this.field_145870_n);
++        }
++        else
++        {
          p_189515_1_.func_74776_a("progress", this.field_145870_n);
++        }
          p_189515_1_.func_74757_a("extending", this.field_145875_k);
          p_189515_1_.func_74757_a("source", this.field_145872_l);
 +
@@ -245,7 +260,7 @@
          return p_189515_1_;
      }
  
-@@ -382,4 +547,34 @@
+@@ -382,4 +557,34 @@
              }
          }
      }

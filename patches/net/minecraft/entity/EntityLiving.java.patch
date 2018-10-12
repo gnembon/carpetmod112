@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -56,6 +56,8 @@
+@@ -56,6 +56,9 @@
  import net.minecraft.world.storage.loot.LootContext;
  import net.minecraft.world.storage.loot.LootTable;
  
++import carpet.CarpetSettings;
 +import net.minecraft.util.text.TextFormatting;
 +
  public abstract class EntityLiving extends EntityLivingBase
  {
      private static final DataParameter<Byte> field_184654_a = EntityDataManager.<Byte>func_187226_a(EntityLiving.class, DataSerializers.field_187191_a);
-@@ -192,11 +194,19 @@
+@@ -192,11 +195,19 @@
  
      public void func_70642_aH()
      {
@@ -33,7 +34,18 @@
          }
      }
  
-@@ -1414,4 +1424,23 @@
+@@ -408,6 +419,10 @@
+ 
+             p_70014_1_.func_74782_a("Leash", nbttagcompound2);
+         }
++        else if ("casual".equals(CarpetSettings.get("leashFix")) && field_110170_bx != null)
++        {
++            p_70014_1_.func_74782_a("Leash", field_110170_bx);
++        }
+ 
+         p_70014_1_.func_74757_a("LeftHanded", this.func_184638_cS());
+ 
+@@ -1414,4 +1429,33 @@
          IN_AIR,
          IN_WATER;
      }
@@ -55,5 +67,15 @@
 +			}
 +		}
 +		return playerInDimension;
++	}
++	
++	// CM
++	@Override
++	public void postLoad()
++	{
++	    if ("cool".equals(CarpetSettings.get("leashFix")))
++	    {
++	        func_110165_bF();
++	    }
 +	}
  }

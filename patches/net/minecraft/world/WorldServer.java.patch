@@ -186,3 +186,11 @@
              }
  
              p_175654_3_ = 1;
+@@ -1057,6 +1133,7 @@
+         this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
+         this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
+         Entity[] aentity = p_72923_1_.func_70021_al();
++        p_72923_1_.postLoad();
+ 
+         if (aentity != null)
+         {

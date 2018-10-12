@@ -3,6 +3,7 @@ package carpet;
 import carpet.utils.HUDController;
 import carpet.utils.PluginChannelTracker;
 import carpet.utils.TickingArea;
+import carpet.worldedit.WorldEditBridge;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -40,6 +41,7 @@ public class CarpetServer // static for now - easier to handle all around the co
         CarpetSettings.apply_settings_from_conf(server);
         CarpetSettings.reload_all_statics();
         LoggerRegistry.initLoggers(server);
+        WorldEditBridge.onServerLoaded(server);
     }
     public static void onLoadAllWorlds(MinecraftServer server)
     {
@@ -58,6 +60,7 @@ public class CarpetServer // static for now - easier to handle all around the co
             TickStartEventDispatcher.dispatchEvent(server.getTickCounter());
         }
         HUDController.update_hud(server);
+        WorldEditBridge.onStartTick();
     }
     public static void playerConnected(EntityPlayerMP player)
     {
@@ -101,6 +104,7 @@ public class CarpetServer // static for now - easier to handle all around the co
             if (CarpetSettings.redstoneMultimeter)
                 ServerPacketEventDispatcher.dispatchCustomPayload(playerEntity, packet_id, packetIn.getBufferData());
             CCServer.onCustomPayload(playerEntity, packet_id, packetIn.getBufferData());
+            WorldEditBridge.onCustomPayload(packetIn, playerEntity);
         }
     }
 
