@@ -443,7 +443,7 @@ public class CarpetSettings
                 }
             }
         } else if (!chunkDebugTool) {
-            CarpetClientChunkLogger.logger.clear();
+            CarpetClientChunkLogger.logger.disable();
         }
     }
     public static void apply_settings_from_conf(MinecraftServer server)
