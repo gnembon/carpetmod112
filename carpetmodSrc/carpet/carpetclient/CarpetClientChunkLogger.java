@@ -300,7 +300,7 @@ public class CarpetClientChunkLogger {
             for(int i = 0; i < logs.size(); i += LOGS_BATCH_SIZE) {
             	boolean complete = (i + LOGS_BATCH_SIZE) >= logs.size();
             	List<ChunkLog> batch = logs.subList(i, Integer.min(i + LOGS_BATCH_SIZE, logs.size()));
-            	NBTTagCompound chunkData = serializeEvents(batch, 0, i, complete);
+            	NBTTagCompound chunkData = serializeEvents(batch, server.getTickCounter() - 1, i, complete);
             	if(chunkData != null) {
             		CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_EVENTS, chunkData);
             	}
