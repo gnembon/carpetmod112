@@ -11,7 +11,7 @@
  public class ServerCommandManager extends CommandHandler implements ICommandListener
  {
      private final MinecraftServer field_184880_a;
-@@ -89,7 +93,34 @@
+@@ -89,7 +93,35 @@
          this.func_71560_a(new CommandLocate());
          this.func_71560_a(new CommandReload());
          this.func_71560_a(new CommandFunction());

@@ -332,7 +332,7 @@
              {
                  return false;
              }
-@@ -2149,6 +2291,13 @@
+@@ -2149,6 +2291,16 @@
                          {
                              this.field_72986_A.func_76090_f(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -349,7 +349,7 @@
                      }
                      else
                      {
-@@ -2173,6 +2322,13 @@
+@@ -2173,6 +2325,16 @@
                          {
                              this.field_72986_A.func_76080_g(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -366,7 +366,7 @@
                      }
                      else
                      {
-@@ -2383,6 +2539,11 @@
+@@ -2383,6 +2545,11 @@
  
      public boolean func_180500_c(EnumSkyBlock p_180500_1_, BlockPos p_180500_2_)
      {
@@ -378,7 +378,7 @@
          if (!this.func_175648_a(p_180500_2_, 17, false))
          {
              return false;
-@@ -3263,30 +3424,44 @@
+@@ -3263,30 +3430,44 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
@@ -435,7 +435,7 @@
      }
  
      public DifficultyInstance func_175649_E(BlockPos p_175649_1_)
-@@ -3357,4 +3532,17 @@
+@@ -3357,4 +3538,17 @@
      {
          return null;
      }
