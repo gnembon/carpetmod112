@@ -15,7 +15,8 @@ import net.minecraft.network.EnumPacketDirection;
 
 import net.minecraft.world.GameType;
 
-public class EntityPlayerMPFake extends EntityPlayerMP {
+public class EntityPlayerMPFake extends EntityPlayerMP
+{
     private double oldPosX;
     private double oldPosY;
     private double oldPosZ;
@@ -26,7 +27,8 @@ public class EntityPlayerMPFake extends EntityPlayerMP {
     private static float setYaw;
     private static float setPitch;
 
-    public static EntityPlayerMPFake createFake(String username, MinecraftServer server, double x, double y, double z, double yaw, double pitch, int dimension, int gamemode) {
+    public static EntityPlayerMPFake createFake(String username, MinecraftServer server, double x, double y, double z, double yaw, double pitch, int dimension, int gamemode)
+    {
         setX = x;
         setY = y;
         setZ = z;
@@ -36,7 +38,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP {
         WorldServer worldIn = server.getWorld(dimension);
         PlayerInteractionManager interactionManagerIn = new PlayerInteractionManager(worldIn);
         GameProfile gameprofile = server.getPlayerProfileCache().getGameProfileForUsername(username);
-        gameprofile = profileCasher(gameprofile);
+        gameprofile = profileCacher(gameprofile);
         EntityPlayerMPFake instance = new EntityPlayerMPFake(server, worldIn, gameprofile, interactionManagerIn);
         server.getPlayerList().initializeConnectionToPlayer(new NetworkManagerFake(EnumPacketDirection.CLIENTBOUND), instance);
         if (instance.dimension != dimension) //player was logged in in a different dimension
@@ -61,7 +63,8 @@ public class EntityPlayerMPFake extends EntityPlayerMP {
         return instance;
     }
 
-    public static EntityPlayerMPFake createShadow(MinecraftServer server, EntityPlayerMP player) {
+    public static EntityPlayerMPFake createShadow(MinecraftServer server, EntityPlayerMP player)
+    {
         player.getServer().getPlayerList().playerLoggedOut(player);
         player.connection.disconnect(new TextComponentTranslation("multiplayer.disconnect.duplicate_login"));
         WorldServer worldIn = server.getWorld(player.dimension);
@@ -82,7 +85,8 @@ public class EntityPlayerMPFake extends EntityPlayerMP {
         return playerShadow;
     }
 
-    public static EntityPlayerMPFake createAstral(MinecraftServer server, EntityPlayerMP player) {
+    public static EntityPlayerMPFake createAstral(MinecraftServer server, EntityPlayerMP player)
+    {
         setX = player.posX;
         setY = player.posY;
         setZ = player.posZ;
@@ -90,7 +94,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP {
         setPitch = player.rotationPitch;
 
         player.getServer().getPlayerList().playerLoggedOut(player);
-        player.connection.disconnect(new TextComponentTranslation("Your soul left your body.", new Object[0]));
+        player.connection.disconnect(new TextComponentTranslation("Your soul left your body."));
 
         WorldServer worldIn = server.getWorld(player.dimension);
         PlayerInteractionManager interactionManagerIn = new PlayerInteractionManager(worldIn);
@@ -110,34 +114,39 @@ public class EntityPlayerMPFake extends EntityPlayerMP {
         return astral;
     }
 
-    private static GameProfile profileCasher(GameProfile gameprofile) {
-        if (!profileWithTexture(gameprofile)) {
+    private static GameProfile profileCacher(GameProfile gameprofile)
+    {
+        if (!profileWithTexture(gameprofile))
             gameprofile = TileEntitySkull.updateGameprofile(gameprofile);
-        }
         return gameprofile;
     }
 
-    private static boolean profileWithTexture(GameProfile gameprofile) {
+    private static boolean profileWithTexture(GameProfile gameprofile)
+    {
         return gameprofile.getProperties().containsKey("textures");
     }
 
-    public EntityPlayerMPFake(MinecraftServer server, WorldServer worldIn, GameProfile profile, PlayerInteractionManager interactionManagerIn) {
+    public EntityPlayerMPFake(MinecraftServer server, WorldServer worldIn, GameProfile profile, PlayerInteractionManager interactionManagerIn)
+    {
         super(server, worldIn, profile, interactionManagerIn);
     }
 
-    public void onKillCommand() {
-        //super.onKillCommand();
+    public void onKillCommand()
+    {
         this.getServer().getPlayerList().playerLoggedOut(this);
     }
 
-    public void onUpdate() {
+    public void onUpdate()
+    {
         super.onUpdate();
         this.onUpdateEntity();
         playerMoved();
     }
 
-    private void playerMoved() {
-        if (posX != oldPosX || posY != oldPosY || posZ != oldPosZ) {
+    private void playerMoved()
+    {
+        if (posX != oldPosX || posY != oldPosY || posZ != oldPosZ)
+        {
             connection.server.getPlayerList().serverUpdateMovingPlayer(this);
         }
         oldPosX = posX;
@@ -146,12 +155,14 @@ public class EntityPlayerMPFake extends EntityPlayerMP {
     }
 
     @Override
-    public void onDeath(DamageSource cause) {
+    public void onDeath(DamageSource cause)
+    {
         super.onDeath(cause);
         getServer().getPlayerList().playerLoggedOut(this);
     }
 
-    public void postReadFromNBT() {
+    public void postReadFromNBT()
+    {
         this.setLocationAndAngles(setX, setY, setZ, setYaw, setPitch);
     }
 }

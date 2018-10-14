@@ -45,10 +45,10 @@ public class CommandAstral extends CommandCarpetBase {
      */
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (!command_enabled("commandAstral", sender)) {
-            throw new WrongUsageException("Enable commandAstral to use this command.");
+            throw new CommandException("Enable commandAstral to use this command.");
         }
         if (!(sender instanceof EntityPlayerMP)) {
-            throw new WrongUsageException("Only players can use this command.");
+            throw new CommandException("Only players can use this command.");
         }
 
         EntityPlayerMP player = (EntityPlayerMP) sender;
@@ -83,7 +83,7 @@ public class CommandAstral extends CommandCarpetBase {
                 String playerName = args[1];
                 EntityPlayerMP kick = server.getPlayerList().getPlayerByUsername(playerName);
                 if (!(kick instanceof EntityPlayerMPFake)) {
-                    throw new WrongUsageException("/astral kick can only be used on astral or fake players");
+                    throw new CommandException("/astral kick can only be used on astral or fake players");
                 }
                 kick.onKillCommand();
                 return;
@@ -99,17 +99,17 @@ public class CommandAstral extends CommandCarpetBase {
         if(args.length > 1)
             System.out.println("testing :" + args[0]+":1");
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, new String[]{"leftClick", "rightClick", "leftAndRight", "kick"});
+            return getListOfStringsMatchingLastWord(args, "leftClick", "rightClick", "leftAndRight", "kick");
         } else if (args.length == 2 && "leftClick".equalsIgnoreCase(args[0])) {
-            return getListOfStringsMatchingLastWord(args, new String[]{"20"});
+            return getListOfStringsMatchingLastWord(args, "20");
         } else if (args.length == 2 && "rightClick".equalsIgnoreCase(args[0])) {
-            return getListOfStringsMatchingLastWord(args, new String[]{"4"});
+            return getListOfStringsMatchingLastWord(args, "4");
         } else if (args.length > 1 && "leftAndRight".equalsIgnoreCase(args[0])) {
             if (args.length == 2) {
-                return getListOfStringsMatchingLastWord(args, new String[]{"20"});
+                return getListOfStringsMatchingLastWord(args, "20");
             }
             else if (args.length == 3) {
-                return getListOfStringsMatchingLastWord(args, new String[]{"4"});
+                return getListOfStringsMatchingLastWord(args, "4");
             }
         } else if (args.length > 1 && "kick".equalsIgnoreCase(args[0])) {
             Set<String> players = new HashSet<>(Arrays.asList(server.getOnlinePlayerNames()));
