@@ -21,7 +21,16 @@
          nethandlerplayserver.func_147359_a(new SPacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.func_186058_p().func_186068_a(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
          nethandlerplayserver.func_147359_a(new SPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
          nethandlerplayserver.func_147359_a(new SPacketServerDifficulty(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
-@@ -343,6 +348,8 @@
+@@ -308,6 +313,8 @@
+             nbttagcompound1 = this.field_72412_k.func_75752_b(p_72380_1_);
+         }
+ 
++        p_72380_1_.postReadFromNBT();
++
+         return nbttagcompound1;
+     }
+ 
+@@ -343,6 +350,8 @@
  
          worldserver.func_72838_d(p_72377_1_);
          this.func_72375_a(p_72377_1_, (WorldServer)null);
@@ -30,7 +39,7 @@
      }
  
      public void func_72358_d(EntityPlayerMP p_72358_1_)
-@@ -352,6 +359,8 @@
+@@ -352,6 +361,8 @@
  
      public void func_72367_e(EntityPlayerMP p_72367_1_)
      {
@@ -39,7 +48,7 @@
          WorldServer worldserver = p_72367_1_.func_71121_q();
          p_72367_1_.func_71029_a(StatList.field_75947_j);
          this.func_72391_b(p_72367_1_);
-@@ -452,6 +461,11 @@
+@@ -452,6 +463,11 @@
  
          for (EntityPlayerMP entityplayermp1 : list)
          {
