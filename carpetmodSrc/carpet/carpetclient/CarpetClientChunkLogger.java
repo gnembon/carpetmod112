@@ -183,7 +183,7 @@ public class CarpetClientChunkLogger {
         }
 
         private String getString(int i) {
-        	if((i<0) && (i>=this.allTracesDeobfuscated.size())) {
+        	if((i<0) || (i>=this.allTracesDeobfuscated.size())) {
         		return null;
         	}
         	else {
@@ -249,7 +249,7 @@ public class CarpetClientChunkLogger {
         private static final int PACKET_STACKTRACE = 1;
         private static final int PACKET_ACCESS_DENIED = 2;
  
-        private static final int STACKTRACES_BATH_SIZE = 10;
+        private static final int STACKTRACES_BATCH_SIZE = 10;
         private static final int LOGS_BATCH_SIZE = 1000;
 
         private HashSet<EntityPlayerMP> playersLoggingChunks = new HashSet();
@@ -300,7 +300,7 @@ public class CarpetClientChunkLogger {
             for(int i = 0; i < logs.size(); i += LOGS_BATCH_SIZE) {
             	boolean complete = (i + LOGS_BATCH_SIZE) >= logs.size();
             	List<ChunkLog> batch = logs.subList(i, Integer.min(i + LOGS_BATCH_SIZE, logs.size()));
-            	NBTTagCompound chunkData = serializeEvents(batch, server.getTickCounter() - 1, i, complete);
+            	NBTTagCompound chunkData = serializeEvents(batch, -server.getTickCounter() -1, i, complete);
             	if(chunkData != null) {
             		CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_EVENTS, chunkData);
             	}
@@ -342,11 +342,12 @@ public class CarpetClientChunkLogger {
         		if(!sentTraces.contains(id)) {
         			sentTraces.add(id);
         			missingTraces.add(id);
+        			System.err.println(String.format("Sending trace %d to player %s",id , player.getName()));
         		}
         	}
         	ArrayList missingList = new ArrayList(missingTraces);
-        	for(int i = 0; i < missingList.size(); i += STACKTRACES_BATH_SIZE) {
-        		List<Integer> part = missingList.subList(i, Integer.min(i + STACKTRACES_BATH_SIZE, missingList.size()));
+        	for(int i = 0; i < missingList.size(); i += STACKTRACES_BATCH_SIZE) {
+        		List<Integer> part = missingList.subList(i, Integer.min(i + STACKTRACES_BATCH_SIZE, missingList.size()));
         		NBTTagCompound stackData = serializeStackTraces(part);
         		if(stackData != null) {
         			CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_STACKTRACE, stackData);

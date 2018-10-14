@@ -158,6 +158,6 @@ public class CarpetClientMessageHandler {
         data.writeInt(dataType);
         data.writeCompoundTag(compound);
 
-        CarpetClientServer.sender(data);
+        CarpetClientServer.sender(data, sender);
     }
 }
