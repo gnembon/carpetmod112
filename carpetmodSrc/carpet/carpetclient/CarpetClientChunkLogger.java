@@ -168,7 +168,9 @@ public class CarpetClientChunkLogger {
     }
 
     private class StackTraces {
-        StackTraceDeobfuscator deobf = StackTraceDeobfuscator.create().withMinecraftVersion("1.12").withSnapshotMcpNames("20180713-1.12");
+        StackTraceDeobfuscator deobf = StackTraceDeobfuscator.create()
+                .withMinecraftVersion(CarpetSettings.minecraftVersion)
+                .withSnapshotMcpNames(CarpetSettings.mcpMappings);
         HashMap<String, Integer> stackTraceToIndex = new HashMap();
         ArrayList<String> allTracesDeobfuscated = new ArrayList();
 

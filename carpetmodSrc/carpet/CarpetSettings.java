@@ -44,7 +44,11 @@ import net.minecraft.util.math.ChunkPos;
 public class CarpetSettings
 {
     public static boolean locked = false;
+
+    // TODO: replace these constants at build time
     public static final String carpetVersion = "v18_08_05";
+    public static final String minecraftVersion = "1.12";
+    public static final String mcpMappings = "20180713-1.12";
 
     public static final Logger LOG = LogManager.getLogger();
     private static final Map<String, CarpetSettingEntry> settings_store;
