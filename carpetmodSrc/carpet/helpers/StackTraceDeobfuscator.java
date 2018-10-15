@@ -8,9 +8,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -37,6 +35,9 @@ public class StackTraceDeobfuscator {
             methodMappingsCache = new HashMap<>(),
             methodDescCaches = new HashMap<>(),
             methodNamesCache = new HashMap<>();
+    private static final Set<String> srgUrlsLoaded = new HashSet<>(), namesUrlsLoaded = new HashSet<>();
+    private static final Object SRG_SYNC_LOCK = new Object();
+    private static final Object NAMES_SYNC_LOCK = new Object();
    
     private StackTraceDeobfuscator() {}
    
@@ -95,61 +96,121 @@ public class StackTraceDeobfuscator {
     }
    
     // IMPLEMENTATION
+
+    private void ensureSrgLoaded() {
+        while (true) {
+            synchronized (SRG_SYNC_LOCK) {
+                if (srgUrlsLoaded.contains(srgUrl))
+                    break;
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void ensureNamesLoaded() {
+        if (namesUrl == null)
+            return;
+
+        while (true) {
+            synchronized (NAMES_SYNC_LOCK) {
+                if (namesUrlsLoaded.contains(namesUrl))
+                    break;
+            }
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
    
-    private void loadMappings() throws IOException {
-        if (methodMappingsCache.containsKey(srgUrl)) {
+    private void loadMappings() {
+        boolean loadingSrg;
+        synchronized (SRG_SYNC_LOCK) {
+            loadingSrg = classMappingsCache.containsKey(srgUrl);
+            if (!loadingSrg) {
+                classMappingsCache.put(srgUrl, new HashMap<>());
+                methodMappingsCache.put(srgUrl, new HashMap<>());
+                methodDescCaches.put(srgUrl, new HashMap<>());
+            }
             classMappings = classMappingsCache.get(srgUrl);
             methodMappings = methodMappingsCache.get(srgUrl);
             methodDescCache = methodDescCaches.get(srgUrl);
-        } else {
-            URL url;
-            try {
-                url = new URL(srgUrl);
-            } catch (MalformedURLException e) {
-                throw new RuntimeException(e);
-            }
-            ZipInputStream zipIn = new ZipInputStream(url.openConnection().getInputStream());
-            ZipEntry entry;
-            while ((entry = zipIn.getNextEntry()) != null) {
-                if (entry.getName().equals("joined.srg")) {
-                    loadSrg(new BufferedReader(new InputStreamReader(zipIn)));
-                    break;
-                } else {
-                    zipIn.closeEntry();
-                }
-            }
-            zipIn.close();
         }
-       
-        if (namesUrl != null) {
-            if (methodNamesCache.containsKey(namesUrl)) {
-                methodNames = methodNamesCache.get(namesUrl);
-            } else {
-                URL url;
+
+        if (!loadingSrg) {
+            Thread t = new Thread(() -> {
                 try {
-                    url = new URL(namesUrl);
-                } catch (MalformedURLException e) {
-                    throw new RuntimeException(e);
-                }
-                ZipInputStream zipIn = new ZipInputStream(url.openConnection().getInputStream());
-                ZipEntry entry;
-                while ((entry = zipIn.getNextEntry()) != null) {
-                    if (entry.getName().equals("methods.csv")) {
-                        loadNames(new BufferedReader(new InputStreamReader(zipIn)));
-                        break;
-                    } else {
-                        zipIn.closeEntry();
+                    URL url;
+                    try {
+                        url = new URL(srgUrl);
+                    } catch (MalformedURLException e) {
+                        throw new RuntimeException(e);
                     }
+                    ZipInputStream zipIn = new ZipInputStream(url.openConnection().getInputStream());
+                    ZipEntry entry;
+                    while ((entry = zipIn.getNextEntry()) != null) {
+                        if (entry.getName().equals("joined.srg")) {
+                            loadSrg(new BufferedReader(new InputStreamReader(zipIn)));
+                            break;
+                        } else {
+                            zipIn.closeEntry();
+                        }
+                    }
+                    zipIn.close();
+                } catch (IOException e) {
+                    System.err.println("Unable to load srg mappings");
                 }
-                zipIn.close();
+            });
+            t.setDaemon(true);
+            t.start();
+        }
+
+        if (namesUrl != null) {
+            boolean loadingNames;
+            synchronized (NAMES_SYNC_LOCK) {
+                loadingNames = methodNamesCache.containsKey(namesUrl);
+                if (!loadingNames) {
+                    methodNamesCache.put(namesUrl, new HashMap<>());
+                }
+                methodNames = methodNamesCache.get(namesUrl);
+            }
+
+            if (!loadingNames) {
+                Thread t = new Thread(() -> {
+                    try {
+                        URL url;
+                        try {
+                            url = new URL(namesUrl);
+                        } catch (MalformedURLException e) {
+                            throw new RuntimeException(e);
+                        }
+                        ZipInputStream zipIn = new ZipInputStream(url.openConnection().getInputStream());
+                        ZipEntry entry;
+                        while ((entry = zipIn.getNextEntry()) != null) {
+                            if (entry.getName().equals("methods.csv")) {
+                                loadNames(new BufferedReader(new InputStreamReader(zipIn)));
+                                break;
+                            } else {
+                                zipIn.closeEntry();
+                            }
+                        }
+                        zipIn.close();
+                    } catch (IOException e) {
+                        System.err.println("Unable to load method names");
+                    }
+                });
+                t.setDaemon(true);
+                t.start();
             }
         }
     }
    
     private void loadSrg(BufferedReader in) {
-        classMappings = new HashMap<>();
-        methodMappings = new HashMap<>();
-        methodDescCache = new HashMap<>();
         in.lines().map(line -> line.split(" ")).forEach(tokens -> {
             if (tokens[0].equals("CL:")) {
                 classMappings.put(tokens[1], tokens[2]);
@@ -157,17 +218,18 @@ public class StackTraceDeobfuscator {
                 methodMappings.put(tokens[1] + tokens[2], tokens[3].substring(tokens[3].lastIndexOf('/') + 1));
             }
         });
-        classMappingsCache.put(srgUrl, classMappings);
-        methodMappingsCache.put(srgUrl, methodMappings);
-        methodDescCaches.put(srgUrl, methodDescCache);
+        synchronized (SRG_SYNC_LOCK) {
+            srgUrlsLoaded.add(srgUrl);
+        }
     }
    
     private void loadNames(BufferedReader in) {
-        methodNames = new HashMap<>();
         in.lines().skip(1).map(line -> line.split(",")).forEach(tokens -> {
             methodNames.put(tokens[0], tokens[1]);
         });
-        methodNamesCache.put(namesUrl, methodNames);
+        synchronized (NAMES_SYNC_LOCK) {
+            namesUrlsLoaded.add(namesUrl);
+        }
     }
    
     public void printDeobf() {
@@ -190,12 +252,8 @@ public class StackTraceDeobfuscator {
         if (stackTrace == null) {
             throw new IllegalStateException("No stack trace has been set");
         }
-       
-        try {
-            loadMappings();
-        } catch (IOException e) {
-            System.err.println("Unable to load mappings");
-        }
+
+        loadMappings();
        
         StackTraceElement[] deobfStackTrace = new StackTraceElement[stackTrace.length];
         for (int i = 0; i < stackTrace.length; i++) {
@@ -206,7 +264,8 @@ public class StackTraceDeobfuscator {
    
     private StackTraceElement deobfuscate(StackTraceElement elem) {
         String className = elem.getClassName().replace('.', '/');
-       
+
+        ensureSrgLoaded();
         if (!classMappings.containsKey(className))
             return elem;
        
@@ -223,6 +282,7 @@ public class StackTraceDeobfuscator {
         }
        
         String key = className + "/" + methodName + methodDesc;
+        ensureNamesLoaded();
         if (methodMappings.containsKey(key)) {
             methodName = methodMappings.get(key);
             if (methodNames != null && methodNames.containsKey(methodName))
