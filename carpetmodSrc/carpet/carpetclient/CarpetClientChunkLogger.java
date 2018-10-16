@@ -8,6 +8,7 @@ package carpet.carpetclient;
  */
 
 import carpet.CarpetSettings;
+import carpet.helpers.StackTraceDeobfuscator;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -20,25 +21,17 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-
-import carpet.helpers.StackTraceDeobfuscator;
+import java.util.*;
 
 public class CarpetClientChunkLogger {
 
-    public static String reason = null;
-
     public static CarpetClientChunkLogger logger = new CarpetClientChunkLogger();
     public boolean enabled = true;
-    
+
     StackTraces stackTraces;
     private ChunkLoggerSerializer clients;
     private ArrayList<ChunkLog> eventsThisGametick;
+    private String eventReason = "Reason for the loading";
 
     public static enum Event {
         NONE,
@@ -54,18 +47,20 @@ public class CarpetClientChunkLogger {
     }
 
     private static class ChunkLog {
-    	final int chunkX;
+        final int chunkX;
         final int chunkZ;
         final int chunkDimension;
         final Event event;
         final int stackTraceIndex;
+        final int reasonID;
 
-        ChunkLog(int x, int z, int d, Event e, int trace) {
-        	this.chunkX = x;
-        	this.chunkZ = z;
-        	this.chunkDimension = d;
+        ChunkLog(int x, int z, int d, Event e, int trace, int reason) {
+            this.chunkX = x;
+            this.chunkZ = z;
+            this.chunkDimension = d;
             this.event = e;
             this.stackTraceIndex = trace;
+            this.reasonID = reason;
         }
     }
 
@@ -80,7 +75,7 @@ public class CarpetClientChunkLogger {
 
         this.eventsThisGametick = new ArrayList();
     }
-    
+
     /*
      * main logging function
      * logs a change in a chunk including a stacktrace if required by the client 
@@ -90,7 +85,8 @@ public class CarpetClientChunkLogger {
         if (clients.hasStackTraceListeners()) {
             stacktraceid = stackTraces.internStackTrace();
         }
-        log(x, z, getWorldIndex(w), e, stacktraceid);
+        int reasonId = stackTraces.internReason();
+        log(x, z, getWorldIndex(w), e, stacktraceid, reasonId);
     }
 
     /*
@@ -109,20 +105,20 @@ public class CarpetClientChunkLogger {
         clients.kickAllPlayers();
         this.eventsThisGametick.clear();
     }
-    
+
 
     /*
      * called when registering a new player
      */
     public void registerPlayer(EntityPlayerMP sender, PacketBuffer data) {
-    	clients.registerPlayer(sender, data);
+        clients.registerPlayer(sender, data);
     }
-    
+
     /*
      * unregisters a single player
      */
     public void unregisterPlayer(EntityPlayerMP player) {
-    	clients.unregisterPlayer(player);
+        clients.unregisterPlayer(player);
     }
 
     private ArrayList<ChunkLog> getInitialChunksForNewClient(MinecraftServer server) {
@@ -132,11 +128,11 @@ public class CarpetClientChunkLogger {
             ChunkProviderServer provider = (ChunkProviderServer) (w.getChunkProvider());
             dimension++;
             for (Chunk c : provider.getLoadedChunks()) {
-                forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.LOADING, 0));
+                forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.LOADING, 0, 0));
                 if (provider.isChunkUnloadScheduled(c.x, c.z)) {
-                    forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.QUEUE_UNLOAD, 0));
+                    forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.QUEUE_UNLOAD, 0, 0));
                     if (!c.unloadQueued) {
-                        forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.CANCEL_UNLOAD, 0));
+                        forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.CANCEL_UNLOAD, 0, 0));
                     }
                 }
             }
@@ -144,7 +140,7 @@ public class CarpetClientChunkLogger {
             Iterator<ChunkPos> i = chunkmap.carpetGetAllChunkCoordinates();
             while (i.hasNext()) {
                 ChunkPos pos = i.next();
-                forNewClient.add(new ChunkLog(pos.x, pos.z, dimension, Event.PLAYER_ENTERS, 0));
+                forNewClient.add(new ChunkLog(pos.x, pos.z, dimension, Event.PLAYER_ENTERS, 0, 0));
             }
         }
         return forNewClient;
@@ -154,8 +150,8 @@ public class CarpetClientChunkLogger {
         return this.eventsThisGametick;
     }
 
-    private void log(int x, int z, int d, Event event, int stackTrace) {
-        this.eventsThisGametick.add(new ChunkLog(x, z, d, event, stackTrace));
+    private void log(int x, int z, int d, Event event, int stackTrace, int reasonID) {
+        this.eventsThisGametick.add(new ChunkLog(x, z, d, event, stackTrace, reasonID));
     }
 
     private static int getWorldIndex(World w) {
@@ -170,9 +166,7 @@ public class CarpetClientChunkLogger {
     }
 
     private class StackTraces {
-        StackTraceDeobfuscator deobf = StackTraceDeobfuscator.create()
-                .withMinecraftVersion(CarpetSettings.minecraftVersion)
-                .withSnapshotMcpNames(CarpetSettings.mcpMappings);
+        StackTraceDeobfuscator deobf = StackTraceDeobfuscator.create().withMinecraftVersion("1.12").withSnapshotMcpNames("20180713-1.12");
         HashMap<String, Integer> stackTraceToIndex = new HashMap();
         ArrayList<String> allTracesDeobfuscated = new ArrayList();
 
@@ -187,12 +181,11 @@ public class CarpetClientChunkLogger {
         }
 
         private String getString(int i) {
-        	if((i<0) || (i>=this.allTracesDeobfuscated.size())) {
-        		return null;
-        	}
-        	else {
-        		return this.allTracesDeobfuscated.get(i);
-        	}
+            if ((i < 0) || (i >= this.allTracesDeobfuscated.size())) {
+                return null;
+            } else {
+                return this.allTracesDeobfuscated.get(i);
+            }
         }
 
         private ArrayList<String> getInitialStackTracesForNewClient() {
@@ -229,6 +222,15 @@ public class CarpetClientChunkLogger {
             }
         }
 
+        public int internReason() {
+            Integer i = this.stackTraceToIndex.get(eventReason);
+            if (i != null) {
+                return i;
+            } else {
+                return this.internString(eventReason, eventReason);
+            }
+        }
+
         private String asString(StackTraceElement[] trace, boolean deobfuscated) {
             if (deobfuscated) {
                 trace = deobf.withStackTrace(trace).deobfuscate();
@@ -252,7 +254,7 @@ public class CarpetClientChunkLogger {
         private static final int PACKET_EVENTS = 0;
         private static final int PACKET_STACKTRACE = 1;
         private static final int PACKET_ACCESS_DENIED = 2;
- 
+
         private static final int STACKTRACES_BATCH_SIZE = 10;
         private static final int LOGS_BATCH_SIZE = 1000;
 
@@ -268,8 +270,8 @@ public class CarpetClientChunkLogger {
             boolean getStackTraces = data.readBoolean();
             if (addPlayer) {
                 enabled = true;
-                if(getStackTraces) {
-                	this.sentTracesForPlayer.put(sender, new HashSet<Integer>());
+                if (getStackTraces) {
+                    this.sentTracesForPlayer.put(sender, new HashSet<Integer>());
                 }
                 playersLoggingChunks.add(sender);
                 this.sendInitalChunks(sender);
@@ -288,7 +290,7 @@ public class CarpetClientChunkLogger {
                 enabled = false;
             }
         }
-        
+
         public boolean hasListeners() {
             return !this.playersLoggingChunks.isEmpty();
         }
@@ -296,18 +298,18 @@ public class CarpetClientChunkLogger {
         private boolean hasStackTraceListeners() {
             return !this.sentTracesForPlayer.isEmpty();
         }
-        
+
         private void sendInitalChunks(EntityPlayerMP sender) {
             MinecraftServer server = sender.getServer();
             ArrayList<ChunkLog> logs = getInitialChunksForNewClient(server);
-            sendMissingStackTracesForPlayer(sender,logs);
-            for(int i = 0; i < logs.size(); i += LOGS_BATCH_SIZE) {
-            	boolean complete = (i + LOGS_BATCH_SIZE) >= logs.size();
-            	List<ChunkLog> batch = logs.subList(i, Integer.min(i + LOGS_BATCH_SIZE, logs.size()));
-            	NBTTagCompound chunkData = serializeEvents(batch, -server.getTickCounter() -1, i, complete);
-            	if(chunkData != null) {
-            		CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_EVENTS, chunkData);
-            	}
+            sendMissingStackTracesForPlayer(sender, logs);
+            for (int i = 0; i < logs.size(); i += LOGS_BATCH_SIZE) {
+                boolean complete = (i + LOGS_BATCH_SIZE) >= logs.size();
+                List<ChunkLog> batch = logs.subList(i, Integer.min(i + LOGS_BATCH_SIZE, logs.size()));
+                NBTTagCompound chunkData = serializeEvents(batch, -server.getTickCounter() - 1, i, complete);
+                if (chunkData != null) {
+                    CarpetClientMessageHandler.sendNBTChunkData(sender, PACKET_EVENTS, chunkData);
+                }
             }
         }
 
@@ -315,48 +317,53 @@ public class CarpetClientChunkLogger {
             if (this.playersLoggingChunks.isEmpty()) {
                 return;
             }
-            
+
             ArrayList<ChunkLog> logs = getEventsThisGametick();
             MinecraftServer server = this.playersLoggingChunks.iterator().next().server;
-            
+
             for (EntityPlayerMP client : this.sentTracesForPlayer.keySet()) {
-            	this.sendMissingStackTracesForPlayer(client, logs);
+                this.sendMissingStackTracesForPlayer(client, logs);
             }
-            for(int i = 0; i < logs.size() ; i += LOGS_BATCH_SIZE) {
-            	boolean complete = (i + LOGS_BATCH_SIZE) >= logs.size();
-            	List<ChunkLog> batch = logs.subList(i, Integer.min(i + LOGS_BATCH_SIZE, logs.size()));
-            	NBTTagCompound chunkData = serializeEvents(batch, server.getTickCounter(), i, complete);
-		        if (chunkData != null) {
-		            for (EntityPlayerMP player : this.playersLoggingChunks) {
-		            	CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_EVENTS, chunkData);
-		            }
-		        }
+            for (int i = 0; i < logs.size(); i += LOGS_BATCH_SIZE) {
+                boolean complete = (i + LOGS_BATCH_SIZE) >= logs.size();
+                List<ChunkLog> batch = logs.subList(i, Integer.min(i + LOGS_BATCH_SIZE, logs.size()));
+                NBTTagCompound chunkData = serializeEvents(batch, server.getTickCounter(), i, complete);
+                if (chunkData != null) {
+                    for (EntityPlayerMP player : this.playersLoggingChunks) {
+                        CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_EVENTS, chunkData);
+                    }
+                }
             }
         }
-        
+
         private void sendMissingStackTracesForPlayer(EntityPlayerMP player, ArrayList<ChunkLog> events) {
-        	HashSet<Integer> missingTraces = new HashSet<Integer>();
-        	HashSet<Integer> sentTraces = this.sentTracesForPlayer.getOrDefault(player, null);
-        	
-        	if(sentTraces == null) {
-        		return;
-        	}
-        	for(ChunkLog log : events) {
-        		int id = log.stackTraceIndex;
-        		if(!sentTraces.contains(id)) {
-        			sentTraces.add(id);
-        			missingTraces.add(id);
-        			System.err.println(String.format("Sending trace %d to player %s",id , player.getName()));
-        		}
-        	}
-        	ArrayList missingList = new ArrayList(missingTraces);
-        	for(int i = 0; i < missingList.size(); i += STACKTRACES_BATCH_SIZE) {
-        		List<Integer> part = missingList.subList(i, Integer.min(i + STACKTRACES_BATCH_SIZE, missingList.size()));
-        		NBTTagCompound stackData = serializeStackTraces(part);
-        		if(stackData != null) {
-        			CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_STACKTRACE, stackData);
-        		}
-        	}
+            HashSet<Integer> missingTraces = new HashSet<Integer>();
+            HashSet<Integer> sentTraces = this.sentTracesForPlayer.getOrDefault(player, null);
+
+            if (sentTraces == null) {
+                return;
+            }
+            for (ChunkLog log : events) {
+                int id = log.stackTraceIndex;
+                int reason = log.reasonID;
+                if (!sentTraces.contains(id)) {
+                    sentTraces.add(id);
+                    missingTraces.add(id);
+//                    System.err.println(String.format("Sending trace %d to player %s", id, player.getName()));
+                } else if (!sentTraces.contains(reason)) {
+                    sentTraces.add(reason);
+                    missingTraces.add(reason);
+//                    System.err.println(String.format("Reason %d to player %s", reason, player.getName()));
+                }
+            }
+            ArrayList missingList = new ArrayList(missingTraces);
+            for (int i = 0; i < missingList.size(); i += STACKTRACES_BATCH_SIZE) {
+                List<Integer> part = missingList.subList(i, Integer.min(i + STACKTRACES_BATCH_SIZE, missingList.size()));
+                NBTTagCompound stackData = serializeStackTraces(part);
+                if (stackData != null) {
+                    CarpetClientMessageHandler.sendNBTChunkData(player, PACKET_STACKTRACE, stackData);
+                }
+            }
         }
 
         private NBTTagCompound serializeEvents(List<ChunkLog> events, int gametick, int dataOffset, boolean complete) {
@@ -372,8 +379,7 @@ public class CarpetClientChunkLogger {
                 data.setInteger("d", log.chunkDimension);
                 data.setInteger("event", log.event.ordinal());
                 data.setInteger("trace", log.stackTraceIndex);
-                if (reason != null)
-                    data.setString("reason", reason);
+                data.setInteger("reason", log.reasonID);
                 list.appendTag(data);
             }
             chunkData.setTag("data", list);
@@ -389,7 +395,10 @@ public class CarpetClientChunkLogger {
             }
             NBTTagList list = new NBTTagList();
             for (Integer id : ids) {
-            	String s = stackTraces.getString(id);
+                String s = stackTraces.getString(id);
+                if (s == null) {
+                    return null;
+                }
                 NBTTagCompound stackTrace = new NBTTagCompound();
                 stackTrace.setInteger("id", id);
                 stackTrace.setString("stack", s);
