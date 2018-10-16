@@ -31,6 +31,8 @@ import carpet.helpers.StackTraceDeobfuscator;
 
 public class CarpetClientChunkLogger {
 
+    public static String reason = null;
+
     public static CarpetClientChunkLogger logger = new CarpetClientChunkLogger();
     public boolean enabled = true;
     
@@ -370,6 +372,8 @@ public class CarpetClientChunkLogger {
                 data.setInteger("d", log.chunkDimension);
                 data.setInteger("event", log.event.ordinal());
                 data.setInteger("trace", log.stackTraceIndex);
+                if (reason != null)
+                    data.setString("reason", reason);
                 list.appendTag(data);
             }
             chunkData.setTag("data", list);
