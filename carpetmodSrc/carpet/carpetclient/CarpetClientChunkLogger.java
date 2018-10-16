@@ -31,7 +31,7 @@ public class CarpetClientChunkLogger {
     StackTraces stackTraces;
     private ChunkLoggerSerializer clients;
     private ArrayList<ChunkLog> eventsThisGametick;
-    private String eventReason = "Reason for the loading";
+    public static String reason = null;
 
     public static enum Event {
         NONE,
@@ -223,11 +223,12 @@ public class CarpetClientChunkLogger {
         }
 
         public int internReason() {
-            Integer i = this.stackTraceToIndex.get(eventReason);
+            if (reason == null) return 0;
+            Integer i = this.stackTraceToIndex.get(reason);
             if (i != null) {
                 return i;
             } else {
-                return this.internString(eventReason, eventReason);
+                return this.internString(reason, reason);
             }
         }
 
