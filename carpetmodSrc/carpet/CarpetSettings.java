@@ -1,9 +1,6 @@
 package carpet;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -14,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import carpet.helpers.RandomTickOptimization;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -72,7 +70,6 @@ public class CarpetSettings
     public static boolean mergeTNT = false;
     public static boolean unloadedEntityFix = false;
     public static float hardcodeTNTangle = -1;
-    public static boolean worldGenBug = false;
     public static boolean antiCheat = false;
     public static boolean optimizedTNT = false;
     public static boolean huskSpawningInTemples = false;
@@ -282,6 +279,8 @@ public class CarpetSettings
   rule("leashFix",              "fix",      "Fixes to leashes.")
                                 .choices("false", "false casual cool"),
   rule("disablePlayerCollision","creative", "Disables player entity collision."),
+  rule("randomTickOptimization","fix", "Stops blocks which don't need to be random ticked from being random ticked")
+                                .extraInfo("Fixed in 1.13"),
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -355,29 +354,18 @@ public class CarpetSettings
         }
         else if ("liquidsNotRandom".equalsIgnoreCase(rule))
         {
-            if(CarpetSettings.getBool("liquidsNotRandom"))
-            {
-                worldGenBug = true;
-                Blocks.FLOWING_WATER.setTickRandomly(false);
-                Blocks.FLOWING_LAVA.setTickRandomly(false);
-            }
-            else
-            {
-                worldGenBug = false;
-                Blocks.FLOWING_WATER.setTickRandomly(true);
-                Blocks.FLOWING_LAVA.setTickRandomly(true);
-            }
+            RandomTickOptimization.setLiquidRandomTicks(!CarpetSettings.getBool("liquidsNotRandom"));
+            RandomTickOptimization.recalculateAllChunks();
         }
         else if ("spongeRandom".equalsIgnoreCase(rule))
         {
-            if(CarpetSettings.getBool("spongeRandom"))
-            {
-                Blocks.SPONGE.setTickRandomly(true);
-            }
-            else
-            {
-                Blocks.SPONGE.setTickRandomly(false);
-            }
+            RandomTickOptimization.setSpongeRandomTicks(CarpetSettings.getBool("spongeRandom"));
+            RandomTickOptimization.recalculateAllChunks();
+        }
+        else if ("randomTickOptimization".equalsIgnoreCase(rule))
+        {
+            RandomTickOptimization.setUselessRandomTicks(!CarpetSettings.getBool("randomTickOptimization"));
+            RandomTickOptimization.recalculateAllChunks();
         }
         else if ("reloadSuffocationFix".equalsIgnoreCase(rule))
         {
@@ -733,6 +721,7 @@ public class CarpetSettings
         set("pistonSerializationFix","true");
         set("reloadUpdateOrderFix","true");
         set("leashFix","true");
+        set("randomTickOptimization","true");
     }
 
     public static class CarpetSettingEntry 
