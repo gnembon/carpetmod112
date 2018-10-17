@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServer.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
-@@ -79,12 +79,16 @@
+@@ -79,12 +79,17 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import carpet.CarpetSettings;
++import carpet.helpers.RandomTickOptimization;
 +import carpet.helpers.TickSpeed;
 +import carpet.utils.CarpetProfiler;
 +
@@ -18,7 +19,7 @@
      private final Set<NextTickListEntry> field_73064_N = Sets.<NextTickListEntry>newHashSet();
      private final TreeSet<NextTickListEntry> field_73065_O = new TreeSet<NextTickListEntry>();
      private final Map<UUID, Entity> field_175741_N = Maps.<UUID, Entity>newHashMap();
-@@ -183,12 +187,19 @@
+@@ -183,12 +188,19 @@
              this.func_73053_d();
          }
  
@@ -38,7 +39,7 @@
  
          this.field_72984_F.func_76318_c("chunkSource");
          this.field_73020_y.func_73156_b();
-@@ -199,26 +210,56 @@
+@@ -199,26 +211,56 @@
              this.func_175692_b(j);
          }
  
@@ -97,7 +98,7 @@
      }
  
      @Nullable
-@@ -254,8 +295,15 @@
+@@ -254,8 +296,15 @@
                      ++j;
                  }
              }
@@ -115,7 +116,7 @@
          }
      }
  
-@@ -289,6 +337,28 @@
+@@ -289,6 +338,28 @@
      {
          if (this.field_73068_P && !this.field_72995_K)
          {
@@ -144,7 +145,7 @@
              for (EntityPlayer entityplayer : this.field_73010_i)
              {
                  if (!entityplayer.func_175149_v() && !entityplayer.func_71026_bH())
-@@ -305,7 +375,7 @@
+@@ -305,7 +376,7 @@
          }
      }
  
@@ -153,7 +154,7 @@
      {
          return this.func_72863_F().func_73149_a(p_175680_1_, p_175680_2_);
      }
-@@ -357,6 +427,11 @@
+@@ -357,6 +428,11 @@
                  chunk.func_76594_o();
                  this.field_72984_F.func_76318_c("tickChunk");
                  chunk.func_150804_b(false);
@@ -165,7 +166,7 @@
                  this.field_72984_F.func_76318_c("thunder");
  
                  if (flag && flag1 && this.field_73012_v.nextInt(100000) == 0)
-@@ -445,7 +520,7 @@
+@@ -445,7 +521,7 @@
          }
      }
  
@@ -174,19 +175,19 @@
      {
          BlockPos blockpos = this.func_175725_q(p_175736_1_);
          AxisAlignedBB axisalignedbb = (new AxisAlignedBB(blockpos, new BlockPos(blockpos.func_177958_n(), this.func_72800_K(), blockpos.func_177952_p()))).func_186662_g(3.0D);
-@@ -505,9 +580,10 @@
+@@ -505,9 +581,10 @@
                      {
                          iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
                      }
-+                    if(CarpetSettings.worldGenBug) return;
++                    if(RandomTickOptimization.needsWorldGenFix) return;
                  }
  
 -                return;
-+                if(!CarpetSettings.worldGenBug) return;
++                if(!RandomTickOptimization.needsWorldGenFix) return;
              }
  
              p_175654_3_ = 1;
-@@ -1057,6 +1133,7 @@
+@@ -1057,6 +1134,7 @@
          this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
          this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
          Entity[] aentity = p_72923_1_.func_70021_al();
