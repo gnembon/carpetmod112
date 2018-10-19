@@ -1,36 +1,34 @@
 package carpet.helpers;
- 
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
+
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
- 
+
 /**
  * @author Earthcomputer
- *
+ * <p>
  * Example: StackTraceDeobfuscator.create()
- *              .withMinecraftVersion("1.12")
- *              .withSnapshotMcpNames("20180713-1.12")
- *              .withCurrentStackTrace()
- *              .printDeobf();
+ * .withMinecraftVersion("1.12")
+ * .withSnapshotMcpNames("20180713-1.12")
+ * .withCurrentStackTrace()
+ * .printDeobf();
  */
 public class StackTraceDeobfuscator {
- 
+
     private String srgUrl;
     private String namesUrl;
     private StackTraceElement[] stackTrace;
     private ClassLoader classLoader = StackTraceDeobfuscator.class.getClassLoader();
-   
+
     private Map<String, String> classMappings, methodMappings, methodDescCache, methodNames;
-   
+
     private static final Map<String, Map<String, String>> classMappingsCache = new HashMap<>(),
             methodMappingsCache = new HashMap<>(),
             methodDescCaches = new HashMap<>(),
@@ -38,44 +36,48 @@ public class StackTraceDeobfuscator {
     private static final Set<String> srgUrlsLoaded = new HashSet<>(), namesUrlsLoaded = new HashSet<>();
     private static final Object SRG_SYNC_LOCK = new Object();
     private static final Object NAMES_SYNC_LOCK = new Object();
-   
-    private StackTraceDeobfuscator() {}
-   
+    private static final String CARPET_DIRECTORY = "carpet";
+    private static final String JOINED_FILE_NAME = CARPET_DIRECTORY + "/joined.srg";
+    private static final String METHODS_FILE_NAME = CARPET_DIRECTORY + "/methods.csv";
+
+    private StackTraceDeobfuscator() {
+    }
+
     // BUILDER
-   
+
     public static StackTraceDeobfuscator create() {
         return new StackTraceDeobfuscator();
     }
-   
+
     public StackTraceDeobfuscator withSrgUrl(String srgUrl) {
         this.srgUrl = srgUrl;
         return this;
     }
-   
+
     public StackTraceDeobfuscator withMinecraftVersion(String minecraftVersion) {
         return withSrgUrl(String.format("http://mcpbot.bspk.rs/mcp/%1$s/mcp-%1$s-srg.zip", minecraftVersion));
     }
-   
+
     public StackTraceDeobfuscator withNamesUrl(String namesUrl) {
         this.namesUrl = namesUrl;
         return this;
     }
-   
+
     // e.g. 39-1.12
     public StackTraceDeobfuscator withStableMcpNames(String mcpVersion) {
         return withNamesUrl(String.format("http://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_stable/%1$s/mcp_stable-%1$s.zip", mcpVersion));
     }
-   
+
     // e.g. 20180204-1.12
     public StackTraceDeobfuscator withSnapshotMcpNames(String mcpVersion) {
         return withNamesUrl(String.format("http://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_snapshot/%1$s/mcp_snapshot-%1$s.zip", mcpVersion));
     }
-   
+
     public StackTraceDeobfuscator withStackTrace(StackTraceElement[] stackTrace) {
         this.stackTrace = stackTrace;
         return this;
     }
-   
+
     public StackTraceDeobfuscator withCurrentStackTrace() {
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
         final String thisClass = getClass().getName();
@@ -89,12 +91,12 @@ public class StackTraceDeobfuscator {
         }
         return withStackTrace(Arrays.copyOfRange(stackTrace, firstIndex, stackTrace.length));
     }
-   
+
     public StackTraceDeobfuscator withClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader;
         return this;
     }
-   
+
     // IMPLEMENTATION
 
     private void ensureSrgLoaded() {
@@ -127,7 +129,7 @@ public class StackTraceDeobfuscator {
             }
         }
     }
-   
+
     private void loadMappings() {
         boolean loadingSrg;
         synchronized (SRG_SYNC_LOCK) {
@@ -142,16 +144,34 @@ public class StackTraceDeobfuscator {
             methodDescCache = methodDescCaches.get(srgUrl);
         }
 
+
         if (!loadingSrg) {
             Thread t = new Thread(() -> {
-                try {
-                    URL url;
+                URL url;
+                InputStream in = null;
+                File carpetDirectory = new File(CARPET_DIRECTORY);
+                File joinedFile = new File(JOINED_FILE_NAME);
+                if (!carpetDirectory.exists() || !joinedFile.exists()) {
+                    carpetDirectory.mkdir();
                     try {
                         url = new URL(srgUrl);
                     } catch (MalformedURLException e) {
                         throw new RuntimeException(e);
                     }
-                    ZipInputStream zipIn = new ZipInputStream(url.openConnection().getInputStream());
+                    try {
+                        in = url.openConnection().getInputStream();
+                        Files.copy(in, Paths.get(JOINED_FILE_NAME));
+                    } catch (Exception e) {
+                    }
+                } else {
+                    try {
+                        in = new FileInputStream(joinedFile);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    ZipInputStream zipIn = new ZipInputStream(in);
                     ZipEntry entry;
                     while ((entry = zipIn.getNextEntry()) != null) {
                         if (entry.getName().equals("joined.srg")) {
@@ -182,14 +202,31 @@ public class StackTraceDeobfuscator {
 
             if (!loadingNames) {
                 Thread t = new Thread(() -> {
-                    try {
-                        URL url;
+                    URL url;
+                    InputStream in = null;
+                    File carpetDirectory = new File(CARPET_DIRECTORY);
+                    File methodsFile = new File(METHODS_FILE_NAME);
+                    if (!carpetDirectory.exists() || !methodsFile.exists()) {
+                        carpetDirectory.mkdir();
                         try {
                             url = new URL(namesUrl);
                         } catch (MalformedURLException e) {
                             throw new RuntimeException(e);
                         }
-                        ZipInputStream zipIn = new ZipInputStream(url.openConnection().getInputStream());
+                        try {
+                            in = url.openConnection().getInputStream();
+                            Files.copy(in, Paths.get(METHODS_FILE_NAME));
+                        } catch (Exception e) {
+                        }
+                    } else {
+                        try {
+                            in = new FileInputStream(methodsFile);
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    try {
+                        ZipInputStream zipIn = new ZipInputStream(in);
                         ZipEntry entry;
                         while ((entry = zipIn.getNextEntry()) != null) {
                             if (entry.getName().equals("methods.csv")) {
@@ -209,7 +246,7 @@ public class StackTraceDeobfuscator {
             }
         }
     }
-   
+
     private void loadSrg(BufferedReader in) {
         in.lines().map(line -> line.split(" ")).forEach(tokens -> {
             if (tokens[0].equals("CL:")) {
@@ -222,7 +259,7 @@ public class StackTraceDeobfuscator {
             srgUrlsLoaded.add(srgUrl);
         }
     }
-   
+
     private void loadNames(BufferedReader in) {
         in.lines().skip(1).map(line -> line.split(",")).forEach(tokens -> {
             methodNames.put(tokens[0], tokens[1]);
@@ -231,20 +268,20 @@ public class StackTraceDeobfuscator {
             namesUrlsLoaded.add(namesUrl);
         }
     }
-   
+
     public void printDeobf() {
         printDeobf(System.err);
     }
-   
+
     public void printDeobf(PrintStream out) {
         out.println(deobfAsString());
     }
-   
+
     public String deobfAsString() {
         StackTraceElement[] elems = deobfuscate();
         return Arrays.stream(elems).map(StackTraceElement::toString).collect(Collectors.joining("\n"));
     }
-   
+
     public StackTraceElement[] deobfuscate() {
         if (srgUrl == null) {
             throw new IllegalStateException("No mappings url has been set");
@@ -254,21 +291,21 @@ public class StackTraceDeobfuscator {
         }
 
         loadMappings();
-       
+
         StackTraceElement[] deobfStackTrace = new StackTraceElement[stackTrace.length];
         for (int i = 0; i < stackTrace.length; i++) {
             deobfStackTrace[i] = deobfuscate(stackTrace[i]);
         }
         return deobfStackTrace;
     }
-   
+
     private StackTraceElement deobfuscate(StackTraceElement elem) {
         String className = elem.getClassName().replace('.', '/');
 
         ensureSrgLoaded();
         if (!classMappings.containsKey(className))
             return elem;
-       
+
         String methodName = elem.getMethodName();
         String methodDesc;
         try {
@@ -280,7 +317,7 @@ public class StackTraceDeobfuscator {
             System.err.println("Failed to get method desc for " + className + "/" + methodName + "@" + elem.getLineNumber());
             return elem;
         }
-       
+
         String key = className + "/" + methodName + methodDesc;
         ensureNamesLoaded();
         if (methodMappings.containsKey(key)) {
@@ -290,10 +327,10 @@ public class StackTraceDeobfuscator {
         }
         className = classMappings.get(className);
         className = className.replace('/', '.');
-       
+
         return new StackTraceElement(className, methodName, createFileName(className, elem.getFileName()), elem.getLineNumber());
     }
-   
+
     private String getMethodDesc(StackTraceElement elem) throws IOException {
         String className = elem.getClassName().replace('.', '/');
         String methodName = elem.getMethodName();
@@ -301,16 +338,16 @@ public class StackTraceDeobfuscator {
         if (methodDescCache.containsKey(className + "/" + methodName + "@" + lineNumber)) {
             return methodDescCache.get(className + "/" + methodName + "@" + lineNumber);
         }
-       
+
         // Java Class File Format:
         // https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html
-       
+
         InputStream is = classLoader.getResourceAsStream(className + ".class");
         if (is == null)
             return null;
         DataInputStream dataIn = new DataInputStream(is);
         skip(dataIn, 8); // header
-       
+
         // constant pool
         Map<Integer, String> stringConstants = new HashMap<>();
         int cpCount = dataIn.readUnsignedShort();
@@ -327,13 +364,13 @@ public class StackTraceDeobfuscator {
                 skip(dataIn, constSizes[tag]);
             }
         }
-       
+
         skip(dataIn, 6); // more boring information
-       
+
         // Need to know interface count to know how much to skip over
         int interfaceCount = dataIn.readUnsignedShort();
         skip(dataIn, interfaceCount * 2);
-       
+
         // Skip over the fields
         int fieldCount = dataIn.readUnsignedShort();
         for (int i = 0; i < fieldCount; i++) {
@@ -345,7 +382,7 @@ public class StackTraceDeobfuscator {
                 skip(dataIn, length);
             }
         }
-       
+
         // Methods, now we're talking
         int methodCount = dataIn.readUnsignedShort();
         for (int i = 0; i < methodCount; i++) {
@@ -385,17 +422,17 @@ public class StackTraceDeobfuscator {
                 }
             }
         }
-       
+
         return null;
     }
-   
+
     private static void skip(DataInputStream dataIn, long n) throws IOException {
         long actual = 0;
         while (actual < n) {
             actual += dataIn.skip(n - actual);
         }
     }
-   
+
     private static String createFileName(String className, String oldFileName) {
         if (oldFileName == null || "SourceFile".equals(oldFileName)) {
             if (className.contains("."))
@@ -407,5 +444,5 @@ public class StackTraceDeobfuscator {
             return oldFileName;
         }
     }
-   
+
 }
