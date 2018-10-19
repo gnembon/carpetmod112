@@ -448,13 +448,15 @@
      }
  
      public void func_76623_d()
-@@ -964,12 +1035,27 @@
+@@ -964,12 +1035,31 @@
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
              {
 +        		// ChunkLogger 0x-CARPET
 +                if(CarpetClientChunkLogger.logger.enabled) {
++                    carpet.carpetclient.CarpetClientChunkLogger.reason = "Generating structure";
 +                	CarpetClientChunkLogger.logger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.GENERATING_STRUCTURES);
++                    carpet.carpetclient.CarpetClientChunkLogger.reason = null;
 +                }
 +        		
                  this.func_76630_e();
@@ -471,13 +473,15 @@
 +        	}
 +    		// ChunkLogger 0x-CARPET
 +            if(CarpetClientChunkLogger.logger.enabled) {
++                carpet.carpetclient.CarpetClientChunkLogger.reason = "Populating chunk";
 +            	CarpetClientChunkLogger.logger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.POPULATING);
++                carpet.carpetclient.CarpetClientChunkLogger.reason = null;
 +            }
 +    		
              p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
              this.func_76630_e();
          }
-@@ -1018,10 +1104,13 @@
+@@ -1018,10 +1108,13 @@
  
          this.field_150815_m = true;
  
@@ -495,7 +499,7 @@
  
          while (!this.field_177447_w.isEmpty())
          {
-@@ -1389,4 +1478,26 @@
+@@ -1389,4 +1482,26 @@
          QUEUED,
          CHECK;
      }

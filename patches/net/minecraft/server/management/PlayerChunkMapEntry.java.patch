@@ -16,31 +16,35 @@
      private final ChunkPos field_187284_d;
      private final short[] field_187285_e = new short[64];
      @Nullable
-@@ -53,6 +56,11 @@
+@@ -53,6 +56,13 @@
          }
          else
          {
 +            // ChunkLogger - 0x-CARPET
 +            if(CarpetClientChunkLogger.logger.enabled) {
++                carpet.carpetclient.CarpetClientChunkLogger.reason = "Player added to chunk";
 +            	CarpetClientChunkLogger.logger.log(this.field_187282_b.func_72688_a(),field_187284_d.field_77276_a,field_187284_d.field_77275_b,CarpetClientChunkLogger.Event.PLAYER_ENTERS);
++                carpet.carpetclient.CarpetClientChunkLogger.reason = null;
 +            }
 +
              if (this.field_187283_c.isEmpty())
              {
                  this.field_187289_i = this.field_187282_b.func_72688_a().func_82737_E();
-@@ -80,6 +88,11 @@
+@@ -80,6 +90,13 @@
  
              if (this.field_187283_c.isEmpty())
              {
 +                // ChunkLogger - 0x-CARPET
 +                if(CarpetClientChunkLogger.logger.enabled) {
++                    carpet.carpetclient.CarpetClientChunkLogger.reason = "Player removed from chunk";
 +                	CarpetClientChunkLogger.logger.log(this.field_187282_b.func_72688_a(),field_187284_d.field_77276_a,field_187284_d.field_77275_b,CarpetClientChunkLogger.Event.PLAYER_LEAVES);
++                    carpet.carpetclient.CarpetClientChunkLogger.reason = null;
 +                }
 +            	
                  this.field_187282_b.func_187305_b(this);
              }
          }
-@@ -248,12 +261,28 @@
+@@ -248,12 +265,28 @@
      {
          if (p_187273_1_ != null)
          {

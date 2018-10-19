@@ -8,8 +8,23 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Sets;
  import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
-@@ -463,4 +464,22 @@
+@@ -215,7 +216,9 @@
+ 
+             if (!worldprovider.func_76567_e())
+             {
++                carpet.carpetclient.CarpetClientChunkLogger.reason = "Dimensional unloading, no player activity";
+                 this.field_72701_a.func_72863_F().func_73240_a();
++                carpet.carpetclient.CarpetClientChunkLogger.reason = null;
+             }
+         }
+     }
+@@ -460,7 +463,27 @@
+ 
+         if (chunk != null)
+         {
++            carpet.carpetclient.CarpetClientChunkLogger.reason = "Player unloading, player leaving chunk";
              this.func_72688_a().func_72863_F().func_189549_a(chunk);
++            carpet.carpetclient.CarpetClientChunkLogger.reason = null;
          }
      }
 +    
