@@ -404,11 +404,13 @@
          if (!this.func_175648_a(p_180500_2_, 17, false))
          {
              return false;
-@@ -3263,30 +3443,44 @@
+@@ -3263,30 +3443,47 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
 -        for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
++        if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++            carpet.carpetclient.CarpetClientChunkLogger.setReason("Comperator updates for inventory changes");
 +        if (CarpetSettings.optimizedTileEntities)
          {
 -            BlockPos blockpos = p_175666_1_.func_177972_a(enumfacing);
@@ -453,6 +455,7 @@
                  }
              }
          }
++        carpet.carpetclient.CarpetClientChunkLogger.resetReason();
 +        // ----- RSMM Start ----- //
 +        if (CarpetSettings.redstoneMultimeter) {
 +            StateChangeEventDispatcher.dispatchEvent(this, p_175666_1_);
@@ -461,7 +464,7 @@
      }
  
      public DifficultyInstance func_175649_E(BlockPos p_175649_1_)
-@@ -3357,4 +3551,17 @@
+@@ -3357,4 +3554,17 @@
      {
          return null;
      }

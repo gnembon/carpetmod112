@@ -188,7 +188,15 @@
          }
      }
  
-@@ -303,8 +436,24 @@
+@@ -298,13 +431,32 @@
+ 
+         if (this.field_145870_n >= 1.0F)
+         {
++            if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                carpet.carpetclient.CarpetClientChunkLogger.setReason("Piston block finishes moving");
+             this.field_145850_b.func_175713_t(this.field_174879_c);
++            carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+             this.func_145843_s();
  
              if (this.field_145850_b.func_180495_p(this.field_174879_c).func_177230_c() == Blocks.field_180384_M)
              {
@@ -215,7 +223,7 @@
              }
          }
          else
-@@ -331,8 +480,19 @@
+@@ -331,8 +483,19 @@
          this.field_174931_f = EnumFacing.func_82600_a(p_145839_1_.func_74762_e("facing"));
          this.field_145873_m = p_145839_1_.func_74760_g("progress");
          this.field_145870_n = this.field_145873_m;
@@ -235,7 +243,7 @@
      }
  
      public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
-@@ -341,9 +501,24 @@
+@@ -341,9 +504,24 @@
          p_189515_1_.func_74768_a("blockId", Block.func_149682_b(this.field_174932_a.func_177230_c()));
          p_189515_1_.func_74768_a("blockData", this.field_174932_a.func_177230_c().func_176201_c(this.field_174932_a));
          p_189515_1_.func_74768_a("facing", this.field_174931_f.func_176745_a());
@@ -260,7 +268,7 @@
          return p_189515_1_;
      }
  
-@@ -382,4 +557,34 @@
+@@ -382,4 +560,34 @@
              }
          }
      }
