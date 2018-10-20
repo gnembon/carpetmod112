@@ -32,6 +32,7 @@ public class CarpetClientChunkLogger {
     private ChunkLoggerSerializer clients;
     private ArrayList<ChunkLog> eventsThisGametick;
     public static String reason = null;
+    private final int MAX_STACKTRACE_SIZE = 60;
 
     public static enum Event {
         NONE,
@@ -62,6 +63,14 @@ public class CarpetClientChunkLogger {
             this.stackTraceIndex = trace;
             this.reasonID = reason;
         }
+    }
+
+    public static void setReason(String r) {
+        reason = r;
+    }
+
+    public static void resetReason() {
+        reason = null;
     }
 
     public CarpetClientChunkLogger() {
@@ -194,9 +203,9 @@ public class CarpetClientChunkLogger {
         }
 
         private int internString(String obfuscated, String deobfuscated) {
-        	if(obfuscated == null) {
-        		return 0;
-        	}
+            if (obfuscated == null) {
+                return 0;
+            }
             Integer i = stackTraceToIndex.get(obfuscated);
             if (i == null) {
                 i = this.allTracesDeobfuscated.size();
@@ -226,7 +235,11 @@ public class CarpetClientChunkLogger {
                 trace = deobf.withStackTrace(trace).deobfuscate();
             }
             String stacktrace = new String();
-            for (StackTraceElement e : trace) {
+            int i;
+            int size = deobfuscated ? MAX_STACKTRACE_SIZE / 2 : MAX_STACKTRACE_SIZE;
+            for (i = 0; i < trace.length && i < size; i++) {
+                StackTraceElement e = trace[i];
+
                 if ("CarpetClientChunkLogger.java".equals(e.getFileName())) {
                     continue;
                 }
@@ -234,6 +247,22 @@ public class CarpetClientChunkLogger {
                     stacktrace += "\n";
                 }
                 stacktrace += e.toString();
+            }
+            if (size <= i && deobfuscated) {
+                stacktrace += "\n.....cut out.....";
+                int reduce = trace.length - size;
+                if (reduce > size) reduce = size;
+                for (i = trace.length - reduce; i < trace.length; i++) {
+                    StackTraceElement e = trace[i];
+
+                    if ("CarpetClientChunkLogger.java".equals(e.getFileName())) {
+                        continue;
+                    }
+                    if (!stacktrace.isEmpty()) {
+                        stacktrace += "\n";
+                    }
+                    stacktrace += e.toString();
+                }
             }
             return stacktrace;
         }
@@ -271,7 +300,7 @@ public class CarpetClientChunkLogger {
                 enabled = false;
             }
         }
-        
+
         private void sendInitalChunks(EntityPlayerMP sender) {
             MinecraftServer server = sender.getServer();
             ArrayList<ChunkLog> logs = getInitialChunksForNewClient(server);
@@ -345,7 +374,7 @@ public class CarpetClientChunkLogger {
                 return null;
             }
             NBTTagCompound chunkData = new NBTTagCompound();
-            int data[] = new int[6*events.size()];
+            int data[] = new int[6 * events.size()];
             int i = 0;
             for (ChunkLog log : events) {
                 data[i++] = log.chunkX;
