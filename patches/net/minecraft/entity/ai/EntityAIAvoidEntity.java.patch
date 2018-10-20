@@ -65,3 +65,13 @@
                  return this.field_75374_f != null;
              }
          }
+@@ -103,4 +134,9 @@
+             this.field_75380_a.func_70661_as().func_75489_a(this.field_75378_b);
+         }
+     }
++
++    @Override
++    public String getTask() {
++        return ": " + field_75380_a.func_70005_c_() + " Task: Avoiding other entity";
++    }
+ }

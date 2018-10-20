@@ -9,3 +9,13 @@
      private final Predicate<Entity> field_179435_c;
      private final EntityAINearestAttackableTarget.Sorter field_179432_d;
      private EntityLivingBase field_179433_e;
+@@ -148,4 +148,9 @@
+         IAttributeInstance iattributeinstance = this.field_179434_b.func_110148_a(SharedMonsterAttributes.field_111265_b);
+         return iattributeinstance == null ? 16.0D : iattributeinstance.func_111126_e();
+     }
++
++    @Override
++    public String getTask() {
++        return ": " + field_179434_b.func_70005_c_() + " Task: Looking for nearest player";
++    }
+ }
