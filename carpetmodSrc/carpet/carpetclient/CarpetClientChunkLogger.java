@@ -249,9 +249,11 @@ public class CarpetClientChunkLogger {
                 stacktrace += e.toString();
             }
             if (size <= i && deobfuscated) {
-                stacktrace += "\n.....cut out.....";
                 int reduce = trace.length - size;
-                if (reduce > size) reduce = size;
+                if (reduce > size){
+                    stacktrace += "\n.....cut out.....";
+                    reduce = size;
+                }
                 for (i = trace.length - reduce; i < trace.length; i++) {
                     StackTraceElement e = trace[i];
 
