@@ -211,3 +211,18 @@
  
          if (aentity != null)
          {
+@@ -1152,11 +1232,14 @@
+ 
+             for (BlockEventData blockeventdata : this.field_147490_S[i])
+             {
++                if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                    carpet.carpetclient.CarpetClientChunkLogger.setReason("Queued block event: " + blockeventdata.func_151337_f().func_176223_P());
+                 if (this.func_147485_a(blockeventdata))
+                 {
+                     this.field_73061_a.func_184103_al().func_148543_a((EntityPlayer)null, (double)blockeventdata.func_180328_a().func_177958_n(), (double)blockeventdata.func_180328_a().func_177956_o(), (double)blockeventdata.func_180328_a().func_177952_p(), 64.0D, this.field_73011_w.func_186058_p().func_186068_a(), new SPacketBlockAction(blockeventdata.func_180328_a(), blockeventdata.func_151337_f(), blockeventdata.func_151339_d(), blockeventdata.func_151338_e()));
+                 }
+             }
++            carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+ 
+             this.field_147490_S[i].clear();
+         }

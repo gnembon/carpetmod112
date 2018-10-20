@@ -253,7 +253,16 @@
                  }
                  catch (Throwable throwable1)
                  {
-@@ -1442,17 +1567,29 @@
+@@ -1436,23 +1561,38 @@
+ 
+                 if (entity2.field_70175_ag && this.func_175680_a(l1, i2, true))
+                 {
++                    if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                        carpet.carpetclient.CarpetClientChunkLogger.setReason("Removing entity from chunk: " + entity2.func_70005_c_());
+                     this.func_72964_e(l1, i2).func_76622_b(entity2);
++                    carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+                 }
+ 
                  this.field_72996_f.remove(i1--);
                  this.func_72847_b(entity2);
              }
@@ -283,7 +292,7 @@
  
              if (!tileentity.func_145837_r() && tileentity.func_145830_o())
              {
-@@ -1462,9 +1599,20 @@
+@@ -1462,9 +1602,20 @@
                  {
                      try
                      {
@@ -307,7 +316,7 @@
                      }
                      catch (Throwable throwable)
                      {
-@@ -1486,11 +1634,12 @@
+@@ -1486,11 +1637,12 @@
                      this.func_175726_f(tileentity.func_174877_v()).func_177425_e(tileentity.func_174877_v());
                  }
              }
@@ -321,7 +330,7 @@
          {
              this.field_175730_i.removeAll(this.field_147483_b);
              this.field_147482_g.removeAll(this.field_147483_b);
-@@ -1524,6 +1673,7 @@
+@@ -1524,6 +1676,7 @@
  
              this.field_147484_a.clear();
          }
@@ -329,7 +338,7 @@
  
          this.field_72984_F.func_76319_b();
          this.field_72984_F.func_76319_b();
-@@ -1644,7 +1794,8 @@
+@@ -1644,7 +1797,8 @@
                  this.func_72964_e(p_72866_1_.field_70176_ah, p_72866_1_.field_70164_aj).func_76608_a(p_72866_1_, p_72866_1_.field_70162_ai);
              }
  
@@ -339,7 +348,7 @@
              {
                  p_72866_1_.field_70175_ag = false;
              }
-@@ -1685,7 +1836,8 @@
+@@ -1685,7 +1839,8 @@
          {
              Entity entity = list.get(i);
  
@@ -349,7 +358,7 @@
              {
                  return false;
              }
-@@ -2149,6 +2301,16 @@
+@@ -2149,6 +2304,16 @@
                          {
                              this.field_72986_A.func_76090_f(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -366,7 +375,7 @@
                      }
                      else
                      {
-@@ -2173,6 +2335,16 @@
+@@ -2173,6 +2338,16 @@
                          {
                              this.field_72986_A.func_76080_g(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -383,7 +392,7 @@
                      }
                      else
                      {
-@@ -2383,6 +2555,11 @@
+@@ -2383,6 +2558,11 @@
  
      public boolean func_180500_c(EnumSkyBlock p_180500_1_, BlockPos p_180500_2_)
      {
@@ -395,7 +404,7 @@
          if (!this.func_175648_a(p_180500_2_, 17, false))
          {
              return false;
-@@ -3263,30 +3440,44 @@
+@@ -3263,30 +3443,44 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
@@ -452,7 +461,7 @@
      }
  
      public DifficultyInstance func_175649_E(BlockPos p_175649_1_)
-@@ -3357,4 +3548,17 @@
+@@ -3357,4 +3551,17 @@
      {
          return null;
      }

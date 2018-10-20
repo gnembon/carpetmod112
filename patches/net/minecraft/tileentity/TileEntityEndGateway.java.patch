@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityEndGateway.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityEndGateway.java
+@@ -205,6 +205,8 @@
+     {
+         BlockPos blockpos = null;
+ 
++        if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++            carpet.carpetclient.CarpetClientChunkLogger.setReason("End gateway looking for highest block");
+         for (int i = -p_184308_2_; i <= p_184308_2_; ++i)
+         {
+             for (int j = -p_184308_2_; j <= p_184308_2_; ++j)
+@@ -225,6 +227,7 @@
+                 }
+             }
+         }
++        carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+ 
+         return blockpos == null ? p_184308_1_ : blockpos;
+     }
