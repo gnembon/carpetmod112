@@ -98,17 +98,18 @@
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -224,6 +257,9 @@
+@@ -224,6 +257,10 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
-+                carpet.carpetclient.CarpetClientChunkLogger.reason = "Unloading chunks";
++                if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                    carpet.carpetclient.CarpetClientChunkLogger.setReason("Unloading chunk and writing to disk");
 +                // NewLight PHIPRO-CARPET
 +                if (CarpetSettings.newLight) this.field_73251_h.lightingEngine.procLightUpdates();
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -238,8 +274,14 @@
+@@ -238,8 +275,14 @@
                          this.func_73243_a(chunk);
                          this.field_73244_f.remove(olong);
                          ++i;
@@ -119,11 +120,11 @@
 +                        }
                      }
                  }
-+                carpet.carpetclient.CarpetClientChunkLogger.reason = null;
++                carpet.carpetclient.CarpetClientChunkLogger.resetReason();
              }
  
              this.field_73247_e.func_75817_a();
-@@ -283,9 +325,17 @@
+@@ -283,9 +326,17 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
      }

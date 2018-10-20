@@ -158,16 +158,17 @@
  
          if (this.field_71295_T)
          {
-@@ -621,12 +675,16 @@
+@@ -621,12 +675,17 @@
  
          if (this.field_71315_w % 900 == 0)
          {
 +            CarpetProfiler.start_section(null, "Autosave");
              this.field_71304_b.func_76320_a("save");
              this.field_71318_t.func_72389_g();
-+            carpet.carpetclient.CarpetClientChunkLogger.reason = "Autosave queuing chunks for unloading";
++            if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                carpet.carpetclient.CarpetClientChunkLogger.setReason("Autosave queuing chunks for unloading");
              this.func_71267_a(true);
-+            carpet.carpetclient.CarpetClientChunkLogger.reason = null;
++            carpet.carpetclient.CarpetClientChunkLogger.resetReason();
              this.field_71304_b.func_76319_b();
 +            CarpetProfiler.end_current_section();
          }
@@ -176,7 +177,7 @@
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
          this.field_71304_b.func_76319_b();
-@@ -644,6 +702,16 @@
+@@ -644,6 +703,16 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -193,7 +194,7 @@
      }
  
      public void func_71190_q()
-@@ -710,10 +778,12 @@
+@@ -710,10 +779,12 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  

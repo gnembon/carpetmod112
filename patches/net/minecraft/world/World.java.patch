@@ -190,15 +190,6 @@
          if (p_175695_3_ != EnumFacing.WEST)
          {
              this.func_190524_a(p_175695_1_.func_177976_e(), p_175695_2_, p_175695_1_);
-@@ -481,7 +587,7 @@
-     {
-         if (!this.field_72995_K)
-         {
--            IBlockState iblockstate = this.func_180495_p(p_190524_1_);
-+            IBlockState iblockstate = this.getBlockState(p_190524_1_, "Block update");
- 
-             try
-             {
 @@ -508,6 +614,11 @@
                  CrashReportCategory.func_175750_a(crashreportcategory, p_190524_1_, iblockstate);
                  throw new ReportedException(crashreport);

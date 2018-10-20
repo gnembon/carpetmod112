@@ -9,6 +9,15 @@
  public class Block
  {
      private static final ResourceLocation field_176230_a = new ResourceLocation("air");
+@@ -73,7 +75,7 @@
+     public float field_149765_K;
+     protected final BlockStateContainer field_176227_L;
+     private IBlockState field_176228_M;
+-    private String field_149770_b;
++    public String field_149770_b;
+ 
+     public static int func_149682_b(Block p_149682_0_)
+     {
 @@ -235,7 +237,7 @@
          return this;
      }
@@ -27,7 +36,18 @@
      {
          this.field_149789_z = p_149675_1_;
          return this;
-@@ -490,6 +492,8 @@
+@@ -399,7 +401,10 @@
+ 
+     public void func_180645_a(World p_180645_1_, BlockPos p_180645_2_, IBlockState p_180645_3_, Random p_180645_4_)
+     {
++        if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++            carpet.carpetclient.CarpetClientChunkLogger.setReason("Randomtick block: " + p_180645_3_.func_177230_c().func_149732_F());
+         this.func_180650_b(p_180645_1_, p_180645_2_, p_180645_3_, p_180645_4_);
++        carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+     }
+ 
+     public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
+@@ -490,6 +495,8 @@
              EntityItem entityitem = new EntityItem(p_180635_0_, (double)p_180635_1_.func_177958_n() + d0, (double)p_180635_1_.func_177956_o() + d1, (double)p_180635_1_.func_177952_p() + d2, p_180635_2_);
              entityitem.func_174869_p();
              p_180635_0_.func_72838_d(entityitem);

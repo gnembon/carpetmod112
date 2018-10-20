@@ -8,19 +8,3 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.block.properties.IProperty;
  import net.minecraft.block.properties.PropertyBool;
-@@ -35,6 +36,7 @@
-     {
-         if (!p_180650_1_.field_72995_K)
-         {
-+            carpet.carpetclient.CarpetClientChunkLogger.reason = "Grass block randomtick, checks light";
-             if (p_180650_1_.func_175671_l(p_180650_2_.func_177984_a()) < 4 && p_180650_1_.func_180495_p(p_180650_2_.func_177984_a()).func_185891_c() > 2)
-             {
-                 p_180650_1_.func_175656_a(p_180650_2_, Blocks.field_150346_d.func_176223_P());
-@@ -62,6 +64,7 @@
-                     }
-                 }
-             }
-+            carpet.carpetclient.CarpetClientChunkLogger.reason = null;
-         }
-     }
- 

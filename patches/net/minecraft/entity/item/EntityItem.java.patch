@@ -33,7 +33,26 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -470,4 +487,9 @@
+@@ -256,6 +273,8 @@
+ 
+     public boolean func_70072_I()
+     {
++        if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++            carpet.carpetclient.CarpetClientChunkLogger.setReason("Item checking if pushed by water: " + func_70005_c_());
+         if (this.field_70170_p.func_72918_a(this.func_174813_aQ(), Material.field_151586_h, this))
+         {
+             if (!this.field_70171_ac && !this.field_70148_d)
+@@ -269,7 +288,8 @@
+         {
+             this.field_70171_ac = false;
+         }
+-
++        carpet.carpetclient.CarpetClientChunkLogger.resetReason();
++        
+         return this.field_70171_ac;
+     }
+ 
+@@ -470,4 +490,9 @@
          this.func_174871_r();
          this.field_70292_b = 5999;
      }
