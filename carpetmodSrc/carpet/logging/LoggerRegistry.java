@@ -32,7 +32,7 @@ public class LoggerRegistry
     public static void initLoggers(MinecraftServer server)
     {
         registerLogger("tnt", new Logger(server, "tnt", "brief", new String[]{"brief", "full"}, LogHandler.CHAT));
-        registerLogger("projectiles", new Logger(server, "projectiles", "brief",  new String[]{"brief", "full"}, LogHandler.CHAT));
+        registerLogger("projectiles", new Logger(server, "projectiles", "full",  new String[]{"brief", "full"}, LogHandler.CHAT));
         registerLogger("fallingBlocks",new Logger(server, "fallingBlocks", "brief", new String[]{"brief", "full"}, LogHandler.CHAT));
         registerLogger("kills", new Logger(server, "kills", null, null, LogHandler.CHAT));
         registerLogger("damage", new Logger(server, "damage", "all", new String[]{"all","players","me"}, LogHandler.CHAT));
