@@ -17,3 +17,16 @@
          }
          else
          {
+@@ -102,8 +105,12 @@
+ 
+             for (EntityAITasks.EntityAITaskEntry entityaitasks$entityaitaskentry2 : this.field_75780_b)
+             {
++                if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                    carpet.carpetclient.CarpetClientChunkLogger.setReason("Entity" + entityaitasks$entityaitaskentry2.field_75733_a.getTask());
++                
+                 entityaitasks$entityaitaskentry2.field_75733_a.func_75246_d();
+             }
++            carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+ 
+             this.field_75781_c.func_76319_b();
+         }

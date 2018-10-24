@@ -70,7 +70,7 @@
 +                if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
 +                    carpet.carpetclient.CarpetClientChunkLogger.setReason("Population triggering neighbouring chunks to cancel unload");
                  chunk.func_186030_a(this, this.field_186029_c);
-+                carpet.carpetclient.CarpetClientChunkLogger.resetReason();
++                carpet.carpetclient.CarpetClientChunkLogger.resetToOldReason();
              }
          }
  

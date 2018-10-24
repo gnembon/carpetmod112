@@ -24,14 +24,15 @@ import net.minecraft.world.gen.ChunkProviderServer;
 import java.util.*;
 
 public class CarpetClientChunkLogger {
-
     public static CarpetClientChunkLogger logger = new CarpetClientChunkLogger();
-    public boolean enabled = true;
 
+    public boolean enabled = true;
     StackTraces stackTraces;
     private ChunkLoggerSerializer clients;
     private ArrayList<ChunkLog> eventsThisGametick;
     public static String reason = null;
+    public static String oldReason = null;
+
     private final int MAX_STACKTRACE_SIZE = 60;
 
     public static enum Event {
@@ -65,7 +66,12 @@ public class CarpetClientChunkLogger {
         }
     }
 
+    public static void resetToOldReason() {
+        reason = oldReason;
+    }
+
     public static void setReason(String r) {
+        oldReason = reason;
         reason = r;
     }
 
@@ -106,12 +112,12 @@ public class CarpetClientChunkLogger {
     /*
      * removes all players and disables the logging
      */
+
     public void disable() {
         enabled = false;
         clients.kickAllPlayers();
         this.eventsThisGametick.clear();
     }
-
 
     /*
      * called when registering a new player
@@ -250,7 +256,7 @@ public class CarpetClientChunkLogger {
             }
             if (size <= i && deobfuscated) {
                 int reduce = trace.length - size;
-                if (reduce > size){
+                if (reduce > size) {
                     stacktrace += "\n.....cut out.....";
                     reduce = size;
                 }

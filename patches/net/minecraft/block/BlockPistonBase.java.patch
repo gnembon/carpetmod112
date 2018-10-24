@@ -21,7 +21,16 @@
  
          if (!p_180633_1_.field_72995_K)
          {
-@@ -142,11 +147,34 @@
+@@ -130,6 +135,8 @@
+ 
+     private void func_176316_e(World p_176316_1_, BlockPos p_176316_2_, IBlockState p_176316_3_)
+     {
++        if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++            carpet.carpetclient.CarpetClientChunkLogger.setReason("Piston scheduled by power source");
+         EnumFacing enumfacing = (EnumFacing)p_176316_3_.func_177229_b(field_176387_N);
+         boolean flag = this.func_176318_b(p_176316_1_, p_176316_2_, enumfacing);
+ 
+@@ -142,11 +149,34 @@
          }
          else if (!flag && ((Boolean)p_176316_3_.func_177229_b(field_176320_b)).booleanValue())
          {
@@ -58,7 +67,7 @@
      {
          for (EnumFacing enumfacing : EnumFacing.values())
          {
-@@ -162,6 +190,12 @@
+@@ -162,6 +192,12 @@
          }
          else
          {
@@ -71,7 +80,7 @@
              BlockPos blockpos = p_176318_2_.func_177984_a();
  
              for (EnumFacing enumfacing1 : EnumFacing.values())
-@@ -241,7 +275,8 @@
+@@ -241,7 +277,8 @@
                      }
                  }
  
@@ -81,7 +90,7 @@
                  {
                      this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
                  }
-@@ -307,7 +342,13 @@
+@@ -307,7 +344,13 @@
                      return false;
                  }
  
@@ -96,7 +105,7 @@
              }
              else
              {
-@@ -319,6 +360,14 @@
+@@ -319,6 +362,14 @@
              return false;
          }
      }
@@ -111,7 +120,7 @@
  
      private boolean func_176319_a(World p_176319_1_, BlockPos p_176319_2_, EnumFacing p_176319_3_, boolean p_176319_4_)
      {
-@@ -358,15 +407,64 @@
+@@ -358,15 +409,64 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }
