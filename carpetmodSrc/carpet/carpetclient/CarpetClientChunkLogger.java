@@ -178,7 +178,7 @@ public class CarpetClientChunkLogger {
     }
 
     private class StackTraces {
-        StackTraceDeobfuscator deobf = StackTraceDeobfuscator.create().withMinecraftVersion("1.12").withSnapshotMcpNames("20180713-1.12");
+        StackTraceDeobfuscator deobf = StackTraceDeobfuscator.create().withMinecraftVersion(CarpetSettings.minecraftVersion).withSnapshotMcpNames(CarpetSettings.mcpMappings);
         HashMap<String, Integer> stackTraceToIndex = new HashMap();
         ArrayList<String> allTracesDeobfuscated = new ArrayList();
 
@@ -359,12 +359,10 @@ public class CarpetClientChunkLogger {
                 if (!sentTraces.contains(id)) {
                     sentTraces.add(id);
                     missingTraces.add(id);
-//                    System.err.println(String.format("Sending trace %d to player %s", id, player.getName()));
                 }
                 if (!sentTraces.contains(reason)) {
                     sentTraces.add(reason);
                     missingTraces.add(reason);
-//                    System.err.println(String.format("Reason %d to player %s", reason, player.getName()));
                 }
             }
             ArrayList missingList = new ArrayList(missingTraces);
