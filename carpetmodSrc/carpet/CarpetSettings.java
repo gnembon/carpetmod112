@@ -88,6 +88,7 @@ public class CarpetSettings
     public static boolean endRNG = false;
     public static int structureBlockLimit = 32;
     public static boolean disablePlayerCollision = false;
+    public static int tileTickLimit = 65536;
 
     public static long setSeed = 0;
 
@@ -281,7 +282,8 @@ public class CarpetSettings
   rule("disablePlayerCollision","creative", "Disables player entity collision."),
   rule("randomTickOptimization","fix", "Stops blocks which don't need to be random ticked from being random ticked")
                                 .extraInfo("Fixed in 1.13"),
-
+  rule("tileTickLimit",         "fix", "Customizable tile tick limit")
+                                .choices("65536","1000 65536 1000000").setNotStrict(),
         };
         for (CarpetSettingEntry rule: RuleList)
         {
@@ -324,6 +326,7 @@ public class CarpetSettings
         endRNG = CarpetSettings.getBool("endRNG");
         structureBlockLimit = CarpetSettings.getInt("structureBlockLimit");
         disablePlayerCollision = CarpetSettings.getBool("disablePlayerCollision");
+        tileTickLimit = CarpetSettings.getInt("tileTickLimit");
 
         if ("pistonGhostBlocksFix".equalsIgnoreCase(rule))
         {

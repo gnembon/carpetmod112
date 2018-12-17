@@ -187,7 +187,21 @@
              }
  
              p_175654_3_ = 1;
-@@ -1057,6 +1134,7 @@
+@@ -646,9 +723,11 @@
+             }
+             else
+             {
+-                if (i > 65536)
++                int tileTickLimit = CarpetSettings.tileTickLimit;
++                if (i > tileTickLimit)
+                 {
+-                    i = 65536;
++                    field_147491_a.warn(String.format("Reached tile tick limit (%d > %d)", i, tileTickLimit));
++                    i = tileTickLimit;
+                 }
+ 
+                 this.field_72984_F.func_76320_a("cleaning");
+@@ -1057,6 +1136,7 @@
          this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
          this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
          Entity[] aentity = p_72923_1_.func_70021_al();
