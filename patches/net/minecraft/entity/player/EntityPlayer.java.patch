@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayer.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayer.java
-@@ -91,6 +91,12 @@
+@@ -91,6 +91,13 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
@@ -9,11 +9,12 @@
 +import carpet.logging.logHelpers.DamageReporter;
 +import carpet.helpers.PortalHelper;
 +import carpet.logging.LoggerRegistry;
++import carpet.helpers.StatHelper;
 +
  public abstract class EntityPlayer extends EntityLivingBase
  {
      private static final DataParameter<Float> field_184829_a = EntityDataManager.<Float>func_187226_a(EntityPlayer.class, DataSerializers.field_187193_c);
-@@ -364,6 +370,15 @@
+@@ -364,6 +371,15 @@
  
      public int func_82145_z()
      {
@@ -29,7 +30,7 @@
          return this.field_71075_bZ.field_75102_a ? 1 : 80;
      }
  
-@@ -530,7 +545,9 @@
+@@ -530,7 +546,9 @@
          this.func_192028_j(this.func_192023_dk());
          this.func_192028_j(this.func_192025_dl());
  
@@ -40,16 +41,16 @@
          {
              this.func_192030_dh();
          }
-@@ -692,7 +709,7 @@
+@@ -692,7 +710,7 @@
              {
                  if (!itemstack.func_190926_b())
                  {
 -                    this.func_71064_a(StatList.func_188058_e(itemstack.func_77973_b()), p_146097_1_.func_190916_E());
-+                    this.func_71064_a(StatList.getDroppedObjectStats(itemstack.func_77973_b(), itemstack.func_77960_j()), p_146097_1_.func_190916_E());
++                    this.func_71064_a(StatHelper.getDroppedObjectStats(itemstack.func_77973_b(), itemstack.func_77960_j()), p_146097_1_.func_190916_E());
                  }
  
                  this.func_71029_a(StatList.field_75952_v);
-@@ -908,10 +925,23 @@
+@@ -908,10 +926,23 @@
                      this.func_70999_a(true, true, false);
                  }
  
@@ -74,7 +75,7 @@
                      if (this.field_70170_p.func_175659_aa() == EnumDifficulty.PEACEFUL)
                      {
                          p_70097_2_ = 0.0F;
-@@ -926,6 +956,7 @@
+@@ -926,6 +957,7 @@
                      {
                          p_70097_2_ = p_70097_2_ * 3.0F / 2.0F;
                      }
@@ -82,7 +83,7 @@
                  }
  
                  return p_70097_2_ == 0.0F ? false : super.func_70097_a(p_70097_1_, p_70097_2_);
-@@ -1008,16 +1039,22 @@
+@@ -1008,16 +1040,22 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -105,7 +106,7 @@
                  this.func_70606_j(this.func_110143_aJ() - p_70665_2_);
                  this.func_110142_aN().func_94547_a(p_70665_1_, f1, p_70665_2_);
  
-@@ -1027,6 +1064,12 @@
+@@ -1027,6 +1065,12 @@
                  }
              }
          }
@@ -118,7 +119,7 @@
      }
  
      public void func_175141_a(TileEntitySign p_175141_1_)
-@@ -1227,19 +1270,33 @@
+@@ -1227,19 +1271,33 @@
                          {
                              float f3 = 1.0F + EnchantmentHelper.func_191527_a(this) * f;
  
@@ -152,7 +153,7 @@
                          if (p_71059_1_ instanceof EntityPlayerMP && p_71059_1_.field_70133_I)
                          {
                              ((EntityPlayerMP)p_71059_1_).field_71135_a.func_147359_a(new SPacketEntityVelocity(p_71059_1_));
-@@ -1333,6 +1390,13 @@
+@@ -1333,6 +1391,13 @@
                      }
                  }
              }
@@ -166,7 +167,7 @@
          }
      }
  
-@@ -2044,6 +2108,20 @@
+@@ -2044,6 +2109,20 @@
          this.func_192031_i(new NBTTagCompound());
      }
  
@@ -187,7 +188,7 @@
      private void func_192026_k(@Nullable NBTTagCompound p_192026_1_)
      {
          if (!this.field_70170_p.field_72995_K && !p_192026_1_.func_82582_d())
-@@ -2307,6 +2385,13 @@
+@@ -2307,6 +2386,13 @@
      {
          return this.field_71075_bZ.field_75098_d && this.func_70003_b(2, "");
      }

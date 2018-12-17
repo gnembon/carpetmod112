@@ -1,16 +1,25 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -169,7 +169,8 @@
+@@ -41,6 +41,8 @@
+ import net.minecraft.util.text.translation.I18n;
+ import net.minecraft.world.World;
+ 
++import carpet.helpers.StatHelper;
++
+ public final class ItemStack
+ {
+     public static final ItemStack field_190927_a = new ItemStack((Item)null);
+@@ -169,7 +171,8 @@
  
          if (enumactionresult == EnumActionResult.SUCCESS)
          {
 -            p_179546_1_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
 +            // CM add meta
-+            p_179546_1_.func_71029_a(StatList.getObjectUseStats(this.field_151002_e, this.field_77991_e));
++            p_179546_1_.func_71029_a(StatHelper.getObjectUseStats(this.field_151002_e, this.field_77991_e));
          }
  
          return enumactionresult;
-@@ -207,7 +208,9 @@
+@@ -207,7 +210,9 @@
  
      public int func_77976_d()
      {
@@ -21,37 +30,37 @@
      }
  
      public boolean func_77985_e()
-@@ -334,7 +337,8 @@
+@@ -334,7 +339,8 @@
  
          if (flag)
          {
 -            p_77961_2_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
 +            // CM add meta
-+            p_77961_2_.func_71029_a(StatList.getObjectUseStats(this.field_151002_e, this.field_77991_e));
++            p_77961_2_.func_71029_a(StatHelper.getObjectUseStats(this.field_151002_e, this.field_77991_e));
          }
      }
  
-@@ -344,7 +348,8 @@
+@@ -344,7 +350,8 @@
  
          if (flag)
          {
 -            p_179548_4_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
 +            // CM add meta
-+            p_179548_4_.func_71029_a(StatList.getObjectUseStats(this.field_151002_e, this.field_77991_e));
++            p_179548_4_.func_71029_a(StatHelper.getObjectUseStats(this.field_151002_e, this.field_77991_e));
          }
      }
  
-@@ -496,7 +501,8 @@
+@@ -496,7 +503,8 @@
  
      public void func_77980_a(World p_77980_1_, EntityPlayer p_77980_2_, int p_77980_3_)
      {
 -        p_77980_2_.func_71064_a(StatList.func_188060_a(this.field_151002_e), p_77980_3_);
 +        // CM add meta
-+        p_77980_2_.func_71064_a(StatList.getCraftStats(this.field_151002_e, this.field_77991_e), p_77980_3_);
++        p_77980_2_.func_71064_a(StatHelper.getCraftStats(this.field_151002_e, this.field_77991_e), p_77980_3_);
          this.func_77973_b().func_77622_d(this, p_77980_1_, p_77980_2_);
      }
  
-@@ -881,4 +887,9 @@
+@@ -881,4 +889,9 @@
      {
          this.func_190917_f(-p_190918_1_);
      }
