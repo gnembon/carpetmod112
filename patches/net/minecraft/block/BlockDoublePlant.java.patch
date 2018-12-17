@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDoublePlant.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDoublePlant.java
+@@ -217,7 +217,10 @@
+         }
+         else
+         {
+-            p_176489_4_.func_71029_a(StatList.func_188055_a(this));
++            // CM
++            // player.addStat(StatList.getBlockStats(this));
++            p_176489_4_.func_71029_a(StatList.getBlockStateStats(p_176489_3_));
++            // CM END
+             int i = (blockdoubleplant$enumplanttype == BlockDoublePlant.EnumPlantType.GRASS ? BlockTallGrass.EnumType.GRASS : BlockTallGrass.EnumType.FERN).func_177044_a();
+             func_180635_a(p_176489_1_, p_176489_2_, new ItemStack(Blocks.field_150329_H, 2, i));
+             return true;

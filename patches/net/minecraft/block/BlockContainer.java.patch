@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockContainer.java
++++ ../src-work/minecraft/net/minecraft/block/BlockContainer.java
+@@ -56,7 +56,10 @@
+     {
+         if (p_180657_5_ instanceof IWorldNameable && ((IWorldNameable)p_180657_5_).func_145818_k_())
+         {
+-            p_180657_2_.func_71029_a(StatList.func_188055_a(this));
++            // CM
++            // player.addStat(StatList.getBlockStats(this));
++            p_180657_2_.func_71029_a(StatList.getBlockStateStats(p_180657_4_));
++            // CM END
+             p_180657_2_.func_71020_j(0.005F);
+ 
+             if (p_180657_1_.field_72995_K)

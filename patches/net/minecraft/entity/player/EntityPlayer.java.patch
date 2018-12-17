@@ -40,6 +40,15 @@
          {
              this.func_192030_dh();
          }
+@@ -692,7 +709,7 @@
+             {
+                 if (!itemstack.func_190926_b())
+                 {
+-                    this.func_71064_a(StatList.func_188058_e(itemstack.func_77973_b()), p_146097_1_.func_190916_E());
++                    this.func_71064_a(StatList.getDroppedObjectStats(itemstack.func_77973_b(), itemstack.func_77960_j()), p_146097_1_.func_190916_E());
+                 }
+ 
+                 this.func_71029_a(StatList.field_75952_v);
 @@ -908,10 +925,23 @@
                      this.func_70999_a(true, true, false);
                  }

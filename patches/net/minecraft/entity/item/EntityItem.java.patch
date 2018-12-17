@@ -33,7 +33,17 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -470,4 +487,9 @@
+@@ -376,7 +393,8 @@
+                     itemstack.func_190920_e(i);
+                 }
+ 
+-                p_70100_1_.func_71064_a(StatList.func_188056_d(item), i);
++                // CM add meta
++                p_70100_1_.func_71064_a(StatList.getObjectsPickedUpStats(item, itemstack.func_77960_j()), i);
+             }
+         }
+     }
+@@ -470,4 +488,9 @@
          this.func_174871_r();
          this.field_70292_b = 5999;
      }

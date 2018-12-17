@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemStack.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
-@@ -207,7 +207,9 @@
+@@ -169,7 +169,8 @@
+ 
+         if (enumactionresult == EnumActionResult.SUCCESS)
+         {
+-            p_179546_1_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
++            // CM add meta
++            p_179546_1_.func_71029_a(StatList.getObjectUseStats(this.field_151002_e, this.field_77991_e));
+         }
+ 
+         return enumactionresult;
+@@ -207,7 +208,9 @@
  
      public int func_77976_d()
      {
@@ -11,7 +21,37 @@
      }
  
      public boolean func_77985_e()
-@@ -881,4 +883,9 @@
+@@ -334,7 +337,8 @@
+ 
+         if (flag)
+         {
+-            p_77961_2_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
++            // CM add meta
++            p_77961_2_.func_71029_a(StatList.getObjectUseStats(this.field_151002_e, this.field_77991_e));
+         }
+     }
+ 
+@@ -344,7 +348,8 @@
+ 
+         if (flag)
+         {
+-            p_179548_4_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
++            // CM add meta
++            p_179548_4_.func_71029_a(StatList.getObjectUseStats(this.field_151002_e, this.field_77991_e));
+         }
+     }
+ 
+@@ -496,7 +501,8 @@
+ 
+     public void func_77980_a(World p_77980_1_, EntityPlayer p_77980_2_, int p_77980_3_)
+     {
+-        p_77980_2_.func_71064_a(StatList.func_188060_a(this.field_151002_e), p_77980_3_);
++        // CM add meta
++        p_77980_2_.func_71064_a(StatList.getCraftStats(this.field_151002_e, this.field_77991_e), p_77980_3_);
+         this.func_77973_b().func_77622_d(this, p_77980_1_, p_77980_2_);
+     }
+ 
+@@ -881,4 +887,9 @@
      {
          this.func_190917_f(-p_190918_1_);
      }

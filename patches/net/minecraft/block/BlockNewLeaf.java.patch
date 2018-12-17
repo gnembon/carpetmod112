@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockNewLeaf.java
++++ ../src-work/minecraft/net/minecraft/block/BlockNewLeaf.java
+@@ -90,7 +90,10 @@
+     {
+         if (!p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
+         {
+-            p_180657_2_.func_71029_a(StatList.func_188055_a(this));
++            // CM
++            // player.addStat(StatList.getBlockStats(this));
++            p_180657_2_.func_71029_a(StatList.getBlockStateStats(p_180657_4_));
++            // CM END
+             func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Item.func_150898_a(this), 1, ((BlockPlanks.EnumType)p_180657_4_.func_177229_b(field_176240_P)).func_176839_a() - 4));
+         }
+         else
