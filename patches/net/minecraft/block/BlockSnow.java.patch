@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockSnow.java
++++ ../src-work/minecraft/net/minecraft/block/BlockSnow.java
+@@ -23,6 +23,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import carpet.helpers.StatHelper;
++
+ public class BlockSnow extends Block
+ {
+     public static final PropertyInteger field_176315_a = PropertyInteger.func_177719_a("layers", 1, 8);
+@@ -114,7 +116,10 @@
+     {
+         func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Items.field_151126_ay, ((Integer)p_180657_4_.func_177229_b(field_176315_a)).intValue() + 1, 0));
+         p_180657_1_.func_175698_g(p_180657_3_);
+-        p_180657_2_.func_71029_a(StatList.func_188055_a(this));
++        // CM
++        // player.addStat(StatList.getBlockStats(this));
++        p_180657_2_.func_71029_a(StatHelper.getBlockStateStats(p_180657_4_));
++        // CM END
+     }
+ 
+     public Item func_180660_a(IBlockState p_180660_1_, Random p_180660_2_, int p_180660_3_)

@@ -1,0 +1,109 @@
+--- ../src-base/minecraft/net/minecraft/stats/StatList.java
++++ ../src-work/minecraft/net/minecraft/stats/StatList.java
+@@ -19,6 +19,7 @@
+ import net.minecraft.item.crafting.IRecipe;
+ import net.minecraft.util.ResourceLocation;
+ import net.minecraft.util.text.TextComponentTranslation;
++import carpet.helpers.StatHelper;
+ 
+ public class StatList
+ {
+@@ -85,18 +86,21 @@
+     private static final StatBase[] field_188068_aj = new StatBase[32000];
+ 
+     @Nullable
++    @Deprecated // CM
+     public static StatBase func_188055_a(Block p_188055_0_)
+     {
+         return field_188065_ae[Block.func_149682_b(p_188055_0_)];
+     }
+ 
+     @Nullable
++    @Deprecated // CM
+     public static StatBase func_188060_a(Item p_188060_0_)
+     {
+         return field_188066_af[Item.func_150891_b(p_188060_0_)];
+     }
+ 
+     @Nullable
++    @Deprecated // CM
+     public static StatBase func_188057_b(Item p_188057_0_)
+     {
+         return field_75929_E[Item.func_150891_b(p_188057_0_)];
+@@ -109,12 +113,14 @@
+     }
+ 
+     @Nullable
++    @Deprecated // CM
+     public static StatBase func_188056_d(Item p_188056_0_)
+     {
+         return field_188067_ai[Item.func_150891_b(p_188056_0_)];
+     }
+ 
+     @Nullable
++    @Deprecated // CM
+     public static StatBase func_188058_e(Item p_188058_0_)
+     {
+         return field_188068_aj[Item.func_150891_b(p_188058_0_)];
+@@ -157,7 +163,11 @@
+ 
+                 if (s != null)
+                 {
+-                    field_188066_af[i] = (new StatCrafting("stat.craftItem.", s, new TextComponentTranslation("stat.craftItem", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).func_75971_g();
++                    // CM
++                    StatCrafting baseStat = (StatCrafting) new StatCrafting("stat.craftItem.", s, new TextComponentTranslation("stat.craftItem", new ItemStack(item).func_151000_E()), item).func_75971_g();
++                    field_188066_af[i] = baseStat;
++                    StatHelper.addCraftStats(item, baseStat);
++                    // CM END
+                 }
+             }
+         }
+@@ -178,8 +188,12 @@
+ 
+                 if (s != null && block.func_149652_G())
+                 {
+-                    field_188065_ae[i] = (new StatCrafting("stat.mineBlock.", s, new TextComponentTranslation("stat.mineBlock", new Object[] {(new ItemStack(block)).func_151000_E()}), item)).func_75971_g();
++                    // CM
++                    StatCrafting baseStat = (StatCrafting) new StatCrafting("stat.mineBlock.", s, new TextComponentTranslation("stat.mineBlock", new ItemStack(block).func_151000_E()), item).func_75971_g();
++                    field_188065_ae[i] = baseStat;
+                     field_188096_e.add((StatCrafting)field_188065_ae[i]);
++                    StatHelper.addMineStats(block, baseStat);
++                    // CM END
+                 }
+             }
+         }
+@@ -198,12 +212,12 @@
+ 
+                 if (s != null)
+                 {
+-                    field_75929_E[i] = (new StatCrafting("stat.useItem.", s, new TextComponentTranslation("stat.useItem", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).func_75971_g();
+-
+-                    if (!(item instanceof ItemBlock))
+-                    {
+-                        field_188095_d.add((StatCrafting)field_75929_E[i]);
+-                    }
++                    // CM
++                    StatCrafting baseStat = (StatCrafting) new StatCrafting("stat.useItem.", s, new TextComponentTranslation("stat.useItem", new ItemStack(item).func_151000_E()), item).func_75971_g();
++                    field_75929_E[i] = baseStat;
++                    if (!(item instanceof ItemBlock)) field_188095_d.add((StatCrafting)field_75929_E[i]);
++                    StatHelper.addUseStats(item, baseStat);
++                    // CM END
+                 }
+             }
+         }
+@@ -241,8 +255,13 @@
+ 
+                 if (s != null)
+                 {
+-                    field_188067_ai[i] = (new StatCrafting("stat.pickup.", s, new TextComponentTranslation("stat.pickup", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).func_75971_g();
+-                    field_188068_aj[i] = (new StatCrafting("stat.drop.", s, new TextComponentTranslation("stat.drop", new Object[] {(new ItemStack(item)).func_151000_E()}), item)).func_75971_g();
++                    // CM
++                    StatCrafting basePickupStat = (StatCrafting) new StatCrafting("stat.pickup.", s, new TextComponentTranslation("stat.pickup", new ItemStack(item).func_151000_E()), item).func_75971_g();
++                    field_188067_ai[i] = basePickupStat;
++                    StatCrafting baseDropStat = (StatCrafting) new StatCrafting("stat.drop.", s, new TextComponentTranslation("stat.drop", new ItemStack(item).func_151000_E()), item).func_75971_g();
++                    field_188068_aj[i] = baseDropStat;
++                    StatHelper.addPickedUpAndDroppedStats(item, basePickupStat, baseDropStat);
++                    // CM END
+                 }
+             }
+         }

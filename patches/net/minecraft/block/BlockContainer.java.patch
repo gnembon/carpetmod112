@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockContainer.java
++++ ../src-work/minecraft/net/minecraft/block/BlockContainer.java
+@@ -1,6 +1,7 @@
+ package net.minecraft.block;
+ 
+ import javax.annotation.Nullable;
++
+ import net.minecraft.block.material.MapColor;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+@@ -18,6 +19,8 @@
+ import net.minecraft.world.IWorldNameable;
+ import net.minecraft.world.World;
+ 
++import carpet.helpers.StatHelper;
++
+ public abstract class BlockContainer extends Block implements ITileEntityProvider
+ {
+     protected BlockContainer(Material p_i45386_1_)
+@@ -56,7 +59,10 @@
+     {
+         if (p_180657_5_ instanceof IWorldNameable && ((IWorldNameable)p_180657_5_).func_145818_k_())
+         {
+-            p_180657_2_.func_71029_a(StatList.func_188055_a(this));
++            // CM
++            // player.addStat(StatList.getBlockStats(this));
++            p_180657_2_.func_71029_a(StatHelper.getBlockStateStats(p_180657_4_));
++            // CM END
+             p_180657_2_.func_71020_j(0.005F);
+ 
+             if (p_180657_1_.field_72995_K)
