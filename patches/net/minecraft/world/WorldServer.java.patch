@@ -209,7 +209,7 @@
              {
 -                if (i > 65536)
 +                int tileTickLimit = CarpetSettings.tileTickLimit;
-+                if (i > tileTickLimit)
++                if (tileTickLimit >= 0 && i > tileTickLimit)
                  {
 -                    i = 65536;
 +                    if (LoggerRegistry.__tileTickLimit) {

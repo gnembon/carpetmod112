@@ -283,6 +283,7 @@ public class CarpetSettings
   rule("randomTickOptimization","fix", "Stops blocks which don't need to be random ticked from being random ticked")
                                 .extraInfo("Fixed in 1.13"),
   rule("tileTickLimit",         "survival", "Customizable tile tick limit")
+                                .extraInfo("Negative for no limit")
                                 .choices("65536","1000 65536 1000000").setNotStrict(),
         };
         for (CarpetSettingEntry rule: RuleList)
