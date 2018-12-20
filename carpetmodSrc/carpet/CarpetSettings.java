@@ -282,7 +282,7 @@ public class CarpetSettings
   rule("disablePlayerCollision","creative", "Disables player entity collision."),
   rule("randomTickOptimization","fix", "Stops blocks which don't need to be random ticked from being random ticked")
                                 .extraInfo("Fixed in 1.13"),
-  rule("tileTickLimit",         "fix", "Customizable tile tick limit")
+  rule("tileTickLimit",         "survival", "Customizable tile tick limit")
                                 .choices("65536","1000 65536 1000000").setNotStrict(),
         };
         for (CarpetSettingEntry rule: RuleList)
