@@ -28,6 +28,7 @@ public class LoggerRegistry
     public static boolean __damage;
     public static boolean __packets;
     public static boolean __weather;
+    public static boolean __tileTickLimit;
 
     public static void initLoggers(MinecraftServer server)
     {
@@ -37,6 +38,7 @@ public class LoggerRegistry
         registerLogger("kills", new Logger(server, "kills", null, null, LogHandler.CHAT));
         registerLogger("damage", new Logger(server, "damage", "all", new String[]{"all","players","me"}, LogHandler.CHAT));
         registerLogger("weather", new Logger(server, "weather", null, null, LogHandler.CHAT));
+        registerLogger("tileTickLimit", new Logger(server, "tileTickLimit", null, null, LogHandler.CHAT));
 
         registerLogger("tps", new Logger(server, "tps", null, null, LogHandler.HUD));
         registerLogger("packets", new Logger(server, "packets", null, null, LogHandler.HUD));
