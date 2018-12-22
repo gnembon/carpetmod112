@@ -1,9 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -114,6 +114,10 @@
+@@ -114,6 +114,14 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
++import net.minecraft.entity.item.EntityMinecart;
++import net.minecraft.entity.passive.EntityLlama;
++
++import carpet.CarpetSettings;
 +import carpet.helpers.EntityPlayerActionPack;
 +import carpet.helpers.IPlayerSensitiveTileEntity;
 +import carpet.logging.logHelpers.DamageReporter;
@@ -11,7 +15,7 @@
  public class EntityPlayerMP extends EntityPlayer implements IContainerListener
  {
      private static final Logger field_147102_bM = LogManager.getLogger();
-@@ -153,6 +157,9 @@
+@@ -153,6 +161,9 @@
      public int field_71138_i;
      public boolean field_71136_j;
  
@@ -21,7 +25,7 @@
      public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_)
      {
          super(p_i45285_2_, p_i45285_3_);
-@@ -188,6 +195,9 @@
+@@ -188,6 +199,9 @@
          {
              this.func_70107_b(this.field_70165_t, this.field_70163_u + 1.0D, this.field_70161_v);
          }
@@ -31,7 +35,7 @@
      }
  
      public void func_70037_a(NBTTagCompound p_70037_1_)
-@@ -313,6 +323,9 @@
+@@ -313,6 +327,9 @@
  
      public void func_70071_h_()
      {
@@ -41,7 +45,21 @@
          this.field_71134_c.func_73075_a();
          --this.field_147101_bU;
  
-@@ -605,6 +618,7 @@
+@@ -365,6 +382,13 @@
+             }
+         }
+ 
++        if (CarpetSettings.ridingPlayerUpdateFix) {
++            Entity riding = func_184208_bv();
++            if(riding != null && (riding instanceof EntityMinecart || riding instanceof EntityLlama)){
++                this.field_71133_b.func_184103_al().func_72358_d(this);
++            }
++        }
++
+         CriteriaTriggers.field_193135_v.func_193182_a(this);
+ 
+         if (this.field_193107_ct != null)
+@@ -605,6 +629,7 @@
  
              if (!flag && this.field_147101_bU > 0 && p_70097_1_ != DamageSource.field_76380_i)
              {
@@ -49,7 +67,7 @@
                  return false;
              }
              else
-@@ -615,6 +629,7 @@
+@@ -615,6 +640,7 @@
  
                      if (entity instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entity))
                      {
@@ -57,7 +75,7 @@
                          return false;
                      }
  
-@@ -624,6 +639,7 @@
+@@ -624,6 +650,7 @@
  
                          if (entityarrow.field_70250_c instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entityarrow.field_70250_c))
                          {
@@ -65,7 +83,7 @@
                              return false;
                          }
                      }
-@@ -704,6 +720,8 @@
+@@ -704,6 +731,8 @@
          if (p_147097_1_ != null)
          {
              SPacketUpdateTileEntity spacketupdatetileentity = p_147097_1_.func_189518_D_();
