@@ -111,7 +111,7 @@
  
                      if (this.field_71305_c[0].func_73056_e())
                      {
-@@ -481,14 +513,30 @@
+@@ -481,14 +513,33 @@
                      }
                      else
                      {
@@ -129,7 +129,10 @@
 +                            }
                              this.func_71217_p();
 +                            keeping_up = true;
-+                            if (CarpetSettings.disableVanillaTickWarp) break;
++                            if (CarpetSettings.disableVanillaTickWarp) {
++                                i = 0;
++                                break;
++                            }
                          }
                      }
  
@@ -145,7 +148,7 @@
                      this.field_71296_Q = true;
                  }
              }
-@@ -592,6 +640,11 @@
+@@ -592,6 +643,11 @@
      {
          long i = System.nanoTime();
          ++this.field_71315_w;
@@ -157,7 +160,7 @@
  
          if (this.field_71295_T)
          {
-@@ -621,12 +674,17 @@
+@@ -621,12 +677,17 @@
  
          if (this.field_71315_w % 900 == 0)
          {
@@ -175,7 +178,7 @@
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
          this.field_71304_b.func_76319_b();
-@@ -644,6 +702,10 @@
+@@ -644,6 +705,10 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -186,7 +189,7 @@
      }
  
      public void func_71190_q()
-@@ -710,10 +772,12 @@
+@@ -710,10 +775,12 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  
