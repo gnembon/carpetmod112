@@ -118,7 +118,26 @@
      }
  
      public boolean func_184220_m(Entity p_184220_1_)
-@@ -2578,6 +2621,10 @@
+@@ -1966,6 +2009,18 @@
+         }
+     }
+ 
++    // CM
++    public final void dismountRidingEntityBase()
++    {
++        if (this.field_184239_as != null)
++        {
++            Entity entity = this.field_184239_as;
++            this.field_184239_as = null;
++            entity.func_184225_p(this);
++        }
++    }
++    // CM END
++
+     protected void func_184200_o(Entity p_184200_1_)
+     {
+         if (p_184200_1_.func_184187_bx() != this)
+@@ -2578,6 +2633,10 @@
  
      public EnumFacing func_174811_aO()
      {
@@ -129,7 +148,7 @@
          return EnumFacing.func_176731_b(MathHelper.func_76128_c((double)(this.field_70177_z * 4.0F / 360.0F) + 0.5D) & 3);
      }
  
-@@ -2886,4 +2933,14 @@
+@@ -2886,4 +2945,14 @@
      {
          return 1;
      }

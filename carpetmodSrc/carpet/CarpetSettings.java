@@ -89,6 +89,7 @@ public class CarpetSettings
     public static int structureBlockLimit = 32;
     public static boolean disablePlayerCollision = false;
     public static int tileTickLimit = 65536;
+    public static boolean dismountFix = false;
     public static boolean disableVanillaTickWarp = false;
     public static boolean ridingPlayerUpdateFix;
 
@@ -287,6 +288,7 @@ public class CarpetSettings
   rule("tileTickLimit",         "survival", "Customizable tile tick limit")
                                 .extraInfo("Negative for no limit")
                                 .choices("65536","1000 65536 1000000").setNotStrict(),
+  rule("dismountFix",           "fix", "Fix dismount behavior that leads to ghost chicken jockeys")
   rule("disableVanillaTickWarp", "fix", "Disables the catching-up behavior after lag spikes"),
   rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas"),
         };
@@ -332,6 +334,7 @@ public class CarpetSettings
         structureBlockLimit = CarpetSettings.getInt("structureBlockLimit");
         disablePlayerCollision = CarpetSettings.getBool("disablePlayerCollision");
         tileTickLimit = CarpetSettings.getInt("tileTickLimit");
+        dismountFix = CarpetSettings.getBool("dismountFix");
         disableVanillaTickWarp = CarpetSettings.getBool("disableVanillaTickWarp");
         ridingPlayerUpdateFix = CarpetSettings.getBool("ridingPlayerUpdateFix");
 
@@ -732,6 +735,7 @@ public class CarpetSettings
         set("reloadUpdateOrderFix","true");
         set("leashFix","true");
         set("randomTickOptimization","true");
+        set("dismountFix","true");
         set("disableVanillaTickWarp","true");
         set("ridingPlayerUpdateFix","true");
     }
