@@ -89,6 +89,7 @@ public class CarpetSettings
     public static int structureBlockLimit = 32;
     public static boolean disablePlayerCollision = false;
     public static int tileTickLimit = 65536;
+    public static boolean dismountFix = false;
 
     public static long setSeed = 0;
 
@@ -285,6 +286,7 @@ public class CarpetSettings
   rule("tileTickLimit",         "survival", "Customizable tile tick limit")
                                 .extraInfo("Negative for no limit")
                                 .choices("65536","1000 65536 1000000").setNotStrict(),
+  rule("dismountFix",           "fix", "Fix dismount behavior that leads to ghost chicken jockeys")
         };
         for (CarpetSettingEntry rule: RuleList)
         {
@@ -328,6 +330,7 @@ public class CarpetSettings
         structureBlockLimit = CarpetSettings.getInt("structureBlockLimit");
         disablePlayerCollision = CarpetSettings.getBool("disablePlayerCollision");
         tileTickLimit = CarpetSettings.getInt("tileTickLimit");
+        dismountFix = CarpetSettings.getBool("dismountFix");
 
         if ("pistonGhostBlocksFix".equalsIgnoreCase(rule))
         {
@@ -726,6 +729,7 @@ public class CarpetSettings
         set("reloadUpdateOrderFix","true");
         set("leashFix","true");
         set("randomTickOptimization","true");
+        set("dismountFix","true");
     }
 
     public static class CarpetSettingEntry 
