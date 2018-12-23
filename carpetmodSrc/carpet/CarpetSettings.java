@@ -48,7 +48,7 @@ public class CarpetSettings
     public static final CarpetSettingEntry FalseEntry = CarpetSettingEntry.create("void","all","Error").choices("None","");
 
     public static final String[] default_tags = {"tnt","fix","survival","creative", "experimental","optimizations","feature","commands"}; //tab completion only
-    
+
     static {
         settings_store = new HashMap<>();
         set_defaults();
@@ -90,6 +90,7 @@ public class CarpetSettings
     public static boolean disablePlayerCollision = false;
     public static int tileTickLimit = 65536;
     public static boolean disableVanillaTickWarp = false;
+    public static boolean ridingPlayerUpdateFix;
 
     public static long setSeed = 0;
 
@@ -287,6 +288,7 @@ public class CarpetSettings
                                 .extraInfo("Negative for no limit")
                                 .choices("65536","1000 65536 1000000").setNotStrict(),
   rule("disableVanillaTickWarp", "fix", "Disables the catching-up behavior after lag spikes"),
+  rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas"),
         };
         for (CarpetSettingEntry rule: RuleList)
         {
@@ -331,6 +333,7 @@ public class CarpetSettings
         disablePlayerCollision = CarpetSettings.getBool("disablePlayerCollision");
         tileTickLimit = CarpetSettings.getInt("tileTickLimit");
         disableVanillaTickWarp = CarpetSettings.getBool("disableVanillaTickWarp");
+        ridingPlayerUpdateFix = CarpetSettings.getBool("ridingPlayerUpdateFix");
 
         if ("pistonGhostBlocksFix".equalsIgnoreCase(rule))
         {
@@ -730,6 +733,7 @@ public class CarpetSettings
         set("leashFix","true");
         set("randomTickOptimization","true");
         set("disableVanillaTickWarp","true");
+        set("ridingPlayerUpdateFix","true");
     }
 
     public static class CarpetSettingEntry 
