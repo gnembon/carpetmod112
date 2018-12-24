@@ -288,9 +288,9 @@ public class CarpetSettings
   rule("tileTickLimit",         "survival", "Customizable tile tick limit")
                                 .extraInfo("Negative for no limit")
                                 .choices("65536","1000 65536 1000000").setNotStrict(),
-  rule("dismountFix",           "fix", "Fix dismount behavior that leads to ghost chicken jockeys")
+  rule("dismountFix",           "fix", "Fix dismount behavior that leads to ghost chicken jockeys"),
   rule("disableVanillaTickWarp", "fix", "Disables the catching-up behavior after lag spikes"),
-  rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas"),
+  rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas")
         };
         for (CarpetSettingEntry rule: RuleList)
         {

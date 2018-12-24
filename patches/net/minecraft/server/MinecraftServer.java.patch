@@ -130,7 +130,7 @@
                              this.func_71217_p();
 +                            keeping_up = true;
 +                            if (CarpetSettings.disableVanillaTickWarp) {
-+                                i = 0;
++                                i = func_130071_aq() - k;
 +                                break;
 +                            }
                          }
