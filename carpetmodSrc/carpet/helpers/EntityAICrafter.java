@@ -29,7 +29,7 @@ SOFTWARE.
  * tiers are unlockable by having the nitwit craft the first tier or the 2nd when it
  * unlocks. They pickup items based on the crafting they are doing and they will swap
  * crafting jobs if they have nothing to do for a while. They will also consume 
- * food to craft and randomly have a prefered food type they craft faster with and
+ * food to craft and randomly have a preferred food type they craft faster with and
  * a dislike food they craft slower with. The longer they craft the faster they become.
  * 
  */
@@ -703,7 +703,7 @@ public class EntityAICrafter extends EntityAIBase {
 	}
 
 	/**
-	 * Randomises the stats of a nearly created crafting villager.
+	 * Randomizes the stats of a newly created crafting villager.
 	 */
 	private void randomiseStats() {
 		tasks[0] = randy.nextInt(tier1.length);
@@ -805,6 +805,7 @@ public class EntityAICrafter extends EntityAIBase {
 				setName();
 				craftingCooldown = cooldown;
 				resetIdleTimer();
+				encodeVillager();
 			} else {
 				craftingCanHappen = false;
 			}
@@ -814,6 +815,7 @@ public class EntityAICrafter extends EntityAIBase {
 					villager.wealth++;
 				}
 				craftingCooldown--;
+				encodeVillager();
 			}
 		}
 	}
@@ -938,7 +940,7 @@ public class EntityAICrafter extends EntityAIBase {
 	}
 
 	/**
-	 * Main crafting logic that preforms the crafting based on the job
+	 * Main crafting logic that performs the crafting based on the job
 	 * 
 	 * @return returns true if the crafting job is successful and false if not.
 	 */
@@ -1034,7 +1036,7 @@ public class EntityAICrafter extends EntityAIBase {
 
 	/**
 	 * Find the relative inventory items of the currently selected job. A list
-	 * of all iventory stacks and the amount that is needed to be deducted for
+	 * of all inventory stacks and the amount that is needed to be deducted for
 	 * the current job is returned.
 	 * 
 	 * @param list
@@ -1274,7 +1276,7 @@ public class EntityAICrafter extends EntityAIBase {
 	}
 
 	/**
-	 * Switches the job and preforms the dropping of items and resets the idle
+	 * Switches the job and performs the dropping of items and resets the idle
 	 * timer.
 	 * 
 	 * @param job
@@ -1531,7 +1533,7 @@ public class EntityAICrafter extends EntityAIBase {
 	 * not.
 	 * 
 	 * @param item
-	 *            The item that is being checked if its a villager prefered food
+	 *            The item that is being checked if its a villager preferred food
 	 *            or not.
 	 * @return Returns true if its a food that can be consumed.
 	 */
