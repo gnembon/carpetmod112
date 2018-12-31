@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -970,4 +970,10 @@
+@@ -970,4 +970,9 @@
              }
          }
      }
@@ -8,6 +8,5 @@
 +    /*
 +     * Fix for stack changes when doing NBT checks on shoulkers. CARPET-XCOM
 +     */
-+    public int getNBTDependentStackLimit(boolean hasTag){ return func_77639_j(); }
 +    public boolean itemGroundStacking(boolean hasTagCompound) { return false; }
  }
