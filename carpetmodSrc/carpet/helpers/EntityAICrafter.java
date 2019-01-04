@@ -76,7 +76,7 @@ public class EntityAICrafter extends EntityAIBase {
 	private int[] food = new int[3];
 	private int foodSize;
 	private float foodSpeed;
-	private static Item[] foods = { Items.BREAD, Items.POTATO, Items.CARROT, Items.BEETROOT };
+	private static Item[] foods = { Items.BREAD, Items.POTATO, Items.CARROT, Items.BEETROOT, Items.POISONOUS_POTATO };
 
 	private Random randy = new Random();
 	private int cooldown;
@@ -1005,9 +1005,23 @@ public class EntityAICrafter extends EntityAIBase {
 			return false;
 		}
 
+		if (food.getItem() == Items.POISONOUS_POTATO) {
+			dropInventoryExceptFood();
+		}
+
 		food.setCount(food.getCount() - foodSize);
 		foodCooldown = 160;
+
 		return true;
+	}
+
+	private void dropInventoryExceptFood() {
+		InventoryBasic villagerInventory = villager.getVillagerInventory();
+		for (int i = 0; i < villagerInventory.getSizeInventory() - 1; ++i) {
+			ItemStack itemstack = villagerInventory.getStackInSlot(i);
+			dropItem(itemstack.copy());
+			itemstack.setCount(0);
+		}
 	}
 
 	/**
@@ -1310,8 +1324,9 @@ public class EntityAICrafter extends EntityAIBase {
 
 	/**
 	 * Adds the food item into the villagers inventory. Placed in the last slot
-	 * of the villager. If another food type is found it is swaped if the idle
-	 * timer have kicked in (no crafting done in a period of 10-15 seconds).
+	 * of the villager. If another food type is found it is swapped if the idle
+	 * timer have kicked in (no crafting done in a period of 10-15 seconds), or
+	 * if the picked items is poisonous.
 	 * 
 	 * @param stack
 	 *            Item stack that is being placed into the villagers inventory.
@@ -1347,7 +1362,7 @@ public class EntityAICrafter extends EntityAIBase {
 						return ItemStack.EMPTY;
 					}
 				}
-			} else if (idleTimer <= 0) {
+			} else if ((idleTimer <= 0) || (inventoryItem.getItem() == Items.POISONOUS_POTATO)) {
 				dropItem(inventoryItem);
 				villagerInventory.setInventorySlotContents(foodSlot, groundItem);
 				setFoodSpeed(groundItem);
