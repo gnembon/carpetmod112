@@ -292,7 +292,7 @@ public class CarpetSettings
                                 .choices("65536","1000 65536 1000000").setNotStrict(),
   rule("dismountFix",           "fix", "Fix dismount behavior that leads to ghost chicken jockeys"),
   rule("disableVanillaTickWarp", "fix", "Disables the catching-up behavior after lag spikes"),
-  rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas")
+  rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas"),
   rule("pistonClippingFix",     "fix", "Fixes players clipping through moving piston blocks partially.")
                                 .choices("0", "0 20 40 100"),
 
