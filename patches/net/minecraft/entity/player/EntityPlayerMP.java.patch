@@ -23,6 +23,9 @@
 +    //CM
 +    public EntityPlayerActionPack actionPack;
 +
++    // [CM] PistonClippingFix -- Counter
++    public int pistonClippingCounter;
++
      public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_)
      {
          super(p_i45285_2_, p_i45285_3_);

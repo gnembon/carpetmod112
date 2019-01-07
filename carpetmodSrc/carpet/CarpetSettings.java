@@ -92,6 +92,8 @@ public class CarpetSettings
     public static boolean dismountFix = false;
     public static boolean disableVanillaTickWarp = false;
     public static boolean ridingPlayerUpdateFix;
+    public static boolean artificialPermaloader = false;
+    public static int pistonClippingFix = 0;
 
     public static long setSeed = 0;
 
@@ -291,6 +293,9 @@ public class CarpetSettings
   rule("dismountFix",           "fix", "Fix dismount behavior that leads to ghost chicken jockeys"),
   rule("disableVanillaTickWarp", "fix", "Disables the catching-up behavior after lag spikes"),
   rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas")
+  rule("pistonClippingFix",     "fix", "Fixes players clipping through moving piston blocks partially.")
+                                .choices("0", "0 20 40 100"),
+
         };
         for (CarpetSettingEntry rule: RuleList)
         {
