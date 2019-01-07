@@ -77,11 +77,11 @@ def parse_file(lines):
 			if current_hunk == None:
 				patch.header = current_lines
 			current_hunk = Hunk()
-			current_hunk.start_a = int(match[1])
-			current_hunk.len_a = int(match[2])
-			current_hunk.start_b = int(match[3])
-			current_hunk.len_b = int(match[4])
-			current_hunk.suffix = match[5]
+			current_hunk.start_a = int(match.group(1))
+			current_hunk.len_a = int(match.group(2))
+			current_hunk.start_b = int(match.group(3))
+			current_hunk.len_b = int(match.group(4))
+			current_hunk.suffix = match.group(5)
 			current_lines = []
 			current_hunk.lines = current_lines
 			patch.hunks.append(current_hunk)

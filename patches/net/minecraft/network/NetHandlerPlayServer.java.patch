@@ -19,8 +19,20 @@
      public EntityPlayerMP field_147369_b;
      private int field_147368_e;
      private int field_147378_h;
-@@ -249,7 +255,7 @@
+@@ -247,9 +253,19 @@
+         {
+             this.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.idling", new Object[0]));
          }
++
++        // [CM] PistonClippingFix -- Check if counter is above 0 and decrement
++        if(this.field_147369_b.pistonClippingCounter > 0 && CarpetSettings.pistonClippingFix > 0)
++        {
++            this.field_147369_b.pistonClippingCounter--;
++        }
++        else
++        {
++            this.field_147369_b.pistonClippingCounter = 0;
++        }
      }
  
 -    private void func_184342_d()
@@ -28,7 +40,7 @@
      {
          this.field_184349_l = this.field_147369_b.field_70165_t;
          this.field_184350_m = this.field_147369_b.field_70163_u;
-@@ -287,6 +293,11 @@
+@@ -287,6 +303,11 @@
      {
          PacketThreadUtil.func_180031_a(p_147358_1_, this, this.field_147369_b.func_71121_q());
          this.field_147369_b.func_110430_a(p_147358_1_.func_149620_c(), p_147358_1_.func_192620_b(), p_147358_1_.func_149618_e(), p_147358_1_.func_149617_f());
@@ -40,7 +52,7 @@
      }
  
      private static boolean func_183006_b(CPacketPlayer p_183006_0_)
-@@ -490,6 +501,10 @@
+@@ -490,6 +511,10 @@
                          double d10 = this.field_147369_b.field_70159_w * this.field_147369_b.field_70159_w + this.field_147369_b.field_70181_x * this.field_147369_b.field_70181_x + this.field_147369_b.field_70179_y * this.field_147369_b.field_70179_y;
                          double d11 = d7 * d7 + d8 * d8 + d9 * d9;
  
@@ -51,7 +63,7 @@
                          if (this.field_147369_b.func_70608_bn())
                          {
                              if (d11 > 1.0D)
-@@ -508,7 +523,7 @@
+@@ -508,7 +533,7 @@
                                  i = 1;
                              }
  
@@ -60,7 +72,17 @@
                              {
                                  float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
  
-@@ -745,6 +760,7 @@
+@@ -554,7 +579,8 @@
+                             this.field_147369_b.func_70080_a(d4, d5, d6, f, f1);
+                             this.field_147369_b.func_71000_j(this.field_147369_b.field_70165_t - d0, this.field_147369_b.field_70163_u - d1, this.field_147369_b.field_70161_v - d2);
+ 
+-                            if (!this.field_147369_b.field_70145_X && !this.field_147369_b.func_70608_bn())
++                            // [CM] PistonClippingFix -- Added PistonClippingcounter check to the if statement
++                            if (!this.field_147369_b.field_70145_X && !this.field_147369_b.func_70608_bn() && this.field_147369_b.pistonClippingCounter == 0)
+                             {
+                                 boolean flag1 = worldserver.func_184144_a(this.field_147369_b, this.field_147369_b.func_174813_aQ().func_186664_h(0.0625D)).isEmpty();
+ 
+@@ -745,6 +771,7 @@
  
          if (!itemstack.func_190926_b())
          {
@@ -68,7 +90,7 @@
              this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, worldserver, itemstack, enumhand);
          }
      }
-@@ -1200,7 +1216,15 @@
+@@ -1200,7 +1227,15 @@
                              }
                              else
                              {
@@ -85,7 +107,7 @@
                              }
                          }
  
-@@ -1732,13 +1756,14 @@
+@@ -1732,13 +1767,14 @@
                      String s8 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
                      tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
@@ -106,7 +128,7 @@
                      tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
                      String s2 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184411_a(Mirror.valueOf(s2));
-@@ -1775,6 +1800,17 @@
+@@ -1775,6 +1811,17 @@
                          }
                          else
                          {
@@ -124,7 +146,7 @@
                              this.field_147369_b.func_146105_b(new TextComponentTranslation("structure_block.load_prepare", new Object[] {s4}), false);
                          }
                      }
-@@ -1816,5 +1852,9 @@
+@@ -1816,5 +1863,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }

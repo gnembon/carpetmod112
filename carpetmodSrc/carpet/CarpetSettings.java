@@ -41,7 +41,7 @@ import net.minecraft.util.math.ChunkPos;
 public class CarpetSettings
 {
     public static boolean locked = false;
-    public static final String carpetVersion = "v18_12_20";
+    public static final String carpetVersion = "v19_01_07";
 
     public static final Logger LOG = LogManager.getLogger();
     private static final Map<String, CarpetSettingEntry> settings_store;
@@ -92,6 +92,8 @@ public class CarpetSettings
     public static boolean dismountFix = false;
     public static boolean disableVanillaTickWarp = false;
     public static boolean ridingPlayerUpdateFix;
+    public static boolean artificialPermaloader = false;
+    public static int pistonClippingFix = 0;
 
     public static long setSeed = 0;
 
@@ -290,7 +292,10 @@ public class CarpetSettings
                                 .choices("65536","1000 65536 1000000").setNotStrict(),
   rule("dismountFix",           "fix", "Fix dismount behavior that leads to ghost chicken jockeys"),
   rule("disableVanillaTickWarp", "fix", "Disables the catching-up behavior after lag spikes"),
-  rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas")
+  rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas"),
+  rule("pistonClippingFix",     "fix", "Fixes players clipping through moving piston blocks partially.")
+                                .choices("0", "0 20 40 100"),
+
         };
         for (CarpetSettingEntry rule: RuleList)
         {

@@ -16,17 +16,20 @@
  public class EntityPlayerMP extends EntityPlayer implements IContainerListener
  {
      private static final Logger field_147102_bM = LogManager.getLogger();
-@@ -153,6 +162,9 @@
+@@ -153,6 +162,12 @@
      public int field_71138_i;
      public boolean field_71136_j;
  
 +    //CM
 +    public EntityPlayerActionPack actionPack;
 +
++    // [CM] PistonClippingFix -- Counter
++    public int pistonClippingCounter;
++
      public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_)
      {
          super(p_i45285_2_, p_i45285_3_);
-@@ -188,6 +200,9 @@
+@@ -188,6 +203,9 @@
          {
              this.func_70107_b(this.field_70165_t, this.field_70163_u + 1.0D, this.field_70161_v);
          }
@@ -36,7 +39,7 @@
      }
  
      public void func_70037_a(NBTTagCompound p_70037_1_)
-@@ -313,6 +328,9 @@
+@@ -313,6 +331,9 @@
  
      public void func_70071_h_()
      {
@@ -46,7 +49,7 @@
          this.field_71134_c.func_73075_a();
          --this.field_147101_bU;
  
-@@ -365,6 +383,13 @@
+@@ -365,6 +386,13 @@
              }
          }
  
@@ -60,7 +63,7 @@
          CriteriaTriggers.field_193135_v.func_193182_a(this);
  
          if (this.field_193107_ct != null)
-@@ -605,6 +630,7 @@
+@@ -605,6 +633,7 @@
  
              if (!flag && this.field_147101_bU > 0 && p_70097_1_ != DamageSource.field_76380_i)
              {
@@ -68,7 +71,7 @@
                  return false;
              }
              else
-@@ -615,6 +641,7 @@
+@@ -615,6 +644,7 @@
  
                      if (entity instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entity))
                      {
@@ -76,7 +79,7 @@
                          return false;
                      }
  
-@@ -624,6 +651,7 @@
+@@ -624,6 +654,7 @@
  
                          if (entityarrow.field_70250_c instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entityarrow.field_70250_c))
                          {
@@ -84,7 +87,7 @@
                              return false;
                          }
                      }
-@@ -704,6 +732,8 @@
+@@ -704,6 +735,8 @@
          if (p_147097_1_ != null)
          {
              SPacketUpdateTileEntity spacketupdatetileentity = p_147097_1_.func_189518_D_();
@@ -93,7 +96,7 @@
  
              if (spacketupdatetileentity != null)
              {
-@@ -1035,6 +1065,10 @@
+@@ -1035,6 +1068,10 @@
              {
                  this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective).func_96649_a(p_71064_2_);
              }
