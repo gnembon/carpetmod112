@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityPiston.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityPiston.java
-@@ -20,12 +20,19 @@
+@@ -20,12 +20,20 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import carpet.CarpetSettings;
++import carpet.utils.PistonFixes;
 +import net.minecraft.block.ITileEntityProvider;
 +
  public class TileEntityPiston extends TileEntity implements ITickable
@@ -20,7 +21,7 @@
      private static final ThreadLocal<EnumFacing> field_190613_i = new ThreadLocal<EnumFacing>()
      {
          protected EnumFacing initialValue()
-@@ -48,6 +55,9 @@
+@@ -48,6 +56,9 @@
          this.field_145872_l = p_i45665_4_;
      }
  
@@ -30,7 +31,7 @@
      public IBlockState func_174927_b()
      {
          return this.field_174932_a;
-@@ -100,8 +110,22 @@
+@@ -100,8 +111,22 @@
          return !this.func_145868_b() && this.func_145867_d() ? Blocks.field_150332_K.func_176223_P().func_177226_a(BlockPistonExtension.field_176325_b, this.field_174932_a.func_177230_c() == Blocks.field_150320_F ? BlockPistonExtension.EnumPistonType.STICKY : BlockPistonExtension.EnumPistonType.DEFAULT).func_177226_a(BlockPistonExtension.field_176387_N, this.field_174932_a.func_177229_b(BlockPistonBase.field_176387_N)) : this.field_174932_a;
      }
  
@@ -53,7 +54,7 @@
          EnumFacing enumfacing = this.field_145875_k ? this.field_174931_f : this.field_174931_f.func_176734_d();
          double d0 = (double)(p_184322_1_ - this.field_145873_m);
          List<AxisAlignedBB> list = Lists.<AxisAlignedBB>newArrayList();
-@@ -166,6 +190,11 @@
+@@ -166,6 +191,11 @@
                              {
                                  this.func_190605_a(entity, enumfacing, d0);
                              }
@@ -65,7 +66,7 @@
                          }
                      }
                  }
-@@ -173,6 +202,92 @@
+@@ -173,6 +203,92 @@
          }
      }
  
@@ -158,7 +159,7 @@
      private AxisAlignedBB func_191515_a(List<AxisAlignedBB> p_191515_1_)
      {
          double d0 = 0.0D;
-@@ -286,9 +401,27 @@
+@@ -286,14 +402,37 @@
  
              if (this.field_145850_b.func_180495_p(this.field_174879_c).func_177230_c() == Blocks.field_180384_M)
              {
@@ -188,7 +189,17 @@
          }
      }
  
-@@ -303,8 +436,24 @@
+     public void func_73660_a()
+     {
++        // CM START
++        if (CarpetSettings.pistonClippingFix > 0) {
++            PistonFixes.synchronizeClient();
++        }
++        // CM END
+         this.field_145870_n = this.field_145873_m;
+ 
+         if (this.field_145870_n >= 1.0F)
+@@ -303,8 +442,24 @@
  
              if (this.field_145850_b.func_180495_p(this.field_174879_c).func_177230_c() == Blocks.field_180384_M)
              {
@@ -215,7 +226,7 @@
              }
          }
          else
-@@ -331,8 +480,19 @@
+@@ -331,8 +486,19 @@
          this.field_174931_f = EnumFacing.func_82600_a(p_145839_1_.func_74762_e("facing"));
          this.field_145873_m = p_145839_1_.func_74760_g("progress");
          this.field_145870_n = this.field_145873_m;
@@ -235,7 +246,7 @@
      }
  
      public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
-@@ -341,9 +501,24 @@
+@@ -341,9 +507,24 @@
          p_189515_1_.func_74768_a("blockId", Block.func_149682_b(this.field_174932_a.func_177230_c()));
          p_189515_1_.func_74768_a("blockData", this.field_174932_a.func_177230_c().func_176201_c(this.field_174932_a));
          p_189515_1_.func_74768_a("facing", this.field_174931_f.func_176745_a());
@@ -260,7 +271,7 @@
          return p_189515_1_;
      }
  
-@@ -382,4 +557,34 @@
+@@ -382,4 +563,34 @@
              }
          }
      }

@@ -23,6 +23,7 @@ public class CarpetClientMessageHandler {
 	public static final int LARGE_VILLAGE_MARKERS = 6;
 	public static final int LARGE_BOUNDINGBOX_MARKERS_START = 7;
 	public static final int LARGE_BOUNDINGBOX_MARKERS = 8;
+	public static final int PISTON_UPDATES = 10;
 
 	public static void handler(EntityPlayerMP sender, PacketBuffer data) {
 		int type = data.readInt();
@@ -145,6 +146,13 @@ public class CarpetClientMessageHandler {
 		PacketBuffer data = new PacketBuffer(Unpooled.buffer());
 		data.writeInt(CarpetClientMessageHandler.TICKRATE_CHANGES);
 		data.writeFloat(TickSpeed.tickrate);
+
+		CarpetClientServer.sender(data);
+	}
+
+	public static void sendPistonUpdate() {
+		PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+		data.writeInt(CarpetClientMessageHandler.PISTON_UPDATES);
 
 		CarpetClientServer.sender(data);
 	}
