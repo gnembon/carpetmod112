@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 
+import carpet.carpetclient.CarpetClientChunkLogger;
 import carpet.helpers.RandomTickOptimization;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,7 +42,11 @@ import net.minecraft.util.math.ChunkPos;
 public class CarpetSettings
 {
     public static boolean locked = false;
+
+    // TODO: replace these constants at build time
     public static final String carpetVersion = "v19_01_07";
+    public static final String minecraftVersion = "1.12";
+    public static final String mcpMappings = "20180713-1.12";
 
     public static final Logger LOG = LogManager.getLogger();
     private static final Map<String, CarpetSettingEntry> settings_store;
@@ -87,6 +92,7 @@ public class CarpetSettings
     public static boolean netherRNG = false;
     public static boolean endRNG = false;
     public static int structureBlockLimit = 32;
+    public static boolean chunkDebugTool = false;
     public static boolean disablePlayerCollision = false;
     public static int tileTickLimit = 65536;
     public static boolean dismountFix = false;
@@ -275,7 +281,7 @@ public class CarpetSettings
   rule("disableSpawnChunks",    "creative", "Removes the spawn chunks."),
   rule("structureBlockLimit",   "creative", "Changes the structure block dimension limit.")
                                 .choices("32", "32 50 200 1000").setNotStrict(),
-
+  rule("chunkDebugTool", "creative", "Enables chunk debug on carpet client."),
   rule("worldEdit",             "creative", "Enables/disables WorldEdit.")
                                 .extraInfo("Only works in WorldEdit is in the classpath."),
   rule("pistonSerializationFix","fix", "Fixes bug with piston serialization"),
@@ -337,6 +343,8 @@ public class CarpetSettings
         netherRNG = CarpetSettings.getBool("netherRNG");
         endRNG = CarpetSettings.getBool("endRNG");
         structureBlockLimit = CarpetSettings.getInt("structureBlockLimit");
+        chunkDebugTool = CarpetSettings.getBool("chunkDebugTool");
+        mergeTNT = CarpetSettings.getBool("mergeTNT");
         disablePlayerCollision = CarpetSettings.getBool("disablePlayerCollision");
         tileTickLimit = CarpetSettings.getInt("tileTickLimit");
         dismountFix = CarpetSettings.getBool("dismountFix");
@@ -457,6 +465,8 @@ public class CarpetSettings
                     overworld.getChunkProvider().provideChunk(chunk.x, chunk.z);
                 }
             }
+        } else if (!chunkDebugTool) {
+            CarpetClientChunkLogger.logger.disable();
         }
     }
     public static void apply_settings_from_conf(MinecraftServer server)

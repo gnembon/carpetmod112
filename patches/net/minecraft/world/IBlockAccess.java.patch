@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/world/IBlockAccess.java
++++ ../src-work/minecraft/net/minecraft/world/IBlockAccess.java
+@@ -6,11 +6,23 @@
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.math.BlockPos;
+ 
++import carpet.carpetclient.CarpetClientChunkLogger;
++
+ public interface IBlockAccess
+ {
+     @Nullable
+     TileEntity func_175625_s(BlockPos p_175625_1_);
+ 
++    //CM chunk load reason
++    default IBlockState getBlockState(BlockPos pos, String reason)
++    {
++        String prevReason = CarpetClientChunkLogger.reason;
++        CarpetClientChunkLogger.reason = reason;
++        IBlockState prev = func_180495_p(pos);
++        CarpetClientChunkLogger.reason = prevReason;
++        return prev;
++    }
++
+     IBlockState func_180495_p(BlockPos p_180495_1_);
+ 
+     boolean func_175623_d(BlockPos p_175623_1_);

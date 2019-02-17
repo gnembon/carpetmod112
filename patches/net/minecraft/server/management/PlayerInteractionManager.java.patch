@@ -36,7 +36,19 @@
                  this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), p_180784_1_, i);
                  this.field_73094_o = i;
              }
-@@ -402,10 +417,22 @@
+@@ -235,8 +250,10 @@
+     {
+         IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180235_1_);
+         iblockstate.func_177230_c().func_176208_a(this.field_73092_a, p_180235_1_, iblockstate, this.field_73090_b);
++        if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++            carpet.carpetclient.CarpetClientChunkLogger.setReason("Player removed block");
+         boolean flag = this.field_73092_a.func_175698_g(p_180235_1_);
+-
++        carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+         if (flag)
+         {
+             iblockstate.func_177230_c().func_176206_d(this.field_73092_a, p_180235_1_, iblockstate);
+@@ -402,10 +419,22 @@
          }
          else
          {

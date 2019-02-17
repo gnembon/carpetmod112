@@ -23,7 +23,15 @@
      public int func_70302_i_()
      {
          return 27;
-@@ -210,6 +217,10 @@
+@@ -203,13 +210,17 @@
+         }
+         else
+         {
+-            Block block = this.field_145850_b.func_180495_p(p_174912_1_).func_177230_c();
++            Block block = this.field_145850_b.getBlockState(p_174912_1_, "Chest loading").func_177230_c();
+             return block instanceof BlockChest && ((BlockChest)block).field_149956_a == this.func_145980_j();
+         }
+     }
  
      public void func_73660_a()
      {
