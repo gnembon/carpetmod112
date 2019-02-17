@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIFollowOwner.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIFollowOwner.java
+@@ -16,7 +16,7 @@
+ 
+ public class EntityAIFollowOwner extends EntityAIBase
+ {
+-    private final EntityTameable field_75338_d;
++    protected final EntityTameable field_75338_d;
+     private EntityLivingBase field_75339_e;
+     World field_75342_a;
+     private final double field_75336_f;
+@@ -133,4 +133,9 @@
+         IBlockState iblockstate = this.field_75342_a.func_180495_p(blockpos);
+         return iblockstate.func_193401_d(this.field_75342_a, blockpos, EnumFacing.DOWN) == BlockFaceShape.SOLID && iblockstate.func_189884_a(this.field_75338_d) && this.field_75342_a.func_175623_d(blockpos.func_177984_a()) && this.field_75342_a.func_175623_d(blockpos.func_177981_b(2));
+     }
++
++    @Override
++    public String getTask() {
++        return ": " + field_75338_d.func_70005_c_() + " Task: Following owner";
++    }
+ }

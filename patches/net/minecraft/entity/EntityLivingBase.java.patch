@@ -134,7 +134,18 @@
                  this.func_70606_j(f1 - p_70665_2_);
                  this.func_110142_aN().func_94547_a(p_70665_1_, f1, p_70665_2_);
                  this.func_110149_m(this.func_110139_bj() - p_70665_2_);
-@@ -2330,8 +2364,13 @@
+@@ -1828,7 +1862,10 @@
+                             }
+                         }
+ 
++                        if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                            carpet.carpetclient.CarpetClientChunkLogger.setReason("Entity walking around: " + func_70005_c_());
+                         this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
++                        carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+ 
+                         if (this.field_70123_F && this.func_70617_f_())
+                         {
+@@ -2330,8 +2367,13 @@
                  }
              }
  
@@ -149,7 +160,7 @@
                  Entity entity = list.get(l);
                  this.func_82167_n(entity);
              }
-@@ -2366,6 +2405,11 @@
+@@ -2366,6 +2408,11 @@
      {
          this.field_70703_bu = p_70637_1_;
      }

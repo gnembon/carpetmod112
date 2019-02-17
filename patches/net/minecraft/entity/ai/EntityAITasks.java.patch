@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/entity/ai/EntityAITasks.java
++++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAITasks.java
+@@ -60,6 +60,8 @@
+         {
+             for (EntityAITasks.EntityAITaskEntry entityaitasks$entityaitaskentry : this.field_75782_a)
+             {
++                if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                    carpet.carpetclient.CarpetClientChunkLogger.setReason("Entity" + entityaitasks$entityaitaskentry.field_75733_a.getTask());
+                 if (entityaitasks$entityaitaskentry.field_188524_c)
+                 {
+                     if (!this.func_75775_b(entityaitasks$entityaitaskentry) || !this.func_75773_a(entityaitasks$entityaitaskentry))
+@@ -76,6 +78,7 @@
+                     this.field_75780_b.add(entityaitasks$entityaitaskentry);
+                 }
+             }
++            carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+         }
+         else
+         {
+@@ -102,8 +105,12 @@
+ 
+             for (EntityAITasks.EntityAITaskEntry entityaitasks$entityaitaskentry2 : this.field_75780_b)
+             {
++                if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                    carpet.carpetclient.CarpetClientChunkLogger.setReason("Entity" + entityaitasks$entityaitaskentry2.field_75733_a.getTask());
++                
+                 entityaitasks$entityaitaskentry2.field_75733_a.func_75246_d();
+             }
++            carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+ 
+             this.field_75781_c.func_76319_b();
+         }

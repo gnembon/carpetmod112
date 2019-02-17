@@ -224,7 +224,24 @@
                  }
  
                  this.field_72984_F.func_76320_a("cleaning");
-@@ -1057,6 +1146,7 @@
+@@ -679,6 +768,8 @@
+ 
+                     if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0), nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0)))
+                     {
++                        if (carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                            carpet.carpetclient.CarpetClientChunkLogger.setReason("Block update: " + nextticklistentry1.func_151351_a().func_149732_F());
+                         IBlockState iblockstate = this.func_180495_p(nextticklistentry1.field_180282_a);
+ 
+                         if (iblockstate.func_185904_a() != Material.field_151579_a && Block.func_149680_a(iblockstate.func_177230_c(), nextticklistentry1.func_151351_a()))
+@@ -701,6 +792,7 @@
+                         this.func_175684_a(nextticklistentry1.field_180282_a, nextticklistentry1.func_151351_a(), 0);
+                     }
+                 }
++                carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+ 
+                 this.field_72984_F.func_76319_b();
+                 this.field_94579_S.clear();
+@@ -1057,6 +1149,7 @@
          this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
          this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
          Entity[] aentity = p_72923_1_.func_70021_al();
@@ -232,3 +249,18 @@
  
          if (aentity != null)
          {
+@@ -1152,11 +1245,14 @@
+ 
+             for (BlockEventData blockeventdata : this.field_147490_S[i])
+             {
++                if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                    carpet.carpetclient.CarpetClientChunkLogger.setReason("Queued block event: " + blockeventdata.func_151337_f().func_176223_P());
+                 if (this.func_147485_a(blockeventdata))
+                 {
+                     this.field_73061_a.func_184103_al().func_148543_a((EntityPlayer)null, (double)blockeventdata.func_180328_a().func_177958_n(), (double)blockeventdata.func_180328_a().func_177956_o(), (double)blockeventdata.func_180328_a().func_177952_p(), 64.0D, this.field_73011_w.func_186058_p().func_186068_a(), new SPacketBlockAction(blockeventdata.func_180328_a(), blockeventdata.func_151337_f(), blockeventdata.func_151339_d(), blockeventdata.func_151338_e()));
+                 }
+             }
++            carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+ 
+             this.field_147490_S[i].clear();
+         }

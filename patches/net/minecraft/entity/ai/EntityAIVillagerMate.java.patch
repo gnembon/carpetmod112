@@ -86,3 +86,13 @@
          this.field_75450_b.func_70671_ap().func_75651_a(this.field_75451_c, 10.0F, 30.0F);
  
          if (this.field_75450_b.func_70068_e(this.field_75451_c) > 2.25D)
+@@ -123,4 +159,9 @@
+         this.field_75448_d.func_72838_d(entityvillager);
+         this.field_75448_d.func_72960_a(entityvillager, (byte)12);
+     }
++
++    @Override
++    public String getTask() {
++        return ": " + field_75450_b.func_70005_c_() + " Task: Mating villagers";
++    }
+ }

@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -28,12 +28,21 @@
+@@ -2,6 +2,8 @@
+ 
+ import java.util.List;
+ import javax.annotation.Nullable;
++
++import carpet.carpetclient.CarpetClientChunkLogger;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockChest;
+ import net.minecraft.block.BlockHopper;
+@@ -28,12 +30,21 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
  
@@ -23,7 +32,7 @@
      public static void func_189683_a(DataFixer p_189683_0_)
      {
          p_189683_0_.func_188258_a(FixTypes.BLOCK_ENTITY, new ItemStackDataLists(TileEntityHopper.class, new String[] {"Items"}));
-@@ -132,14 +141,44 @@
+@@ -132,14 +143,44 @@
              {
                  boolean flag = false;
  
@@ -73,10 +82,12 @@
                  }
  
                  if (flag)
-@@ -191,10 +230,31 @@
+@@ -191,10 +232,35 @@
  
      private boolean func_145883_k()
      {
++        String prevReason = CarpetClientChunkLogger.reason;
++        CarpetClientChunkLogger.reason = "Hopper loading";
 +        /* carpet mod */
 +        if (CarpetSettings.hopperCounters)
 +        {
@@ -99,13 +110,15 @@
 +
          IInventory iinventory = this.func_145895_l();
  
++        CarpetClientChunkLogger.reason = prevReason;
++
          if (iinventory == null)
          {
 +            // Carpet-optimizedTileEntities: This code purposely does not put push to sleep to preserve chunk loading behavior
              return false;
          }
          else
-@@ -203,6 +263,10 @@
+@@ -203,6 +269,10 @@
  
              if (this.func_174919_a(iinventory, enumfacing))
              {
@@ -116,7 +129,18 @@
                  return false;
              }
              else
-@@ -305,6 +369,14 @@
+@@ -297,7 +367,10 @@
+ 
+     public static boolean func_145891_a(IHopper p_145891_0_)
+     {
++        String prevReason = CarpetClientChunkLogger.reason;
++        CarpetClientChunkLogger.reason = "Hopper self-loading";
+         IInventory iinventory = func_145884_b(p_145891_0_);
++        CarpetClientChunkLogger.reason = prevReason;
+ 
+         if (iinventory != null)
+         {
+@@ -305,6 +378,14 @@
  
              if (func_174917_b(iinventory, enumfacing))
              {
@@ -131,7 +155,7 @@
                  return false;
              }
  
-@@ -333,6 +405,13 @@
+@@ -333,6 +414,13 @@
                      }
                  }
              }
@@ -145,22 +169,22 @@
          }
          else
          {
-@@ -499,6 +578,14 @@
+@@ -499,6 +587,14 @@
          return func_145893_b(this.func_145831_w(), this.func_96107_aA() + (double)enumfacing.func_82601_c(), this.func_96109_aB() + (double)enumfacing.func_96559_d(), this.func_96108_aC() + (double)enumfacing.func_82599_e());
      }
  
 +    /* carpet mod */
 +    private EnumDyeColor get_wool_pointing()
 +    {
-+            return WoolTool.getWoolColorAtPosition(
-+                    func_145831_w(),
-+                    new BlockPos(func_96107_aA(),func_96109_aB(),func_96108_aC() ).func_177972_a(BlockHopper.func_176428_b(this.func_145832_p())));
++        return WoolTool.getWoolColorAtPosition(
++                func_145831_w(),
++                new BlockPos(func_96107_aA(),func_96109_aB(),func_96108_aC() ).func_177972_a(BlockHopper.func_176428_b(this.func_145832_p())));
 +    }
 +
      public static IInventory func_145884_b(IHopper p_145884_0_)
      {
          return func_145893_b(p_145884_0_.func_145831_w(), p_145884_0_.func_96107_aA(), p_145884_0_.func_96109_aB() + 1.0D, p_145884_0_.func_96108_aC());
-@@ -611,4 +698,15 @@
+@@ -611,4 +707,15 @@
      {
          return this.field_145900_a;
      }

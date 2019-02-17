@@ -1,5 +1,6 @@
 package carpet;
 
+import carpet.helpers.StackTraceDeobfuscator;
 import carpet.utils.HUDController;
 import carpet.utils.PluginChannelTracker;
 import carpet.utils.TickingArea;
@@ -42,6 +43,13 @@ public class CarpetServer // static for now - easier to handle all around the co
         CarpetSettings.reload_all_statics();
         LoggerRegistry.initLoggers(server);
         WorldEditBridge.onServerLoaded(server);
+
+        // Precache mappings so as not to lag the server later
+        StackTraceDeobfuscator.create()
+                .withMinecraftVersion(CarpetSettings.minecraftVersion)
+                .withSnapshotMcpNames(CarpetSettings.mcpMappings)
+                .withStackTrace(new StackTraceElement[0])
+                .deobfuscate();
     }
     public static void onLoadAllWorlds(MinecraftServer server)
     {

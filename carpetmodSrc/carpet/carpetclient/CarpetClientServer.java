@@ -46,20 +46,18 @@ public class CarpetClientServer {
     public void onPlayerDisconnect(EntityPlayerMP player) {
         players.remove(player);
         CarpetClientMarkers.unregisterPlayerVillageMarkers(player);
+        CarpetClientChunkLogger.logger.unregisterPlayer(player);
     }
 
     static public ArrayList<EntityPlayerMP> getRegisteredPlayers() {
         return players;
     }
 
-    public static boolean sender(PacketBuffer data)
+    public static boolean sendProtected(PacketBuffer data)
     {
         try
         {
-            SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
-            for (EntityPlayerMP player : CarpetClientServer.getRegisteredPlayers()) {
-                player.connection.sendPacket(packet);
-            }
+            sender(data);
             return true;
         }
         catch (IllegalArgumentException exc)
@@ -69,12 +67,11 @@ public class CarpetClientServer {
         }
     }
 
-    public static boolean sender(PacketBuffer data, EntityPlayerMP player)
+    public static boolean sendProtected(PacketBuffer data, EntityPlayerMP player)
     {
         try
         {
-            SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
-            player.connection.sendPacket(packet);
+            sender(data, player);
             return true;
         }
         catch (IllegalArgumentException exc)
@@ -82,6 +79,20 @@ public class CarpetClientServer {
             // Payload too large
             return false;
         }
+    }
+
+    public static void sender(PacketBuffer data)
+    {
+        SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
+        for (EntityPlayerMP player : CarpetClientServer.getRegisteredPlayers()) {
+            player.connection.sendPacket(packet);
+        }
+    }
+
+    public static void sender(PacketBuffer data, EntityPlayerMP player)
+    {
+        SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
+        player.connection.sendPacket(packet);
     }
 
     public MinecraftServer getMinecraftServer() {
