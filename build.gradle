@@ -19,7 +19,7 @@ buildscript
 		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
 		classpath 'de.undercouch:gradle-download-task:3.4.3'
 		classpath 'commons-io:commons-io:2.6'
-		//classpath "gradle.plugin.com.dorongold.plugins:task-tree:1.3" // For debug purposes
+		classpath "gradle.plugin.com.dorongold.plugins:task-tree:1.3" // For debug purposes
 	}
 }
 apply plugin: 'java'
@@ -28,7 +28,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 def patcher_plugin = plugins.apply 'net.minecraftforge.gradle.patcher'
 apply plugin: 'de.undercouch.download'
-//apply plugin: "com.dorongold.task-tree" // For debug purposes
+apply plugin: "com.dorongold.task-tree" // For debug purposes
 
 
 import com.google.common.io.Resources
@@ -106,13 +106,16 @@ processJson
  * 2. gradlew setup[Project]
  */
 task('setup' + capitalizedName) {
+	group = 'ForgeGradle'
 	dependsOn 'setup'
 }
 
 /**
  * createRelease creates a ZIP file with all the modified classes
  */
-task('createRelease')
+task('createRelease') {
+	group = 'ForgeGradle'
+}
 project.afterEvaluate { createRelease.dependsOn tasks.getByName(project.name + 'OutputJar') }
 
 gradle.taskGraph.whenReady

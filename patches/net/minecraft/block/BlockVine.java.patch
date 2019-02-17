@@ -1,0 +1,32 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockVine.java
++++ ../src-work/minecraft/net/minecraft/block/BlockVine.java
+@@ -2,6 +2,8 @@
+ 
+ import java.util.Random;
+ import javax.annotation.Nullable;
++
++import carpet.helpers.StatHelper;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.IProperty;
+ import net.minecraft.block.properties.PropertyBool;
+@@ -25,6 +27,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import carpet.helpers.StatHelper;
++
+ public class BlockVine extends Block
+ {
+     public static final PropertyBool field_176277_a = PropertyBool.func_177716_a("up");
+@@ -343,7 +347,10 @@
+     {
+         if (!p_180657_1_.field_72995_K && p_180657_6_.func_77973_b() == Items.field_151097_aZ)
+         {
+-            p_180657_2_.func_71029_a(StatList.func_188055_a(this));
++            // CM
++            // player.addStat(StatList.getBlockStats(this));
++            p_180657_2_.func_71029_a(StatHelper.getBlockStateStats(p_180657_4_));
++            // CM END
+             func_180635_a(p_180657_1_, p_180657_3_, new ItemStack(Blocks.field_150395_bd, 1, 0));
+         }
+         else

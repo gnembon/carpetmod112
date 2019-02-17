@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDoublePlant.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDoublePlant.java
+@@ -2,6 +2,7 @@
+ 
+ import java.util.Random;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.IProperty;
+ import net.minecraft.block.properties.PropertyEnum;
+@@ -22,6 +23,8 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import carpet.helpers.StatHelper;
++
+ public class BlockDoublePlant extends BlockBush implements IGrowable
+ {
+     public static final PropertyEnum<BlockDoublePlant.EnumPlantType> field_176493_a = PropertyEnum.<BlockDoublePlant.EnumPlantType>func_177709_a("variant", BlockDoublePlant.EnumPlantType.class);
+@@ -217,7 +220,10 @@
+         }
+         else
+         {
+-            p_176489_4_.func_71029_a(StatList.func_188055_a(this));
++            // CM
++            // player.addStat(StatList.getBlockStats(this));
++            p_176489_4_.func_71029_a(StatHelper.getBlockStateStats(p_176489_3_));
++            // CM END
+             int i = (blockdoubleplant$enumplanttype == BlockDoublePlant.EnumPlantType.GRASS ? BlockTallGrass.EnumType.GRASS : BlockTallGrass.EnumType.FERN).func_177044_a();
+             func_180635_a(p_176489_1_, p_176489_2_, new ItemStack(Blocks.field_150329_H, 2, i));
+             return true;

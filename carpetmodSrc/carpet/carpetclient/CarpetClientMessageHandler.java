@@ -24,6 +24,7 @@ public class CarpetClientMessageHandler {
     public static final int LARGE_BOUNDINGBOX_MARKERS_START = 7;
     public static final int LARGE_BOUNDINGBOX_MARKERS = 8;
     public static final int CHUNK_LOGGER = 9;
+	public static final int PISTON_UPDATES = 10;
 
     public static void handler(EntityPlayerMP sender, PacketBuffer data) {
         int type = data.readInt();
@@ -161,4 +162,11 @@ public class CarpetClientMessageHandler {
         }catch(Exception e){ }
         CarpetClientServer.sender(data, sender);
     }
+
+	public static void sendPistonUpdate() {
+		PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+		data.writeInt(CarpetClientMessageHandler.PISTON_UPDATES);
+
+		CarpetClientServer.sender(data);
+	}
 }

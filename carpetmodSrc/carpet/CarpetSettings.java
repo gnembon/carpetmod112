@@ -1,9 +1,6 @@
 package carpet;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -15,6 +12,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 
 import carpet.carpetclient.CarpetClientChunkLogger;
+import carpet.helpers.RandomTickOptimization;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,7 +44,7 @@ public class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v18_08_05";
+    public static final String carpetVersion = "v19_01_07";
     public static final String minecraftVersion = "1.12";
     public static final String mcpMappings = "20180713-1.12";
 
@@ -55,7 +53,7 @@ public class CarpetSettings
     public static final CarpetSettingEntry FalseEntry = CarpetSettingEntry.create("void","all","Error").choices("None","");
 
     public static final String[] default_tags = {"tnt","fix","survival","creative", "experimental","optimizations","feature","commands"}; //tab completion only
-    
+
     static {
         settings_store = new HashMap<>();
         set_defaults();
@@ -77,7 +75,6 @@ public class CarpetSettings
     public static boolean mergeTNT = false;
     public static boolean unloadedEntityFix = false;
     public static float hardcodeTNTangle = -1;
-    public static boolean worldGenBug = false;
     public static boolean antiCheat = false;
     public static boolean optimizedTNT = false;
     public static boolean huskSpawningInTemples = false;
@@ -97,6 +94,12 @@ public class CarpetSettings
     public static int structureBlockLimit = 32;
     public static boolean chunkDebugTool = false;
     public static boolean disablePlayerCollision = false;
+    public static int tileTickLimit = 65536;
+    public static boolean dismountFix = false;
+    public static boolean disableVanillaTickWarp = false;
+    public static boolean ridingPlayerUpdateFix;
+    public static boolean artificialPermaloader = false;
+    public static int pistonClippingFix = 0;
 
     public static long setSeed = 0;
 
@@ -288,6 +291,16 @@ public class CarpetSettings
   rule("leashFix",              "fix",      "Fixes to leashes.")
                                 .choices("false", "false casual cool"),
   rule("disablePlayerCollision","creative", "Disables player entity collision."),
+  rule("randomTickOptimization","fix", "Stops blocks which don't need to be random ticked from being random ticked")
+                                .extraInfo("Fixed in 1.13"),
+  rule("tileTickLimit",         "survival", "Customizable tile tick limit")
+                                .extraInfo("Negative for no limit")
+                                .choices("65536","1000 65536 1000000").setNotStrict(),
+  rule("dismountFix",           "fix", "Fix dismount behavior that leads to ghost chicken jockeys"),
+  rule("disableVanillaTickWarp", "fix", "Disables the catching-up behavior after lag spikes"),
+  rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas"),
+  rule("pistonClippingFix",     "fix", "Fixes players clipping through moving piston blocks partially.")
+                                .choices("0", "0 20 40 100"),
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -333,6 +346,10 @@ public class CarpetSettings
         chunkDebugTool = CarpetSettings.getBool("chunkDebugTool");
         mergeTNT = CarpetSettings.getBool("mergeTNT");
         disablePlayerCollision = CarpetSettings.getBool("disablePlayerCollision");
+        tileTickLimit = CarpetSettings.getInt("tileTickLimit");
+        dismountFix = CarpetSettings.getBool("dismountFix");
+        disableVanillaTickWarp = CarpetSettings.getBool("disableVanillaTickWarp");
+        ridingPlayerUpdateFix = CarpetSettings.getBool("ridingPlayerUpdateFix");
 
         if ("pistonGhostBlocksFix".equalsIgnoreCase(rule))
         {
@@ -363,29 +380,18 @@ public class CarpetSettings
         }
         else if ("liquidsNotRandom".equalsIgnoreCase(rule))
         {
-            if(CarpetSettings.getBool("liquidsNotRandom"))
-            {
-                worldGenBug = true;
-                Blocks.FLOWING_WATER.setTickRandomly(false);
-                Blocks.FLOWING_LAVA.setTickRandomly(false);
-            }
-            else
-            {
-                worldGenBug = false;
-                Blocks.FLOWING_WATER.setTickRandomly(true);
-                Blocks.FLOWING_LAVA.setTickRandomly(true);
-            }
+            RandomTickOptimization.setLiquidRandomTicks(!CarpetSettings.getBool("liquidsNotRandom"));
+            RandomTickOptimization.recalculateAllChunks();
         }
         else if ("spongeRandom".equalsIgnoreCase(rule))
         {
-            if(CarpetSettings.getBool("spongeRandom"))
-            {
-                Blocks.SPONGE.setTickRandomly(true);
-            }
-            else
-            {
-                Blocks.SPONGE.setTickRandomly(false);
-            }
+            RandomTickOptimization.setSpongeRandomTicks(CarpetSettings.getBool("spongeRandom"));
+            RandomTickOptimization.recalculateAllChunks();
+        }
+        else if ("randomTickOptimization".equalsIgnoreCase(rule))
+        {
+            RandomTickOptimization.setUselessRandomTicks(!CarpetSettings.getBool("randomTickOptimization"));
+            RandomTickOptimization.recalculateAllChunks();
         }
         else if ("reloadSuffocationFix".equalsIgnoreCase(rule))
         {
@@ -743,6 +749,10 @@ public class CarpetSettings
         set("pistonSerializationFix","true");
         set("reloadUpdateOrderFix","true");
         set("leashFix","true");
+        set("randomTickOptimization","true");
+        set("dismountFix","true");
+        set("disableVanillaTickWarp","true");
+        set("ridingPlayerUpdateFix","true");
     }
 
     public static class CarpetSettingEntry 

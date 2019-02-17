@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemFood.java
++++ ../src-work/minecraft/net/minecraft/item/ItemFood.java
+@@ -14,6 +14,8 @@
+ import net.minecraft.util.SoundCategory;
+ import net.minecraft.world.World;
+ 
++import carpet.helpers.StatHelper;
++
+ public class ItemFood extends Item
+ {
+     public final int field_77855_a;
+@@ -46,7 +48,8 @@
+             entityplayer.func_71024_bL().func_151686_a(this, p_77654_1_);
+             p_77654_2_.func_184148_a((EntityPlayer)null, entityplayer.field_70165_t, entityplayer.field_70163_u, entityplayer.field_70161_v, SoundEvents.field_187739_dZ, SoundCategory.PLAYERS, 0.5F, p_77654_2_.field_73012_v.nextFloat() * 0.1F + 0.9F);
+             this.func_77849_c(p_77654_1_, p_77654_2_, entityplayer);
+-            entityplayer.func_71029_a(StatList.func_188057_b(this));
++            // CM add meta
++            entityplayer.func_71029_a(StatHelper.getObjectUseStats(this, p_77654_1_.func_77960_j()));
+ 
+             if (entityplayer instanceof EntityPlayerMP)
+             {

@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockIce.java
++++ ../src-work/minecraft/net/minecraft/block/BlockIce.java
+@@ -17,6 +17,8 @@
+ import net.minecraft.world.EnumSkyBlock;
+ import net.minecraft.world.World;
+ 
++import carpet.helpers.StatHelper;
++
+ public class BlockIce extends BlockBreakable
+ {
+     public BlockIce()
+@@ -29,7 +31,10 @@
+ 
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_)
+     {
+-        p_180657_2_.func_71029_a(StatList.func_188055_a(this));
++        // CM
++        // player.addStat(StatList.getBlockStats(this));
++        p_180657_2_.func_71029_a(StatHelper.getBlockStateStats(p_180657_4_));
++        // CM END
+         p_180657_2_.func_71020_j(0.005F);
+ 
+         if (this.func_149700_E() && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_180657_6_) > 0)

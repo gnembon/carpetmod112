@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -47,6 +47,8 @@
+@@ -47,6 +47,9 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import carpet.helpers.CapturedDrops;
++import carpet.helpers.StatHelper;
 +
  public class Block
  {
      private static final ResourceLocation field_176230_a = new ResourceLocation("air");
-@@ -73,7 +75,7 @@
+@@ -73,7 +76,7 @@
      public float field_149765_K;
      protected final BlockStateContainer field_176227_L;
      private IBlockState field_176228_M;
@@ -18,7 +19,7 @@
  
      public static int func_149682_b(Block p_149682_0_)
      {
-@@ -235,7 +237,7 @@
+@@ -235,7 +238,7 @@
          return this;
      }
  
@@ -27,7 +28,7 @@
      {
          this.field_149786_r = p_149713_1_;
          return this;
-@@ -327,7 +329,7 @@
+@@ -327,7 +330,7 @@
          return this.field_149782_v;
      }
  
@@ -36,7 +37,7 @@
      {
          this.field_149789_z = p_149675_1_;
          return this;
-@@ -399,7 +401,10 @@
+@@ -399,7 +402,10 @@
  
      public void func_180645_a(World p_180645_1_, BlockPos p_180645_2_, IBlockState p_180645_3_, Random p_180645_4_)
      {
@@ -47,7 +48,7 @@
      }
  
      public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
-@@ -490,6 +495,8 @@
+@@ -490,6 +496,8 @@
              EntityItem entityitem = new EntityItem(p_180635_0_, (double)p_180635_1_.func_177958_n() + d0, (double)p_180635_1_.func_177956_o() + d1, (double)p_180635_1_.func_177952_p() + d2, p_180635_2_);
              entityitem.func_174869_p();
              p_180635_0_.func_72838_d(entityitem);
@@ -56,3 +57,15 @@
          }
      }
  
+@@ -593,7 +601,10 @@
+ 
+     public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_)
+     {
+-        p_180657_2_.func_71029_a(StatList.func_188055_a(this));
++        // CM
++        // player.addStat(StatList.getBlockStats(this));
++        p_180657_2_.func_71029_a(StatHelper.getBlockStateStats(p_180657_4_));
++        // CM END
+         p_180657_2_.func_71020_j(0.005F);
+ 
+         if (this.func_149700_E() && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_180657_6_) > 0)

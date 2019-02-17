@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/stats/StatCrafting.java
++++ ../src-work/minecraft/net/minecraft/stats/StatCrafting.java
+@@ -5,7 +5,7 @@
+ 
+ public class StatCrafting extends StatBase
+ {
+-    private final Item field_150960_a;
++    public final Item field_150960_a; // CM public
+ 
+     public StatCrafting(String p_i45910_1_, String p_i45910_2_, ITextComponent p_i45910_3_, Item p_i45910_4_)
+     {

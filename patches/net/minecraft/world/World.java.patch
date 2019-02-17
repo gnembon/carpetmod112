@@ -348,7 +348,20 @@
              {
                  p_72866_1_.field_70175_ag = false;
              }
-@@ -1685,7 +1839,8 @@
+@@ -1666,7 +1820,11 @@
+                 }
+                 else
+                 {
+-                    entity.func_184210_p();
++                    if (CarpetSettings.dismountFix) {
++                        entity.dismountRidingEntityBase();
++                    } else {
++                        entity.func_184210_p();
++                    }
+                 }
+             }
+         }
+@@ -1685,7 +1843,8 @@
          {
              Entity entity = list.get(i);
  
@@ -358,7 +371,7 @@
              {
                  return false;
              }
-@@ -2149,6 +2304,16 @@
+@@ -2149,6 +2308,16 @@
                          {
                              this.field_72986_A.func_76090_f(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -375,7 +388,7 @@
                      }
                      else
                      {
-@@ -2173,6 +2338,16 @@
+@@ -2173,6 +2342,16 @@
                          {
                              this.field_72986_A.func_76080_g(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -392,7 +405,7 @@
                      }
                      else
                      {
-@@ -2383,6 +2558,11 @@
+@@ -2383,6 +2562,11 @@
  
      public boolean func_180500_c(EnumSkyBlock p_180500_1_, BlockPos p_180500_2_)
      {
@@ -404,7 +417,7 @@
          if (!this.func_175648_a(p_180500_2_, 17, false))
          {
              return false;
-@@ -3263,30 +3443,47 @@
+@@ -3263,30 +3447,47 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
@@ -464,7 +477,7 @@
      }
  
      public DifficultyInstance func_175649_E(BlockPos p_175649_1_)
-@@ -3357,4 +3554,17 @@
+@@ -3357,4 +3558,17 @@
      {
          return null;
      }
