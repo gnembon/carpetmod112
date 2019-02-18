@@ -143,6 +143,12 @@ public class Messenger
         return _getCoordsTextComponent(desc, (float)x, (float)y, (float)z, true);
     }
 
+    public static ITextComponent tp(String desc, Waypoint waypoint) {
+        String text = String.format("%s [ %.2f, %.2f, %.2f]", desc, waypoint.x, waypoint.y, waypoint.z);
+        String command = "!/tp " + waypoint.getFullName();
+        return m(null, text, command);
+    }
+
     /// to be continued
     public static ITextComponent dbl(String style, double double_value)
     {
