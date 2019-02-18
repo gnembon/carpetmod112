@@ -70,7 +70,7 @@ public class CommandWaypoint extends CommandCarpetBase {
         MinecraftServer server = sender.getServer();
         switch (id) {
             case "overworld": return server.getWorld(0);
-            case "nether": return server.getWorld(-1);
+            case "the_nether": case "nether": return server.getWorld(-1);
             case "the_end": case "end": return server.getWorld(1);
         }
         return null;
