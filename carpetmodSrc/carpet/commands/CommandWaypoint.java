@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 public class CommandWaypoint extends CommandCarpetBase {
     public static final String USAGE = "/waypoint <add|remove|list> ...";
     public static final String USAGE_ADD = "/waypoint add <name> [x y z] [dimension] [yaw pitch]";
-    public static final String USAGE_LIST = "/waypoint list [<dimension>|<user>|all]";
+    public static final String USAGE_LIST = "/waypoint list [<dimension>|<user>|all] [page]";
     public static final String USAGE_REMOVE = "/waypoint remove <waypoint>";
 
     @Override
