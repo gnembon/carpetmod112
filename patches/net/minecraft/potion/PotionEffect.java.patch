@@ -19,7 +19,7 @@
      public PotionEffect(Potion p_i46811_1_)
      {
          this(p_i46811_1_, 0, 0);
-@@ -49,12 +54,19 @@
+@@ -49,12 +54,32 @@
          this.field_188421_h = p_i1577_1_.field_188421_h;
      }
  
@@ -32,15 +32,28 @@
              field_180155_a.warn("This method should only be called for matching effects!");
          }
 +        // CM
-+        if (CarpetSettings.effectsFix && !this.field_82724_e && p_76452_1_.field_76461_c >= this.field_76461_c) {
-+            p_76452_1_.previous = this;
-+            return p_76452_1_;
++        if (p_76452_1_ == this) {
++            return this;
++        }
++        if (CarpetSettings.effectsFix && !this.field_82724_e && p_76452_1_.field_76461_c >= this.field_76461_c && p_76452_1_.field_76460_b < this.field_76460_b) {
++            boolean stack = true;
++            for (PotionEffect e = p_76452_1_; e != null; e = e.previous) {
++                if (e == this) {
++                    field_180155_a.warn("Tried to recursively combine effects " + this + " and " + p_76452_1_);
++                    stack = false;
++                    break;
++                }
++            }
++            if (stack) {
++                p_76452_1_.previous = this;
++                return p_76452_1_;
++            }
 +        }
 +        // CM END
  
          if (p_76452_1_.field_76461_c > this.field_76461_c)
          {
-@@ -71,6 +83,7 @@
+@@ -71,6 +96,7 @@
          }
  
          this.field_188421_h = p_76452_1_.field_188421_h;
