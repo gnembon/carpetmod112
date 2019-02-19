@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/potion/PotionEffect.java
++++ ../src-work/minecraft/net/minecraft/potion/PotionEffect.java
+@@ -6,6 +6,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import carpet.CarpetSettings;
++
+ public class PotionEffect implements Comparable<PotionEffect>
+ {
+     private static final Logger field_180155_a = LogManager.getLogger();
+@@ -16,6 +18,9 @@
+     private boolean field_82724_e;
+     private boolean field_188421_h;
+ 
++    // CM
++    public PotionEffect previous;
++
+     public PotionEffect(Potion p_i46811_1_)
+     {
+         this(p_i46811_1_, 0, 0);
+@@ -49,12 +54,19 @@
+         this.field_188421_h = p_i1577_1_.field_188421_h;
+     }
+ 
+-    public void func_76452_a(PotionEffect p_76452_1_)
++    // Carpet: void -> PotionEffect, other -> p_76452_1_ for smaller diff
++    public PotionEffect combine(PotionEffect p_76452_1_)
+     {
+         if (this.field_188420_b != p_76452_1_.field_188420_b)
+         {
+             field_180155_a.warn("This method should only be called for matching effects!");
+         }
++        // CM
++        if (CarpetSettings.effectsFix && !this.field_82724_e && p_76452_1_.field_76461_c >= this.field_76461_c) {
++            p_76452_1_.previous = this;
++            return p_76452_1_;
++        }
++        // CM END
+ 
+         if (p_76452_1_.field_76461_c > this.field_76461_c)
+         {
+@@ -71,6 +83,7 @@
+         }
+ 
+         this.field_188421_h = p_76452_1_.field_188421_h;
++        return this; // Carpet added return
+     }
+ 
+     public Potion func_188419_a()
