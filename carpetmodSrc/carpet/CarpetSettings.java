@@ -100,6 +100,7 @@ public class CarpetSettings
     public static boolean ridingPlayerUpdateFix;
     public static boolean artificialPermaloader = false;
     public static int pistonClippingFix = 0;
+    public static boolean effectsFix = false;
 
     public static long setSeed = 0;
 
@@ -302,6 +303,7 @@ public class CarpetSettings
   rule("ridingPlayerUpdateFix", "fix", "Fixes chunk updates for players riding minecarts or llamas"),
   rule("pistonClippingFix",     "fix", "Fixes players clipping through moving piston blocks partially.")
                                 .choices("0", "0 20 40 100"),
+  rule("effectsFix",            "fix", "Recovers potion effects when they were replaced and the relacement ended"),
 
         };
         for (CarpetSettingEntry rule: RuleList)
@@ -351,6 +353,7 @@ public class CarpetSettings
         dismountFix = CarpetSettings.getBool("dismountFix");
         disableVanillaTickWarp = CarpetSettings.getBool("disableVanillaTickWarp");
         ridingPlayerUpdateFix = CarpetSettings.getBool("ridingPlayerUpdateFix");
+        effectsFix = CarpetSettings.getBool("effectsFix");
 
         if ("pistonGhostBlocksFix".equalsIgnoreCase(rule))
         {
@@ -754,6 +757,7 @@ public class CarpetSettings
         set("dismountFix","true");
         set("disableVanillaTickWarp","true");
         set("ridingPlayerUpdateFix","true");
+        set("effectsFix","true");
     }
 
     public static class CarpetSettingEntry 

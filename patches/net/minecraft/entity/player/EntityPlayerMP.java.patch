@@ -107,3 +107,20 @@
          }
      }
  
+@@ -1169,7 +1206,7 @@
+ 
+     protected void func_70688_c(PotionEffect p_70688_1_)
+     {
+-        super.func_70688_c(p_70688_1_);
++        if (!CarpetSettings.effectsFix) super.func_70688_c(p_70688_1_);
+         this.field_71135_a.func_147359_a(new SPacketRemoveEntityEffect(this.func_145782_y(), p_70688_1_.func_188419_a()));
+ 
+         if (p_70688_1_.func_188419_a() == MobEffects.field_188424_y)
+@@ -1178,6 +1215,7 @@
+         }
+ 
+         CriteriaTriggers.field_193139_z.func_193153_a(this);
++        if (CarpetSettings.effectsFix) super.func_70688_c(p_70688_1_);
+     }
+ 
+     public void func_70634_a(double p_70634_1_, double p_70634_3_, double p_70634_5_)
