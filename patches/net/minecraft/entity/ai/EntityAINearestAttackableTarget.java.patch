@@ -44,3 +44,13 @@
      }
  
      protected AxisAlignedBB func_188511_a(double p_188511_1_)
+@@ -150,4 +161,9 @@
+                 }
+             }
+         }
++
++    @Override
++    public String getTask() {
++        return ": " + field_75299_d.func_70005_c_() + " Task: Looking for nearest target";
++    }
+ }

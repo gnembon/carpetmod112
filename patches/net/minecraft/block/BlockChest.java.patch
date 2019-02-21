@@ -1,0 +1,92 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockChest.java
++++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
+@@ -67,21 +67,21 @@
+ 
+     public AxisAlignedBB func_185496_a(IBlockState p_185496_1_, IBlockAccess p_185496_2_, BlockPos p_185496_3_)
+     {
+-        if (p_185496_2_.func_180495_p(p_185496_3_.func_177978_c()).func_177230_c() == this)
++        if (p_185496_2_.getBlockState(p_185496_3_.func_177978_c(), "Chest loading").func_177230_c() == this)
+         {
+             return field_185557_b;
+         }
+-        else if (p_185496_2_.func_180495_p(p_185496_3_.func_177968_d()).func_177230_c() == this)
++        else if (p_185496_2_.getBlockState(p_185496_3_.func_177968_d(), "Chest loading").func_177230_c() == this)
+         {
+             return field_185558_c;
+         }
+-        else if (p_185496_2_.func_180495_p(p_185496_3_.func_177976_e()).func_177230_c() == this)
++        else if (p_185496_2_.getBlockState(p_185496_3_.func_177976_e(), "Chest loading").func_177230_c() == this)
+         {
+             return field_185559_d;
+         }
+         else
+         {
+-            return p_185496_2_.func_180495_p(p_185496_3_.func_177974_f()).func_177230_c() == this ? field_185560_e : field_185561_f;
++            return p_185496_2_.getBlockState(p_185496_3_.func_177974_f(), "Chest loading").func_177230_c() == this ? field_185560_e : field_185561_f;
+         }
+     }
+ 
+@@ -92,7 +92,7 @@
+         for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+         {
+             BlockPos blockpos = p_176213_2_.func_177972_a(enumfacing);
+-            IBlockState iblockstate = p_176213_1_.func_180495_p(blockpos);
++            IBlockState iblockstate = p_176213_1_.getBlockState(blockpos, "Chest loading");
+ 
+             if (iblockstate.func_177230_c() == this)
+             {
+@@ -172,10 +172,10 @@
+         }
+         else
+         {
+-            IBlockState iblockstate = p_176455_1_.func_180495_p(p_176455_2_.func_177978_c());
+-            IBlockState iblockstate1 = p_176455_1_.func_180495_p(p_176455_2_.func_177968_d());
+-            IBlockState iblockstate2 = p_176455_1_.func_180495_p(p_176455_2_.func_177976_e());
+-            IBlockState iblockstate3 = p_176455_1_.func_180495_p(p_176455_2_.func_177974_f());
++            IBlockState iblockstate = p_176455_1_.getBlockState(p_176455_2_.func_177978_c(), "Chest loading");
++            IBlockState iblockstate1 = p_176455_1_.getBlockState(p_176455_2_.func_177968_d(), "Chest loading");
++            IBlockState iblockstate2 = p_176455_1_.getBlockState(p_176455_2_.func_177976_e(), "Chest loading");
++            IBlockState iblockstate3 = p_176455_1_.getBlockState(p_176455_2_.func_177974_f(), "Chest loading");
+             EnumFacing enumfacing = (EnumFacing)p_176455_3_.func_177229_b(field_176459_a);
+ 
+             if (iblockstate.func_177230_c() != this && iblockstate1.func_177230_c() != this)
+@@ -186,8 +186,8 @@
+                 if (iblockstate2.func_177230_c() == this || iblockstate3.func_177230_c() == this)
+                 {
+                     BlockPos blockpos1 = iblockstate2.func_177230_c() == this ? p_176455_2_.func_177976_e() : p_176455_2_.func_177974_f();
+-                    IBlockState iblockstate7 = p_176455_1_.func_180495_p(blockpos1.func_177978_c());
+-                    IBlockState iblockstate6 = p_176455_1_.func_180495_p(blockpos1.func_177968_d());
++                    IBlockState iblockstate7 = p_176455_1_.getBlockState(blockpos1.func_177978_c(), "Chest loading");
++                    IBlockState iblockstate6 = p_176455_1_.getBlockState(blockpos1.func_177968_d(), "Chest loading");
+                     enumfacing = EnumFacing.SOUTH;
+                     EnumFacing enumfacing2;
+ 
+@@ -219,8 +219,8 @@
+             else
+             {
+                 BlockPos blockpos = iblockstate.func_177230_c() == this ? p_176455_2_.func_177978_c() : p_176455_2_.func_177968_d();
+-                IBlockState iblockstate4 = p_176455_1_.func_180495_p(blockpos.func_177976_e());
+-                IBlockState iblockstate5 = p_176455_1_.func_180495_p(blockpos.func_177974_f());
++                IBlockState iblockstate4 = p_176455_1_.getBlockState(blockpos.func_177976_e(), "Chest loading");
++                IBlockState iblockstate5 = p_176455_1_.getBlockState(blockpos.func_177974_f(), "Chest loading");
+                 enumfacing = EnumFacing.EAST;
+                 EnumFacing enumfacing1;
+ 
+@@ -368,7 +368,7 @@
+         {
+             for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+             {
+-                if (p_176454_1_.func_180495_p(p_176454_2_.func_177972_a(enumfacing)).func_177230_c() == this)
++                if (p_176454_1_.getBlockState(p_176454_2_.func_177972_a(enumfacing), "Chest loading").func_177230_c() == this)
+                 {
+                     return true;
+                 }
+@@ -458,7 +458,7 @@
+                 for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+                 {
+                     BlockPos blockpos = p_189418_2_.func_177972_a(enumfacing);
+-                    Block block = p_189418_1_.func_180495_p(blockpos).func_177230_c();
++                    Block block = p_189418_1_.getBlockState(blockpos, "Chest loading").func_177230_c();
+ 
+                     if (block == this)
+                     {

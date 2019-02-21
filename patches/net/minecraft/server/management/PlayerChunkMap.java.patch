@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/server/management/PlayerChunkMap.java
++++ ../src-work/minecraft/net/minecraft/server/management/PlayerChunkMap.java
+@@ -3,6 +3,7 @@
+ import com.google.common.base.Predicate;
+ import com.google.common.collect.AbstractIterator;
+ import com.google.common.collect.ComparisonChain;
++import com.google.common.collect.Iterators;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Sets;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+@@ -215,7 +216,10 @@
+ 
+             if (!worldprovider.func_76567_e())
+             {
++                if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                    carpet.carpetclient.CarpetClientChunkLogger.setReason("Dimensional unloading due to no players");
+                 this.field_72701_a.func_72863_F().func_73240_a();
++                carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+             }
+         }
+     }
+@@ -460,7 +464,28 @@
+ 
+         if (chunk != null)
+         {
++            if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
++                carpet.carpetclient.CarpetClientChunkLogger.setReason("Player leaving chunk, queuing unload");
+             this.func_72688_a().func_72863_F().func_189549_a(chunk);
++            carpet.carpetclient.CarpetClientChunkLogger.resetReason();
+         }
+     }
++    
++    /*
++     * 0x Chunk Logger - Gets the coordinates of all chunks
++     */
++    public Iterator<ChunkPos> carpetGetAllChunkCoordinates(){
++    	return new AbstractIterator<ChunkPos>() {
++    		Iterator<PlayerChunkMapEntry> allChunks = Iterators.concat(field_111193_e.iterator(),field_187311_h.iterator());
++			@Override
++			protected ChunkPos computeNext() {
++				if(allChunks.hasNext()) {
++					return allChunks.next().func_187264_a();
++				}
++				else {
++					return (ChunkPos) this.endOfData();
++				}
++			}
++    	};
++    }
+ }
