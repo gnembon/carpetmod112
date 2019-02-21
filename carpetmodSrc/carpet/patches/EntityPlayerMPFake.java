@@ -54,6 +54,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityHeadLook(instance, (byte)(instance.rotationYawHead * 256 / 360) ),instance.dimension);
         server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityTeleport(instance),instance.dimension);
         server.getPlayerList().serverUpdateMovingPlayer(instance);
+        instance.dataManager.set(PLAYER_MODEL_FLAG, (byte) 0x7f); // show all model layers (incl. capes)
         return instance;
     }
 
