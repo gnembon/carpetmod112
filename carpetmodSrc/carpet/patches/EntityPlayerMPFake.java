@@ -95,11 +95,13 @@ public class EntityPlayerMPFake extends EntityPlayerMP
             return gameProfile;
     }
 
+    @Override
     public void onKillCommand()
     {
-        this.getServer().getPlayerList().playerLoggedOut(this);
+        logout();
     }
 
+    @Override
     public void onUpdate()
     {
         super.onUpdate();
@@ -111,6 +113,11 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     public void onDeath(DamageSource cause)
     {
         super.onDeath(cause);
+        logout();
+    }
+
+    private void logout() {
+        this.dismountRidingEntity();
         getServer().getPlayerList().playerLoggedOut(this);
     }
 
