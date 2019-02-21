@@ -1,6 +1,7 @@
 package carpet.utils;
 
 import carpet.CarpetSettings;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
@@ -142,6 +143,12 @@ public class Messenger
         return _getCoordsTextComponent(desc, (float)x, (float)y, (float)z, true);
     }
 
+    public static ITextComponent tp(String desc, Waypoint waypoint) {
+        String text = String.format("%s [ %.2f, %.2f, %.2f]", desc, waypoint.x, waypoint.y, waypoint.z);
+        String command = "!/tp " + waypoint.getFullName();
+        return m(null, text, command);
+    }
+
     /// to be continued
     public static ITextComponent dbl(String style, double double_value)
     {
@@ -208,7 +215,7 @@ public class Messenger
     /*
     builds single line, multicomponent message, optionally returns it to sender, and returns as one chat messagge
      */
-    public static ITextComponent m(EntityPlayer player, Object ... fields)
+    public static ITextComponent m(ICommandSender receiver, Object ... fields)
     {
         ITextComponent message = new TextComponentString("");
         ITextComponent previous_component = null;
@@ -226,28 +233,28 @@ public class Messenger
             if (comp != previous_component) message.appendSibling(comp);
             previous_component = comp;
         }
-        if (player != null)
-            player.sendMessage(message);
+        if (receiver != null)
+            receiver.sendMessage(message);
         return message;
     }
 
-    public static ITextComponent s(EntityPlayer player,String text)
+    public static ITextComponent s(ICommandSender receiver,String text)
     {
-        return s(player,text,"");
+        return s(receiver,text,"");
     }
-    public static ITextComponent s(EntityPlayer player,String text, String style)
+    public static ITextComponent s(ICommandSender receiver,String text, String style)
     {
         ITextComponent message = new TextComponentString(text);
         _applyStyleToTextComponent(message, style);
-        if (player != null)
-            player.sendMessage(message);
+        if (receiver != null)
+            receiver.sendMessage(message);
         return message;
     }
 
-    public static void send(EntityPlayer player, ITextComponent ... messages) { send(player, Arrays.asList(messages)); }
-    public static void send(EntityPlayer player, List<ITextComponent> list)
+    public static void send(ICommandSender receiver, ITextComponent ... messages) { send(receiver, Arrays.asList(messages)); }
+    public static void send(ICommandSender receiver, List<ITextComponent> list)
     {
-        list.forEach(player::sendMessage);
+        list.forEach(receiver::sendMessage);
     }
 
     public static void print_server_message(MinecraftServer server, String message)

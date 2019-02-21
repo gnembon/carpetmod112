@@ -4,10 +4,14 @@ import carpet.helpers.StackTraceDeobfuscator;
 import carpet.utils.HUDController;
 import carpet.utils.PluginChannelTracker;
 import carpet.utils.TickingArea;
+import carpet.utils.Waypoint;
 import carpet.worldedit.WorldEditBridge;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Random;
 
@@ -24,6 +28,7 @@ import carpet.logging.LoggerRegistry;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.WorldServer;
 
 public class CarpetServer // static for now - easier to handle all around the code, its one anyways
 {
@@ -54,10 +59,24 @@ public class CarpetServer // static for now - easier to handle all around the co
     public static void onLoadAllWorlds(MinecraftServer server)
     {
         TickingArea.loadConfig(server);
+        for (WorldServer world : server.worlds) {
+            try {
+                world.waypoints = Waypoint.loadWaypoints(world);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
     }
     public static void onWorldsSaved(MinecraftServer server)
     {
         TickingArea.saveConfig(server);
+        for (WorldServer world : server.worlds) {
+            try {
+                Waypoint.saveWaypoints(world, world.waypoints);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
+            }
+        }
     }
 
     public static void tick(MinecraftServer server)
