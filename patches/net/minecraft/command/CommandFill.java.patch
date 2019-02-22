@@ -18,10 +18,10 @@
              int i = (blockpos3.func_177958_n() - blockpos2.func_177958_n() + 1) * (blockpos3.func_177956_o() - blockpos2.func_177956_o() + 1) * (blockpos3.func_177952_p() - blockpos2.func_177952_p() + 1);
  
 -            if (i > 32768)
-+            if (i > CarpetSettings.getInt("fillLimit")) //CM
++            if (i > CarpetSettings.fillLimit) //CM
              {
 -                throw new CommandException("commands.fill.tooManyBlocks", new Object[] {i, Integer.valueOf(32768)});
-+                throw new CommandException("commands.fill.tooManyBlocks", new Object[] {i, Integer.valueOf(CarpetSettings.getInt("fillLimit"))}); //CM
++                throw new CommandException("commands.fill.tooManyBlocks", new Object[] {i, Integer.valueOf(CarpetSettings.fillLimit)}); //CM
              }
              else if (blockpos2.func_177956_o() >= 0 && blockpos3.func_177956_o() < 256)
              {
@@ -70,7 +70,7 @@
                              }
  
 -                            if (world.func_180501_a(blockpos4, iblockstate, 2))
-+                            if (world.func_180501_a(blockpos4, iblockstate, 2 | (CarpetSettings.getBool("fillUpdates")?0:128)  )) //CM
++                            if (world.func_180501_a(blockpos4, iblockstate, 2 | (CarpetSettings.fillUpdates?0:128)  )) //CM
                              {
                                  list.add(blockpos4);
                                  ++i;
@@ -81,7 +81,7 @@
 -
 +                
 +                /*carpet mod */
-+                if (CarpetSettings.getBool("fillUpdates"))
++                if (CarpetSettings.fillUpdates)
 +                {
 +                    /*carpet mod end EXTRA INDENT*/
                  for (BlockPos blockpos5 : list)

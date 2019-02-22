@@ -18,7 +18,7 @@
              }
  
 +            //CM start
-+            boolean optimizedDespawnRange = CarpetSettings.getBool("optimizedDespawnRange");
++            boolean optimizedDespawnRange = CarpetSettings.optimizedDespawnRange;
 +            if (i==0 && optimizedDespawnRange) // worlds without valid chunks are skipped.
 +            {
 +                return 0;
@@ -75,7 +75,7 @@
                                      IEntityLivingData ientitylivingdata = null;
                                      int l3 = MathHelper.func_76143_f(Math.random() * 4.0D);
 +                                    //CM fixed 4 mobs per pack
-+                                    if (CarpetSettings.getBool("1.8Spawning")) { l3 = 4; }
++                                    if (CarpetSettings._1_8Spawning) { l3 = 4; }
  
                                      for (int i4 = 0; i4 < l3; ++i4)
                                      {

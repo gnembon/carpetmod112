@@ -16,7 +16,7 @@
              f = 10.0F;
  
 -            if (this.func_110248_bS() && this.func_70874_b() == 0)
-+            if (this.func_110248_bS() && this.func_70874_b() == 0 && !(CarpetSettings.getBool("llamaOverfeedingFix") && this.func_70880_s() ) )
++            if (this.func_110248_bS() && this.func_70874_b() == 0 && !(CarpetSettings.llamaOverfeedingFix && this.func_70880_s() ) )
              {
                  flag = true;
                  this.func_146082_f(p_190678_1_);

@@ -79,7 +79,7 @@ public class CommandCounter extends CommandCarpetBase
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
-        if (!CarpetSettings.getBool("hopperCounters"))
+        if (!CarpetSettings.hopperCounters)
         {
             return Collections.<String>emptyList();
         }

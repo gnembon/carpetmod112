@@ -279,7 +279,7 @@ public class CommandPlayer extends CommandCarpetBase
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
     {
-        if (!CarpetSettings.getBool("commandPlayer"))
+        if (!CarpetSettings.commandPlayer)
         {
             return Collections.emptyList();
         }

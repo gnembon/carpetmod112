@@ -16,7 +16,7 @@
          else
          {
 +            // Added code for dead shrub rule CARPET-XCOM
-+            if(CarpetSettings.getBool("desertShrubs") && p_176478_1_.func_180494_b(p_176478_2_) == Biomes.field_76769_d && !BlockSaplingHelper.hasWater(p_176478_1_, p_176478_2_))
++            if(CarpetSettings.desertShrubs && p_176478_1_.func_180494_b(p_176478_2_) == Biomes.field_76769_d && !BlockSaplingHelper.hasWater(p_176478_1_, p_176478_2_))
 +            {
 +                p_176478_1_.func_180501_a(p_176478_2_, Blocks.field_150330_I.func_176223_P(), 3);
 +                return;

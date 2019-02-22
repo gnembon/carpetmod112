@@ -125,7 +125,7 @@
              }
 -
 -            this.field_73068_P = j > 0 && j >= this.field_73010_i.size() - i;
-+            int sleepingThreshold = CarpetSettings.getInt("sleepingThreshold");
++            int sleepingThreshold = CarpetSettings.sleepingThreshold;
 +            if(sleepingThreshold < 100)
 +            { // custom amount
 +                field_73068_P = j > 0;
@@ -142,7 +142,7 @@
          if (this.field_73068_P && !this.field_72995_K)
          {
 +            //CM sleeping
-+            int sleepingThreshold = CarpetSettings.getInt("sleepingThreshold");
++            int sleepingThreshold = CarpetSettings.sleepingThreshold;
 +            if(sleepingThreshold < 100)
 +            {
 +                float numberOfPlayers = 0;

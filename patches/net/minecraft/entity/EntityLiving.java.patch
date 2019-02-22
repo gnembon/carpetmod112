@@ -38,7 +38,7 @@
  
              p_70014_1_.func_74782_a("Leash", nbttagcompound2);
          }
-+        else if ("casual".equals(CarpetSettings.get("leashFix")) && field_110170_bx != null)
++        else if ("casual".equals(CarpetSettings.leashFix) && field_110170_bx != null)
 +        {
 +            p_70014_1_.func_74782_a("Leash", field_110170_bx);
 +        }
@@ -73,7 +73,7 @@
 +	@Override
 +	public void postLoad()
 +	{
-+	    if ("cool".equals(CarpetSettings.get("leashFix")))
++	    if ("cool".equals(CarpetSettings.leashFix))
 +	    {
 +	        func_110165_bF();
 +	    }

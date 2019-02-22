@@ -34,7 +34,7 @@
          this.field_76638_b = new int[256];
          this.field_76639_c = new boolean[256];
 -        this.field_150816_i = Maps.<BlockPos, TileEntity>newHashMap();
-+        this.field_150816_i = CarpetSettings.getBool("reloadUpdateOrderFix") ? Maps.newLinkedHashMap() : Maps.newHashMap(); // CM: reload update order fix
++        this.field_150816_i = CarpetSettings.reloadUpdateOrderFix ? Maps.newLinkedHashMap() : Maps.newHashMap(); // CM: reload update order fix
          this.field_76649_t = 4096;
          this.field_177447_w = Queues.<BlockPos>newConcurrentLinkedQueue();
          this.field_76645_j = (ClassInheritanceMultiMap[])(new ClassInheritanceMultiMap[16]);

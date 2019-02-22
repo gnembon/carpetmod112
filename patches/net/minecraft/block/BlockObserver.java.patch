@@ -18,7 +18,7 @@
 +         * Made observer not send a signal when placed. CARPET-XCOM
 +         */
 +      //return this.getDefaultState().withProperty(FACING, EnumFacing.getDirectionFromEntityLiving(pos, placer).getOpposite());
-+        return this.func_176223_P().func_177226_a(field_176387_N, EnumFacing.func_190914_a(p_180642_2_, p_180642_8_).func_176734_d()).func_177226_a(field_190963_a, CarpetSettings.getBool("observersDoNonUpdate"));
++        return this.func_176223_P().func_177226_a(field_176387_N, EnumFacing.func_190914_a(p_180642_2_, p_180642_8_).func_176734_d()).func_177226_a(field_190963_a, CarpetSettings.observersDoNonUpdate);
 +
      }
  

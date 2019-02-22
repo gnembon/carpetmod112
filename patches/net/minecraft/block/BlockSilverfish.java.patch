@@ -14,7 +14,7 @@
              p_180653_1_.func_72838_d(entitysilverfish);
              entitysilverfish.func_70656_aK();
 +            // Silver fish will drop gravel when breaking out of a block. CARPET-XCOM
-+            if(CarpetSettings.getBool("silverFishDropGravel")){
++            if(CarpetSettings.silverFishDropGravel){
 +            	func_180635_a(p_180653_1_, p_180653_2_, new ItemStack(Blocks.field_150351_n));
 +            }
          }

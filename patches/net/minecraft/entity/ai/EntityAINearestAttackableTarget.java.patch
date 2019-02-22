@@ -20,7 +20,7 @@
 +                //this.targetEntity = list.get(0);
 +                //return true;
 +				//CM replaced with
-+				if (!(CarpetSettings.getBool("invisibilityFix") && (list.get(0) instanceof EntityPlayer)))
++				if (!(CarpetSettings.invisibilityFix && (list.get(0) instanceof EntityPlayer)))
 +				{
 +					this.field_75309_a = list.get(0);
 +                    return true;

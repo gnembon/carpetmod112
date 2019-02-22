@@ -68,7 +68,7 @@
 +    {
 +        NBTTagCompound data = field_75828_a.get(pos);
 +        if (data != null) return data;
-+        return (CarpetSettings.getBool("entityDuplicationFix"))?chunksInWrite.get(pos):data;
++        return (CarpetSettings.entityDuplicationFix)?chunksInWrite.get(pos):data;
 +    }
 +
 +    // Check if chunk exists at all in any pending save state
@@ -116,7 +116,7 @@
 +        //{
 +        //    this.chunksToRemove.put(pos, compound);
 +        //}
-+        if ( CarpetSettings.getBool("entityDuplicationFix") || !chunksInWrite.containsKey(p_75824_1_))
++        if ( CarpetSettings.entityDuplicationFix || !chunksInWrite.containsKey(p_75824_1_))
          {
 -            this.field_75828_a.put(p_75824_1_, p_75824_2_);
 +            queueChunkToRemove(p_75824_1_, p_75824_2_);

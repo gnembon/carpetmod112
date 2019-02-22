@@ -44,8 +44,7 @@ public class CarpetServer // static for now - easier to handle all around the co
     }
     public static void onServerLoaded(MinecraftServer server)
     {
-        CarpetSettings.apply_settings_from_conf(server);
-        CarpetSettings.reload_all_statics();
+        CarpetSettings.applySettingsFromConf(server);
         LoggerRegistry.initLoggers(server);
         WorldEditBridge.onServerLoaded(server);
 

@@ -18,6 +18,6 @@
 +     */
 +    @Override
 +    public boolean itemGroundStacking(boolean hasTag){
-+    	return !hasTag && CarpetSettings.getBool("stackableEmptyShulkerBoxes");
++    	return !hasTag && CarpetSettings.stackableEmptyShulkerBoxes;
 +    }
  }

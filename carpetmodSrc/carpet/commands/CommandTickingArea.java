@@ -182,7 +182,7 @@ public class CommandTickingArea extends CommandCarpetBase
     
     private void listAreas(ICommandSender sender, World world)
     {
-        if (world.provider.isSurfaceWorld() && !CarpetSettings.getBool("disableSpawnChunks"))
+        if (world.provider.isSurfaceWorld() && !CarpetSettings.disableSpawnChunks)
             sender.sendMessage(new TextComponentString("Spawn chunks are enabled"));
         
         sender.sendMessage(new TextComponentString("Ticking areas in " + world.provider.getDimensionType().getName() + ":"));

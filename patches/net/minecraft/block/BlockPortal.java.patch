@@ -18,7 +18,7 @@
          {
              blockportal$size.func_150859_c();
 +            //CM
-+            if (CarpetSettings.getBool("portalCaching"))
++            if (CarpetSettings.portalCaching)
 +            {
 +                ((WorldServer) p_176548_1_).func_85176_s().clearHistoryCache();
 +            }
@@ -31,7 +31,7 @@
              {
                  blockportal$size1.func_150859_c();
 +                //CM
-+                if (CarpetSettings.getBool("portalCaching"))
++                if (CarpetSettings.portalCaching)
 +                {
 +                    ((WorldServer) p_176548_1_).func_85176_s().clearHistoryCache();
 +                }
@@ -44,7 +44,7 @@
              {
                  p_189540_2_.func_175656_a(p_189540_3_, Blocks.field_150350_a.func_176223_P());
 +                //CM
-+                if (CarpetSettings.getBool("portalCaching"))
++                if (CarpetSettings.portalCaching)
 +                {
 +                    ((WorldServer) p_189540_2_).func_85176_s().clearHistoryCache();
 +                }
@@ -57,7 +57,7 @@
              {
                  p_189540_2_.func_175656_a(p_189540_3_, Blocks.field_150350_a.func_176223_P());
 +                //CM
-+                if (CarpetSettings.getBool("portalCaching"))
++                if (CarpetSettings.portalCaching)
 +                {
 +                    ((WorldServer) p_189540_2_).func_85176_s().clearHistoryCache();
 +                }

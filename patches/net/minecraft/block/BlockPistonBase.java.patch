@@ -16,12 +16,12 @@
      public void func_180633_a(World p_180633_1_, BlockPos p_180633_2_, IBlockState p_180633_3_, EntityLivingBase p_180633_4_, ItemStack p_180633_5_)
      {
 -        p_180633_1_.func_180501_a(p_180633_2_, p_180633_3_.func_177226_a(field_176387_N, EnumFacing.func_190914_a(p_180633_2_, p_180633_4_)), 2);
-+        if (!CarpetSettings.getBool("accurateBlockPlacement"))
++        if (!CarpetSettings.accurateBlockPlacement)
 +            p_180633_1_.func_180501_a(p_180633_2_, p_180633_3_.func_177226_a(field_176387_N, EnumFacing.func_190914_a(p_180633_2_, p_180633_4_)), 2);
  
          if (!p_180633_1_.field_72995_K)
          {
-@@ -130,23 +135,58 @@
+@@ -130,23 +135,55 @@
  
      private void func_176316_e(World p_176316_1_, BlockPos p_176316_2_, IBlockState p_176316_3_)
      {
@@ -55,10 +55,7 @@
 +            {
 +                p_176316_1_.func_180501_a(p_176316_2_,  p_176316_3_.func_177226_a(field_176320_b,  Boolean.valueOf(false)), 2);
 +            }
-+            if (CarpetSettings.pistonGhostBlocksFix == 2)
-+                p_176316_1_.func_175641_c(p_176316_2_, this, 1, enumfacing.func_176745_a() | ignoreMovingBlockMeta(p_176316_1_, p_176316_2_, enumfacing));
-+            else
-+                p_176316_1_.func_175641_c(p_176316_2_, this, 1, enumfacing.func_176745_a() );
++            p_176316_1_.func_175641_c(p_176316_2_, this, 1, enumfacing.func_176745_a() );
          }
 +
 +        carpet.carpetclient.CarpetClientChunkLogger.resetReason();
@@ -84,7 +81,7 @@
      {
          for (EnumFacing enumfacing : EnumFacing.values())
          {
-@@ -162,6 +202,12 @@
+@@ -162,6 +199,12 @@
          }
          else
          {
@@ -97,7 +94,7 @@
              BlockPos blockpos = p_176318_2_.func_177984_a();
  
              for (EnumFacing enumfacing1 : EnumFacing.values())
-@@ -241,7 +287,8 @@
+@@ -241,7 +284,8 @@
                      }
                  }
  
@@ -107,7 +104,7 @@
                  {
                      this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
                  }
-@@ -307,7 +354,13 @@
+@@ -307,7 +351,13 @@
                      return false;
                  }
  
@@ -122,7 +119,7 @@
              }
              else
              {
-@@ -319,6 +372,14 @@
+@@ -319,6 +369,14 @@
              return false;
          }
      }
@@ -137,7 +134,7 @@
  
      private boolean func_176319_a(World p_176319_1_, BlockPos p_176319_2_, EnumFacing p_176319_3_, boolean p_176319_4_)
      {
-@@ -358,15 +419,64 @@
+@@ -358,15 +416,64 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }

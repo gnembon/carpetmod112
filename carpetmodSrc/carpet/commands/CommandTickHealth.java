@@ -42,7 +42,7 @@ public class CommandTickHealth extends CommandCarpetBase
     }
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
-        if (!CarpetSettings.getBool("commandTick"))
+        if (!CarpetSettings.commandTick)
         {
             return Collections.<String>emptyList();
         }

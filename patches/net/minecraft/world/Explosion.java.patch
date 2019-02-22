@@ -60,7 +60,7 @@
          }
  
 -        this.field_77281_g.addAll(set);
-+        if(!CarpetSettings.getBool("explosionNoBlockDamage")) this.field_77281_g.addAll(set);
++        if(!CarpetSettings.explosionNoBlockDamage) this.field_77281_g.addAll(set);
          float f3 = this.field_77280_f * 2.0F;
          int k1 = MathHelper.func_76128_c(this.field_77284_b - (double)f3 - 1.0D);
          int l1 = MathHelper.func_76128_c(this.field_77284_b + (double)f3 + 1.0D);

@@ -14,7 +14,7 @@
          if (!this.func_176592_e(p_189540_2_, p_189540_3_, p_189540_1_))
          {
 -            if (this.field_150113_a == this.func_176597_g(p_189540_2_, p_189540_3_, p_189540_1_))
-+            if ( (this.field_150113_a == this.func_176597_g(p_189540_2_, p_189540_3_, p_189540_1_)) && !(CarpetSettings.getBool("inconsistentRedstoneTorchesFix") && p_189540_2_.func_175691_a(p_189540_3_, this)))
++            if ( (this.field_150113_a == this.func_176597_g(p_189540_2_, p_189540_3_, p_189540_1_)) && !(CarpetSettings.inconsistentRedstoneTorchesFix && p_189540_2_.func_175691_a(p_189540_3_, this)))
              {
                  p_189540_2_.func_175684_a(p_189540_3_, this, this.func_149738_a(p_189540_2_));
              }

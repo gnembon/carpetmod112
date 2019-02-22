@@ -17,7 +17,7 @@
      {
          List<T> list = this.field_75380_a.field_70170_p.<T>func_175647_a(this.field_181064_i, this.field_75380_a.func_174813_aQ().func_72314_b((double)this.field_179508_f, 3.0D, (double)this.field_179508_f), Predicates.and(EntitySelectors.field_188444_d, this.field_179509_a, this.field_179510_i));
 -
-+        boolean log = CarpetSettings.getBool("displayMobAI") && this.field_75380_a instanceof EntityCreeper;
++        boolean log = CarpetSettings.displayMobAI && this.field_75380_a instanceof EntityCreeper;
          if (list.isEmpty())
          {
 +            if (log)

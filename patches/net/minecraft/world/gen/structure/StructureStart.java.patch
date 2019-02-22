@@ -13,7 +13,7 @@
              nbttaglist.func_74742_a(structurecomponent.func_143010_b());
          }
  
-+        if(CarpetSettings.getBool("boundingBoxFix")) func_75072_c(); // add this line
++        if(CarpetSettings.boundingBoxFix) func_75072_c(); // add this line
          nbttagcompound.func_74782_a("Children", nbttaglist);
          this.func_143022_a(nbttagcompound);
          return nbttagcompound;

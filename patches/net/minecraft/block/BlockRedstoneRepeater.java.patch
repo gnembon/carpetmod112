@@ -25,7 +25,7 @@
 -        return ((Integer)p_176403_1_.func_177229_b(field_176410_b)).intValue() * 2;
 +    	int delay = 2;
 +    	// Added repeater with adjustable delay on terracota CARPET-XCOM
-+    	if(CarpetSettings.getBool("repeaterPoweredTerracota")){
++    	if(CarpetSettings.repeaterPoweredTerracotta){
 +            IBlockState iblockstate = world.func_180495_p(pos.func_177977_b());
 +            Block block = iblockstate.func_177230_c();
 +            if (block == Blocks.field_150406_ce){

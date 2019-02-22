@@ -42,9 +42,9 @@
 -        this.field_70181_x = 0.20000000298023224D;
 -        this.field_70179_y = (double)(-((float)Math.cos((double)f)) * 0.02F);
 +        float f = 0F;
-+        if(!CarpetSettings.getBool("tntPrimerMomentumRemoved")){
++        if(!CarpetSettings.tntPrimerMomentumRemoved){
 +            f = (float)(Math.random() * (Math.PI * 2D));
-+            if(CarpetSettings.hardcodeTNTangle > 0) f = CarpetSettings.hardcodeTNTangle;
++            if(CarpetSettings.hardcodeTNTangle > 0) f = (float) CarpetSettings.hardcodeTNTangle;
 +            this.field_70159_w = (double)(-((float)Math.sin((double)f)) * 0.02F);
 +            this.field_70181_x = 0.20000000298023224D;
 +            this.field_70179_y = (double)(-((float)Math.cos((double)f)) * 0.02F);

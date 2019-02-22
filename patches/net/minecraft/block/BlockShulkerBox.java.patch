@@ -14,7 +14,7 @@
                  NBTTagCompound nbttagcompound1 = new NBTTagCompound();
                  nbttagcompound.func_74782_a("BlockEntityTag", ((TileEntityShulkerBox)tileentity).func_190580_f(nbttagcompound1));
 -                itemstack.func_77982_d(nbttagcompound);
-+                if(!CarpetSettings.getBool("stackableEmptyShulkerBoxes") || nbttagcompound1.func_186856_d() > 0) itemstack.func_77982_d(nbttagcompound);
++                if(!CarpetSettings.stackableEmptyShulkerBoxes || nbttagcompound1.func_186856_d() > 0) itemstack.func_77982_d(nbttagcompound);
  
                  if (tileentityshulkerbox.func_145818_k_())
                  {

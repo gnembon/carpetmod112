@@ -47,7 +47,7 @@
                  this.field_70714_bg.func_75776_a(6, new EntityAIHarvestFarmland(this, 0.6D));
              }
 +            // Added nitwit crafting AI for making automateable crafters out of them. CARPET-XCOM
-+            else if (CarpetSettings.getBool("nitwitCrafter") && this.func_70946_n() == 5)
++            else if (CarpetSettings.nitwitCrafter && this.func_70946_n() == 5)
 +            {
 +                craftingAI.updateNitwit();
 +                this.field_70714_bg.func_75776_a(6, craftingAI);
@@ -60,7 +60,7 @@
              this.field_70714_bg.func_75776_a(8, new EntityAIHarvestFarmland(this, 0.6D));
          }
 +        // Added nitwit crafting AI for making automateable crafters out of them. CARPET-XCOM
-+        else if (CarpetSettings.getBool("nitwitCrafter") && this.func_70946_n() == 5)
++        else if (CarpetSettings.nitwitCrafter && this.func_70946_n() == 5)
 +        {
 +            craftingAI.updateNitwit();
 +            this.field_70714_bg.func_75776_a(6, craftingAI);
@@ -73,7 +73,7 @@
          EntityVillager.ITradeList[][][] aentityvillager$itradelist = field_175561_bA[this.func_70946_n()];
  
 +        // Added nitwit crafting AI for making automateable crafters out of them. CARPET-XCOM
-+        if (CarpetSettings.getBool("nitwitCrafter") && this.func_70946_n() == 5)
++        if (CarpetSettings.nitwitCrafter && this.func_70946_n() == 5)
 +        {
 +            return;
 +        }
@@ -86,7 +86,7 @@
          Item item = itemstack.func_77973_b();
  
 +        // Added a redirect for villagers picking up items incase a task needs to do it differently CARPET-XCOM
-+        if(CarpetSettings.getBool("nitwitCrafter") && craftingAI != null)
++        if(CarpetSettings.nitwitCrafter && craftingAI != null)
 +        {
 +            if(craftingAI.updateEquipment(p_175445_1_, field_175560_bz)) return;
 +        }

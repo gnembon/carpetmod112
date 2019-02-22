@@ -32,7 +32,7 @@
  
 +            protected ItemStack func_82487_b(IBlockSource source, ItemStack stack)
 +            {
-+                if(CarpetSettings.getBool("rotatorBlock")){
++                if(CarpetSettings.rotatorBlock){
 +                    EnumFacing sourceFace = (EnumFacing)source.func_189992_e().func_177229_b(BlockDispenser.field_176441_a);
 +                    World world = source.func_82618_k();
 +                    BlockPos blockpos = source.func_180699_d().func_177972_a(sourceFace);

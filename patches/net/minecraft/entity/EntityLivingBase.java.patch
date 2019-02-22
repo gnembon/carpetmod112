@@ -68,7 +68,7 @@
          {
 -            this.field_70708_bq = 0;
 +            DamageReporter.register_damage(this, p_70097_1_, p_70097_2_); //CM
-+            if (!CarpetSettings.getBool("potionsDespawnFix")) // CM run conditionally with vanilla behaviour
++            if (!CarpetSettings.potionsDespawnFix) // CM run conditionally with vanilla behaviour
 +            {
 +                this.field_70708_bq = 0;
 +            }
@@ -116,7 +116,7 @@
                  {
                      this.func_184581_c(p_70097_1_);
                  }
-+                if (CarpetSettings.getBool("potionsDespawnFix"))
++                if (CarpetSettings.potionsDespawnFix)
 +                    // CM reset entity age is connected to making a hurt noise
 +                {
 +                    this.field_70708_bq = 0;
@@ -182,9 +182,9 @@
  
 -            for (int l = 0; l < list.size(); ++l)
 +            int limit = list.size();
-+            if (CarpetSettings.getInt("maxEntityCollisions") > 0)
++            if (CarpetSettings.maxEntityCollisions > 0)
              {
-+                limit = Math.min(limit,CarpetSettings.getInt("maxEntityCollisions"));
++                limit = Math.min(limit,CarpetSettings.maxEntityCollisions);
 +            }
 +            for (int l = 0; l < limit; ++l)
 +            {

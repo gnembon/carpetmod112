@@ -16,12 +16,12 @@
                                  }
  
 -                                p_189960_1_.func_180501_a(blockpos, Blocks.field_180401_cv.func_176223_P(), 4);
-+                                p_189960_1_.func_180501_a(blockpos, Blocks.field_180401_cv.func_176223_P(), 4 | (CarpetSettings.getBool("fillUpdates")?0:128)); //CM
++                                p_189960_1_.func_180501_a(blockpos, Blocks.field_180401_cv.func_176223_P(), 4 | (CarpetSettings.fillUpdates?0:128)); //CM
                              }
                          }
  
 -                        if (p_189960_1_.func_180501_a(blockpos, iblockstate1, p_189960_5_) && template$blockinfo1.field_186244_c != null)
-+                        if (p_189960_1_.func_180501_a(blockpos, iblockstate1, p_189960_5_ | (CarpetSettings.getBool("fillUpdates")?0:128)) && template$blockinfo1.field_186244_c != null) //CM
++                        if (p_189960_1_.func_180501_a(blockpos, iblockstate1, p_189960_5_ | (CarpetSettings.fillUpdates?0:128)) && template$blockinfo1.field_186244_c != null) //CM
                          {
                              TileEntity tileentity2 = p_189960_1_.func_175625_s(blockpos);
  
@@ -30,7 +30,7 @@
                      if (structureboundingbox == null || structureboundingbox.func_175898_b(blockpos1))
                      {
 +                        //CARPET MOD ADDED CONDITION
-+                        if (CarpetSettings.getBool("fillUpdates"))
++                        if (CarpetSettings.fillUpdates)
 +                        {
                          p_189960_1_.func_175722_b(blockpos1, template$blockinfo2.field_186243_b.func_177230_c(), false);
 -

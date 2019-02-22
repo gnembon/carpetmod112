@@ -15,7 +15,7 @@
  
 -        if (p_176213_1_.func_175640_z(p_176213_2_))
 +		// Carpet setting to remove updates when tnt is placed CARPET-XCOM
-+        if (!CarpetSettings.getBool("TNTDoNotUpdate") && p_176213_1_.func_175640_z(p_176213_2_))
++        if (!CarpetSettings.TNTDoNotUpdate && p_176213_1_.func_175640_z(p_176213_2_))
          {
              this.func_176206_d(p_176213_1_, p_176213_2_, p_176213_3_.func_177226_a(field_176246_a, Boolean.valueOf(true)));
              p_176213_1_.func_175698_g(p_176213_2_);

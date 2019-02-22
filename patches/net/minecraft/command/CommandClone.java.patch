@@ -16,10 +16,10 @@
              int i = structureboundingbox.func_78883_b() * structureboundingbox.func_78882_c() * structureboundingbox.func_78880_d();
  
 -            if (i > 32768)
-+            if (i > CarpetSettings.getInt("fillLimit")) //CM
++            if (i > CarpetSettings.fillLimit) //CM
              {
 -                throw new CommandException("commands.clone.tooManyBlocks", new Object[] {i, Integer.valueOf(32768)});
-+                throw new CommandException("commands.clone.tooManyBlocks", new Object[] {i, Integer.valueOf(CarpetSettings.getInt("fillLimit"))}); //CM
++                throw new CommandException("commands.clone.tooManyBlocks", new Object[] {i, Integer.valueOf(CarpetSettings.fillLimit)}); //CM
              }
              else
              {
@@ -42,13 +42,13 @@
                                      }
  
 -                                    world.func_180501_a(blockpos6, Blocks.field_180401_cv.func_176223_P(), 2);
-+                                    world.func_180501_a(blockpos6, Blocks.field_180401_cv.func_176223_P(), 2 | (CarpetSettings.getBool("fillUpdates")?0:128)); //carpet
++                                    world.func_180501_a(blockpos6, Blocks.field_180401_cv.func_176223_P(), 2 | (CarpetSettings.fillUpdates?0:128)); //carpet
                                  }
  
                                  for (BlockPos blockpos7 : deque)
                                  {
 -                                    world.func_180501_a(blockpos7, Blocks.field_150350_a.func_176223_P(), 3);
-+                                    world.func_180501_a(blockpos7, Blocks.field_150350_a.func_176223_P(), (CarpetSettings.getBool("fillUpdates")?3:131)); //carpet
++                                    world.func_180501_a(blockpos7, Blocks.field_150350_a.func_176223_P(), (CarpetSettings.fillUpdates?3:131)); //carpet
                                  }
                              }
  
@@ -65,7 +65,7 @@
                                  }
  
 -                                world.func_180501_a(commandclone$staticclonedata.field_179537_a, Blocks.field_180401_cv.func_176223_P(), 2);
-+                                world.func_180501_a(commandclone$staticclonedata.field_179537_a, Blocks.field_180401_cv.func_176223_P(), 2 | (CarpetSettings.getBool("fillUpdates")?0:128)); //carpet
++                                world.func_180501_a(commandclone$staticclonedata.field_179537_a, Blocks.field_180401_cv.func_176223_P(), 2 | (CarpetSettings.fillUpdates?0:128)); //carpet
                              }
  
                              i = 0;
@@ -73,7 +73,7 @@
                              for (CommandClone.StaticCloneData commandclone$staticclonedata1 : list3)
                              {
 -                                if (world.func_180501_a(commandclone$staticclonedata1.field_179537_a, commandclone$staticclonedata1.field_179535_b, 2))
-+                                if (world.func_180501_a(commandclone$staticclonedata1.field_179537_a, commandclone$staticclonedata1.field_179535_b, 2 | (CarpetSettings.getBool("fillUpdates")?0:128))) //carpet
++                                if (world.func_180501_a(commandclone$staticclonedata1.field_179537_a, commandclone$staticclonedata1.field_179535_b, 2 | (CarpetSettings.fillUpdates?0:128))) //carpet
                                  {
                                      ++i;
                                  }
@@ -89,7 +89,7 @@
 -
 +                            
 +                            /*carpet mod */
-+                            if (CarpetSettings.getBool("fillUpdates"))
++                            if (CarpetSettings.fillUpdates)
 +                            {
 +                                /*carpet mod end EXTRA INDENTATION START*/
                              for (CommandClone.StaticCloneData commandclone$staticclonedata3 : list4)

@@ -3,9 +3,12 @@ package carpet.carpetclient;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;
 import carpet.CarpetSettings;
-import carpet.CarpetSettings.CarpetSettingEntry;
 import carpet.utils.Messenger;
 import net.minecraft.network.PacketBuffer;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class CarpetClientRuleChanger {
 
@@ -15,14 +18,19 @@ public class CarpetClientRuleChanger {
 	private static final int RESET_RULE = 2;
 	private static final int REQUEST_RULE_TIP = 3;
 
+	private static Map<String, Integer> valueIndex = new HashMap<>();
+
 	static void ruleChanger(EntityPlayerMP sender, PacketBuffer data) {
 		int type = data.readInt();
 		String rule = data.readString(100);
 
 		if (CHANGE_RULE == type) {
 			if (sender.canUseCommand(2, "carpet")) {
-				CarpetSettingEntry entry = CarpetSettings.getCarpetSetting(rule);
-				String value = entry.getNextValue();
+				String[] options = CarpetSettings.getOptions(rule);
+				int index = valueIndex.getOrDefault(rule.toLowerCase(Locale.ENGLISH), -1);
+				index = (index + 1) % options.length;
+				valueIndex.put(rule.toLowerCase(Locale.ENGLISH), index);
+				String value = options[index];
 				ruleChangeLogic(sender, rule, value);
 			} else {
 				Messenger.m(sender, "r You do not have permissions to change the rules.");
@@ -36,8 +44,7 @@ public class CarpetClientRuleChanger {
 			}
 		} else if (RESET_RULE == type) {
 			if (sender.canUseCommand(2, "carpet")) {
-				CarpetSettingEntry entry = CarpetSettings.getCarpetSetting(rule);
-				String value = entry.getDefault();
+				String value = CarpetSettings.getDefault(rule);
 				ruleChangeLogic(sender, rule, value);
 			} else {
 				Messenger.m(sender, "r You do not have permissions to change the rules.");
@@ -49,7 +56,7 @@ public class CarpetClientRuleChanger {
 
 	private static void ruleChangeLogic(EntityPlayerMP sender, String rule, String value) {
 		CarpetSettings.set(rule, value);
-		String s = CarpetSettings.get(rule).getToast() + " is set to: " + CarpetSettings.getString(rule);
+		String s = CarpetSettings.getDescription(rule) + " is set to: " + CarpetSettings.get(rule);
         Messenger.print_server_message(sender.getEntityWorld().getMinecraftServer(), s);
 		updateCarpetClientsRule(rule, value);
 	}

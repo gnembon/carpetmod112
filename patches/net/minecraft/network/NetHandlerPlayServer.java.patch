@@ -75,7 +75,7 @@
                              }
  
 -                            if (!this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_82766_b("disableElytraMovementCheck") || !this.field_147369_b.func_184613_cA()))
-+                            if (!CarpetSettings.antiCheat && !this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_82766_b("disableElytraMovementCheck") || !this.field_147369_b.func_184613_cA()))
++                            if (!CarpetSettings.antiCheatSpeed && !this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_82766_b("disableElytraMovementCheck") || !this.field_147369_b.func_184613_cA()))
                              {
                                  float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
  
@@ -114,7 +114,7 @@
                              {
 -                                itemstack1.func_190917_f(i);
 +                                // Crafting window duplication clitch fixed CARPET-XCOM
-+                                if(!CarpetSettings.getBool("craftingWindowDuplicationFix") || ItemStack.func_185132_d(itemstack, itemstack1) )
++                                if(!CarpetSettings.craftingWindowDuplicationFix || ItemStack.func_185132_d(itemstack, itemstack1) )
 +                                {
 +                                    itemstack1.func_190917_f(i);
 +                                }

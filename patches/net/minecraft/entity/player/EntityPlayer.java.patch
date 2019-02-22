@@ -19,7 +19,7 @@
      public int func_82145_z()
      {
 +        //CM
-+        if (CarpetSettings.getBool("portalCreativeDelay"))
++        if (CarpetSettings.portalCreativeDelay)
 +        {
 +            if ( PortalHelper.player_holds_obsidian(this))
 +            {
@@ -36,7 +36,7 @@
  
 -        if (!this.field_70170_p.field_72995_K && (this.field_70143_R > 0.5F || this.func_70090_H() || this.func_184218_aH()) || this.field_71075_bZ.field_75100_b)
 +        //CM conditions
-+        boolean parrots_will_drop = !CarpetSettings.getBool("persistentParrots") || this.field_71075_bZ.field_75102_a;
++        boolean parrots_will_drop = !CarpetSettings.persistentParrots || this.field_71075_bZ.field_75102_a;
 +        if (!this.field_70170_p.field_72995_K && ((parrots_will_drop && this.field_70143_R > 0.5F) || this.func_70090_H() || (parrots_will_drop && this.func_184218_aH()) ) || this.field_71075_bZ.field_75100_b )
          {
              this.func_192030_dh();
@@ -57,7 +57,7 @@
 -                this.func_192030_dh();
 +                //this.spawnShoulderEntities();
 +                //CM optionally dismount parrots
-+                if (CarpetSettings.getBool("persistentParrots") && !this.func_70093_af())
++                if (CarpetSettings.persistentParrots && !this.func_70093_af())
 +                {
 +                    if (this.field_70146_Z.nextFloat() < ((p_70097_2_)/15.0) )
 +                    {

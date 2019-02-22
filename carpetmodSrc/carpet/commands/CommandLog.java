@@ -183,7 +183,7 @@ public class CommandLog extends CommandCarpetBase {
     @Override
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos)
     {
-        if (!CarpetSettings.getBool("commandLog"))
+        if (!CarpetSettings.commandLog)
         {
             return Collections.<String>emptyList();
         }

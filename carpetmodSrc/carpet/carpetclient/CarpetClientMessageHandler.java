@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import carpet.CarpetSettings;
-import carpet.CarpetSettings.CarpetSettingEntry;
 import carpet.helpers.TickSpeed;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -58,17 +57,16 @@ public class CarpetClientMessageHandler {
         PacketBuffer data = new PacketBuffer(Unpooled.buffer());
         data.writeInt(GUI_ALL_DATA);
 
-        ArrayList<CarpetSettingEntry> list = CarpetSettings.getAllCarpetSettings();
+        String[] list = CarpetSettings.findAll(null);
 
         data.writeString(CarpetSettings.carpetVersion);
         data.writeFloat(TickSpeed.tickrate);
-        data.writeInt(list.size());
-        for (CarpetSettingEntry cse : list) {
-            String rule = cse.getName();
-            String current = cse.getStringValue();
-            String[] options = cse.getOptions();
-            String def = cse.getDefault();
-            boolean isfloat = cse.getIsFloat();
+        data.writeInt(list.length);
+        for (String rule : list) {
+            String current = CarpetSettings.get(rule);
+            String[] options = CarpetSettings.getOptions(rule);
+            String def = CarpetSettings.getDefault(rule);
+            boolean isfloat = CarpetSettings.isDouble(rule);
 
             data.writeString(rule);
             data.writeString(current);
