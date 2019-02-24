@@ -8,7 +8,7 @@
 +import carpet.CarpetSettings;
 +import carpet.carpetclient.CarpetClientServer;
 +import carpet.helpers.IPlayerSensitiveTileEntity;
-+import carpet.utils.PluginChannelTracker;
++import carpet.network.PluginChannelTracker;
 +import net.minecraft.entity.player.EntityPlayerMP;
 +
 +public class TileEntityStructure extends TileEntity implements IPlayerSensitiveTileEntity
@@ -46,7 +46,7 @@
 +    public SPacketUpdateTileEntity getUpdatePacketPlayerSensitive(EntityPlayerMP player)
 +    {
 +        NBTTagCompound updateTag = func_189517_E_();
-+        if (!PluginChannelTracker.isRegistered(player, CarpetClientServer.CARPET_CHANNEL_NAME) && (field_184424_i.func_177958_n() > 32 || field_184424_i.func_177956_o() > 32 || field_184424_i.func_177952_p() > 32))
++        if (!CarpetClientServer.isPlayerRegistered(player) && (field_184424_i.func_177958_n() > 32 || field_184424_i.func_177956_o() > 32 || field_184424_i.func_177952_p() > 32))
 +        {
 +            updateTag.func_74768_a("sizeX", 0);
 +            updateTag.func_74768_a("sizeY", 0);

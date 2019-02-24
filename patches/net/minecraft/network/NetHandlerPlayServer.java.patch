@@ -170,7 +170,7 @@
          }
 +        else // CM handling all the packets from modders cheaters
 +        {
-+            CarpetServer.customPacket(this.field_147369_b, s, p_147349_1_);
++            CarpetServer.pluginChannels.process(this.field_147369_b, p_147349_1_);
 +        }
      }
  }

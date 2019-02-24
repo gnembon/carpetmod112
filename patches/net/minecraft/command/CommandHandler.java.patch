@@ -10,19 +10,20 @@
  public abstract class CommandHandler implements ICommandManager
  {
      private static final Logger field_147175_a = LogManager.getLogger();
-@@ -37,6 +40,11 @@
+@@ -37,6 +40,12 @@
          astring = func_71559_a(astring);
          ICommand icommand = this.field_71562_a.get(s);
          int i = 0;
 +        
 +        EntityPlayerMP worldEditPlayer = p_71556_1_ instanceof EntityPlayerMP ? (EntityPlayerMP) p_71556_1_ : null;
 +        boolean nonWorldEditCommand = icommand != null && !icommand.getClass().getName().startsWith("carpet.worldedit.");
++        boolean weEnabledPre = WorldEditBridge.worldEditEnabled();
 +        if (nonWorldEditCommand)
 +            WorldEditBridge.startEditSession(worldEditPlayer);
  
          try
          {
-@@ -50,6 +58,7 @@
+@@ -50,6 +59,7 @@
              }
              else if (icommand.func_184882_a(this.func_184879_a(), p_71556_1_))
              {
@@ -30,13 +31,13 @@
                  if (j > -1)
                  {
                      List<Entity> list = EntitySelector.<Entity>func_179656_b(p_71556_1_, astring[j], Entity.class);
-@@ -96,6 +105,11 @@
+@@ -96,6 +106,11 @@
              textcomponenttranslation.func_150256_b().func_150238_a(TextFormatting.RED);
              p_71556_1_.func_145747_a(textcomponenttranslation);
          }
 +        finally
 +        {
-+            if (nonWorldEditCommand)
++            if (nonWorldEditCommand && weEnabledPre)
 +                WorldEditBridge.finishEditSession(worldEditPlayer);
 +        }
  
