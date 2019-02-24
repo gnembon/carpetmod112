@@ -108,7 +108,6 @@ public class PluginChannelManager {
 
     private void sendChannelUpdate(Collection<EntityPlayerMP> players, String updateType, Collection<String> channels) {
         if (players.isEmpty()) return;
-        LOG.info(updateType + ": " + String.join(", ", channels));
         String joinedChannels = String.join("\0", channels);
         ByteBuf payload = Unpooled.wrappedBuffer(joinedChannels.getBytes(Charsets.UTF_8));
         SPacketCustomPayload packet = new SPacketCustomPayload(updateType, new PacketBuffer(payload));
