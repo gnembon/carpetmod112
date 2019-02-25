@@ -29,7 +29,7 @@
 +        /*
 +         * Carpet settings to make only players be able to control minecarts. CARPET-XCOM
 +         */
-+        if (entity instanceof EntityLivingBase && (!CarpetSettings.getBool("mobsDontControlMinecarts") || entity instanceof EntityPlayer))
++        if (entity instanceof EntityLivingBase && (!CarpetSettings.mobsDontControlMinecarts || entity instanceof EntityPlayer))
          {
              double d6 = (double)((EntityLivingBase)entity).field_191988_bg;
  

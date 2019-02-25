@@ -33,7 +33,7 @@
 +    public void func_70636_d()
 +    {
 +        super.func_70636_d();
-+        if (this.field_70146_Z.nextInt(400) == 0 && CarpetSettings.getBool("rideableGhasts") && this.field_70725_aQ == 0 && this.func_184207_aI())
++        if (this.field_70146_Z.nextInt(400) == 0 && CarpetSettings.rideableGhasts && this.field_70725_aQ == 0 && this.func_184207_aI())
 +        {
 +            this.func_70691_i(1.0F);
 +        }
@@ -45,7 +45,7 @@
 +    */
 +    public boolean func_184645_a(EntityPlayer player, EnumHand hand)
 +    {
-+        if (!(CarpetSettings.getBool("rideableGhasts")) || this.func_184207_aI())
++        if (!(CarpetSettings.rideableGhasts) || this.func_184207_aI())
 +        {
 +            return super.func_184645_a(player, hand);
 +        }
@@ -83,7 +83,7 @@
 +                {
 +                    return false;
 +                }
-+                if (CarpetSettings.getBool("rideableGhasts") && this.field_179470_b.func_145818_k_() )
++                if (CarpetSettings.rideableGhasts && this.field_179470_b.func_145818_k_() )
 +                {
 +                    if (this.field_179470_b.func_184207_aI())
 +                    {
@@ -108,7 +108,7 @@
              {
                  this.field_179470_b.func_175454_a(false);
 +                //CM added reset attacking entity, but this should be here from day one
-+                if (CarpetSettings.getBool("rideableGhasts"))
++                if (CarpetSettings.rideableGhasts)
 +                {
 +                    this.field_179470_b.func_70624_b(null);
 +                }

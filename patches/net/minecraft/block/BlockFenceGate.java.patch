@@ -16,7 +16,7 @@
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
 -        return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185904_a().func_76220_a() ? super.func_176196_c(p_176196_1_, p_176196_2_) : false;
-+        return (p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185904_a().func_76220_a()  || CarpetSettings.getBool("relaxedBlockPlacement") )? super.func_176196_c(p_176196_1_, p_176196_2_) : false; // CM added condition to place in mid air
++        return (p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185904_a().func_76220_a()  || CarpetSettings.relaxedBlockPlacement )? super.func_176196_c(p_176196_1_, p_176196_2_) : false; // CM added condition to place in mid air
      }
  
      @Nullable

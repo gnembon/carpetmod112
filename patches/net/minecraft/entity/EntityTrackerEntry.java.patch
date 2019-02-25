@@ -15,7 +15,7 @@
                      this.field_73132_a.func_184178_b(p_73117_1_);
                      p_73117_1_.func_184848_d(this.field_73132_a);
 +                    
-+                    if (!"false".equals(CarpetSettings.get("leashFix")) && this.field_73132_a instanceof EntityLiving)
++                    if (!"false".equals(CarpetSettings.leashFix) && this.field_73132_a instanceof EntityLiving)
 +                    {
 +                        p_73117_1_.field_71135_a.func_147359_a(new SPacketEntityAttach(this.field_73132_a, ((EntityLiving)this.field_73132_a).func_110166_bE()));
 +                    }

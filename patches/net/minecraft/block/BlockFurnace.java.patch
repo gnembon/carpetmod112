@@ -14,7 +14,7 @@
      public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
      {
 +    	// A bug that causes bad rotations fixed in 1.13 CARPET-XCOM #not needed in 1.13
-+    	if(CarpetSettings.getBool("accurateBlockPlacement")) { return; }
++    	if(CarpetSettings.accurateBlockPlacement) { return; }
          this.func_176445_e(p_176213_1_, p_176213_2_, p_176213_3_);
      }
  

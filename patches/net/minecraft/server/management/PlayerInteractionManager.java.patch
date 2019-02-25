@@ -29,7 +29,7 @@
                  this.field_180240_f = p_180784_1_;
                  int i = (int)(f * 10.0F);
 +                //CM mining ghost blocks fix
-+                if (CarpetSettings.getBool("miningGhostBlocksFix"))
++                if (CarpetSettings.miningGhostBlocksFix)
 +                {
 +                    field_73090_b.field_71135_a.func_147359_a(new SPacketBlockChange(field_73092_a, field_180240_f));
 +                }

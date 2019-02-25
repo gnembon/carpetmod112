@@ -38,7 +38,7 @@
 +    /* carpet mod moving entities selector */
      private void func_184322_i(float p_184322_1_)
      {
-+        if (CarpetSettings.getBool("pocketPushing"))
++        if (CarpetSettings.pocketPushing)
 +        {
 +            moveCollidedEntities_old();
 +        }
@@ -211,7 +211,7 @@
 -                this.field_145850_b.func_180501_a(this.field_174879_c, this.field_174932_a, 3);
 -                this.field_145850_b.func_190524_a(this.field_174879_c, this.field_174932_a.func_177230_c(), this.field_174879_c);
 +                //CM piston_ghost_blocks
-+                if (CarpetSettings.pistonGhostBlocksFix == 1 )
++                if (CarpetSettings.pistonGhostBlocksFix)
 +                {
 +                    IBlockState blockstate = this.field_145850_b.func_180495_p(this.field_174879_c);
 +                    this.field_145850_b.func_184138_a(field_174879_c.func_177972_a(blockstate.func_177229_b(BlockPistonExtension.field_176387_N).func_176734_d()), blockstate, blockstate, 0);
@@ -235,7 +235,7 @@
          this.field_174931_f = EnumFacing.func_82600_a(p_145839_1_.func_74762_e("facing"));
          this.field_145873_m = p_145839_1_.func_74760_g("progress");
          this.field_145870_n = this.field_145873_m;
-+        if (CarpetSettings.getBool("pistonSerializationFix") && p_145839_1_.func_150297_b("lastProgress", 5)) // CM: piston serialization fix
++        if (CarpetSettings.pistonSerializationFix && p_145839_1_.func_150297_b("lastProgress", 5)) // CM: piston serialization fix
 +            this.field_145870_n = p_145839_1_.func_74760_g("lastProgress");
          this.field_145875_k = p_145839_1_.func_74767_n("extending");
          this.field_145872_l = p_145839_1_.func_74767_n("source");
@@ -255,7 +255,7 @@
          p_189515_1_.func_74768_a("blockId", Block.func_149682_b(this.field_174932_a.func_177230_c()));
          p_189515_1_.func_74768_a("blockData", this.field_174932_a.func_177230_c().func_176201_c(this.field_174932_a));
          p_189515_1_.func_74768_a("facing", this.field_174931_f.func_176745_a());
-+        if (CarpetSettings.getBool("pistonSerializationFix")) // CM: piston serialization fix
++        if (CarpetSettings.pistonSerializationFix) // CM: piston serialization fix
 +        {
 +            p_189515_1_.func_74776_a("progress", this.field_145873_m);
 +            p_189515_1_.func_74776_a("lastProgress", this.field_145870_n);

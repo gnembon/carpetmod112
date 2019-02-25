@@ -35,11 +35,11 @@
          int i1 = 0;
          this.func_71192_d("menu.generatingTerrain");
          int j1 = 0;
-+        if (CarpetSettings.getBool("tickingAreas"))
++        if (CarpetSettings.tickingAreas)
 +        {
 +            TickingArea.initialChunkLoad(this, true);
 +        }
-+        if (!CarpetSettings.getBool("disableSpawnChunks"))
++        if (!CarpetSettings.disableSpawnChunks)
 +        {
          field_147145_h.info("Preparing start region for level 0");
          WorldServer worldserver = this.field_71305_c[0];
@@ -74,10 +74,10 @@
                  this.field_175591_ab = func_130071_aq();
                  long i = 0L;
 -                this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
-+                if ("_".equals(CarpetSettings.getString("customMOTD")))
++                if ("_".equals(CarpetSettings.customMOTD))
 +                    this.field_147147_p.func_151315_a(new TextComponentString(this.field_71286_C));
 +                else
-+                    this.field_147147_p.func_151315_a(new TextComponentString(CarpetSettings.getString("customMOTD")));
++                    this.field_147147_p.func_151315_a(new TextComponentString(CarpetSettings.customMOTD));
                  this.field_147147_p.func_151321_a(new ServerStatusResponse.Version("1.12", 335));
                  this.func_184107_a(this.field_147147_p);
  
@@ -123,7 +123,7 @@
                          {
 -                            i -= 50L;
 +                            i -= TickSpeed.mspt; /* carpet mod 50L */
-+                            if (CarpetSettings.getBool("watchdogFix") && keeping_up)
++                            if (CarpetSettings.watchdogFix && keeping_up)
 +                            {
 +                                this.field_175591_ab = func_130071_aq();
 +                                this.field_71296_Q = true;

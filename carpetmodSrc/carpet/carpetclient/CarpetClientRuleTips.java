@@ -19,6 +19,6 @@ public class CarpetClientRuleTips {
 
 	private static String getRuleTip(String rule)
     {
-        return CarpetSettings.get(rule).getToast();
+        return CarpetSettings.getDescription(rule);
 	}
 }

@@ -19,7 +19,7 @@
 +                /*
 +                 * Adding a check for mounting when breeding. CARPET-XCOM
 +                 */
-+                if(!CarpetSettings.getBool("breedingMountingDisabled") || isValidBreedingItem(itemstack)) this.func_110237_h(p_184645_1_);
++                if(!CarpetSettings.breedingMountingDisabled || isValidBreedingItem(itemstack)) this.func_110237_h(p_184645_1_);
 +
                  return true;
              }

@@ -36,7 +36,7 @@ public abstract class CommandCarpetBase extends CommandBase
     }
     public boolean command_enabled(String command_name, ICommandSender sender)
     {
-        if (!CarpetSettings.getBool(command_name))
+        if (!CarpetSettings.get(command_name).equalsIgnoreCase("true"))
         {
             msg(sender, Messenger.m(null, "w Command is disabled in carpet settings"));
             if (!(sender instanceof EntityPlayer)) return false;

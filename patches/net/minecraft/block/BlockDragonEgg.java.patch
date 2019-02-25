@@ -18,7 +18,7 @@
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)
      {
 +    	// Added funtions for renewable dragon eggs. Feed them meet. CARPET-XCOM
-+        if(CarpetSettings.getBool("renewableDragonEggs"))
++        if(CarpetSettings.renewableDragonEggs)
 +        {
 +            ItemStack itemstack = p_180639_4_.func_184586_b(p_180639_5_);
 +            if (isMeat(itemstack.func_77973_b()))

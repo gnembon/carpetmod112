@@ -14,7 +14,7 @@
      {
          Block block = p_176594_1_.func_180495_p(p_176594_2_).func_177230_c();
 -        boolean flag = block == Blocks.field_185775_db || block == Blocks.field_150428_aP;
-+        boolean flag = block == Blocks.field_185775_db || (block == Blocks.field_150428_aP && !CarpetSettings.getBool("relaxedBlockPlacement"));
++        boolean flag = block == Blocks.field_185775_db || (block == Blocks.field_150428_aP && !CarpetSettings.relaxedBlockPlacement);
  
          if (p_176594_1_.func_180495_p(p_176594_2_).func_185896_q())
          {

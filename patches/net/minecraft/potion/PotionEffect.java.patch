@@ -1,0 +1,81 @@
+--- ../src-base/minecraft/net/minecraft/potion/PotionEffect.java
++++ ../src-work/minecraft/net/minecraft/potion/PotionEffect.java
+@@ -6,6 +6,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import carpet.CarpetSettings;
++
+ public class PotionEffect implements Comparable<PotionEffect>
+ {
+     private static final Logger field_180155_a = LogManager.getLogger();
+@@ -16,6 +18,9 @@
+     private boolean field_82724_e;
+     private boolean field_188421_h;
+ 
++    // CM
++    public PotionEffect previous;
++
+     public PotionEffect(Potion p_i46811_1_)
+     {
+         this(p_i46811_1_, 0, 0);
+@@ -49,28 +54,49 @@
+         this.field_188421_h = p_i1577_1_.field_188421_h;
+     }
+ 
+-    public void func_76452_a(PotionEffect p_76452_1_)
++    // Carpet: void -> PotionEffect, other -> other for smaller diff
++    public PotionEffect combine(PotionEffect other)
+     {
+-        if (this.field_188420_b != p_76452_1_.field_188420_b)
++        if (this.field_188420_b != other.field_188420_b)
+         {
+             field_180155_a.warn("This method should only be called for matching effects!");
+         }
++        // CM
++        if (other == this) {
++            return this;
++        }
++        if (CarpetSettings.effectsFix && !this.field_82724_e && other.field_76461_c >= this.field_76461_c && other.field_76460_b < this.field_76460_b) {
++            boolean stack = true;
++            for (PotionEffect e = other; e != null; e = e.previous) {
++                if (e == this) {
++                    field_180155_a.warn("Tried to recursively combine effects " + this + " and " + other);
++                    stack = false;
++                    break;
++                }
++            }
++            if (stack) {
++                other.previous = this;
++                return other;
++            }
++        }
++        // CM END
+ 
+-        if (p_76452_1_.field_76461_c > this.field_76461_c)
++        if (other.field_76461_c > this.field_76461_c)
+         {
+-            this.field_76461_c = p_76452_1_.field_76461_c;
+-            this.field_76460_b = p_76452_1_.field_76460_b;
++            this.field_76461_c = other.field_76461_c;
++            this.field_76460_b = other.field_76460_b;
+         }
+-        else if (p_76452_1_.field_76461_c == this.field_76461_c && this.field_76460_b < p_76452_1_.field_76460_b)
++        else if (other.field_76461_c == this.field_76461_c && this.field_76460_b < other.field_76460_b)
+         {
+-            this.field_76460_b = p_76452_1_.field_76460_b;
++            this.field_76460_b = other.field_76460_b;
+         }
+-        else if (!p_76452_1_.field_82724_e && this.field_82724_e)
++        else if (!other.field_82724_e && this.field_82724_e)
+         {
+-            this.field_82724_e = p_76452_1_.field_82724_e;
++            this.field_82724_e = other.field_82724_e;
+         }
+ 
+-        this.field_188421_h = p_76452_1_.field_188421_h;
++        this.field_188421_h = other.field_188421_h;
++        return this; // Carpet added return
+     }
+ 
+     public Potion func_188419_a()

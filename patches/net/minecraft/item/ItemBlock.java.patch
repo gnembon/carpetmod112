@@ -18,7 +18,7 @@
  
 +            //Carpet Mod Accurate block placement replacement code
 +            IBlockState iblockstate1 = null;
-+            if(CarpetSettings.getBool("accurateBlockPlacement") && p_180614_6_ > 1)
++            if(CarpetSettings.accurateBlockPlacement && p_180614_6_ > 1)
 +            {
 +                iblockstate1 = BlockRotator.alternativeBlockPlacement(this.field_150939_a, p_180614_2_, p_180614_3_, p_180614_5_, p_180614_6_, p_180614_7_, p_180614_8_, i, p_180614_1_);
 +            }

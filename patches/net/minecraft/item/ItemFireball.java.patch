@@ -20,7 +20,7 @@
 +
 +    public ActionResult<ItemStack> func_77659_a(World itemStackIn, EntityPlayer worldIn, EnumHand playerIn)
 +    {
-+        if (!(CarpetSettings.getBool("rideableGhasts") && worldIn.func_184187_bx() instanceof EntityGhast))
++        if (!(CarpetSettings.rideableGhasts && worldIn.func_184187_bx() instanceof EntityGhast))
 +        {
 +            return super.func_77659_a(itemStackIn, worldIn, playerIn);
 +        }

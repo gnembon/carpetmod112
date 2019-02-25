@@ -19,6 +19,6 @@
 +        /*
 +         * Added missing tool for piston CARPET-XCOM
 +         */
-+        return material != Material.field_151573_f && material != Material.field_151574_g && material != Material.field_151576_e && (!CarpetSettings.getBool("missingTools") || (material != Material.field_76233_E && material != Material.field_151592_s)) ? super.func_150893_a(p_150893_1_, p_150893_2_) : this.field_77864_a;
++        return material != Material.field_151573_f && material != Material.field_151574_g && material != Material.field_151576_e && (!CarpetSettings.missingTools || (material != Material.field_76233_E && material != Material.field_151592_s)) ? super.func_150893_a(p_150893_1_, p_150893_2_) : this.field_77864_a;
      }
  }

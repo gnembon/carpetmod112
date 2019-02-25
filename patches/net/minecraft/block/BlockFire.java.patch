@@ -16,7 +16,7 @@
                      p_180650_1_.func_180501_a(p_180650_2_, p_180650_3_, 4);
                  }
 +                // CM added if statement around
-+                if (!flag || !CarpetSettings.getBool("calmNetherFires"))
++                if (!flag || !CarpetSettings.calmNetherFires)
 +                {
 +                    p_180650_1_.func_175684_a(p_180650_2_, this, this.func_149738_a(p_180650_1_) + p_180650_4_.nextInt(10));
 +                }

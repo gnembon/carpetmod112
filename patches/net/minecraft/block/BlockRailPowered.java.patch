@@ -9,7 +9,7 @@
  public class BlockRailPowered extends BlockRailBase
  {
      public static final PropertyEnum<BlockRailBase.EnumRailDirection> field_176568_b = PropertyEnum.<BlockRailBase.EnumRailDirection>func_177708_a("shape", BlockRailBase.EnumRailDirection.class, new Predicate<BlockRailBase.EnumRailDirection>()
-@@ -32,7 +34,10 @@
+@@ -32,7 +34,11 @@
      @SuppressWarnings("incomplete-switch")
      protected boolean func_176566_a(World p_176566_1_, BlockPos p_176566_2_, IBlockState p_176566_3_, boolean p_176566_4_, int p_176566_5_)
      {
@@ -17,11 +17,12 @@
 +        /*
 +         * Edit rail powered limit editable CARPET-XCOM
 +         */
-+        if (p_176566_5_ >= CarpetSettings.railPowerLimit)
++        // Rail limit -1 because 8 is the code default. But counted to 9 including the source in human terms.
++        if (p_176566_5_ >= CarpetSettings.railPowerLimit - 1)
          {
              return false;
          }
-@@ -228,6 +233,14 @@
+@@ -228,6 +234,14 @@
  
                  switch ((BlockRailBase.EnumRailDirection)p_185499_1_.func_177229_b(field_176568_b))
                  {

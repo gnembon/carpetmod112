@@ -243,7 +243,7 @@ public class CommandSpawn extends CommandCarpetBase
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
-        if (!CarpetSettings.getBool("commandSpawn"))
+        if (!CarpetSettings.commandSpawn)
         {
             return Collections.<String>emptyList();
         }

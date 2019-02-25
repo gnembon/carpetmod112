@@ -45,7 +45,7 @@ public class CommandDistance extends CommandCarpetBase
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
-        if (!CarpetSettings.getBool("commandDistance"))
+        if (!CarpetSettings.commandDistance)
         {
             return Collections.<String>emptyList();
         }

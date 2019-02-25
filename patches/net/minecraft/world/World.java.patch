@@ -274,7 +274,7 @@
 +        CarpetProfiler.start_section(world_name, "tileentities");
  
          this.field_72984_F.func_76318_c("blockEntities");
-+        if (CarpetSettings.getBool("hopperDuplicationFix") && !this.field_147483_b.isEmpty())
++        if (CarpetSettings.hopperDuplicationFix && !this.field_147483_b.isEmpty())
 +        {
 +            this.field_175730_i.removeAll(this.field_147483_b);
 +            this.field_147482_g.removeAll(this.field_147483_b);
@@ -326,7 +326,7 @@
          this.field_147481_N = false;
  
 -        if (!this.field_147483_b.isEmpty())
-+        if (!CarpetSettings.getBool("hopperDuplicationFix") && !this.field_147483_b.isEmpty())
++        if (!CarpetSettings.hopperDuplicationFix && !this.field_147483_b.isEmpty())
          {
              this.field_175730_i.removeAll(this.field_147483_b);
              this.field_147482_g.removeAll(this.field_147483_b);
@@ -367,7 +367,7 @@
  
 -            if (!entity.field_70128_L && entity.field_70156_m && entity != p_72917_2_ && (p_72917_2_ == null || entity.func_184223_x(p_72917_2_)))
 +            // carpet mod replaces: if (!entity.isDead && entity.preventEntitySpawning && entity != entityIn && (entityIn == null || entity.isRidingSameEntity(entityIn)))
-+            if (!entity.field_70128_L && entity.field_70156_m && entity != p_72917_2_ && (p_72917_2_ == null || entity.func_184223_x(p_72917_2_) || CarpetSettings.getBool("1.8Spawning")))
++            if (!entity.field_70128_L && entity.field_70156_m && entity != p_72917_2_ && (p_72917_2_ == null || entity.func_184223_x(p_72917_2_) || CarpetSettings._1_8Spawning))
              {
                  return false;
              }

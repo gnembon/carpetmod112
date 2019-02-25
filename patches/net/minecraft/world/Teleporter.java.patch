@@ -30,7 +30,7 @@
              flag = false;
          }
 -        else
-+        else if (CarpetSettings.getBool("portalCaching") && this.destinationHistoryCache.containsKey(l)) // potential best candidate for linkage.
++        else if (CarpetSettings.portalCaching && this.destinationHistoryCache.containsKey(l)) // potential best candidate for linkage.
          {
 +            Teleporter.PortalPosition teleporter$portalposition_cm = (Teleporter.PortalPosition)this.destinationHistoryCache.get(l);
 +            if (this.field_85192_a.func_180495_p(teleporter$portalposition_cm).func_177230_c() == Blocks.field_150427_aO)
@@ -52,7 +52,7 @@
                  this.field_85191_c.put(l, new Teleporter.PortalPosition(blockpos, this.field_85192_a.func_82737_E()));
              }
 +            /* carpet mod */
-+            if (CarpetSettings.getBool("portalCaching") && (flag || flag_cm))
++            if (CarpetSettings.portalCaching && (flag || flag_cm))
 +            {
 +                //its timeless
 +                this.destinationHistoryCache.put(l, new Teleporter.PortalPosition(blockpos, 0L));
@@ -70,7 +70,7 @@
 +            //CM portalSuffocationFix
 +            //removed offset calculation outside of the if statement
 +            double offset = (1.0D - p_180620_1_.func_181014_aG().field_72450_a) * (double)blockpattern$patternhelper.func_181118_d() * (double)blockpattern$patternhelper.func_177669_b().func_176746_e().func_176743_c().func_179524_a();
-+            if (CarpetSettings.getBool("portalSuffocationFix"))
++            if (CarpetSettings.portalSuffocationFix)
 +            {
 +                double entity_corrected_radius = 1.02*(double)p_180620_1_.field_70130_N/2;
 +                if (entity_corrected_radius >= (double)blockpattern$patternhelper.func_181118_d()-entity_corrected_radius)
@@ -107,7 +107,7 @@
 +                /*
 +                 * Resets the players postion after move to fix a bug created in the teleportation. CARPET-XCOM
 +                 */
-+                if(CarpetSettings.getBool("portalTeleportationFix") )
++                if(CarpetSettings.portalTeleportationFix )
 +                {
 +                    ((EntityPlayerMP)p_180620_1_).field_71135_a.func_184342_d();
 +                }
@@ -119,7 +119,7 @@
              }
          }
 +        /* carpet mod */
-+        if (CarpetSettings.getBool("portalCaching"))
++        if (CarpetSettings.portalCaching)
 +        {
 +            clearHistoryCache();
 +        }
@@ -134,7 +134,7 @@
 +            /* carpet mod */
 +            //failsafe - arbitrary, but will never happen in normal circumstances, 
 +            //but who knows these freekin players.
-+            if (CarpetSettings.getBool("portalCaching") && this.destinationHistoryCache.size()> 65000 )
++            if (CarpetSettings.portalCaching && this.destinationHistoryCache.size()> 65000 )
 +            {
 +                removeAllCachedEntries();
 +            }

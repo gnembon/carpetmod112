@@ -18,7 +18,7 @@
 +    public void func_180645_a(World worldIn, BlockPos pos, IBlockState state, Random random)
 +    {
 +        super.func_180645_a(worldIn, pos, state, random);
-+        if (!CarpetSettings.getBool("spongeRandom"))
++        if (!CarpetSettings.spongeRandom)
 +        {
 +            return;
 +        }

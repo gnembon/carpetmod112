@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandTP.java
++++ ../src-work/minecraft/net/minecraft/command/CommandTP.java
+@@ -13,6 +13,10 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ 
++import net.minecraft.world.WorldServer;
++import carpet.CarpetSettings;
++import carpet.utils.Waypoint;
++
+ public class CommandTP extends CommandBase
+ {
+     public String func_71517_b()
+@@ -38,6 +42,17 @@
+         }
+         else
+         {
++            // CM
++            if (p_184881_3_.length <= 2 && CarpetSettings.commandWaypoint) {
++                Entity entity = p_184881_3_.length == 1 ? func_71521_c(p_184881_2_) : func_184885_b(p_184881_1_, p_184881_2_, p_184881_3_[0]);
++                Waypoint waypoint = Waypoint.find(p_184881_3_[p_184881_3_.length - 1], (WorldServer) entity.field_70170_p, p_184881_1_.field_71305_c);
++                if (waypoint != null) {
++                    waypoint.teleport(entity);
++                    func_152373_a(p_184881_2_, this, "commands.tp.success", entity.func_70005_c_(), waypoint.getFullName());
++                    return;
++                }
++            }
++            // CM END
+             int i = 0;
+             Entity entity;
+ 

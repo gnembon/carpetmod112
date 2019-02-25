@@ -49,7 +49,7 @@
                  }
  
 -                if (!world.func_180501_a(blockpos, iblockstate, 2))
-+                if (!world.func_180501_a(blockpos, iblockstate, 2 | (CarpetSettings.getBool("fillUpdates")?0:128) )) // CM
++                if (!world.func_180501_a(blockpos, iblockstate, 2 | (CarpetSettings.fillUpdates?0:128) )) // CM
                  {
                      throw new CommandException("commands.setblock.noChange", new Object[0]);
                  }
@@ -59,7 +59,7 @@
  
 -                    world.func_175722_b(blockpos, iblockstate.func_177230_c(), false);
 +                    // CM
-+                    if (CarpetSettings.getBool("fillUpdates"))
++                    if (CarpetSettings.fillUpdates)
 +                    {
 +                        world.func_175722_b(blockpos, iblockstate.func_177230_c(), false);
 +                    }

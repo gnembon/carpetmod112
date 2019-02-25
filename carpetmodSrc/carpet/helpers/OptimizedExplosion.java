@@ -260,7 +260,7 @@ public class OptimizedExplosion
                         d2 = d2 / d3;
                         float rand = e.world.rand.nextFloat();
                         if (CarpetSettings.tntRandomRange >= 0) {
-                            rand = CarpetSettings.tntRandomRange;
+                            rand = (float) CarpetSettings.tntRandomRange;
                         }
                         float f = e.size * (0.7F + rand * 0.6F);
                         double d4 = e.x;
@@ -375,7 +375,7 @@ public class OptimizedExplosion
         double yInc = (yRel / len) * 0.3;
         double zInc = (zRel / len) * 0.3;
         float rand = e.world.rand.nextFloat();
-        float sizeRand = (CarpetSettings.tntRandomRange >= 0F ? CarpetSettings.tntRandomRange : rand);
+        float sizeRand = (CarpetSettings.tntRandomRange >= 0 ? (float) CarpetSettings.tntRandomRange : rand);
         float size = e.size * (0.7F + sizeRand * 0.6F);
         double posX = e.x;
         double posY = e.y;

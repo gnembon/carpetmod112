@@ -131,9 +131,9 @@ public class CommandPlayer extends CommandCarpetBase
             {
                 throw new WrongUsageException("player "+playerName+" already exists");
             }
-            if (playerName.length()<3 || playerName.length()>11)
+            if (playerName.length() < 3 || playerName.length() > 16)
             {
-                throw new WrongUsageException("player names can only be 3 to 11 chars long");
+                throw new WrongUsageException("player names can only be 3 to 16 chars long");
             }
             Vec3d vec3d = sender.getPositionVector();
             double d0 = vec3d.x;
@@ -279,7 +279,7 @@ public class CommandPlayer extends CommandCarpetBase
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
     {
-        if (!CarpetSettings.getBool("commandPlayer"))
+        if (!CarpetSettings.commandPlayer)
         {
             return Collections.emptyList();
         }

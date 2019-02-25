@@ -29,7 +29,7 @@
 +                /*
 +                 * Adding Ctrl + Q to craft and throw. CARPET-XCOM
 +                 */
-+                if(CarpetSettings.getBool("ctrlQCraftingFix") && p_184996_1_ == 0 && p_184996_2_ == 1)
++                if(CarpetSettings.ctrlQCraftingFix && p_184996_1_ == 0 && p_184996_2_ == 1)
 +                {
 +                    for (ItemStack itemstackDropAll = CtrlQcrafting.dropAllCrafting(p_184996_4_, p_184996_1_, field_75151_b); !itemstackDropAll.func_190926_b() && ItemStack.func_179545_c(slot2.func_75211_c(), itemstackDropAll); itemstackDropAll = CtrlQcrafting.dropAllCrafting(p_184996_4_, p_184996_1_, field_75151_b))
 +                    {

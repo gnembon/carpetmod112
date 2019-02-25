@@ -61,7 +61,7 @@
 +        /*
 +         * Adding code here for combining XP orbs. CARPET-XCOM
 +         */
-+        if (CarpetSettings.getBool("combineXPOrbs") )
++        if (CarpetSettings.combineXPOrbs )
 +        {
 +            if (this.delayBeforeCombine > 0)
 +            {
@@ -80,7 +80,7 @@
          {
 -            if (this.field_70532_c == 0 && p_70100_1_.field_71090_bL == 0)
 +            //CM added ORed condition
-+            if (this.field_70532_c == 0 && (p_70100_1_.field_71090_bL == 0 || CarpetSettings.getBool("xpNoCooldown")) )
++            if (this.field_70532_c == 0 && (p_70100_1_.field_71090_bL == 0 || CarpetSettings.xpNoCooldown) )
              {
                  p_70100_1_.field_71090_bL = 2;
                  p_70100_1_.func_71001_a(this, 1);

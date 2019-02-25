@@ -28,7 +28,7 @@
              else if (EntityList.field_191307_a.equals(new ResourceLocation(s)))
              {
 -                world.func_72942_c(new EntityLightningBolt(world, d0, d1, d2, false));
-+                if(!CarpetSettings.getBool("summonNaturalLightning"))
++                if(!CarpetSettings.summonNaturalLightning)
 +                {
 +                    world.func_72942_c(new EntityLightningBolt(world, d0, d1, d2, false));
 +                }

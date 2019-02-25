@@ -81,7 +81,7 @@
                      this.field_70181_x *= -0.5D;
  
 +                    if (block == Blocks.field_150467_bQ &&
-+                            CarpetSettings.getBool("renewablePackedIce") &&
++                            CarpetSettings.renewablePackedIce &&
 +                            this.field_70170_p.func_180495_p(new BlockPos(this.field_70165_t, this.field_70163_u - 0.059999999776482582D, this.field_70161_v)).func_177230_c()==Blocks.field_150432_aD  )
 +                    {
 +                        if (iceCount < 2)

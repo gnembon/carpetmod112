@@ -54,6 +54,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityHeadLook(instance, (byte)(instance.rotationYawHead * 256 / 360) ),instance.dimension);
         server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityTeleport(instance),instance.dimension);
         server.getPlayerList().serverUpdateMovingPlayer(instance);
+        instance.dataManager.set(PLAYER_MODEL_FLAG, (byte) 0x7f); // show all model layers (incl. capes)
         return instance;
     }
 
@@ -94,11 +95,13 @@ public class EntityPlayerMPFake extends EntityPlayerMP
             return gameProfile;
     }
 
+    @Override
     public void onKillCommand()
     {
-        this.getServer().getPlayerList().playerLoggedOut(this);
+        logout();
     }
 
+    @Override
     public void onUpdate()
     {
         super.onUpdate();
@@ -110,6 +113,11 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     public void onDeath(DamageSource cause)
     {
         super.onDeath(cause);
+        logout();
+    }
+
+    private void logout() {
+        this.dismountRidingEntity();
         getServer().getPlayerList().playerLoggedOut(this);
     }
 

@@ -29,10 +29,10 @@
                  tileentitynote.field_145880_i = flag;
 +
 +                //Added note block imitation in 1.13 CARPET-XCOM
-+                if(CarpetSettings.noteBlockImitation) p_189540_2_.func_175685_c(p_189540_3_, this, true);
++                if(CarpetSettings.noteBlockImitationOf1_13) p_189540_2_.func_175685_c(p_189540_3_, this, true);
 +            }else if(saveSoundEvent == null || saveSoundEvent != instrument){
 +	            saveSoundEvent = instrument;
-+	            if(CarpetSettings.noteBlockImitation) p_189540_2_.func_190522_c(p_189540_3_, p_189540_4_);
++	            if(CarpetSettings.noteBlockImitationOf1_13) p_189540_2_.func_190522_c(p_189540_3_, p_189540_4_);
              }
          }
      }
@@ -41,7 +41,7 @@
              }
  
 +            //Added note block imitation in 1.13 CARPET-XCOM
-+            if(CarpetSettings.noteBlockImitation) p_180639_1_.func_175685_c(p_180639_2_, this, true);
++            if(CarpetSettings.noteBlockImitationOf1_13) p_180639_1_.func_175685_c(p_180639_2_, this, true);
 +
              return true;
          }

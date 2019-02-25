@@ -17,7 +17,7 @@
  
 +    public void func_70077_a(EntityLightningBolt lightningBolt)
 +    {
-+        if (!this.field_70170_p.field_72995_K && !this.field_70128_L && CarpetSettings.getBool("renewableElderGuardians"))
++        if (!this.field_70170_p.field_72995_K && !this.field_70128_L && CarpetSettings.renewableElderGuardians)
 +        {
 +            EntityElderGuardian entityguardian = new EntityElderGuardian(this.field_70170_p);
 +            entityguardian.func_70012_b(this.field_70165_t, this.field_70163_u, this.field_70161_v, this.field_70177_z, this.field_70125_A);

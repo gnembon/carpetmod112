@@ -21,7 +21,7 @@
 +        /*
 +         * Added missing tool for sponge CARPET-XCOM
 +         */
-+        if (block != Blocks.field_150321_G && p_150893_2_.func_185904_a() != Material.field_151584_j && (!CarpetSettings.getBool("missingTools") || p_150893_2_.func_185904_a() != Material.field_151583_m))
++        if (block != Blocks.field_150321_G && p_150893_2_.func_185904_a() != Material.field_151584_j && (!CarpetSettings.missingTools || p_150893_2_.func_185904_a() != Material.field_151583_m))
          {
              return block == Blocks.field_150325_L ? 5.0F : super.func_150893_a(p_150893_1_, p_150893_2_);
          }

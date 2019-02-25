@@ -34,7 +34,7 @@ public class WorldEditBridge
     
     private static boolean worldEditEnabled()
     {
-        return CarpetSettings.getBool("worldEdit") && worldEditPresent;
+        return CarpetSettings.worldEdit && worldEditPresent;
     }
     
     public static void onServerLoaded(MinecraftServer server)

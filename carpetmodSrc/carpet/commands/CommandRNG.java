@@ -330,7 +330,7 @@ public class CommandRNG extends CommandCarpetBase {
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
             @Nullable BlockPos targetPos)
     {
-        if (!CarpetSettings.getBool("commandRNG"))
+        if (!CarpetSettings.commandRNG)
         {
             return Collections.<String>emptyList();
         }
