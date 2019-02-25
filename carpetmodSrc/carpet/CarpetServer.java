@@ -3,6 +3,8 @@ package carpet;
 import carpet.helpers.StackTraceDeobfuscator;
 import carpet.network.PluginChannelManager;
 import carpet.network.ToggleableChannelHandler;
+import carpet.pubsub.PubSubManager;
+import carpet.pubsub.PubSubMessenger;
 import carpet.utils.HUDController;
 import carpet.utils.TickingArea;
 import carpet.utils.Waypoint;
@@ -12,7 +14,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Random;
 
-import narcolepticfrog.rsmm.events.PlayerConnectionEventDispatcher;
 import narcolepticfrog.rsmm.events.TickStartEventDispatcher;
 import narcolepticfrog.rsmm.server.RSMMServer;
 
@@ -27,18 +28,23 @@ import net.minecraft.world.WorldServer;
 public class CarpetServer // static for now - easier to handle all around the code, its one anyways
 {
     public static final Random rand = new Random((int)((2>>16)*Math.random()));
-    public static MinecraftServer minecraft_server;
+    public static final PubSubManager PUBSUB = new PubSubManager();
+    public static final PubSubMessenger PUBSUB_MESSENGER = new PubSubMessenger(PUBSUB);
 
+    public static MinecraftServer minecraft_server;
     public static PluginChannelManager pluginChannels;
-    private static CarpetClientServer CCServer;
     public static RSMMServer rsmmServer;
     public static ToggleableChannelHandler rsmmChannel;
     public static ToggleableChannelHandler wecuiChannel;
+
+    private static CarpetClientServer CCServer;
 
     public static void init(MinecraftServer server) //aka constructor of this static singleton class
     {
         minecraft_server = server;
         pluginChannels = new PluginChannelManager(server);
+        pluginChannels.register(PUBSUB_MESSENGER);
+
         CCServer = new CarpetClientServer(server);
         pluginChannels.register(CCServer);
 
@@ -91,6 +97,7 @@ public class CarpetServer // static for now - easier to handle all around the co
         }
         HUDController.update_hud(server);
         WorldEditBridge.onStartTick();
+        PUBSUB.update(server.getTickCounter());
     }
     public static void playerConnected(EntityPlayerMP player)
     {
