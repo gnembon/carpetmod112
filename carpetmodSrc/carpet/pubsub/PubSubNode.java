@@ -81,7 +81,7 @@ public final class PubSubNode {
     private void onSubscribe(PubSubSubscriber subscriber) {
         this.totalSubscriberCount++;
         if (this.provider != null) {
-            subscriber.updateValue(this, this.provider.supplier.get());
+            subscriber.updateValue(this, this.provider.get());
         }
         for (PubSubNode child : children.values()) {
             child.onSubscribe(subscriber);
@@ -142,7 +142,7 @@ public final class PubSubNode {
     void update(int tickCounter) {
         if (totalSubscriberCount == 0) return;
         if (this.provider != null && this.provider.shouldUpdate(tickCounter)) {
-            this.publish(this.provider.supplier.get());
+            this.publish(this.provider.get());
         }
         for (PubSubNode child : children.values()) {
             child.update(tickCounter);
