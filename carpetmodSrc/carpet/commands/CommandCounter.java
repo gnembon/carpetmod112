@@ -3,6 +3,7 @@ package carpet.commands;
 import java.util.Collections;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Locale;
 
 import javax.annotation.Nullable;
 
@@ -38,40 +39,33 @@ public class CommandCounter extends CommandCarpetBase
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if (!command_enabled("hopperCounters", sender)) return;
-        World world = sender.getEntityWorld();
-        if (args.length == 0)
-        {
-
-            msg(sender, HopperCounter.query_hopper_all_stats(server, false));
+        if (args.length == 0) {
+            msg(sender, HopperCounter.formatAll(server, false));
             return;
         }
-        if ("realtime".equalsIgnoreCase(args[0]))
-        {
-            msg(sender, HopperCounter.query_hopper_all_stats(server, true));
+        switch (args[0].toLowerCase(Locale.ROOT)) {
+            case "realtime":
+                msg(sender, HopperCounter.formatAll(server, true));
+                return;
+            case "reset":
+                HopperCounter.resetAll(server);
+                notifyCommandListener(sender, this, "All counters restarted.");
+                return;
+        }
+        HopperCounter counter = HopperCounter.getCounter(args[0]);
+        if (counter == null) throw new WrongUsageException("Invalid color");
+        if (args.length == 1) {
+            msg(sender, counter.format(server,false, false));
             return;
         }
-        if ("reset".equalsIgnoreCase(args[0]))
-        {
-            HopperCounter.reset_hopper_counter(world, null);
-            notifyCommandListener(sender, this, "All counters restarted.");
-            return;
-        }
-        String color = args[0];
-        if (args.length == 1)
-        {
-            msg(sender, HopperCounter.query_hopper_stats_for_color(server, color, false, false));
-            return;
-        }
-        if ("realtime".equalsIgnoreCase(args[1]))
-        {
-            msg(sender, HopperCounter.query_hopper_stats_for_color(server, color, true, false));
-            return;
-        }
-        if ("reset".equalsIgnoreCase(args[1]))
-        {
-            HopperCounter.reset_hopper_counter(world, color);
-            notifyCommandListener(sender, this, String.format("%s counters restarted.", color));
-            return;
+        switch (args[1].toLowerCase(Locale.ROOT)) {
+            case "realtime":
+                msg(sender, counter.format(server, true, false));
+                return;
+            case "reset":
+                counter.reset(server);
+                notifyCommandListener(sender, this, String.format("%s counters restarted.", args[0]));
+                return;
         }
         throw new WrongUsageException(getUsage(sender));
 
@@ -89,7 +83,7 @@ public class CommandCounter extends CommandCarpetBase
             lst.add("reset");
             for (EnumDyeColor clr : EnumDyeColor.values())
             {
-                lst.add(clr.toString());
+                lst.add(clr.name().toLowerCase(Locale.ROOT));
             }
             lst.add("realtime");
             String[] stockArr = new String[lst.size()];
