@@ -1,6 +1,8 @@
 package carpet.helpers;
 //Author: masa
 
+import java.math.RoundingMode;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -516,16 +518,18 @@ public class OptimizedExplosion
             }
         }
         double chance = 1 - total;
-        final double tot = total;
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        nf.setRoundingMode (RoundingMode.DOWN);
+        nf.setMaximumFractionDigits(2);
         for(EntityPlayer player : e.world.playerEntities){
             Messenger.m(player,"w Pop: ",
-                    String.format("c %.2f ", chance),
+                    "c " + nf.format(chance) + " ",
                     "^w Chance for the block to be destroyed by the blast: " + chance,
                     "?" + chance,
                     "w Remain: ",
-                    String.format("c %.2f ", tot),
-                    "^w Chance the block survives the blast: " + tot,
-                    "?" + tot,
+                    String.format("c %.2f ", total),
+                    "^w Chance the block survives the blast: " + total,
+                    "?" + total,
                     "w Rays: ",
                     String.format("c %d ", rays),
                     "^w TNT blast rays going through the block",
