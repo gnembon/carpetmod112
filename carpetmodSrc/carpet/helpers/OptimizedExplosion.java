@@ -501,14 +501,15 @@ public class OptimizedExplosion
     private static void showTNTblastChance(Explosion e){
         double randMax = 0.6F * e.size;
         double total = 0;
+        boolean fullyBlownUp = false;
         boolean first = true;
         int rays = 0;
         for(float f3 : chances){
             rays++;
             double calc = f3 - randMax;
-                if(calc > 0) total = 1.0d;
+                if(calc > 0) fullyBlownUp = true;
             double chancePerRay = (Math.abs(calc) / randMax);
-            if(total != 1.0d){
+            if(!fullyBlownUp){
                 if(first){
                     first = false;
                     total = chancePerRay;
@@ -517,6 +518,7 @@ public class OptimizedExplosion
                 }
             }
         }
+        if(fullyBlownUp) total = 0;
         double chance = 1 - total;
         NumberFormat nf = NumberFormat.getNumberInstance();
         nf.setRoundingMode (RoundingMode.DOWN);
