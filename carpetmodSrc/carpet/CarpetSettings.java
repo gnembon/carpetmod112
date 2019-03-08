@@ -38,7 +38,7 @@ public class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v19_02_17";
+    public static final String carpetVersion = "v19_03_08";
     public static final String minecraftVersion = "1.12";
     public static final String mcpMappings = "20180713-1.12";
 
@@ -207,6 +207,7 @@ public class CarpetSettings
 
     @Rule(desc = "Transparent observers, TNT and redstone blocks. May cause lighting artifacts", category = CREATIVE, validator = "validateFlyingMachineTransparent")
     public static boolean flyingMachineTransparent = false;
+
     private static boolean validateFlyingMachineTransparent(boolean value) {
         int newOpacity = value ? 0 : 255;
         Blocks.OBSERVER.setLightOpacity(newOpacity);
@@ -317,7 +318,11 @@ public class CarpetSettings
     @Rule(desc = "Disables player entity collision.", category = {CREATIVE, EXPERIMENTAL})
     public static boolean disablePlayerCollision = false;
 
+    @Rule(desc = "Enables randomtick indexing on carpet client.", category = {CREATIVE})
+    public static boolean randomtickingChunkUpdates = false;
 
+    @Rule(desc = "Disables snow, ice and lightning in nether and end for stable LCG.", category = {CREATIVE})
+    public static boolean enableStableLCGNetherEnd = false;
     // ===== FIXES ===== //
     /*
      * Rules in this category should end with the "Fix" suffix
