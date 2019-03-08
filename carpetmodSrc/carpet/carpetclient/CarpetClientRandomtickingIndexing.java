@@ -6,6 +6,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.management.PlayerChunkMap;
+import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
 import java.util.ArrayList;
@@ -14,17 +15,19 @@ import java.util.List;
 
 public class CarpetClientRandomtickingIndexing {
 
-    private static boolean updates = false;
+    private static boolean[] updates = {false, false, false};
     private static boolean enableUpdates = false;
     private static List<EntityPlayerMP> players = new ArrayList<>();
 
-    public static void enableUpdate() {
+    public static void enableUpdate(EntityPlayerMP player) {
         if (!enableUpdates) return;
-        updates = CarpetSettings.randomtickingChunkUpdates;
+        int dimention = player.world.provider.getDimensionType().getId() + 1;
+        updates[dimention] = CarpetSettings.randomtickingChunkUpdates;
     }
 
-    public static boolean sendUpdates() {
-        return updates;
+    public static boolean sendUpdates(World world) {
+        int dimention = world.provider.getDimensionType().getId() + 1;
+        return updates[dimention];
     }
 
     public static void register(EntityPlayerMP sender, PacketBuffer data) {
@@ -39,7 +42,8 @@ public class CarpetClientRandomtickingIndexing {
     private static void registerPlayer(EntityPlayerMP sender) {
         players.add(sender);
         enableUpdates = true;
-        updates = CarpetSettings.randomtickingChunkUpdates;
+        int dimention = sender.world.provider.getDimensionType().getId() + 1;
+        updates[dimention] = CarpetSettings.randomtickingChunkUpdates;
     }
 
     public static void unregisterPlayer(EntityPlayerMP player) {
@@ -47,7 +51,7 @@ public class CarpetClientRandomtickingIndexing {
         if (players.size() == 0) enableUpdates = false;
     }
 
-    public static void sendRandomtickingChunkOrder(PlayerChunkMap playerChunkMap) {
+    public static void sendRandomtickingChunkOrder(World world, PlayerChunkMap playerChunkMap) {
         NBTTagCompound compound = new NBTTagCompound();
         NBTTagList nbttaglist = new NBTTagList();
         for (Iterator<Chunk> iterator = playerChunkMap.getChunkIterator(); iterator.hasNext(); ) {
@@ -62,7 +66,8 @@ public class CarpetClientRandomtickingIndexing {
             CarpetClientMessageHandler.sendNBTRandomTickData(p, compound);
         }
 
-        updates = false;
+        int dimention = world.provider.getDimensionType().getId() + 1;
+        updates[dimention] = false;
     }
 
 }

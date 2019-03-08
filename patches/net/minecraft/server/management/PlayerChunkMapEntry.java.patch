@@ -48,7 +48,7 @@
          }
 +
 +        // Added to enable randomticking chunk updates Carpet-XCOM
-+        carpet.carpetclient.CarpetClientRandomtickingIndexing.enableUpdate();
++        carpet.carpetclient.CarpetClientRandomtickingIndexing.enableUpdate(p_187276_1_);
      }
  
      public void func_187277_b(EntityPlayerMP p_187277_1_)
@@ -69,7 +69,7 @@
          }
 +
 +        // Added to enable randomticking chunk updates Carpet-XCOM
-+        carpet.carpetclient.CarpetClientRandomtickingIndexing.enableUpdate();
++        carpet.carpetclient.CarpetClientRandomtickingIndexing.enableUpdate(p_187277_1_);
      }
  
      public boolean func_187268_a(boolean p_187268_1_)
