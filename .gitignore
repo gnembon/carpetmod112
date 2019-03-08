@@ -45,3 +45,5 @@ whitelist.json
 /crash-reports/
 /worldedit.properties
 /carpet/
+/buildSrc/out/
+/run/
