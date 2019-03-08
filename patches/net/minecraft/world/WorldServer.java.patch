@@ -179,7 +179,7 @@
              boolean flag = this.func_72896_J();
              boolean flag1 = this.func_72911_I();
              this.field_72984_F.func_76320_a("pollingChunks");
-+            boolean overworldIceOnly = !CarpetSettings.enableStableLCGNetherEnd || field_73011_w.func_186058_p().func_186068_a() != 0; // Rule to disable nether and end ice snow and lightning Carpet-XCOM
++            boolean overworldIceOnly = !CarpetSettings.enableStableLCGNetherEnd || field_73011_w.func_186058_p().func_186068_a() == 0; // Rule to disable nether and end ice snow and lightning Carpet-XCOM
  
              for (Iterator<Chunk> iterator = this.field_73063_M.func_187300_b(); iterator.hasNext(); this.field_72984_F.func_76319_b())
              {
