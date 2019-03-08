@@ -24,6 +24,7 @@ public class CarpetClientMessageHandler {
     public static final int LARGE_BOUNDINGBOX_MARKERS = 8;
     public static final int CHUNK_LOGGER = 9;
 	public static final int PISTON_UPDATES = 10;
+    public static final int RANDOMTICK_DISPLAY = 11;
 
     public static void handler(EntityPlayerMP sender, PacketBuffer data) {
         int type = data.readInt();
@@ -38,6 +39,8 @@ public class CarpetClientMessageHandler {
             boundingboxRequest(sender, data);
         } else if (CHUNK_LOGGER == type) {
             CarpetClientChunkLogger.logger.registerPlayer(sender, data);
+        } else if (RANDOMTICK_DISPLAY == type) {
+            CarpetClientRandomtickingIndexing.register(sender, data);
         }
     }
 
@@ -167,4 +170,13 @@ public class CarpetClientMessageHandler {
 
 		CarpetClientServer.sender(data);
 	}
+
+    public static void sendNBTRandomTickData(EntityPlayerMP sender, NBTTagCompound compound) {
+        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+        data.writeInt(CarpetClientMessageHandler.RANDOMTICK_DISPLAY);
+        try {
+            data.writeCompoundTag(compound);
+        }catch(Exception e){ }
+        CarpetClientServer.sender(data, sender);
+    }
 }
