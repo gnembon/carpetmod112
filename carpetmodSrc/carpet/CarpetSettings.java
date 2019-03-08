@@ -321,6 +321,8 @@ public class CarpetSettings
     @Rule(desc = "Enables randomtick indexing on carpet client.", category = {CREATIVE})
     public static boolean randomtickingChunkUpdates = false;
 
+    @Rule(desc = "Disables snow, ice and lightning in nether and end for stable LCG.", category = {CREATIVE})
+    public static boolean enableStableLCGNetherEnd = false;
     // ===== FIXES ===== //
     /*
      * Rules in this category should end with the "Fix" suffix
