@@ -25,7 +25,7 @@ public class PacketSplitter {
             PacketBuffer buf = new PacketBuffer(Unpooled.buffer(thisLen));
             buf.resetWriterIndex();
             if (offset == 0) buf.writeVarInt(len);
-            buf.writeBytes(packet.readBytes(thisLen));
+            buf.writeBytes(packet, thisLen);
             player.connection.sendPacket(new SPacketCustomPayload(channel, buf));
         }
         packet.release();
