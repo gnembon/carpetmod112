@@ -3,15 +3,13 @@ package carpet;
 import carpet.helpers.StackTraceDeobfuscator;
 import carpet.network.PluginChannelManager;
 import carpet.network.ToggleableChannelHandler;
-import carpet.pubsub.PubSubManager;
-import carpet.pubsub.PubSubMessenger;
-import carpet.utils.HUDController;
-import carpet.utils.TickingArea;
-import carpet.utils.Waypoint;
+import carpet.pubsub.*;
+import carpet.utils.*;
 import carpet.worldedit.WorldEditBridge;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.Locale;
 import java.util.Random;
 
 import narcolepticfrog.rsmm.events.TickStartEventDispatcher;
@@ -20,9 +18,11 @@ import narcolepticfrog.rsmm.server.RSMMServer;
 import carpet.carpetclient.CarpetClientServer;
 
 import carpet.helpers.TickSpeed;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayerMP;
 import carpet.logging.LoggerRegistry;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.WorldServer;
 
 public class CarpetServer // static for now - easier to handle all around the code, its one anyways
@@ -69,10 +69,28 @@ public class CarpetServer // static for now - easier to handle all around the co
     {
         TickingArea.loadConfig(server);
         for (WorldServer world : server.worlds) {
+            int dim = world.provider.getDimensionType().getId();
             try {
                 world.waypoints = Waypoint.loadWaypoints(world);
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
+            }
+
+            String prefix = "minecraft." + world.provider.getDimensionType().getName();
+            new PubSubInfoProvider<>(PUBSUB,prefix + ".chunk_loading.dropped_chunks.hash_size",20,
+                    () -> UnloadOrder.getCurrentHashSize(world));
+            for (EnumCreatureType creatureType : EnumCreatureType.values()) {
+                String mobCapPrefix = prefix + ".mob_cap." + creatureType.name().toLowerCase(Locale.ROOT);
+                new PubSubInfoProvider<>(PUBSUB, mobCapPrefix + ".filled", 20, () -> {
+                    Tuple<Integer, Integer> mobCap = SpawnReporter.mobcaps.get(dim).get(creatureType);
+                    if (mobCap == null) return 0;
+                    return mobCap.getFirst();
+                });
+                new PubSubInfoProvider<>(PUBSUB, mobCapPrefix + ".total", 20, () -> {
+                    Tuple<Integer, Integer> mobCap = SpawnReporter.mobcaps.get(dim).get(creatureType);
+                    if (mobCap == null) return 0;
+                    return mobCap.getSecond();
+                });
             }
         }
     }
