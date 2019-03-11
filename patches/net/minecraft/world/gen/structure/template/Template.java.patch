@@ -40,3 +40,72 @@
                          if (template$blockinfo2.field_186244_c != null)
                          {
                              TileEntity tileentity1 = p_189960_1_.func_175625_s(blockpos1);
+@@ -287,6 +296,20 @@
+ 
+     private void func_186263_a(World p_186263_1_, BlockPos p_186263_2_, Mirror p_186263_3_, Rotation p_186263_4_, @Nullable StructureBoundingBox p_186263_5_)
+     {
++        if(CarpetSettings.structuresReplaceEntities){
++            Predicate<Entity> NOT_PLAYER = new Predicate<Entity>()
++            {
++                public boolean apply(Entity entity)
++                {
++                    return !(entity instanceof EntityPlayer);
++                }
++            };
++            for(Entity e : p_186263_1_.func_175647_a(Entity.class, new AxisAlignedBB(p_186263_2_, new BlockPos(func_186269_a((new Vec3d(p_186263_2_.func_177971_a(field_186272_c))) , p_186263_3_, p_186263_4_))), NOT_PLAYER) ){
++                System.out.println(e);
++                e.func_174812_G();
++            }
++        }
++
+         for (Template.EntityInfo template$entityinfo : this.field_186271_b)
+         {
+             BlockPos blockpos = func_186268_a(template$entityinfo.field_186248_b, p_186263_3_, p_186263_4_).func_177971_a(p_186263_2_);
+@@ -435,11 +458,11 @@
+     {
+         p_191158_0_.func_188258_a(FixTypes.STRUCTURE, new IDataWalker()
+         {
+-            public NBTTagCompound func_188266_a(IDataFixer p_188266_1_, NBTTagCompound p_188266_2_, int p_188266_3_)
++            public NBTTagCompound func_188266_a(IDataFixer fixer, NBTTagCompound compound, int versionIn)
+             {
+-                if (p_188266_2_.func_150297_b("entities", 9))
++                if (compound.func_150297_b("entities", 9))
+                 {
+-                    NBTTagList nbttaglist = p_188266_2_.func_150295_c("entities", 10);
++                    NBTTagList nbttaglist = compound.func_150295_c("entities", 10);
+ 
+                     for (int i = 0; i < nbttaglist.func_74745_c(); ++i)
+                     {
+@@ -447,14 +470,14 @@
+ 
+                         if (nbttagcompound.func_150297_b("nbt", 10))
+                         {
+-                            nbttagcompound.func_74782_a("nbt", p_188266_1_.func_188251_a(FixTypes.ENTITY, nbttagcompound.func_74775_l("nbt"), p_188266_3_));
++                            nbttagcompound.func_74782_a("nbt", fixer.func_188251_a(FixTypes.ENTITY, nbttagcompound.func_74775_l("nbt"), versionIn));
+                         }
+                     }
+                 }
+ 
+-                if (p_188266_2_.func_150297_b("blocks", 9))
++                if (compound.func_150297_b("blocks", 9))
+                 {
+-                    NBTTagList nbttaglist1 = p_188266_2_.func_150295_c("blocks", 10);
++                    NBTTagList nbttaglist1 = compound.func_150295_c("blocks", 10);
+ 
+                     for (int j = 0; j < nbttaglist1.func_74745_c(); ++j)
+                     {
+@@ -462,12 +485,12 @@
+ 
+                         if (nbttagcompound1.func_150297_b("nbt", 10))
+                         {
+-                            nbttagcompound1.func_74782_a("nbt", p_188266_1_.func_188251_a(FixTypes.BLOCK_ENTITY, nbttagcompound1.func_74775_l("nbt"), p_188266_3_));
++                            nbttagcompound1.func_74782_a("nbt", fixer.func_188251_a(FixTypes.BLOCK_ENTITY, nbttagcompound1.func_74775_l("nbt"), versionIn));
+                         }
+                     }
+                 }
+ 
+-                return p_188266_2_;
++                return compound;
+             }
+         });
+     }

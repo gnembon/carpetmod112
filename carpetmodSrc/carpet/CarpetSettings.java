@@ -208,6 +208,9 @@ public class CarpetSettings
     @Rule(desc = "Transparent observers, TNT and redstone blocks. May cause lighting artifacts", category = CREATIVE, validator = "validateFlyingMachineTransparent")
     public static boolean flyingMachineTransparent = false;
 
+    @Rule(desc = "Structure blocks remove entities in the bounding box when load entity option is enabled.", category = CREATIVE)
+    public static boolean structuresReplaceEntities = false;
+
     private static boolean validateFlyingMachineTransparent(boolean value) {
         int newOpacity = value ? 0 : 255;
         Blocks.OBSERVER.setLightOpacity(newOpacity);
