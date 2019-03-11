@@ -11,6 +11,7 @@ import net.minecraft.block.BlockStructure;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -248,8 +249,12 @@ public class EntityPlayerActionPack
     }
     public void mount()
     {
-        List<Entity> entities = player.world.getEntitiesWithinAABBExcludingEntity(player,player.getEntityBoundingBox().expand(3.0D, 1.0D, 3.0D));
-        if (entities.size()==0)
+        List<Entity> entities = player.world.getEntitiesInAABBexcluding(
+                player,
+                player.getEntityBoundingBox().expand(3.0D, 1.0D, 3.0D),
+                other -> !(other instanceof EntityPlayer)
+        );
+        if (entities.size() == 0)
         {
             return;
         }

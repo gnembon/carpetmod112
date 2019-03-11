@@ -175,7 +175,15 @@
      {
          return this.func_72863_F().func_73149_a(p_175680_1_, p_175680_2_);
      }
-@@ -357,6 +435,11 @@
+@@ -346,6 +424,7 @@
+             boolean flag = this.func_72896_J();
+             boolean flag1 = this.func_72911_I();
+             this.field_72984_F.func_76320_a("pollingChunks");
++            boolean overworldIceOnly = !CarpetSettings.enableStableLCGNetherEnd || field_73011_w.func_186058_p().func_186068_a() == 0; // Rule to disable nether and end ice snow and lightning Carpet-XCOM
+ 
+             for (Iterator<Chunk> iterator = this.field_73063_M.func_187300_b(); iterator.hasNext(); this.field_72984_F.func_76319_b())
+             {
+@@ -357,9 +436,14 @@
                  chunk.func_76594_o();
                  this.field_72984_F.func_76318_c("tickChunk");
                  chunk.func_150804_b(false);
@@ -186,8 +194,21 @@
 +                }
                  this.field_72984_F.func_76318_c("thunder");
  
-                 if (flag && flag1 && this.field_73012_v.nextInt(100000) == 0)
-@@ -445,7 +528,7 @@
+-                if (flag && flag1 && this.field_73012_v.nextInt(100000) == 0)
++                if (overworldIceOnly && flag && flag1 && this.field_73012_v.nextInt(100000) == 0)
+                 {
+                     this.field_73005_l = this.field_73005_l * 3 + 1013904223;
+                     int l = this.field_73005_l >> 2;
+@@ -387,7 +471,7 @@
+ 
+                 this.field_72984_F.func_76318_c("iceandsnow");
+ 
+-                if (this.field_73012_v.nextInt(16) == 0)
++                if (overworldIceOnly && this.field_73012_v.nextInt(16) == 0)
+                 {
+                     this.field_73005_l = this.field_73005_l * 3 + 1013904223;
+                     int j2 = this.field_73005_l >> 2;
+@@ -445,7 +529,7 @@
          }
      }
  
@@ -196,7 +217,7 @@
      {
          BlockPos blockpos = this.func_175725_q(p_175736_1_);
          AxisAlignedBB axisalignedbb = (new AxisAlignedBB(blockpos, new BlockPos(blockpos.func_177958_n(), this.func_72800_K(), blockpos.func_177952_p()))).func_186662_g(3.0D);
-@@ -505,9 +588,10 @@
+@@ -505,9 +589,10 @@
                      {
                          iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
                      }
@@ -208,7 +229,7 @@
              }
  
              p_175654_3_ = 1;
-@@ -646,9 +730,18 @@
+@@ -646,9 +731,18 @@
              }
              else
              {
@@ -229,7 +250,7 @@
                  }
  
                  this.field_72984_F.func_76320_a("cleaning");
-@@ -679,6 +772,8 @@
+@@ -679,6 +773,8 @@
  
                      if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0), nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0)))
                      {
@@ -238,7 +259,7 @@
                          IBlockState iblockstate = this.func_180495_p(nextticklistentry1.field_180282_a);
  
                          if (iblockstate.func_185904_a() != Material.field_151579_a && Block.func_149680_a(iblockstate.func_177230_c(), nextticklistentry1.func_151351_a()))
-@@ -701,6 +796,7 @@
+@@ -701,6 +797,7 @@
                          this.func_175684_a(nextticklistentry1.field_180282_a, nextticklistentry1.func_151351_a(), 0);
                      }
                  }
@@ -246,7 +267,7 @@
  
                  this.field_72984_F.func_76319_b();
                  this.field_94579_S.clear();
-@@ -1057,6 +1153,7 @@
+@@ -1057,6 +1154,7 @@
          this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
          this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
          Entity[] aentity = p_72923_1_.func_70021_al();
@@ -254,7 +275,7 @@
  
          if (aentity != null)
          {
-@@ -1152,11 +1249,14 @@
+@@ -1152,11 +1250,14 @@
  
              for (BlockEventData blockeventdata : this.field_147490_S[i])
              {

@@ -1,8 +1,15 @@
 package carpet.helpers;
 //Author: masa
 
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import carpet.logging.LoggerRegistry;
+import carpet.utils.Messenger;
+import net.minecraft.util.text.ITextComponent;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -47,8 +54,12 @@ public class OptimizedExplosion
     private static ObjectOpenHashSet<BlockPos> affectedBlockPositionsSet = new ObjectOpenHashSet<>();
     private static boolean firstRay;
     private static boolean rayCalcDone;
+    private static ArrayList<Float> chances = new ArrayList<>();
+    private static BlockPos blastChanceLocation;
 
     public static void doExplosionA(Explosion e) {
+        blastCalc(e);
+
         if (!CarpetSettings.explosionNoBlockDamage) {
 			rayCalcDone = false;
 			firstRay = true;
@@ -430,5 +441,110 @@ public class OptimizedExplosion
         }
 
         return false;
+    }
+
+    public static void setBlastChanceLocation(BlockPos p){
+        blastChanceLocation = p;
+    }
+
+    private static void blastCalc(Explosion e){
+        if(blastChanceLocation == null || blastChanceLocation.distanceSq(e.x, e.y, e.z) > 200) return;
+        chances.clear();
+        for (int j = 0; j < 16; ++j) {
+            for (int k = 0; k < 16; ++k) {
+                for (int l = 0; l < 16; ++l) {
+                    if (j == 0 || j == 15 || k == 0 || k == 15 || l == 0 || l == 15) {
+                        double d0 = (double) ((float) j / 15.0F * 2.0F - 1.0F);
+                        double d1 = (double) ((float) k / 15.0F * 2.0F - 1.0F);
+                        double d2 = (double) ((float) l / 15.0F * 2.0F - 1.0F);
+                        double d3 = Math.sqrt(d0 * d0 + d1 * d1 + d2 * d2);
+                        d0 = d0 / d3;
+                        d1 = d1 / d3;
+                        d2 = d2 / d3;
+                        float f = e.size * (0.7F + 0.6F);
+                        double d4 = e.x;
+                        double d6 = e.y;
+                        double d8 = e.z;
+                        boolean found = false;
+
+                        for (float f1 = 0.3F; f > 0.0F; f -= 0.22500001F) {
+                            BlockPos blockpos = new BlockPos(d4, d6, d8);
+                            IBlockState iblockstate = e.world.getBlockState(blockpos);
+
+                            if (iblockstate.getMaterial() != Material.AIR) {
+                                float f2 = e.exploder != null
+                                        ? e.exploder.getExplosionResistance(e, e.world, blockpos, iblockstate)
+                                        : iblockstate.getBlock().getExplosionResistance((Entity) null);
+                                f -= (f2 + 0.3F) * 0.3F;
+                            }
+
+                            if (f > 0.0F && (e.exploder == null ||
+                                    e.exploder.canExplosionDestroyBlock(e, e.world, blockpos, iblockstate, f))) {
+                                if(!found && blockpos.equals(blastChanceLocation)){
+                                    chances.add(f);
+                                    found = true;
+                                }
+                            }
+
+                            d4 += d0 * 0.30000001192092896D;
+                            d6 += d1 * 0.30000001192092896D;
+                            d8 += d2 * 0.30000001192092896D;
+                        }
+                    }
+                }
+            }
+        }
+
+        showTNTblastChance(e);
+    }
+
+    private static void showTNTblastChance(Explosion e){
+        double randMax = 0.6F * e.size;
+        double total = 0;
+        boolean fullyBlownUp = false;
+        boolean first = true;
+        int rays = 0;
+        for(float f3 : chances){
+            rays++;
+            double calc = f3 - randMax;
+                if(calc > 0) fullyBlownUp = true;
+            double chancePerRay = (Math.abs(calc) / randMax);
+            if(!fullyBlownUp){
+                if(first){
+                    first = false;
+                    total = chancePerRay;
+                }else {
+                    total = total * chancePerRay;
+                }
+            }
+        }
+        if(fullyBlownUp) total = 0;
+        double chance = 1 - total;
+        NumberFormat nf = NumberFormat.getNumberInstance();
+        nf.setRoundingMode (RoundingMode.DOWN);
+        nf.setMaximumFractionDigits(2);
+        for(EntityPlayer player : e.world.playerEntities){
+            Messenger.m(player,"w Pop: ",
+                    "c " + nf.format(chance) + " ",
+                    "^w Chance for the block to be destroyed by the blast: " + chance,
+                    "?" + chance,
+                    "w Remain: ",
+                    String.format("c %.2f ", total),
+                    "^w Chance the block survives the blast: " + total,
+                    "?" + total,
+                    "w Rays: ",
+                    String.format("c %d ", rays),
+                    "^w TNT blast rays going through the block",
+                    "?" + rays,
+                    "w Size: ",
+                    String.format("c %.1f ", e.size),
+                    "^w TNT blast size",
+                    "?" + e.size,
+                    "w @: ",
+                    String.format("c [%.1f %.1f %.1f] ", e.x, e.y, e.z),
+                    "^w TNT blast location X:" + e.x + " Y:" + e.y + " Z:" + e.z,
+                    "?" + e.x + " " + e.y + " " + e.z
+            );
+        }
     }
 }

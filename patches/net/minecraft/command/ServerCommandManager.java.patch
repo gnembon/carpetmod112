@@ -11,7 +11,7 @@
  public class ServerCommandManager extends CommandHandler implements ICommandListener
  {
      private final MinecraftServer field_184880_a;
-@@ -89,7 +93,36 @@
+@@ -89,7 +93,37 @@
          this.func_71560_a(new CommandLocate());
          this.func_71560_a(new CommandReload());
          this.func_71560_a(new CommandFunction());
@@ -40,6 +40,7 @@
 +        this.func_71560_a(new CommandPlayer());
 +        this.func_71560_a(new CommandAutosave());
 +        this.func_71560_a(new CommandWaypoint());
++        this.func_71560_a(new CommandTNT());
 +        /* end */
 +        // ----- RSMM Start ----- //
 +        this.func_71560_a(new MeterCommand(CarpetServer.rsmmServer));

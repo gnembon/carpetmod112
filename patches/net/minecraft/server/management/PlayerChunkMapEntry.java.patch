@@ -42,7 +42,17 @@
              if (this.field_187283_c.isEmpty())
              {
                  this.field_187289_i = this.field_187282_b.func_72688_a().func_82737_E();
-@@ -80,6 +94,14 @@
+@@ -65,6 +79,9 @@
+                 this.func_187278_c(p_187276_1_);
+             }
+         }
++
++        // Added to enable randomticking chunk updates Carpet-XCOM
++        carpet.carpetclient.CarpetClientRandomtickingIndexing.enableUpdate(p_187276_1_);
+     }
+ 
+     public void func_187277_b(EntityPlayerMP p_187277_1_)
+@@ -80,9 +97,20 @@
  
              if (this.field_187283_c.isEmpty())
              {
@@ -57,7 +67,13 @@
                  this.field_187282_b.func_187305_b(this);
              }
          }
-@@ -95,7 +117,10 @@
++
++        // Added to enable randomticking chunk updates Carpet-XCOM
++        carpet.carpetclient.CarpetClientRandomtickingIndexing.enableUpdate(p_187277_1_);
+     }
+ 
+     public boolean func_187268_a(boolean p_187268_1_)
+@@ -95,7 +123,10 @@
          {
              if (p_187268_1_)
              {
@@ -68,7 +84,7 @@
              }
              else
              {
-@@ -248,12 +273,28 @@
+@@ -248,12 +279,28 @@
      {
          if (p_187273_1_ != null)
          {

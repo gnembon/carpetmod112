@@ -40,6 +40,15 @@
  public abstract class World implements IBlockAccess
  {
      private int field_181546_a = 63;
+@@ -74,7 +94,7 @@
+     protected final IntHashMap<Entity> field_175729_l = new IntHashMap<Entity>();
+     private final long field_73001_c = 16777215L;
+     private int field_73008_k;
+-    protected int field_73005_l = (new Random()).nextInt();
++    public int field_73005_l = (new Random()).nextInt();
+     protected final int field_73006_m = 1013904223;
+     protected float field_73003_n;
+     protected float field_73004_o;
 @@ -104,6 +124,13 @@
      private final WorldBorder field_175728_M;
      int[] field_72994_J;
