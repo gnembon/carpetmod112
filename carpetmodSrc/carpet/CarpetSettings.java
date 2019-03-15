@@ -326,6 +326,12 @@ public class CarpetSettings
 
     @Rule(desc = "Disables snow, ice and lightning in nether and end for stable LCG.", category = {CREATIVE})
     public static boolean enableStableLCGNetherEnd = false;
+
+    @Rule(desc = "Enable creative player no-clip.", category = {CREATIVE})
+    public static boolean creativeNoClip = false;
+
+    @Rule(desc = "Allows players to place blocks inside entity's.", category = {CREATIVE})
+    public static boolean ignoreEntityWhenPlacing = false;
     // ===== FIXES ===== //
     /*
      * Rules in this category should end with the "Fix" suffix

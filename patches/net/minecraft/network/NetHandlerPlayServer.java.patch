@@ -79,17 +79,18 @@
                              {
                                  float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
  
-@@ -554,7 +580,8 @@
+@@ -554,7 +580,9 @@
                              this.field_147369_b.func_70080_a(d4, d5, d6, f, f1);
                              this.field_147369_b.func_71000_j(this.field_147369_b.field_70165_t - d0, this.field_147369_b.field_70163_u - d1, this.field_147369_b.field_70161_v - d2);
  
 -                            if (!this.field_147369_b.field_70145_X && !this.field_147369_b.func_70608_bn())
 +                            // [CM] PistonClippingFix -- Added PistonClippingcounter check to the if statement
-+                            if (!this.field_147369_b.field_70145_X && !this.field_147369_b.func_70608_bn() && this.field_147369_b.pistonClippingCounter == 0)
++                            // Added fix to no clipping creative players. Carpet-XCOM
++                            if (!this.field_147369_b.field_70145_X && !this.field_147369_b.func_70608_bn() && this.field_147369_b.pistonClippingCounter == 0 && (!CarpetSettings.creativeNoClip || !field_147369_b.func_184812_l_()))
                              {
                                  boolean flag1 = worldserver.func_184144_a(this.field_147369_b, this.field_147369_b.func_174813_aQ().func_186664_h(0.0625D)).isEmpty();
  
-@@ -721,7 +748,10 @@
+@@ -721,7 +749,10 @@
          {
              if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < 64.0D && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
              {
@@ -100,7 +101,7 @@
              }
          }
          else
-@@ -745,6 +775,7 @@
+@@ -745,6 +776,7 @@
  
          if (!itemstack.func_190926_b())
          {
@@ -108,7 +109,7 @@
              this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, worldserver, itemstack, enumhand);
          }
      }
-@@ -1200,7 +1231,15 @@
+@@ -1200,7 +1232,15 @@
                              }
                              else
                              {
@@ -125,7 +126,7 @@
                              }
                          }
  
-@@ -1732,13 +1771,14 @@
+@@ -1732,13 +1772,14 @@
                      String s8 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
                      tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
@@ -146,7 +147,7 @@
                      tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
                      String s2 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184411_a(Mirror.valueOf(s2));
-@@ -1775,6 +1815,17 @@
+@@ -1775,6 +1816,17 @@
                          }
                          else
                          {
@@ -164,7 +165,7 @@
                              this.field_147369_b.func_146105_b(new TextComponentTranslation("structure_block.load_prepare", new Object[] {s4}), false);
                          }
                      }
-@@ -1816,5 +1867,9 @@
+@@ -1816,5 +1868,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }
