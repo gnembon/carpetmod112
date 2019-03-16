@@ -133,9 +133,14 @@ public class CommandSpawn extends CommandCarpetBase
             //stop tracking
             SpawnReporter.reset_spawn_stats(false);
             //start tracking
-            SpawnReporter.track_spawns = (long) world.getMinecraftServer().getTickCounter();
+            SpawnReporter.track_spawns = (long) server.getTickCounter();
             //counter reset
-            HopperCounter.reset_hopper_counter(world, counter);
+            if (counter == null) {
+                HopperCounter.resetAll(server);
+            } else {
+                HopperCounter hopperCounter = HopperCounter.getCounter(counter);
+                if (hopperCounter != null) hopperCounter.reset(server);
+            }
             
             // tick warp 0
             TickSpeed.tickrate_advance(null, 0, null, null);

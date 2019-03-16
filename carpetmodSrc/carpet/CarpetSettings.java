@@ -21,6 +21,7 @@ import carpet.carpetclient.CarpetClientChunkLogger;
 import carpet.carpetclient.CarpetClientRuleChanger;
 import carpet.helpers.RandomTickOptimization;
 import carpet.utils.TickingArea;
+import carpet.worldedit.WorldEditBridge;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -179,10 +180,14 @@ public class CarpetSettings
     @SurvivalDefault
     public static boolean hopperCounters = false;
 
-    @Rule(desc = "Enables integration with redstone multimeter mod", category = {CREATIVE, SURVIVAL}, extra = {
+    @Rule(desc = "Enables integration with redstone multimeter mod", category = {CREATIVE, SURVIVAL}, validator = "validateRedstoneMultimeter", extra = {
             "Required clients with RSMM Mod by Narcoleptic Frog. Enables multiplayer experience with RSMM Mod"
     })
     public static boolean redstoneMultimeter = false;
+    private static boolean validateRedstoneMultimeter(boolean value) {
+        CarpetServer.rsmmChannel.setEnabled(value);
+        return true;
+    }
 
     @Rule(desc = "Pistons can push tile entities, like hoppers, chests etc.", category = EXPERIMENTAL)
     public static boolean movableTileEntities = false;
@@ -312,11 +317,15 @@ public class CarpetSettings
         return true;
     }
 
-    @Rule(desc = "Enables/disables WorldEdit.", category = {CREATIVE, EXPERIMENTAL}, extra = {
+    @Rule(desc = "Enables/disables WorldEdit.", category = {CREATIVE, EXPERIMENTAL}, validator = "validateWorldEdit", extra = {
             "Only works in WorldEdit is in the classpath."
     })
     @CreativeDefault
     public static boolean worldEdit = false;
+    private static boolean validateWorldEdit(boolean value) {
+        CarpetServer.wecuiChannel.setEnabled(value && WorldEditBridge.worldEditPresent);
+        return true;
+    }
 
     @Rule(desc = "Disables player entity collision.", category = {CREATIVE, EXPERIMENTAL})
     public static boolean disablePlayerCollision = false;

@@ -99,7 +99,7 @@
 +                    if (!this.func_70301_a(i).func_190926_b())
 +                    {
 +                        ItemStack itemstack = this.func_70301_a(i);//.copy();
-+                        HopperCounter.count_hopper_items(this.func_145831_w(), wool_color, itemstack);
++                        HopperCounter.COUNTERS.get(wool_color).add(this.func_145831_w().func_73046_m(), itemstack);
 +                        this.func_70299_a(i, ItemStack.field_190927_a);
 +                    }
 +                }

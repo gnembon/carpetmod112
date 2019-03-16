@@ -1,6 +1,7 @@
 package carpet.worldedit;
 
 import carpet.CarpetSettings;
+import carpet.network.PluginChannelHandler;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
@@ -18,7 +19,7 @@ import net.minecraft.world.World;
  */
 public class WorldEditBridge
 {
-    private static boolean worldEditPresent;
+    public static boolean worldEditPresent;
     static
     {
         try
@@ -32,7 +33,7 @@ public class WorldEditBridge
         }
     }
     
-    private static boolean worldEditEnabled()
+    public static boolean worldEditEnabled()
     {
         return CarpetSettings.worldEdit && worldEditPresent;
     }
@@ -114,5 +115,19 @@ public class WorldEditBridge
     {
         if (worldEditEnabled())
             CarpetWorldEdit.inst.recordEntityRemoval(player, world, removed);
+    }
+
+    public static PluginChannelHandler createChannelHandler() {
+        return new PluginChannelHandler() {
+            @Override
+            public String[] getChannels() {
+                return new String[]{CarpetWorldEdit.CUI_PLUGIN_CHANNEL};
+            }
+
+            @Override
+            public void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player) {
+                WorldEditBridge.onCustomPayload(packet, player);
+            }
+        };
     }
 }
