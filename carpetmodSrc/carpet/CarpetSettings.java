@@ -211,6 +211,9 @@ public class CarpetSettings
     @Rule(desc = "Structure blocks remove entities in the bounding box when load entity option is enabled.", category = CREATIVE)
     public static boolean structuresReplaceEntities = false;
 
+    @Rule(desc = "Allows to always be able to eat cakes.", category = CREATIVE)
+    public static boolean cakeAlwaysEat;
+
     private static boolean validateFlyingMachineTransparent(boolean value) {
         int newOpacity = value ? 0 : 255;
         Blocks.OBSERVER.setLightOpacity(newOpacity);

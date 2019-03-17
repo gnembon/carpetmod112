@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCake.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCake.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.block;
+ 
++import java.net.CacheRequest;
+ import java.util.Random;
++
++import carpet.CarpetSettings;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.IProperty;
+ import net.minecraft.block.properties.PropertyInteger;
+@@ -61,7 +64,7 @@
+ 
+     private boolean func_180682_b(World p_180682_1_, BlockPos p_180682_2_, IBlockState p_180682_3_, EntityPlayer p_180682_4_)
+     {
+-        if (!p_180682_4_.func_71043_e(false))
++        if (!CarpetSettings.cakeAlwaysEat && !p_180682_4_.func_71043_e(false))
+         {
+             return false;
+         }
