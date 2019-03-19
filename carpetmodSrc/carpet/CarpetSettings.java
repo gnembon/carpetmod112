@@ -641,6 +641,9 @@ public class CarpetSettings
     @SurvivalDefault
     public static boolean dispensersShearSheep = false;
 
+    @Rule(desc = "Right click shulker boxes to open without placing them", category = {FEATURE, EXPERIMENTAL, SURVIVAL})
+    public static boolean shulkerBackpack = false;
+
 
     // ===== API ===== //
 

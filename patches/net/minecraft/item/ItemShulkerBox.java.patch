@@ -1,14 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemShulkerBox.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemShulkerBox.java
-@@ -1,6 +1,7 @@
+@@ -1,5 +1,12 @@
  package net.minecraft.item;
  
- import net.minecraft.block.Block;
++import carpet.helpers.ShulkerBoxInventory;
 +import carpet.CarpetSettings;
++import net.minecraft.entity.player.EntityPlayer;
++import net.minecraft.util.ActionResult;
++import net.minecraft.util.EnumActionResult;
++import net.minecraft.util.EnumHand;
++import net.minecraft.world.World;
+ import net.minecraft.block.Block;
  
  public class ItemShulkerBox extends ItemBlock
- {
-@@ -9,4 +10,12 @@
+@@ -9,4 +16,27 @@
          super(p_i47260_1_);
          this.func_77625_d(1);
      }
@@ -20,4 +25,19 @@
 +    public boolean itemGroundStacking(boolean hasTag){
 +    	return !hasTag && CarpetSettings.stackableEmptyShulkerBoxes;
 +    }
++
++
++    @Override
++    public ActionResult<ItemStack> func_77659_a(World worldIn, EntityPlayer player, EnumHand hand) {
++        ActionResult<ItemStack> vanillaResult = super.func_77659_a(worldIn, player, hand);
++        if (!CarpetSettings.shulkerBackpack || vanillaResult.func_188397_a() == EnumActionResult.SUCCESS || player.func_175149_v()) {
++            return vanillaResult;
++        }
++        ItemStack stack = player.func_184586_b(hand);
++        player.func_184611_a(hand, ItemStack.field_190927_a);
++        ShulkerBoxInventory inventory = new ShulkerBoxInventory(stack);
++        player.func_71007_a(inventory);
++        return new ActionResult<>(EnumActionResult.SUCCESS, ItemStack.field_190927_a);
++    }
++
  }
