@@ -13,7 +13,7 @@
  import net.minecraft.block.Block;
  
  public class ItemShulkerBox extends ItemBlock
-@@ -9,4 +16,27 @@
+@@ -9,4 +16,30 @@
          super(p_i47260_1_);
          this.func_77625_d(1);
      }
@@ -34,6 +34,9 @@
 +            return vanillaResult;
 +        }
 +        ItemStack stack = player.func_184586_b(hand);
++        if (stack.func_190916_E() != 1) {
++            return vanillaResult;
++        }
 +        player.func_184611_a(hand, ItemStack.field_190927_a);
 +        ShulkerBoxInventory inventory = new ShulkerBoxInventory(stack);
 +        player.func_71007_a(inventory);
