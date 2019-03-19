@@ -641,6 +641,8 @@ public class CarpetSettings
     @SurvivalDefault
     public static boolean dispensersShearSheep = false;
 
+    @Rule(desc = "Shulker boxes held in the offhand can pick up items", category = {FEATURE, EXPERIMENTAL, SURVIVAL})
+    public static boolean offhandShulkers = false;
 
     // ===== API ===== //
 

@@ -1,0 +1,67 @@
+--- ../src-base/minecraft/net/minecraft/entity/player/InventoryPlayer.java
++++ ../src-work/minecraft/net/minecraft/entity/player/InventoryPlayer.java
+@@ -4,6 +4,7 @@
+ import java.util.Iterator;
+ import java.util.List;
+ import javax.annotation.Nullable;
++
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+@@ -24,6 +25,11 @@
+ import net.minecraft.util.text.TextComponentTranslation;
+ import net.minecraft.world.World;
+ 
++import carpet.CarpetSettings;
++import net.minecraft.util.EnumFacing;
++import net.minecraft.item.ItemShulkerBox;
++import net.minecraft.tileentity.TileEntityShulkerBox;
++
+ public class InventoryPlayer implements IInventory
+ {
+     public final NonNullList<ItemStack> field_70462_a = NonNullList.<ItemStack>func_191197_a(36, ItemStack.field_190927_a);
+@@ -184,8 +190,43 @@
+ 
+     private int func_70452_e(ItemStack p_70452_1_)
+     {
+-        int i = this.func_70432_d(p_70452_1_);
++        if (CarpetSettings.offhandShulkers) {
++            ItemStack offhand = field_184439_c.get(0);
++            if (offhand.func_77973_b() instanceof ItemShulkerBox && offhand.func_190916_E() == 1) {
++                NBTTagCompound blockEntityTag = offhand.func_190925_c("BlockEntityTag");
++                TileEntityShulkerBox boxInventory = new TileEntityShulkerBox();
++                boxInventory.func_190586_e(blockEntityTag);
++                boolean insertedIntoBox = false;
++                for (int slot : boxInventory.func_180463_a(EnumFacing.UP)) {
++                    if (boxInventory.func_180462_a(slot, p_70452_1_, EnumFacing.UP)) {
++                        ItemStack slotContents = boxInventory.func_70301_a(slot);
++                        if (slotContents.func_190926_b()) {
++                            boxInventory.func_70299_a(slot, p_70452_1_);
++                            boxInventory.func_190580_f(blockEntityTag);
++                            return 0;
++                        }
++                        if (func_184436_a(slotContents, p_70452_1_)) {
++                            int space = p_70452_1_.func_77976_d() - slotContents.func_190916_E();
++                            int mergeAmount = Math.min(p_70452_1_.func_190916_E(), space);
++                            slotContents.func_190917_f(mergeAmount);
++                            p_70452_1_.func_190918_g(mergeAmount);
++                            insertedIntoBox = true;
++                            if (p_70452_1_.func_190926_b()) {
++                                break;
++                            }
++                        }
++                    }
++                }
++                if (insertedIntoBox) {
++                    boxInventory.func_190580_f(blockEntityTag);
++                    if (p_70452_1_.func_190926_b()) {
++                        return 0;
++                    }
++                }
++            }
++        }
+ 
++        int i = this.func_70432_d(p_70452_1_);
+         if (i == -1)
+         {
+             i = this.func_70447_i();
