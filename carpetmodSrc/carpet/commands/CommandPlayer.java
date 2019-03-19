@@ -143,13 +143,14 @@ public class CommandPlayer extends CommandCarpetBase
             double pitch = 0.0D;
             World world = sender.getEntityWorld();
             int dimension = world.provider.getDimensionType().getId();
-            int gamemode = 1;
+            int gamemode = server.getGameType().getID();
 
-            if (sender instanceof EntityPlayer)
+            if (sender instanceof EntityPlayerMP)
             {
-                Entity entity = getCommandSenderAsPlayer(sender);
+                EntityPlayerMP entity = getCommandSenderAsPlayer(sender);
                 yaw = (double)entity.rotationYaw;
                 pitch = (double)entity.rotationPitch;
+                gamemode = entity.interactionManager.getGameType().getID();
             }
             if (args.length >= 5)
             {
@@ -175,6 +176,9 @@ public class CommandPlayer extends CommandCarpetBase
             if (args.length >= 9)
             {
                 gamemode = parseInt(args[8],0,3);
+                if (gamemode == 1 && !sender.canUseCommand(2, "gamemode")) {
+                    throw new CommandException("You are not allowed to spawn a creative player");
+                }
             }
             EntityPlayerMPFake.createFake(playerName, server, d0, d1, d2, yaw, pitch, dimension, gamemode );
             return;
