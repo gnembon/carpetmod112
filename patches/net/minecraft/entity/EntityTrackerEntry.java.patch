@@ -22,3 +22,25 @@
                  }
              }
              else if (this.field_73134_o.contains(p_73117_1_))
+@@ -470,9 +478,20 @@
+ 
+     public boolean func_180233_c(EntityPlayerMP p_180233_1_)
+     {
++        int r = this.field_73130_b;
++        // Fix for minecarts and boats not track properly when riding them. Carpet-XCOM
++        if(CarpetSettings.entityTrackerFix){
++            if(field_73132_a instanceof EntityMinecart || field_73132_a instanceof EntityBoat){
++                for(Entity e : field_73132_a.func_184188_bt()){
++                    if(e instanceof EntityPlayer){
++                        r = 512;
++                    }
++                }
++            }
++        }
+         double d0 = p_180233_1_.field_70165_t - (double)this.field_73128_d / 4096.0D;
+         double d1 = p_180233_1_.field_70161_v - (double)this.field_73126_f / 4096.0D;
+-        int i = Math.min(this.field_73130_b, this.field_187262_f);
++        int i = Math.min(r, this.field_187262_f);
+         return d0 >= (double)(-i) && d0 <= (double)i && d1 >= (double)(-i) && d1 <= (double)i && this.field_73132_a.func_174827_a(p_180233_1_);
+     }
+ 

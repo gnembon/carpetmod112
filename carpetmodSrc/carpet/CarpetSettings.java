@@ -524,6 +524,8 @@ public class CarpetSettings
     @BugFixDefault
     public static boolean effectsFix = false;
 
+    @Rule(desc = "Fixes entity tracker not rendering entitys such as players in minecarts or boats.", category = FIX)
+    public static boolean entityTrackerFix;
 
     // ===== SURVIVAL FEATURES ===== //
 
