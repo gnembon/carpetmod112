@@ -527,6 +527,9 @@ public class CarpetSettings
     @Rule(desc = "Fixes entity tracker not rendering entitys such as players in minecarts or boats.", category = FIX)
     public static boolean entityTrackerFix;
 
+    @Rule(desc = "Players go invisible after using portals.", category = FIX)
+    public static boolean portalTurningPlayersInvisibleFix;
+
     // ===== SURVIVAL FEATURES ===== //
 
     @Rule(desc = "Dropping entire stacks works also from on the crafting UI result slot", category = {FIX, SURVIVAL})
