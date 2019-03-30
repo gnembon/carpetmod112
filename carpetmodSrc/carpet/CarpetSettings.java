@@ -530,6 +530,9 @@ public class CarpetSettings
     @Rule(desc = "Players go invisible after using portals.", category = FIX)
     public static boolean portalTurningPlayersInvisibleFix;
 
+    @Rule(desc = "Fixes updates suppression causing server crashes.", category = FIX)
+    public static boolean updateSuppressionCrashFix;
+
     // ===== SURVIVAL FEATURES ===== //
 
     @Rule(desc = "Dropping entire stacks works also from on the crafting UI result slot", category = {FIX, SURVIVAL})

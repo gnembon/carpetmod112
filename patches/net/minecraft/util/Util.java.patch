@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/util/Util.java
++++ ../src-work/minecraft/net/minecraft/util/Util.java
+@@ -4,6 +4,8 @@
+ import java.util.concurrent.ExecutionException;
+ import java.util.concurrent.FutureTask;
+ import javax.annotation.Nullable;
++
++import carpet.CarpetSettings;
+ import org.apache.logging.log4j.Logger;
+ 
+ public class Util
+@@ -18,7 +20,9 @@
+         }
+         catch (ExecutionException executionexception)
+         {
+-            p_181617_1_.fatal("Error executing task", (Throwable)executionexception);
++            // Update Suppression crash fixes CARPET-XCOM
++            if(!CarpetSettings.updateSuppressionCrashFix || !executionexception.getMessage().endsWith("Exception while updating neighbours"))
++                p_181617_1_.fatal("Error executing task", (Throwable)executionexception);
+         }
+         catch (InterruptedException interruptedexception)
+         {

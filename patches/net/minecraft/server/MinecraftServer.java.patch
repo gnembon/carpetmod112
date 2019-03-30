@@ -1,6 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/server/MinecraftServer.java
 +++ ../src-work/minecraft/net/minecraft/server/MinecraftServer.java
-@@ -85,6 +85,14 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.server;
+ 
++import carpet.helpers.ThrowableSuppression;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Queues;
+ import com.google.common.util.concurrent.Futures;
+@@ -85,6 +86,14 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -15,7 +22,7 @@
  public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
  {
      private static final Logger field_147145_h = LogManager.getLogger();
-@@ -143,6 +151,7 @@
+@@ -143,6 +152,7 @@
  
      public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
      {
@@ -23,7 +30,7 @@
          this.field_110456_c = p_i47054_2_;
          this.field_152364_T = p_i47054_4_;
          this.field_147143_S = p_i47054_5_;
-@@ -272,6 +281,7 @@
+@@ -272,6 +282,7 @@
  
          this.field_71318_t.func_72364_a(this.field_71305_c);
          this.func_147139_a(this.func_147135_j());
@@ -31,7 +38,7 @@
          this.func_71222_d();
      }
  
-@@ -284,6 +294,12 @@
+@@ -284,6 +295,12 @@
          int i1 = 0;
          this.func_71192_d("menu.generatingTerrain");
          int j1 = 0;
@@ -44,7 +51,7 @@
          field_147145_h.info("Preparing start region for level 0");
          WorldServer worldserver = this.field_71305_c[0];
          BlockPos blockpos = worldserver.func_175694_M();
-@@ -305,6 +321,7 @@
+@@ -305,6 +322,7 @@
                  worldserver.func_72863_F().func_186025_d(blockpos.func_177958_n() + l1 >> 4, blockpos.func_177952_p() + i2 >> 4);
              }
          }
@@ -52,7 +59,7 @@
  
          this.func_71243_i();
      }
-@@ -340,7 +357,7 @@
+@@ -340,7 +358,7 @@
  
      public abstract boolean func_183002_r();
  
@@ -61,7 +68,7 @@
      {
          this.field_71302_d = p_71216_1_;
          this.field_71303_e = p_71216_2_;
-@@ -374,6 +391,7 @@
+@@ -374,6 +392,7 @@
                  }
              }
          }
@@ -69,7 +76,7 @@
      }
  
      protected void func_71260_j()
-@@ -449,18 +467,33 @@
+@@ -449,18 +468,33 @@
              {
                  this.field_175591_ab = func_130071_aq();
                  long i = 0L;
@@ -105,7 +112,7 @@
                          j = 2000L;
                          this.field_71299_R = this.field_175591_ab;
                      }
-@@ -473,6 +506,7 @@
+@@ -473,6 +507,7 @@
  
                      i += j;
                      this.field_175591_ab = k;
@@ -113,7 +120,7 @@
  
                      if (this.field_71305_c[0].func_73056_e())
                      {
-@@ -481,14 +515,33 @@
+@@ -481,14 +516,33 @@
                      }
                      else
                      {
@@ -150,7 +157,7 @@
                      this.field_71296_Q = true;
                  }
              }
-@@ -592,6 +645,12 @@
+@@ -592,6 +646,12 @@
      {
          long i = System.nanoTime();
          ++this.field_71315_w;
@@ -163,7 +170,7 @@
  
          if (this.field_71295_T)
          {
-@@ -621,12 +680,17 @@
+@@ -621,12 +681,17 @@
  
          if (this.field_71315_w % 900 == 0)
          {
@@ -182,7 +189,7 @@
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
          this.field_71304_b.func_76319_b();
-@@ -644,6 +708,16 @@
+@@ -644,6 +709,16 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -199,7 +206,35 @@
      }
  
      public void func_71190_q()
-@@ -710,10 +784,12 @@
+@@ -685,8 +760,11 @@
+                 catch (Throwable throwable1)
+                 {
+                     CrashReport crashreport = CrashReport.func_85055_a(throwable1, "Exception ticking world");
+-                    worldserver.func_72914_a(crashreport);
+-                    throw new ReportedException(crashreport);
++                    // Update Suppression crash fixes CARPET-XCOM
++                    if(!CarpetSettings.updateSuppressionCrashFix || !(crashreport.func_71505_b() instanceof ThrowableSuppression)){
++                        worldserver.func_72914_a(crashreport);
++                        throw new ReportedException(crashreport);
++                    }
+                 }
+ 
+                 try
+@@ -696,8 +774,11 @@
+                 catch (Throwable throwable)
+                 {
+                     CrashReport crashreport1 = CrashReport.func_85055_a(throwable, "Exception ticking world entities");
+-                    worldserver.func_72914_a(crashreport1);
+-                    throw new ReportedException(crashreport1);
++                    // Update Suppression crash fixes CARPET-XCOM
++                    if(!CarpetSettings.updateSuppressionCrashFix || !(crashreport1.func_71505_b() instanceof ThrowableSuppression)){
++                        worldserver.func_72914_a(crashreport1);
++                        throw new ReportedException(crashreport1);
++                    }
+                 }
+ 
+                 this.field_71304_b.func_76319_b();
+@@ -710,10 +791,12 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  
@@ -212,7 +247,7 @@
          this.field_71304_b.func_76318_c("commandFunctions");
          this.func_193030_aL().func_73660_a();
          this.field_71304_b.func_76318_c("tickables");
-@@ -724,6 +800,8 @@
+@@ -724,6 +807,8 @@
          }
  
          this.field_71304_b.func_76319_b();

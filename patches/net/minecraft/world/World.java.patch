@@ -1,6 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/world/World.java
 +++ ../src-work/minecraft/net/minecraft/world/World.java
-@@ -4,12 +4,18 @@
+@@ -1,15 +1,22 @@
+ package net.minecraft.world;
+ 
++import carpet.helpers.*;
+ import com.google.common.base.Function;
  import com.google.common.base.MoreObjects;
  import com.google.common.base.Predicate;
  import com.google.common.collect.Lists;
@@ -19,18 +23,14 @@
  import javax.annotation.Nullable;
  import net.minecraft.advancements.AdvancementManager;
  import net.minecraft.advancements.FunctionManager;
-@@ -59,6 +65,20 @@
+@@ -59,6 +66,16 @@
  import net.minecraft.world.storage.WorldSavedData;
  import net.minecraft.world.storage.loot.LootTableManager;
  
-+import carpet.helpers.TickSpeed;
 +import carpet.utils.CarpetProfiler;
 +import carpet.utils.Messenger;
-+import carpet.helpers.CollisionBoxesOptimizations;
 +import carpet.CarpetSettings;
 +import carpet.carpetclient.CarpetClientChunkLogger;
-+import carpet.helpers.TileEntityOptimizer;
-+import carpet.helpers.LightingEngine;
 +import narcolepticfrog.rsmm.events.StateChangeEventDispatcher;
 +import net.minecraft.util.text.ITextComponent;
 +import carpet.logging.LoggerRegistry;
@@ -40,7 +40,7 @@
  public abstract class World implements IBlockAccess
  {
      private int field_181546_a = 63;
-@@ -74,7 +94,7 @@
+@@ -74,7 +91,7 @@
      protected final IntHashMap<Entity> field_175729_l = new IntHashMap<Entity>();
      private final long field_73001_c = 16777215L;
      private int field_73008_k;
@@ -49,7 +49,7 @@
      protected final int field_73006_m = 1013904223;
      protected float field_73003_n;
      protected float field_73004_o;
-@@ -104,6 +124,13 @@
+@@ -104,6 +121,13 @@
      private final WorldBorder field_175728_M;
      int[] field_72994_J;
  
@@ -63,7 +63,7 @@
      protected World(ISaveHandler p_i45749_1_, WorldInfo p_i45749_2_, WorldProvider p_i45749_3_, Profiler p_i45749_4_, boolean p_i45749_5_)
      {
          this.field_73021_x = Lists.newArrayList(this.field_184152_t);
-@@ -118,6 +145,7 @@
+@@ -118,6 +142,7 @@
          this.field_73011_w = p_i45749_3_;
          this.field_72995_K = p_i45749_5_;
          this.field_175728_M = p_i45749_3_.func_177501_r();
@@ -71,7 +71,7 @@
      }
  
      public World func_175643_b()
-@@ -268,7 +296,7 @@
+@@ -268,7 +293,7 @@
          }
      }
  
@@ -80,7 +80,7 @@
  
      public Chunk func_175726_f(BlockPos p_175726_1_)
      {
-@@ -285,6 +313,16 @@
+@@ -285,6 +310,16 @@
          return this.func_175680_a(p_190526_1_, p_190526_2_, false) ? true : this.field_73020_y.func_191062_e(p_190526_1_, p_190526_2_);
      }
  
@@ -97,7 +97,7 @@
      public boolean func_180501_a(BlockPos p_180501_1_, IBlockState p_180501_2_, int p_180501_3_)
      {
          if (this.func_189509_E(p_180501_1_))
-@@ -299,7 +337,8 @@
+@@ -299,7 +334,8 @@
          {
              Chunk chunk = this.func_175726_f(p_180501_1_);
              Block block = p_180501_2_.func_177230_c();
@@ -107,7 +107,7 @@
  
              if (iblockstate == null)
              {
-@@ -328,7 +367,8 @@
+@@ -328,7 +364,8 @@
                          this.func_175666_e(p_180501_1_, block);
                      }
                  }
@@ -117,7 +117,7 @@
                  {
                      this.func_190522_c(p_180501_1_, block);
                  }
-@@ -429,8 +469,36 @@
+@@ -429,8 +466,36 @@
          this.func_190529_b(p_190522_1_.func_177968_d(), p_190522_2_, p_190522_1_);
      }
  
@@ -154,7 +154,7 @@
          this.func_190524_a(p_175685_1_.func_177976_e(), p_175685_2_, p_175685_1_);
          this.func_190524_a(p_175685_1_.func_177974_f(), p_175685_2_, p_175685_1_);
          this.func_190524_a(p_175685_1_.func_177977_b(), p_175685_2_, p_175685_1_);
-@@ -446,6 +514,44 @@
+@@ -446,6 +511,44 @@
  
      public void func_175695_a(BlockPos p_175695_1_, Block p_175695_2_, EnumFacing p_175695_3_)
      {
@@ -199,7 +199,19 @@
          if (p_175695_3_ != EnumFacing.WEST)
          {
              this.func_190524_a(p_175695_1_.func_177976_e(), p_175695_2_, p_175695_1_);
-@@ -508,6 +614,11 @@
+@@ -479,6 +582,11 @@
+ 
+     public void func_190524_a(BlockPos p_190524_1_, final Block p_190524_2_, BlockPos p_190524_3_)
+     {
++        if(CarpetSettings.updateSuppressionCrashFix){
++            neighborChangedUpdateSuppressionFixed(p_190524_1_, p_190524_2_, p_190524_3_);
++            return;
++        }
++
+         if (!this.field_72995_K)
+         {
+             IBlockState iblockstate = this.func_180495_p(p_190524_1_);
+@@ -508,11 +616,21 @@
                  CrashReportCategory.func_175750_a(crashreportcategory, p_190524_1_, iblockstate);
                  throw new ReportedException(crashreport);
              }
@@ -211,7 +223,17 @@
          }
      }
  
-@@ -545,6 +656,11 @@
+     public void func_190529_b(BlockPos p_190529_1_, final Block p_190529_2_, BlockPos p_190529_3_)
+     {
++        if(CarpetSettings.updateSuppressionCrashFix){
++            observedNeighborChangedUpdateSuppressionFixed(p_190529_1_, p_190529_2_, p_190529_3_);
++            return;
++        }
++
+         if (!this.field_72995_K)
+         {
+             IBlockState iblockstate = this.func_180495_p(p_190529_1_);
+@@ -545,6 +663,11 @@
                      throw new ReportedException(crashreport);
                  }
              }
@@ -223,7 +245,7 @@
          }
      }
  
-@@ -1125,6 +1241,9 @@
+@@ -1125,6 +1248,9 @@
  
      private boolean func_191504_a(@Nullable Entity p_191504_1_, AxisAlignedBB p_191504_2_, boolean p_191504_3_, @Nullable List<AxisAlignedBB> p_191504_4_)
      {
@@ -233,7 +255,7 @@
          int i = MathHelper.func_76128_c(p_191504_2_.field_72340_a) - 1;
          int j = MathHelper.func_76143_f(p_191504_2_.field_72336_d) + 1;
          int k = MathHelper.func_76128_c(p_191504_2_.field_72338_b) - 1;
-@@ -1369,6 +1488,8 @@
+@@ -1369,6 +1495,8 @@
                  this.field_73007_j.remove(i--);
              }
          }
@@ -242,7 +264,7 @@
  
          this.field_72984_F.func_76318_c("remove");
          this.field_72996_f.removeAll(this.field_72997_g);
-@@ -1397,6 +1518,7 @@
+@@ -1397,6 +1525,7 @@
          for (int i1 = 0; i1 < this.field_72996_f.size(); ++i1)
          {
              Entity entity2 = this.field_72996_f.get(i1);
@@ -250,7 +272,7 @@
              Entity entity3 = entity2.func_184187_bx();
  
              if (entity3 != null)
-@@ -1415,7 +1537,10 @@
+@@ -1415,7 +1544,10 @@
              {
                  try
                  {
@@ -262,7 +284,7 @@
                  }
                  catch (Throwable throwable1)
                  {
-@@ -1436,23 +1561,38 @@
+@@ -1436,23 +1568,38 @@
  
                  if (entity2.field_70175_ag && this.func_175680_a(l1, i2, true))
                  {
@@ -301,7 +323,7 @@
  
              if (!tileentity.func_145837_r() && tileentity.func_145830_o())
              {
-@@ -1462,9 +1602,20 @@
+@@ -1462,9 +1609,20 @@
                  {
                      try
                      {
@@ -325,7 +347,7 @@
                      }
                      catch (Throwable throwable)
                      {
-@@ -1486,11 +1637,12 @@
+@@ -1486,11 +1644,12 @@
                      this.func_175726_f(tileentity.func_174877_v()).func_177425_e(tileentity.func_174877_v());
                  }
              }
@@ -339,7 +361,7 @@
          {
              this.field_175730_i.removeAll(this.field_147483_b);
              this.field_147482_g.removeAll(this.field_147483_b);
-@@ -1524,6 +1676,7 @@
+@@ -1524,6 +1683,7 @@
  
              this.field_147484_a.clear();
          }
@@ -347,7 +369,7 @@
  
          this.field_72984_F.func_76319_b();
          this.field_72984_F.func_76319_b();
-@@ -1644,7 +1797,8 @@
+@@ -1644,7 +1804,8 @@
                  this.func_72964_e(p_72866_1_.field_70176_ah, p_72866_1_.field_70164_aj).func_76608_a(p_72866_1_, p_72866_1_.field_70162_ai);
              }
  
@@ -357,7 +379,7 @@
              {
                  p_72866_1_.field_70175_ag = false;
              }
-@@ -1666,7 +1820,11 @@
+@@ -1666,7 +1827,11 @@
                  }
                  else
                  {
@@ -370,7 +392,7 @@
                  }
              }
          }
-@@ -1685,7 +1843,8 @@
+@@ -1685,7 +1850,8 @@
          {
              Entity entity = list.get(i);
  
@@ -380,7 +402,7 @@
              {
                  return false;
              }
-@@ -2149,6 +2308,16 @@
+@@ -2149,6 +2315,16 @@
                          {
                              this.field_72986_A.func_76090_f(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -397,7 +419,7 @@
                      }
                      else
                      {
-@@ -2173,6 +2342,16 @@
+@@ -2173,6 +2349,16 @@
                          {
                              this.field_72986_A.func_76080_g(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -414,7 +436,7 @@
                      }
                      else
                      {
-@@ -2383,6 +2562,11 @@
+@@ -2383,6 +2569,11 @@
  
      public boolean func_180500_c(EnumSkyBlock p_180500_1_, BlockPos p_180500_2_)
      {
@@ -426,7 +448,7 @@
          if (!this.func_175648_a(p_180500_2_, 17, false))
          {
              return false;
-@@ -2695,7 +2879,8 @@
+@@ -2695,7 +2886,8 @@
          IBlockState iblockstate = this.func_180495_p(p_190527_2_);
          AxisAlignedBB axisalignedbb = p_190527_3_ ? null : p_190527_1_.func_176223_P().func_185890_d(this, p_190527_2_);
  
@@ -436,7 +458,7 @@
          {
              return false;
          }
-@@ -3263,30 +3448,47 @@
+@@ -3263,30 +3455,47 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
@@ -496,7 +518,7 @@
      }
  
      public DifficultyInstance func_175649_E(BlockPos p_175649_1_)
-@@ -3357,4 +3559,17 @@
+@@ -3357,4 +3566,108 @@
      {
          return null;
      }
@@ -512,5 +534,96 @@
 +		} catch (Exception e) {}
 +
 +		return 0;
++    }
++
++    // Update Suppression crash fixes CARPET-XCOM
++    public void neighborChangedUpdateSuppressionFixed(BlockPos pos, final Block blockIn, BlockPos fromPos)
++    {
++        if (!this.field_72995_K)
++        {
++            IBlockState iblockstate = this.func_180495_p(pos);
++
++            try
++            {
++                iblockstate.func_189546_a(this, pos, blockIn, fromPos);
++            }
++            catch (StackOverflowError e)
++            {
++                throw new ThrowableSuppression("Update Suppression");
++            }
++            catch (Throwable throwable)
++            {
++                CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception while updating neighbours");
++                CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block being updated");
++                crashreportcategory.func_189529_a("Source block type", new ICrashReportDetail<String>()
++                {
++                    public String call() throws Exception
++                    {
++                        try
++                        {
++                            return String.format("ID #%d (%s // %s)", Block.func_149682_b(blockIn), blockIn.func_149739_a(), blockIn.getClass().getCanonicalName());
++                        }
++                        catch (Throwable var2)
++                        {
++                            return "ID #" + Block.func_149682_b(blockIn);
++                        }
++                    }
++                });
++                CrashReportCategory.func_175750_a(crashreportcategory, pos, iblockstate);
++                throw new ReportedException(crashreport);
++            }
++            // ----- RSMM Start ----- //
++            if (CarpetSettings.redstoneMultimeter) {
++                StateChangeEventDispatcher.dispatchEvent(this, pos);
++            }
++            // ----- RSMM End ----- //
++        }
++    }
++
++    // Update Suppression crash fixes CARPET-XCOM
++    public void observedNeighborChangedUpdateSuppressionFixed(BlockPos pos, final Block changedBlock, BlockPos changedBlockPos)
++    {
++        if (!this.field_72995_K)
++        {
++            IBlockState iblockstate = this.func_180495_p(pos);
++
++            if (iblockstate.func_177230_c() == Blocks.field_190976_dk)
++            {
++                try
++                {
++                    ((BlockObserver)iblockstate.func_177230_c()).func_190962_b(iblockstate, this, pos, changedBlock, changedBlockPos);
++                }
++                catch (StackOverflowError e)
++                {
++                    throw new ThrowableSuppression("Update Suppression");
++                }
++                catch (Throwable throwable)
++                {
++                    CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception while updating neighbours");
++                    CrashReportCategory crashreportcategory = crashreport.func_85058_a("Block being updated");
++                    crashreportcategory.func_189529_a("Source block type", new ICrashReportDetail<String>()
++                    {
++                        public String call() throws Exception
++                        {
++                            try
++                            {
++                                return String.format("ID #%d (%s // %s)", Block.func_149682_b(changedBlock), changedBlock.func_149739_a(), changedBlock.getClass().getCanonicalName());
++                            }
++                            catch (Throwable var2)
++                            {
++                                return "ID #" + Block.func_149682_b(changedBlock);
++                            }
++                        }
++                    });
++                    CrashReportCategory.func_175750_a(crashreportcategory, pos, iblockstate);
++                    throw new ReportedException(crashreport);
++                }
++            }
++            // ----- RSMM Start ----- //
++            if (CarpetSettings.redstoneMultimeter) {
++                StateChangeEventDispatcher.dispatchEvent(this, pos);
++            }
++            // ----- RSMM End ----- //
++        }
 +    }
  }
