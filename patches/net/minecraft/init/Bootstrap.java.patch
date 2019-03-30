@@ -1,8 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/init/Bootstrap.java
 +++ ../src-work/minecraft/net/minecraft/init/Bootstrap.java
-@@ -1,14 +1,19 @@
+@@ -1,14 +1,20 @@
  package net.minecraft.init;
  
++import carpet.helpers.BetterDispenser;
  import com.mojang.authlib.GameProfile;
 +
 +import carpet.CarpetSettings;
@@ -20,58 +21,12 @@
  import net.minecraft.block.BlockLiquid;
  import net.minecraft.block.BlockPumpkin;
  import net.minecraft.block.BlockShulkerBox;
-@@ -475,7 +480,55 @@
-                 return p_82487_2_;
+@@ -476,6 +482,9 @@
              }
          });
-+        
-+        // Block rotation stuffs CARPET-XCOM
-+        BlockDispenser.field_149943_a.func_82595_a(Item.func_150898_a(Blocks.field_150434_aF), new Bootstrap.BehaviorDispenseOptional()
-+        {
-+            private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
  
-+            protected ItemStack func_82487_b(IBlockSource source, ItemStack stack)
-+            {
-+                if(CarpetSettings.rotatorBlock){
-+                    EnumFacing sourceFace = (EnumFacing)source.func_189992_e().func_177229_b(BlockDispenser.field_176441_a);
-+                    World world = source.func_82618_k();
-+                    BlockPos blockpos = source.func_180699_d().func_177972_a(sourceFace);
-+                    IBlockState iblockstate = world.func_180495_p(blockpos);
-+                    Block block = iblockstate.func_177230_c();
-+
-+                    // Block rotation for blocks that can be placed in all 6 rotations.
-+                    if(block instanceof BlockDirectional || block instanceof BlockDispenser){
-+                        EnumFacing face = (EnumFacing)iblockstate.func_177229_b(BlockDirectional.field_176387_N);
-+                        face = face.func_176732_a(sourceFace.func_176740_k());
-+                        if(sourceFace.func_176745_a() % 2 == 0){ // Rotate twice more to make blocks always rotate clockwise relative to the dispenser
-+                                                            // when index is equal to zero. when index is equal to zero the dispenser is in the opposite direction.
-+                            face = face.func_176732_a(sourceFace.func_176740_k());
-+                            face = face.func_176732_a(sourceFace.func_176740_k());
-+                        }
-+                        world.func_180501_a(blockpos, iblockstate.func_177226_a(BlockDirectional.field_176387_N, face), 3);
-+
-+                    // Block rotation for blocks that can be placed in only 4 horizontal rotations.
-+                    }else if(block instanceof BlockHorizontal){
-+                        EnumFacing face = (EnumFacing)iblockstate.func_177229_b(BlockHorizontal.field_185512_D);
-+                        face = face.func_176732_a(sourceFace.func_176740_k());
-+                        if(sourceFace.func_176745_a() % 2 == 0){ // same as above.
-+                            face = face.func_176732_a(sourceFace.func_176740_k());
-+                            face = face.func_176732_a(sourceFace.func_176740_k());
-+                        }
-+                        if(sourceFace.func_176745_a() <= 1){ // Make sure to suppress rotation when index is lower then 2 as that will result in a faulty rotation for
-+                                                        // blocks that only can be placed horizontaly.
-+                            world.func_180501_a(blockpos, iblockstate.func_177226_a(BlockHorizontal.field_185512_D, face), 3);
-+                        }
-+                    }
-+                    // Send block update to the block that just have been rotated.
-+                    world.func_190524_a(blockpos, block, source.func_180699_d());
-+
-+                    return stack;
-+                }else{
-+                    return this.dispenseBehavior.func_82482_a(source, stack);
-+                }
-+            }
-+        });
++        // Carpet Dispenser addons XCOM-CARPET
++        BetterDispenser.dispenserAddons();
 +
          for (EnumDyeColor enumdyecolor : EnumDyeColor.values())
          {

@@ -213,7 +213,7 @@ public class CarpetSettings
 
     @Rule(desc = "Allows to always be able to eat cakes.", category = CREATIVE)
     public static boolean cakeAlwaysEat;
-
+    
     private static boolean validateFlyingMachineTransparent(boolean value) {
         int newOpacity = value ? 0 : 255;
         Blocks.OBSERVER.setLightOpacity(newOpacity);
@@ -636,6 +636,12 @@ public class CarpetSettings
             "Cactus in a dispenser gives the dispenser the ability to rotate the blocks that are in front of it anti-clockwise if possible."
     })
     public static boolean rotatorBlock = false;
+
+    @Rule(desc = "Water bottles in dispensers fill with water when dispensed with water in front.", category = EXPERIMENTAL)
+    public static boolean dispenserWaterBottle;
+
+    @Rule(desc = "Minecarts can be filled with hoppers, chests, tnt and furnace.", category = EXPERIMENTAL)
+    public static boolean dispenserMinecartFiller;
 
     @Rule(desc = "Customizable tile tick limit", category = SURVIVAL, options = {"1000", "65536", "1000000"}, validator = "validateTileTickLimit", extra = {
             "-1 for no limit"
