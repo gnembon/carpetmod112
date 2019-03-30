@@ -659,10 +659,6 @@ public class CarpetSettings
     private static boolean validateTileTickLimit(int value) {
         return value >= -1;
     }
-    
-    @Rule(desc = "Sheep can be sheared using dispensers with shears similar to 1.14 behaviour", category = {FEATURE, EXPERIMENTAL, SURVIVAL})
-    @SurvivalDefault
-    public static boolean dispensersShearSheep = false;
 
 
     // ===== API ===== //
