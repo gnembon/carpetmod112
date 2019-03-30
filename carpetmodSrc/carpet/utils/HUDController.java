@@ -137,14 +137,15 @@ public class HUDController
     private static void log_counter(MinecraftServer server)
     {
         List<Object> commandParams = new ArrayList<>();
-        for (EnumDyeColor color : EnumDyeColor.values())
-            Collections.addAll(commandParams, color.getName().toUpperCase(Locale.ENGLISH), HopperCounter.get_total_items(color.getName()));
-        LoggerRegistry.getLogger("counter").log((option)->send_counter_info(server, option), commandParams);
+        for (HopperCounter counter : HopperCounter.COUNTERS.values())
+            Collections.addAll(commandParams, counter.color.name(), counter.getTotalItems());
+        LoggerRegistry.getLogger("counter").log((option) -> send_counter_info(server, option), commandParams);
     }
 
     private static ITextComponent [] send_counter_info(MinecraftServer server, String color)
     {
-        List <ITextComponent> res = HopperCounter.query_hopper_stats_for_color(server, color, false, true);
+        HopperCounter counter = HopperCounter.getCounter(color);
+        List<ITextComponent> res = counter == null ? Collections.emptyList() : counter.format(server, false, true);
         return new ITextComponent[]{ Messenger.m(null, res.toArray(new Object[0]))};
     }
     private static ITextComponent [] packetCounter()

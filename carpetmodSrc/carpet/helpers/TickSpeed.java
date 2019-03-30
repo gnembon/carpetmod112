@@ -1,11 +1,13 @@
 package carpet.helpers;
 
 import carpet.CarpetServer;
+import carpet.pubsub.PubSubInfoProvider;
 import carpet.utils.Messenger;
 import net.minecraft.command.ICommandManager;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.MathHelper;
 
 public class TickSpeed
 {
@@ -23,6 +25,13 @@ public class TickSpeed
     public static boolean process_entities = true;
     public static boolean is_paused = false;
     public static boolean is_superHot = false;
+
+    private static PubSubInfoProvider<Float> PUBSUB_TICKRATE = new PubSubInfoProvider<>(CarpetServer.PUBSUB, "carpet.tick.rate", 0, () -> tickrate);
+
+    static {
+        new PubSubInfoProvider<>(CarpetServer.PUBSUB, "minecraft.performance.mspt", 20, TickSpeed::getMSPT);
+        new PubSubInfoProvider<>(CarpetServer.PUBSUB, "minecraft.performance.tps", 20, TickSpeed::getTPS);
+    }
 
     public static void reset_player_active_timeout()
     {
@@ -46,6 +55,7 @@ public class TickSpeed
             mspt = 1l;
             tickrate = 1000.0f;
         }
+        PUBSUB_TICKRATE.publish();
     }
 
     public static String tickrate_advance(EntityPlayer player, long advance, String callback, ICommandSender icommandsender)
@@ -162,7 +172,13 @@ public class TickSpeed
 
             }
         }
+    }
 
+    public static double getMSPT() {
+        return MathHelper.average(CarpetServer.minecraft_server.tickTimeArray) * 1.0E-6D;
+    }
 
+    public static double getTPS() {
+        return 1000.0D / Math.max((time_warp_start_time != 0) ? 0.0 : TickSpeed.mspt, mspt);
     }
 }

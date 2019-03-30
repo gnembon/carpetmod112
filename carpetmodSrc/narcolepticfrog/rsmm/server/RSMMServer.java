@@ -1,14 +1,14 @@
 package narcolepticfrog.rsmm.server;
 
-import carpet.utils.PluginChannelTracker;
-import com.google.common.base.Charsets;
-import io.netty.buffer.Unpooled;
+import carpet.CarpetServer;
+import carpet.network.PluginChannelHandler;
 import narcolepticfrog.rsmm.events.*;
 import narcolepticfrog.rsmm.network.RSMMCPacket;
 import narcolepticfrog.rsmm.network.RSMMSPacket;
 import net.minecraft.entity.player.EntityPlayerMP;
 import carpet.CarpetSettings;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumFacing;
@@ -103,7 +103,7 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
      * @param packet The packet to be sent.
      */
     public void sendToPlayer(EntityPlayerMP player, RSMMCPacket packet) {
-        if (PluginChannelTracker.isRegistered(player, "RSMM")) {
+        if (CarpetServer.pluginChannels.tracker.isRegistered(player, "RSMM")) {
             player.connection.sendPacket(new SPacketCustomPayload("RSMM", packet.toBuffer()));
         }
     }
@@ -207,7 +207,8 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
     @Override
     public void onPlayerConnect(EntityPlayerMP player) {
         // Register the RSMM plugin channel with the player.
-        player.connection.sendPacket(new SPacketCustomPayload("REGISTER", new PacketBuffer(Unpooled.wrappedBuffer("RSMM".getBytes(Charsets.UTF_8)))));
+        // Handled by PluginChannelManager
+        // player.connection.sendPacket(new SPacketCustomPayload("REGISTER", new PacketBuffer(Unpooled.wrappedBuffer("RSMM".getBytes(Charsets.UTF_8)))));
     }
 
     @Override
@@ -235,4 +236,30 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
     @Override
     public void onChannelUnregister(EntityPlayerMP sender, List<String> channels) {}
 
+    public PluginChannelHandler createChannelHandler() {
+        return new PluginChannelHandler() {
+            @Override
+            public String[] getChannels() {
+                return new String[]{"RSMM"};
+            }
+
+            @Override
+            public boolean register(String channel, EntityPlayerMP player) {
+                PlayerConnectionEventDispatcher.dispatchPlayerDisconnectEvent(player);
+                ServerPacketEventDispatcher.dispatchChannelRegister(player, Collections.singletonList(channel));
+                return true;
+            }
+
+            @Override
+            public void unregister(String channel, EntityPlayerMP player) {
+                ServerPacketEventDispatcher.dispatchChannelUnregister(player, Collections.singletonList(channel));
+                PlayerConnectionEventDispatcher.dispatchPlayerDisconnectEvent(player);
+            }
+
+            @Override
+            public void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player) {
+                ServerPacketEventDispatcher.dispatchCustomPayload(player, packet.getChannelName(), packet.getBufferData());
+            }
+        };
+    }
 }

@@ -4,15 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import carpet.CarpetSettings;
+import carpet.network.PluginChannelHandler;
 import com.google.common.base.Charsets;
 
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.server.MinecraftServer;
 
-public class CarpetClientServer {
+public class CarpetClientServer implements PluginChannelHandler {
 
     private MinecraftServer minecraftServer;
     private static ArrayList<EntityPlayerMP> players = new ArrayList<>();
@@ -22,28 +24,21 @@ public class CarpetClientServer {
         this.minecraftServer = server;
     }
 
-    public void onCustomPayload(EntityPlayerMP sender, String channel, PacketBuffer data) {
-        if (CARPET_CHANNEL_NAME.equals(channel)) {
-            CarpetClientMessageHandler.handler(sender, data);
-        }
+    public String[] getChannels() {
+        return new String[]{CARPET_CHANNEL_NAME};
     }
 
-    public void onChannelRegister(EntityPlayerMP sender, List<String> channels) {
-        if (channels.contains(CARPET_CHANNEL_NAME)) {
-            players.add(sender);
-            CarpetClientMessageHandler.sendAllGUIOptions();
-        }
+    public void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player) {
+        CarpetClientMessageHandler.handler(player, packet.getBufferData());
     }
 
-    public void onChannelUnregister(EntityPlayerMP sender, List<String> channels) {
+    public boolean register(String channel, EntityPlayerMP sender) {
+        players.add(sender);
+        CarpetClientMessageHandler.sendAllGUIOptions();
+        return true;
     }
 
-    public void onPlayerConnect(EntityPlayerMP player) {
-        player.connection.sendPacket(new SPacketCustomPayload("REGISTER",
-                new PacketBuffer(Unpooled.wrappedBuffer(CARPET_CHANNEL_NAME.getBytes(Charsets.UTF_8)))));
-    }
-
-    public void onPlayerDisconnect(EntityPlayerMP player) {
+    public void unregister(String channel, EntityPlayerMP player) {
         players.remove(player);
         CarpetClientMarkers.unregisterPlayerVillageMarkers(player);
         CarpetClientChunkLogger.logger.unregisterPlayer(player);
@@ -52,6 +47,10 @@ public class CarpetClientServer {
 
     static public ArrayList<EntityPlayerMP> getRegisteredPlayers() {
         return players;
+    }
+
+    public static boolean isPlayerRegistered(EntityPlayerMP player) {
+        return players.contains(player);
     }
 
     public static boolean sendProtected(PacketBuffer data)
