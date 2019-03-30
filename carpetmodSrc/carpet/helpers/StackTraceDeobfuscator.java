@@ -163,12 +163,11 @@ public class StackTraceDeobfuscator {
                         Files.copy(in, Paths.get(JOINED_FILE_NAME));
                     } catch (Exception e) {
                     }
-                } else {
-                    try {
-                        in = new FileInputStream(joinedFile);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                }
+                try {
+                    in = new FileInputStream(joinedFile);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
                 }
                 try {
                     ZipInputStream zipIn = new ZipInputStream(in);
@@ -218,12 +217,11 @@ public class StackTraceDeobfuscator {
                             Files.copy(in, Paths.get(METHODS_FILE_NAME));
                         } catch (Exception e) {
                         }
-                    } else {
-                        try {
-                            in = new FileInputStream(methodsFile);
-                        } catch (FileNotFoundException e) {
-                            e.printStackTrace();
-                        }
+                    }
+                    try {
+                        in = new FileInputStream(methodsFile);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
                     }
                     try {
                         ZipInputStream zipIn = new ZipInputStream(in);
