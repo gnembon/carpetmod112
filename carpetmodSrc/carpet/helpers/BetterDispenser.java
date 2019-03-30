@@ -1,5 +1,6 @@
 package carpet.helpers;
 
+import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Predicates;
@@ -19,7 +20,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityMinecartEmpty;
 import net.minecraft.entity.item.EntityTNTPrimed;
+import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Bootstrap;
 import net.minecraft.init.Items;
@@ -151,6 +154,38 @@ public class BetterDispenser {
          *      return tntDispense.dispense(source, stack);
          */
 
+        // [CM] Dispensers can shear sheep
+        BlockDispenser.DISPENSE_BEHAVIOR_REGISTRY.putObject(Items.SHEARS, new Bootstrap.BehaviorDispenseOptional() {
+            private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();
+
+            protected ItemStack dispenseStack(IBlockSource blockSource, ItemStack itemStack) {
+                if (CarpetSettings.dispensersShearSheep) {
+                    World world = blockSource.getWorld();
+                    if (!world.isRemote) {
+                        this.successful = false;
+                        BlockPos blockPos = blockSource.getBlockPos().offset((EnumFacing) blockSource.getBlockState().getValue(BlockDispenser.FACING));
+                        List<EntitySheep> sheepList = world.getEntitiesWithinAABB(EntitySheep.class, new AxisAlignedBB(blockPos));
+                        Iterator iterator = sheepList.iterator();
+
+                        while (iterator.hasNext()) {
+                            EntitySheep entitySheep = (EntitySheep) iterator.next();
+                            if (entitySheep.isEntityAlive() && !entitySheep.getSheared() && !entitySheep.isChild()) {
+                                entitySheep.dropItems();
+                                if (itemStack.attemptDamageItem(1, world.rand, (EntityPlayerMP) null)) {
+                                    itemStack.setCount(0);
+                                }
+
+                                this.successful = true;
+                                break;
+                            }
+                        }
+                    }
+                    return itemStack;
+                } else {
+                    return this.dispenseBehavior.dispense(blockSource, itemStack);
+                }
+            }
+        });
     }
     
     public static class BehaviorDispenseMinecart extends BehaviorDefaultDispenseItem
