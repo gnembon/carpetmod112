@@ -9,14 +9,14 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PortalCashing {
+public class PortalCaching {
 
-    public static void portalCashingCleared(World world, int cashedCount, ArrayList<Vec3d> uncacheCount) {
-        if(cashedCount == 0 && uncacheCount.size() == 0) return;
+    public static void portalCachingCleared(World world, int cachedCount, ArrayList<Vec3d> uncacheCount) {
+        if(cachedCount == 0 && uncacheCount.size() == 0) return;
         final int count = uncacheCount.size();
         List<ITextComponent> comp = new ArrayList<>();
-        LoggerRegistry.getLogger("portalCashing").log( (option) -> {
-            comp.add(Messenger.s(null, String.format("%s Portals cashed %d, Portal cashes removed %d", world.provider.getDimensionType(), cashedCount, count)));
+        LoggerRegistry.getLogger("portalCaching").log( (option) -> {
+            comp.add(Messenger.s(null, String.format("%s Portals cached %d, Portal caches removed %d", world.provider.getDimensionType(), cachedCount, count)));
             switch (option) {
                 case "brief":
                     return comp.toArray(new ITextComponent[0]);
@@ -44,7 +44,7 @@ public class PortalCashing {
                 mot = pos.add(1, 0, 1);
             }
             line.add("w  x");
-            line.add(String.format("^w Cash: %d\nx: %f\ny: %f\nz: %f\n------------\nmx: %f\nmy: %f\nmz: %f",
+            line.add(String.format("^w Cache: %d\nx: %f\ny: %f\nz: %f\n------------\nmx: %f\nmy: %f\nmz: %f",
                     i, pos.x, pos.y, pos.z, mot.x, mot.y, mot.z));
             line.add("?/tp " + tp.x +" "+ tp.y +" "+ tp.z);
 

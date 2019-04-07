@@ -5,7 +5,7 @@
  
 +import carpet.CarpetSettings;
 +import carpet.logging.LoggerRegistry;
-+import carpet.logging.logHelpers.PortalCashing;
++import carpet.logging.logHelpers.PortalCaching;
  import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -154,14 +154,14 @@
              long i = p_85189_1_ - 300L;
              ObjectIterator<Teleporter.PortalPosition> objectiterator = this.field_85191_c.values().iterator();
 -
-+            ArrayList<Vec3d> uncashings = new ArrayList<>();
++            ArrayList<Vec3d> uncachings = new ArrayList<>();
              while (objectiterator.hasNext())
              {
                  Teleporter.PortalPosition teleporter$portalposition = (Teleporter.PortalPosition)objectiterator.next();
  
                  if (teleporter$portalposition == null || teleporter$portalposition.field_85087_d < i)
                  {
-+                    uncashings.add(teleporter$portalposition.cashingCoords);
++                    uncachings.add(teleporter$portalposition.cachingCoords);
                      objectiterator.remove();
                  }
              }
@@ -173,9 +173,9 @@
 +                removeAllCachedEntries();
 +            }
 +
-+            // Log portal uncashing CARPET-XCOM
-+            if(LoggerRegistry.__portalCashing) {
-+                PortalCashing.portalCashingCleared(field_85192_a, field_85191_c.size(), uncashings);
++            // Log portal uncaching CARPET-XCOM
++            if(LoggerRegistry.__portalCaching) {
++                PortalCaching.portalCachingCleared(field_85192_a, field_85191_c.size(), uncachings);
 +            }
 +            /* carpet mod end */
          }
@@ -201,7 +201,7 @@
      public class PortalPosition extends BlockPos
      {
          public long field_85087_d;
-+        public Vec3d cashingCoords;
++        public Vec3d cachingCoords;
  
 -        public PortalPosition(BlockPos p_i45747_2_, long p_i45747_3_)
 +        public PortalPosition(BlockPos pos, long lastUpdate, Vec3d vec)
@@ -209,7 +209,7 @@
 -            super(p_i45747_2_.func_177958_n(), p_i45747_2_.func_177956_o(), p_i45747_2_.func_177952_p());
 -            this.field_85087_d = p_i45747_3_;
 +            super(pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p());
-+            cashingCoords = vec;
++            cachingCoords = vec;
 +            this.field_85087_d = lastUpdate;
          }
      }
