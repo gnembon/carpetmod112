@@ -1,11 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/world/Teleporter.java
 +++ ../src-work/minecraft/net/minecraft/world/Teleporter.java
-@@ -15,11 +15,16 @@
+@@ -1,25 +1,34 @@
+ package net.minecraft.world;
+ 
++import carpet.CarpetSettings;
++import carpet.logging.LoggerRegistry;
++import carpet.logging.logHelpers.PortalCashing;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.ObjectIterator;
+-import java.util.Random;
+ import net.minecraft.block.BlockPortal;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.block.state.pattern.BlockPattern;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.init.Blocks;
++import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.ChunkPos;
  import net.minecraft.util.math.MathHelper;
++import net.minecraft.util.math.Vec3d;
  
-+import net.minecraft.server.MinecraftServer;
-+import carpet.CarpetSettings;
++import java.util.ArrayList;
++import java.util.Random;
 +
  public class Teleporter
  {
@@ -17,7 +36,7 @@
  
      public Teleporter(WorldServer p_i1963_1_)
      {
-@@ -74,6 +79,7 @@
+@@ -74,6 +83,7 @@
          int j = MathHelper.func_76128_c(p_180620_1_.field_70165_t);
          int k = MathHelper.func_76128_c(p_180620_1_.field_70161_v);
          boolean flag = true;
@@ -25,7 +44,7 @@
          BlockPos blockpos = BlockPos.field_177992_a;
          long l = ChunkPos.func_77272_a(j, k);
  
-@@ -85,8 +91,20 @@
+@@ -85,8 +95,20 @@
              teleporter$portalposition.field_85087_d = this.field_85192_a.func_82737_E();
              flag = false;
          }
@@ -47,21 +66,24 @@
              BlockPos blockpos3 = new BlockPos(p_180620_1_);
  
              for (int i1 = -128; i1 <= 128; ++i1)
-@@ -125,6 +143,13 @@
+@@ -123,8 +145,15 @@
+         {
+             if (flag)
              {
-                 this.field_85191_c.put(l, new Teleporter.PortalPosition(blockpos, this.field_85192_a.func_82737_E()));
+-                this.field_85191_c.put(l, new Teleporter.PortalPosition(blockpos, this.field_85192_a.func_82737_E()));
++                this.field_85191_c.put(l, new Teleporter.PortalPosition(blockpos, this.field_85192_a.func_82737_E(), new Vec3d(p_180620_1_.field_70165_t, p_180620_1_.field_70163_u, p_180620_1_.field_70161_v)));
              }
 +            /* carpet mod */
 +            if (CarpetSettings.portalCaching && (flag || flag_cm))
 +            {
 +                //its timeless
-+                this.destinationHistoryCache.put(l, new Teleporter.PortalPosition(blockpos, 0L));
++                this.destinationHistoryCache.put(l, new Teleporter.PortalPosition(blockpos, 0L, new Vec3d(p_180620_1_.field_70165_t, p_180620_1_.field_70163_u, p_180620_1_.field_70161_v)));
 +            }
 +            /* carpet mod end */
  
              double d5 = (double)blockpos.func_177958_n() + 0.5D;
              double d7 = (double)blockpos.func_177952_p() + 0.5D;
-@@ -137,14 +162,35 @@
+@@ -137,14 +166,35 @@
              {
                  ++d2;
              }
@@ -100,7 +122,7 @@
              }
  
              float f = 0.0F;
-@@ -182,6 +228,13 @@
+@@ -182,6 +232,13 @@
              if (p_180620_1_ instanceof EntityPlayerMP)
              {
                  ((EntityPlayerMP)p_180620_1_).field_71135_a.func_147364_a(d5, d6, d7, p_180620_1_.field_70177_z, p_180620_1_.field_70125_A);
@@ -114,7 +136,7 @@
              }
              else
              {
-@@ -395,6 +448,12 @@
+@@ -395,6 +452,12 @@
                  }
              }
          }
@@ -127,7 +149,19 @@
  
          return true;
      }
-@@ -415,8 +474,33 @@
+@@ -405,27 +468,60 @@
+         {
+             long i = p_85189_1_ - 300L;
+             ObjectIterator<Teleporter.PortalPosition> objectiterator = this.field_85191_c.values().iterator();
+-
++            ArrayList<Vec3d> uncashings = new ArrayList<>();
+             while (objectiterator.hasNext())
+             {
+                 Teleporter.PortalPosition teleporter$portalposition = (Teleporter.PortalPosition)objectiterator.next();
+ 
+                 if (teleporter$portalposition == null || teleporter$portalposition.field_85087_d < i)
+                 {
++                    uncashings.add(teleporter$portalposition.cashingCoords);
                      objectiterator.remove();
                  }
              }
@@ -137,6 +171,11 @@
 +            if (CarpetSettings.portalCaching && this.destinationHistoryCache.size()> 65000 )
 +            {
 +                removeAllCachedEntries();
++            }
++
++            // Log portal uncashing CARPET-XCOM
++            if(LoggerRegistry.__portalCashing) {
++                PortalCashing.portalCashingCleared(field_85192_a, field_85191_c.size(), uncashings);
 +            }
 +            /* carpet mod end */
          }
@@ -161,3 +200,17 @@
  
      public class PortalPosition extends BlockPos
      {
+         public long field_85087_d;
++        public Vec3d cashingCoords;
+ 
+-        public PortalPosition(BlockPos p_i45747_2_, long p_i45747_3_)
++        public PortalPosition(BlockPos pos, long lastUpdate, Vec3d vec)
+         {
+-            super(p_i45747_2_.func_177958_n(), p_i45747_2_.func_177956_o(), p_i45747_2_.func_177952_p());
+-            this.field_85087_d = p_i45747_3_;
++            super(pos.func_177958_n(), pos.func_177956_o(), pos.func_177952_p());
++            cashingCoords = vec;
++            this.field_85087_d = lastUpdate;
+         }
+     }
+ }
