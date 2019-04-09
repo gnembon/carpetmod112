@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import carpet.carpetclient.CarpetClientChunkLogger;
 import carpet.carpetclient.CarpetClientRuleChanger;
 import carpet.helpers.RandomTickOptimization;
+import carpet.patches.BlockWool;
 import carpet.utils.TickingArea;
 import carpet.worldedit.WorldEditBridge;
 import net.minecraft.init.Blocks;
@@ -144,11 +145,16 @@ public class CarpetSettings
     })
     public static boolean accurateBlockPlacement = false;
 
-    @Rule(desc = "Repeater pointing from and to wool blocks transfer signals wirelessly", category = CREATIVE, extra = {
+    @Rule(desc = "Repeater pointing from and to wool blocks transfer signals wirelessly", category = CREATIVE, validator = "validateWirelessRedstone", extra = {
             "Temporary feature - repeaters need an update when reloaded",
             "By Narcoleptic Frog"
     })
     public static boolean wirelessRedstone = false;
+    private static boolean validateWirelessRedstone(boolean value) {
+        if (!value)
+            ((BlockWool) Blocks.WOOL).clearWirelessLocations();
+        return true;
+    }
 
     @Rule(desc = "Repeater delays depends on stained hardened clay aka terracotta on which they are placed", category = {EXPERIMENTAL, CREATIVE}, extra = {
             "1 to 15 gt per delay added (1-15 block data), 0 (white) adds 100gt per tick"

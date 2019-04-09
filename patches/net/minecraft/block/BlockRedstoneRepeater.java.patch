@@ -1,21 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneRepeater.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneRepeater.java
-@@ -20,6 +20,14 @@
+@@ -20,6 +20,8 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import carpet.CarpetSettings;
-+import carpet.utils.WoolTool;
-+import net.minecraft.item.EnumDyeColor;
-+import com.google.common.collect.ImmutableSet;
-+import java.util.HashMap;
-+import java.util.HashSet;
-+import javax.annotation.Nullable;
 +
  public class BlockRedstoneRepeater extends BlockRedstoneDiode
  {
      public static final PropertyBool field_176411_a = PropertyBool.func_177716_a("locked");
-@@ -64,9 +72,20 @@
+@@ -64,9 +66,20 @@
          }
      }
  
@@ -38,99 +32,3 @@
      }
  
      protected IBlockState func_180674_e(IBlockState p_180674_1_)
-@@ -128,4 +147,95 @@
-     {
-         return new BlockStateContainer(this, new IProperty[] {field_185512_D, field_176410_b, field_176411_a});
-     }
-+
-+    /*carpet mod*/
-+
-+    private static class Location {
-+        private BlockPos position;
-+        private int dimension;
-+        public Location(BlockPos position, int dimension) {
-+            this.position = position;
-+            this.dimension = dimension;
-+        }
-+        public BlockPos getPosition() { return position; }
-+        public int getDimension() { return dimension; }
-+    }
-+
-+    // Map from channels (dye colors) to sets of receiver locations.
-+    private static HashMap<EnumDyeColor, HashSet<Location>> receivers = new HashMap<>();
-+
-+    @Nullable
-+    public EnumDyeColor getTransmitChannel(World world, BlockPos pos, IBlockState state) {
-+        if (!CarpetSettings.wirelessRedstone) {
-+            return null;
-+        }
-+        EnumFacing facing = state.func_177229_b(BlockRedstoneRepeater.field_185512_D);
-+        EnumDyeColor channel = WoolTool.getWoolColorAtPosition(world, pos.func_177972_a(facing.func_176734_d()));
-+        return channel;
-+    }
-+
-+    @Nullable
-+    public EnumDyeColor getReceiveChannel(World world, BlockPos pos, IBlockState state) {
-+        if (!CarpetSettings.wirelessRedstone) {
-+            return null;
-+        }
-+        EnumFacing facing = state.func_177229_b(BlockRedstoneRepeater.field_185512_D);
-+        EnumDyeColor channel = WoolTool.getWoolColorAtPosition(world, pos.func_177972_a(facing));
-+        if (channel != null) {
-+            if (receivers.get(channel) == null) {
-+                receivers.put(channel, new HashSet<>());
-+            }
-+            receivers.get(channel).add(new Location(pos, world.field_73011_w.func_186058_p().func_186068_a()));
-+        }
-+        return channel;
-+    }
-+
-+    public void func_180650_b(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-+
-+        // If this block is a receiver, skip the update
-+        if (getReceiveChannel(worldIn, pos, state) != null) {
-+            return;
-+        }
-+
-+        // Run the normal updateTick code for the repeater
-+        super.func_180650_b(worldIn, pos, state, rand);
-+
-+        // If this repeater is a transmitter, copy its state (except rotation) to the corresponding
-+        // receivers.
-+        EnumDyeColor channel = getTransmitChannel(worldIn, pos, state);
-+        if (channel != null) {
-+            state = worldIn.func_180495_p(pos); // get the now updated trasmitter state.
-+            HashSet<Location> locations = receivers.get(channel);
-+            if (locations != null) {
-+                // Copy the locations, since rWorld.setBlockState can update the locations hash set.
-+                for (Location location : ImmutableSet.copyOf(locations)) {
-+                    World rWorld = worldIn.func_73046_m().func_71218_a(location.getDimension());
-+                    IBlockState oldState = rWorld.func_180495_p(location.getPosition());
-+                    if (oldState.func_177230_c() instanceof BlockRedstoneRepeater) {
-+                        // Need to keep the FACING property of the receiver repeater.
-+                        IBlockState newState = state.func_177226_a(field_185512_D, oldState.func_177229_b(field_185512_D));
-+                        if (!oldState.equals(newState)) {
-+                            rWorld.func_175656_a(location.getPosition(), newState);
-+                        }
-+                    } else {
-+                        locations.remove(location);
-+                    }
-+                }
-+            }
-+        }
-+    }
-+
-+    public void func_189540_a(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-+        super.func_189540_a(state, worldIn, pos, blockIn, fromPos);
-+        // Check to see if we need to add receivers for any channels.
-+        getReceiveChannel(worldIn, pos, state);
-+    }
-+
-+    public void func_176213_c(World worldIn, BlockPos pos, IBlockState state) {
-+        super.func_176213_c(worldIn, pos, state);
-+        // Check to see if we need to add receivers for any channels.
-+        getReceiveChannel(worldIn, pos, state);
-+    }
-+
-+    /*end*/
- }
