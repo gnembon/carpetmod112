@@ -1,16 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -47,6 +47,9 @@
+@@ -47,6 +47,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import carpet.helpers.CapturedDrops;
 +import carpet.helpers.StatHelper;
++import carpet.patches.BlockWool;
 +
  public class Block
  {
      private static final ResourceLocation field_176230_a = new ResourceLocation("air");
-@@ -73,7 +76,7 @@
+@@ -73,7 +77,7 @@
      public float field_149765_K;
      protected final BlockStateContainer field_176227_L;
      private IBlockState field_176228_M;
@@ -19,7 +20,7 @@
  
      public static int func_149682_b(Block p_149682_0_)
      {
-@@ -235,7 +238,7 @@
+@@ -235,7 +239,7 @@
          return this;
      }
  
@@ -28,7 +29,7 @@
      {
          this.field_149786_r = p_149713_1_;
          return this;
-@@ -327,7 +330,7 @@
+@@ -327,7 +331,7 @@
          return this.field_149782_v;
      }
  
@@ -37,7 +38,7 @@
      {
          this.field_149789_z = p_149675_1_;
          return this;
-@@ -399,7 +402,10 @@
+@@ -399,7 +403,10 @@
  
      public void func_180645_a(World p_180645_1_, BlockPos p_180645_2_, IBlockState p_180645_3_, Random p_180645_4_)
      {
@@ -48,7 +49,7 @@
      }
  
      public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
-@@ -490,6 +496,8 @@
+@@ -490,6 +497,8 @@
              EntityItem entityitem = new EntityItem(p_180635_0_, (double)p_180635_1_.func_177958_n() + d0, (double)p_180635_1_.func_177956_o() + d1, (double)p_180635_1_.func_177952_p() + d2, p_180635_2_);
              entityitem.func_174869_p();
              p_180635_0_.func_72838_d(entityitem);
@@ -57,7 +58,7 @@
          }
      }
  
-@@ -593,7 +601,10 @@
+@@ -593,7 +602,10 @@
  
      public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_)
      {
@@ -69,3 +70,13 @@
          p_180657_2_.func_71020_j(0.005F);
  
          if (this.func_149700_E() && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_180657_6_) > 0)
+@@ -838,7 +850,8 @@
+         func_176219_a(32, "deadbush", (new BlockDeadBush()).func_149711_c(0.0F).func_149672_a(SoundType.field_185850_c).func_149663_c("deadbush"));
+         func_176219_a(33, "piston", (new BlockPistonBase(false)).func_149663_c("pistonBase"));
+         func_176219_a(34, "piston_head", (new BlockPistonExtension()).func_149663_c("pistonBase"));
+-        func_176219_a(35, "wool", (new BlockColored(Material.field_151580_n)).func_149711_c(0.8F).func_149672_a(SoundType.field_185854_g).func_149663_c("cloth"));
++        // CM: use custom wool block
++        func_176219_a(35, "wool", (new BlockWool()).func_149711_c(0.8F).func_149672_a(SoundType.field_185854_g).func_149663_c("cloth"));
+         func_176219_a(36, "piston_extension", new BlockPistonMoving());
+         func_176219_a(37, "yellow_flower", (new BlockYellowFlower()).func_149711_c(0.0F).func_149672_a(SoundType.field_185850_c).func_149663_c("flower1"));
+         func_176219_a(38, "red_flower", (new BlockRedFlower()).func_149711_c(0.0F).func_149672_a(SoundType.field_185850_c).func_149663_c("flower2"));
