@@ -184,6 +184,7 @@ public class CarpetSettings
             "Required clients with RSMM Mod by Narcoleptic Frog. Enables multiplayer experience with RSMM Mod"
     })
     public static boolean redstoneMultimeter = false;
+
     private static boolean validateRedstoneMultimeter(boolean value) {
         CarpetServer.rsmmChannel.setEnabled(value);
         return true;
@@ -602,6 +603,9 @@ public class CarpetSettings
             "They need a crafting table to craft tier 2 and higher recipes"
     })
     public static boolean nitwitCrafter = false;
+
+    @Rule(desc = "Villagers automaticaly trade from items on the ground", category = EXPERIMENTAL)
+    public static boolean villagerAutoTrader;
 
     @Rule(desc = "Silverfish drop a gravel item when breaking out of a block", category = EXPERIMENTAL)
     public static boolean silverFishDropGravel = false;
