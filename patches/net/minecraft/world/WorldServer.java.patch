@@ -8,7 +8,7 @@
  import net.minecraft.village.VillageCollection;
  import net.minecraft.village.VillageSiege;
  import net.minecraft.world.biome.Biome;
-@@ -79,12 +80,20 @@
+@@ -79,14 +80,22 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -26,10 +26,14 @@
      private final MinecraftServer field_73061_a;
      private final EntityTracker field_73062_L;
 -    private final PlayerChunkMap field_73063_M;
+-    private final Set<NextTickListEntry> field_73064_N = Sets.<NextTickListEntry>newHashSet();
+-    private final TreeSet<NextTickListEntry> field_73065_O = new TreeSet<NextTickListEntry>();
 +    public final PlayerChunkMap field_73063_M;
-     private final Set<NextTickListEntry> field_73064_N = Sets.<NextTickListEntry>newHashSet();
-     private final TreeSet<NextTickListEntry> field_73065_O = new TreeSet<NextTickListEntry>();
++    public final Set<NextTickListEntry> field_73064_N = Sets.<NextTickListEntry>newHashSet(); // CM: made public for doubleTileTickSchedulingFix
++    public final TreeSet<NextTickListEntry> field_73065_O = new TreeSet<NextTickListEntry>(); // CM: made public for doubleTileTickSchedulingFix
      private final Map<UUID, Entity> field_175741_N = Maps.<UUID, Entity>newHashMap();
+     public boolean field_73058_d;
+     private boolean field_73068_P;
 @@ -98,6 +107,9 @@
      private int field_147489_T;
      private final List<NextTickListEntry> field_94579_S = Lists.<NextTickListEntry>newArrayList();

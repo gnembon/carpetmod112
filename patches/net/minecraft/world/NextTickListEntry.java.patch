@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/world/NextTickListEntry.java
++++ ../src-work/minecraft/net/minecraft/world/NextTickListEntry.java
+@@ -3,6 +3,8 @@
+ import net.minecraft.block.Block;
+ import net.minecraft.util.math.BlockPos;
+ 
++import carpet.CarpetSettings;
++
+ public class NextTickListEntry implements Comparable<NextTickListEntry>
+ {
+     private static long field_77177_f;
+@@ -50,6 +52,8 @@
+ 
+     public int compareTo(NextTickListEntry p_compareTo_1_)
+     {
++        if (CarpetSettings.doubleTileTickSchedulingFix && field_180282_a.equals(p_compareTo_1_.field_180282_a))
++            return 0;
+         if (this.field_77180_e < p_compareTo_1_.field_77180_e)
+         {
+             return -1;

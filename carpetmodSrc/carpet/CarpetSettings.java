@@ -27,7 +27,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -548,6 +550,26 @@ public class CarpetSettings
 
     @Rule(desc = "Fixes updates suppression causing server crashes.", category = FIX)
     public static boolean updateSuppressionCrashFix;
+
+    @Rule(desc = "Fixes double tile tick scheduling", category = FIX, validator = "validateDoubleTileTickSchedulingFix")
+    public static boolean doubleTileTickSchedulingFix = false;
+    private static boolean validateDoubleTileTickSchedulingFix(boolean value) {
+        @SuppressWarnings("unchecked")
+        ArrayList<NextTickListEntry>[] tileTicks = new ArrayList[3];
+        for (int dim = 0; dim < 3; dim++) {
+            WorldServer world = CarpetServer.minecraft_server.worlds[dim];
+            tileTicks[dim] = new ArrayList<>(world.pendingTickListEntriesHashSet);
+            world.pendingTickListEntriesHashSet.clear();
+            world.pendingTickListEntriesTreeSet.clear();
+        }
+        doubleTileTickSchedulingFix = value; // set this early
+        for (int dim = 0; dim < 3; dim++) {
+            WorldServer world = CarpetServer.minecraft_server.worlds[dim];
+            world.pendingTickListEntriesHashSet.addAll(tileTicks[dim]);
+            world.pendingTickListEntriesTreeSet.addAll(tileTicks[dim]);
+        }
+        return true;
+    }
 
     // ===== SURVIVAL FEATURES ===== //
 
