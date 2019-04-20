@@ -1001,7 +1001,7 @@ public class CarpetSettings
                     if (actualFilter == null) return true;
                     if (rule.contains(actualFilter)) return true;
                     for (RuleCategory ctgy : getCategories(rule))
-                        if (ctgy.name().equalsIgnoreCase(rule))
+                        if (ctgy.name().equalsIgnoreCase(actualFilter))
                             return true;
                     return false;
                 })
