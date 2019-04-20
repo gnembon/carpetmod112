@@ -37,6 +37,7 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -165,7 +166,7 @@ class CarpetWorld extends AbstractWorld {
             IInventory inv = (IInventory) tile;
             int size = inv.getSizeInventory();
             for (int i = 0; i < size; i++) {
-                inv.setInventorySlotContents(i, null);
+                inv.setInventorySlotContents(i, ItemStack.EMPTY);
             }
             return true;
         }
