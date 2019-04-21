@@ -4,6 +4,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAIWander;
@@ -12,10 +16,13 @@ import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class BlockInfo
 {
@@ -118,6 +125,21 @@ public class BlockInfo
         return "Something new";
     }
 
+    public static <T extends Comparable<T>> ITextComponent formatBlockProperty(IProperty<T> prop, T value) {
+        ITextComponent name = new TextComponentString( prop.getName()+ "=");
+        ITextComponent valueText = new TextComponentString(prop.getName(value));
+        if (prop instanceof PropertyDirection) valueText.getStyle().setColor(TextFormatting.GOLD);
+        else if (prop instanceof PropertyBool) valueText.getStyle().setColor((Boolean) value ? TextFormatting.GREEN : TextFormatting.RED);
+        else if (prop instanceof PropertyInteger) valueText.getStyle().setColor(TextFormatting.GREEN);
+        return name.appendSibling(valueText);
+    }
+
+    public static ITextComponent formatBoolean(boolean value) {
+        ITextComponent component = new TextComponentString(Boolean.toString(value));
+        component.getStyle().setColor(value ? TextFormatting.GREEN : TextFormatting.RED);
+        return component;
+    }
+
     public static List<ITextComponent> blockInfo(BlockPos pos, World world)
     {
         IBlockState state = world.getBlockState(pos);
@@ -128,37 +150,48 @@ public class BlockInfo
         {
             metastring = ":"+block.getMetaFromState(state);
         }
+        ITextComponent stateInfo = new TextComponentString("");
+        boolean first = true;
+        for (Map.Entry<IProperty<?>, Comparable<?>> entry : state.getProperties().entrySet()) {
+            if (!first) {
+                stateInfo.appendText(", ");
+            }
+            first = false;
+            stateInfo.appendSibling(formatBlockProperty((IProperty) entry.getKey(), (Comparable) entry.getValue()));
+        }
         List<ITextComponent> lst = new ArrayList<>();
         lst.add(Messenger.s(null, ""));
         lst.add(Messenger.s(null, "====================================="));
         lst.add(Messenger.s(null, String.format("Block info for %s%s (id %d%s):",Block.REGISTRY.getNameForObject(block),metastring, Block.getIdFromBlock(block), metastring )));
+        lst.add(Messenger.m(null, "w  - State: ", stateInfo));
         lst.add(Messenger.s(null, String.format(" - Material: %s", getMaterialName(material))));
-        lst.add(Messenger.s(null, String.format(" - Map colour: %s", getMapColourName(block.getMapColor(state, world, pos)))));
+        lst.add(Messenger.s(null, String.format(" - Map colour: %s", getMapColourName(state.getMapColor(world, pos)))));
         lst.add(Messenger.s(null, String.format(" - Sound type: %s", getSoundName(block.getSoundType()))));
         lst.add(Messenger.s(null, ""));
-        lst.add(Messenger.s(null, String.format(" - Full block: %s", block.isFullBlock(state))));
-        lst.add(Messenger.s(null, String.format(" - Full cube: %s", state.isFullCube() )));
-        lst.add(Messenger.s(null, String.format(" - Normal cube: %s", block.isNormalCube(state))));
-        lst.add(Messenger.s(null, String.format(" - Is liquid: %s", material.isLiquid())));
-        lst.add(Messenger.s(null, String.format(" - Is solid: %s", material.isSolid())));
+        lst.add(Messenger.m(null, "w  - Full block: ", formatBoolean(state.isFullBlock())));
+        lst.add(Messenger.m(null, "w  - Full cube: ", formatBoolean(state.isFullCube())));
+        lst.add(Messenger.m(null, "w  - Normal cube: ", formatBoolean(state.isNormalCube())));
+        lst.add(Messenger.m(null, "w  - Block normal cube: ", formatBoolean(state.isBlockNormalCube())));
+        lst.add(Messenger.m(null, "w  - Is liquid: ", formatBoolean(material.isLiquid())));
+        lst.add(Messenger.m(null, "w  - Is solid: ", formatBoolean(material.isSolid())));
         lst.add(Messenger.s(null, ""));
         lst.add(Messenger.s(null, String.format(" - Light in: %d, above: %d", world.getLight(pos), world.getLight(pos.up()))));
         lst.add(Messenger.s(null, String.format(" - Brightness in: %.2f, above: %.2f", world.getLightBrightness(pos), world.getLightBrightness(pos.up()))));
-        lst.add(Messenger.s(null, String.format(" - Is opaque: %s", material.isOpaque() )));
-        lst.add(Messenger.s(null, String.format(" - Light opacity: %d", block.getLightOpacity(state))));
-        lst.add(Messenger.s(null, String.format(" - Blocks light: %s", material.blocksLight())));
-        lst.add(Messenger.s(null, String.format(" - Emitted light: %d", block.getLightValue(state))));
-        lst.add(Messenger.s(null, String.format(" - Picks neighbour light value: %s", block.getUseNeighborBrightness(state))));
+        lst.add(Messenger.m(null, "w  - Is opaque: ", formatBoolean(material.isOpaque())));
+        lst.add(Messenger.s(null, String.format(" - Light opacity: %d", state.getLightOpacity())));
+        lst.add(Messenger.m(null, "w  - Blocks light: ", formatBoolean(material.blocksLight())));
+        lst.add(Messenger.s(null, String.format(" - Emitted light: %d", state.getLightValue())));
+        lst.add(Messenger.m(null, "w  - Picks neighbour light value: ", formatBoolean(state.useNeighborBrightness())));
         lst.add(Messenger.s(null, ""));
-        lst.add(Messenger.s(null, String.format(" - Causes suffocation: %s", block.causesSuffocation(state))));
-        lst.add(Messenger.s(null, String.format(" - Blocks movement: %s", block.isPassable(world,pos))));
-        lst.add(Messenger.s(null, String.format(" - Can burn: %s", material.getCanBurn())));
-        lst.add(Messenger.s(null, String.format(" - Requires a tool: %s", !material.isToolNotRequired())));
-        lst.add(Messenger.s(null, String.format(" - Hardness: %.2f", block.getBlockHardness(state,world,pos))));
+        lst.add(Messenger.m(null, "w  - Causes suffocation: ", formatBoolean(state.causesSuffocation())));
+        lst.add(Messenger.m(null, "w  - Blocks movement: ", formatBoolean(!block.isPassable(world, pos))));
+        lst.add(Messenger.m(null, "w  - Can burn: ", formatBoolean(material.getCanBurn())));
+        lst.add(Messenger.m(null, "w  - Requires a tool: ", formatBoolean(!material.isToolNotRequired())));
+        lst.add(Messenger.s(null, String.format(" - Hardness: %.2f", state.getBlockHardness(world, pos))));
         lst.add(Messenger.s(null, String.format(" - Blast resistance: %.2f", block.getExplosionResistance(null))));
-        lst.add(Messenger.s(null, String.format(" - Ticks randomly: %s", block.getTickRandomly())));
+        lst.add(Messenger.m(null, "w  - Ticks randomly: ", formatBoolean(block.getTickRandomly())));
         lst.add(Messenger.s(null, ""));
-        lst.add(Messenger.s(null, String.format(" - Can provide power: %s", block.canProvidePower(state))));
+        lst.add(Messenger.m(null, "w  - Can provide power: ", formatBoolean(state.canProvidePower())));
         lst.add(Messenger.s(null, String.format(" - Strong power level: %d", world.getStrongPower(pos))));
         lst.add(Messenger.s(null, String.format(" - Redstone power level: %d", world.isBlockIndirectlyGettingPowered(pos))));
         lst.add(Messenger.s(null, ""));
@@ -199,9 +232,9 @@ public class BlockInfo
         }
         creature.setDead();
         long total_time = (total_ticks)/1000/20;
-        return Messenger.s(null, String.format(" - Wander chance above: %.1f%%%%\n - Average standby above: %s",
+        return Messenger.s(null, String.format(" - Wander chance above: %.1f%%\n - Average standby above: %s",
                 (100.0F*success)/1000,
-                ((total_time>5000)?"INFINITY":(Long.toString(total_time)+" s"))
+                ((total_time>5000)?"INFINITY":(total_time + " s"))
         ));
     }
 }
