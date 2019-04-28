@@ -58,7 +58,6 @@ public class CarpetClientRuleChanger {
 		CarpetSettings.set(rule, value);
 		String s = CarpetSettings.getDescription(rule) + " is set to: " + CarpetSettings.get(rule);
         Messenger.print_server_message(sender.getEntityWorld().getMinecraftServer(), s);
-		updateCarpetClientsRule(rule, value);
 	}
 
 	public static void updateCarpetClientsRule(String rule, String value) {
