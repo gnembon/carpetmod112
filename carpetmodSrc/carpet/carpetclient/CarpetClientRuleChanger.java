@@ -1,5 +1,6 @@
 package carpet.carpetclient;
 
+import com.google.common.collect.Lists;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;
 import carpet.CarpetSettings;
@@ -28,6 +29,10 @@ public class CarpetClientRuleChanger {
 			if (sender.canUseCommand(2, "carpet")) {
 				String[] options = CarpetSettings.getOptions(rule);
 				int index = valueIndex.getOrDefault(rule.toLowerCase(Locale.ENGLISH), -1);
+				if (index == -1) {
+					String value = CarpetSettings.get(rule);
+					index = Lists.newArrayList(options).indexOf(value);
+				}
 				index = (index + 1) % options.length;
 				valueIndex.put(rule.toLowerCase(Locale.ENGLISH), index);
 				String value = options[index];
@@ -58,7 +63,6 @@ public class CarpetClientRuleChanger {
 		CarpetSettings.set(rule, value);
 		String s = CarpetSettings.getDescription(rule) + " is set to: " + CarpetSettings.get(rule);
         Messenger.print_server_message(sender.getEntityWorld().getMinecraftServer(), s);
-		updateCarpetClientsRule(rule, value);
 	}
 
 	public static void updateCarpetClientsRule(String rule, String value) {
