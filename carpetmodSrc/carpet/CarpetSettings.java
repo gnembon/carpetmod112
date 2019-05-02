@@ -554,6 +554,8 @@ public class CarpetSettings
     @Rule(desc = "Fixes double tile tick scheduling", category = FIX, validator = "validateDoubleTileTickSchedulingFix")
     public static boolean doubleTileTickSchedulingFix = false;
     private static boolean validateDoubleTileTickSchedulingFix(boolean value) {
+        if (CarpetServer.minecraft_server.worlds == null)
+            return true;
         @SuppressWarnings("unchecked")
         ArrayList<NextTickListEntry>[] tileTicks = new ArrayList[3];
         for (int dim = 0; dim < 3; dim++) {
