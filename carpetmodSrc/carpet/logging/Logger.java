@@ -15,11 +15,8 @@ public class Logger
     // Reference to the minecraft server. Used to look players up by name.
     private MinecraftServer server;
 
-    // The set of subscribed and online players.
-    private Map<String, String> subscribedOnlinePlayers;
-
-    // The set of subscribed and offline players.
-    private Map<String,String> subscribedOfflinePlayers;
+    // The set of subscribed players.
+    private Map<String, String> subscribedPlayers;
 
     // The logName of this log. Gets prepended to logged messages.
     private String logName;
@@ -36,8 +33,7 @@ public class Logger
     public Logger(MinecraftServer server, String logName, String def, String [] options, LogHandler defaultHandler)
     {
         this.server = server;
-        subscribedOnlinePlayers = new HashMap<>();
-        subscribedOfflinePlayers = new HashMap<>();
+        subscribedPlayers = new HashMap<>();
         this.logName = logName;
         this.default_option = def;
         this.options = options;
@@ -63,14 +59,7 @@ public class Logger
      */
     public void addPlayer(String playerName, String option, LogHandler handler)
     {
-        if (playerFromName(playerName) != null)
-        {
-            subscribedOnlinePlayers.put(playerName, option);
-        }
-        else
-        {
-            subscribedOfflinePlayers.put(playerName, option);
-        }
+        subscribedPlayers.put(playerName, option);
         if (handler == null)
             handler = defaultHandler;
         handlers.put(playerName, handler);
@@ -84,8 +73,7 @@ public class Logger
     public void removePlayer(String playerName)
     {
         handlers.getOrDefault(playerName, defaultHandler).onRemovePlayer(playerName);
-        subscribedOnlinePlayers.remove(playerName);
-        subscribedOfflinePlayers.remove(playerName);
+        subscribedPlayers.remove(playerName);
         handlers.remove(playerName);
         LoggerRegistry.setAccess(this);
     }
@@ -109,9 +97,9 @@ public class Logger
     /**
      * Returns true if there are any online subscribers for this log.
      */
-    public boolean hasOnlineSubscribers()
+    public boolean hasSubscribers()
     {
-        return subscribedOnlinePlayers.size() > 0;
+        return subscribedPlayers.size() > 0;
     }
 
     /**
@@ -123,7 +111,7 @@ public class Logger
     public void logNoCommand(lMessage messagePromise) {log(messagePromise, (Object[])null);}
     public void log(lMessage messagePromise, Object... commandParams)
     {
-        for (Map.Entry<String,String> en : subscribedOnlinePlayers.entrySet())
+        for (Map.Entry<String,String> en : subscribedPlayers.entrySet())
         {
             EntityPlayerMP player = playerFromName(en.getKey());
             if (player != null)
@@ -145,7 +133,7 @@ public class Logger
     public void log(lMessageIgnorePlayer messagePromise, Object... commandParams)
     {
         Map<String, ITextComponent[]> cannedMessages = new HashMap<>();
-        for (Map.Entry<String,String> en : subscribedOnlinePlayers.entrySet())
+        for (Map.Entry<String,String> en : subscribedPlayers.entrySet())
         {
             EntityPlayerMP player = playerFromName(en.getKey());
             if (player != null)
@@ -168,7 +156,7 @@ public class Logger
     public void log(Supplier<ITextComponent[]> messagePromise, Object... commandParams)
     {
         ITextComponent [] cannedMessages = null;
-        for (Map.Entry<String,String> en : subscribedOnlinePlayers.entrySet())
+        for (Map.Entry<String,String> en : subscribedPlayers.entrySet())
         {
             EntityPlayerMP player = playerFromName(en.getKey());
             if (player != null)
@@ -193,30 +181,6 @@ public class Logger
     }
 
     // ----- Event Handlers ----- //
-
-    public void onPlayerConnect(EntityPlayer player)
-    {
-        // If the player was subscribed to the log and offline, move them to the set of online subscribers.
-        String playerName = player.getName();
-        if (subscribedOfflinePlayers.containsKey(playerName))
-        {
-            subscribedOnlinePlayers.put(playerName, subscribedOfflinePlayers.get(playerName));
-            subscribedOfflinePlayers.remove(playerName);
-        }
-        LoggerRegistry.setAccess(this);
-    }
-
-    public void onPlayerDisconnect(EntityPlayer player)
-    {
-        // If the player was subscribed to the log, move them to the set of offline subscribers.
-        String playerName = player.getName();
-        if (subscribedOnlinePlayers.containsKey(playerName))
-        {
-            subscribedOfflinePlayers.put(playerName, subscribedOnlinePlayers.get(playerName));
-            subscribedOnlinePlayers.remove(playerName);
-        }
-        LoggerRegistry.setAccess(this);
-    }
 
     public String getAcceptedOption(String arg)
     {

@@ -62,13 +62,22 @@ public abstract class LogHandler
     
     public static LogHandler createHandler(String name, String... extraArgs)
     {
-        return CREATORS.get(name).create(extraArgs);
+        LogHandler handler = CREATORS.get(name).create(extraArgs);
+        handler.name = name;
+        handler.extraArgs = extraArgs;
+        return handler;
     }
     
     public static List<String> getHandlerNames()
     {
         return CREATORS.keySet().stream().sorted().collect(Collectors.toList());
     }
+
+    private String name;
+    private String[] extraArgs;
+
+    public String getName() { return name; }
+    public String[] getExtraArgs() { return extraArgs; }
     
     public abstract void handle(EntityPlayerMP player, ITextComponent[] message, Object[] commandParams);
     
