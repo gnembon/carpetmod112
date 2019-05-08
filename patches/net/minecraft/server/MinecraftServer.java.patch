@@ -256,3 +256,12 @@
      }
  
      public boolean func_71255_r()
+@@ -935,7 +1020,7 @@
+ 
+     public String getServerModName()
+     {
+-        return "vanilla";
++        return "carpetmod";
+     }
+ 
+     public CrashReport func_71230_b(CrashReport p_71230_1_)
