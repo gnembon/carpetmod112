@@ -8,18 +8,17 @@
  import java.util.List;
  import java.util.Random;
  import javax.annotation.Nullable;
-@@ -33,6 +34,10 @@
+@@ -33,6 +34,9 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import carpet.logging.LoggerRegistry;
 +import carpet.logging.logHelpers.InstantComparators;
-+import java.util.BitSet;
 +
  public class BlockRedstoneComparator extends BlockRedstoneDiode implements ITileEntityProvider
  {
      public static final PropertyBool field_176464_a = PropertyBool.func_177716_a("powered");
-@@ -60,7 +65,7 @@
+@@ -60,7 +64,7 @@
          return new ItemStack(Items.field_151132_bS);
      }
  
@@ -28,7 +27,7 @@
      {
          return 2;
      }
-@@ -206,8 +211,34 @@
+@@ -206,8 +210,32 @@
                  {
                      p_176398_1_.func_175654_a(p_176398_2_, this, 2, 0);
                  }
@@ -37,9 +36,9 @@
 +                    if (tileentity instanceof TileEntityComparator)
 +                    {
 +                        TileEntityComparator comparator = (TileEntityComparator) tileentity;
-+                        comparator.scheduledTime = p_176398_1_.func_82737_E();
-+                        comparator.scheduledOutputSignal = i;
-+                        comparator.buggy = i == j;
++                        int index = (int) Math.floorMod(p_176398_1_.func_82737_E() + 2, 3);
++                        comparator.scheduledOutputSignal[index] = i;
++                        comparator.buggy[index] = i == j;
 +                    }
 +                    else
 +                    {
@@ -54,16 +53,14 @@
 +            if (te instanceof TileEntityComparator)
 +            {
 +                TileEntityComparator comparator = (TileEntityComparator) te;
-+                if (p_176398_1_.func_82737_E() == comparator.scheduledTime)
-+                {
-+                    comparator.scheduledOutputSignal = func_176460_j(p_176398_1_, p_176398_2_, p_176398_3_);
-+                }
++                int index = (int) Math.floorMod(p_176398_1_.func_82737_E() + 2, 3);
++                comparator.scheduledOutputSignal[index] = func_176460_j(p_176398_1_, p_176398_2_, p_176398_3_);
 +            }
 +        }
      }
  
      private void func_176462_k(World p_176462_1_, BlockPos p_176462_2_, IBlockState p_176462_3_)
-@@ -249,6 +280,23 @@
+@@ -249,6 +277,22 @@
          }
  
          this.func_176462_k(p_180650_1_, p_180650_2_, p_180650_3_);
@@ -74,14 +71,13 @@
 +            if (te instanceof TileEntityComparator)
 +            {
 +                TileEntityComparator comparator = (TileEntityComparator) te;
++                int index = (int) Math.floorMod(p_180650_1_.func_82737_E(), 3);
 +                // output signal 0 is generally considered to just be a too fast pulse for a comparator, rather
 +                // than an instant comparator
-+                if (comparator.func_145996_a() != comparator.scheduledOutputSignal && comparator.func_145996_a() != 0)
++                if (comparator.func_145996_a() != comparator.scheduledOutputSignal[index] && comparator.func_145996_a() != 0)
 +                {
-+                    InstantComparators.onInstantComparator(p_180650_1_, p_180650_2_, comparator.buggy);
++                    InstantComparators.onInstantComparator(p_180650_1_, p_180650_2_, comparator.buggy[index]);
 +                }
-+                comparator.scheduledOutputSignal = 0;
-+                comparator.buggy = false;
 +            }
 +        }
      }
