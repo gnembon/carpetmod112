@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/tileentity/TileEntityComparator.java
++++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityComparator.java
+@@ -5,6 +5,9 @@
+ public class TileEntityComparator extends TileEntity
+ {
+     private int field_145997_a;
++    // CM: instant comparator logger
++    public int scheduledOutputSignal;
++    public boolean buggy;
+ 
+     public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
+     {

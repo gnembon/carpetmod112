@@ -1,6 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneComparator.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneComparator.java
-@@ -60,7 +60,7 @@
+@@ -33,6 +33,9 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
++import carpet.logging.LoggerRegistry;
++import carpet.logging.logHelpers.InstantComparators;
++
+ public class BlockRedstoneComparator extends BlockRedstoneDiode implements ITileEntityProvider
+ {
+     public static final PropertyBool field_176464_a = PropertyBool.func_177716_a("powered");
+@@ -60,7 +63,7 @@
          return new ItemStack(Items.field_151132_bS);
      }
  
@@ -9,3 +19,40 @@
      {
          return 2;
      }
+@@ -206,6 +209,12 @@
+                 {
+                     p_176398_1_.func_175654_a(p_176398_2_, this, 2, 0);
+                 }
++                if (LoggerRegistry.__instantComparators && tileentity instanceof TileEntityComparator)
++                {
++                    TileEntityComparator comparator = (TileEntityComparator) tileentity;
++                    comparator.scheduledOutputSignal = Math.max(comparator.scheduledOutputSignal, i);
++                    comparator.buggy |= i == j;
++                }
+             }
+         }
+     }
+@@ -249,6 +258,23 @@
+         }
+ 
+         this.func_176462_k(p_180650_1_, p_180650_2_, p_180650_3_);
++
++        if (LoggerRegistry.__instantComparators)
++        {
++            TileEntity te = p_180650_1_.func_175625_s(p_180650_2_);
++            if (te instanceof TileEntityComparator)
++            {
++                TileEntityComparator comparator = (TileEntityComparator) te;
++                // output signal 0 is generally considered to just be a too fast pulse for a comparator, rather
++                // than an instant comparator
++                if (comparator.func_145996_a() != comparator.scheduledOutputSignal && comparator.func_145996_a() != 0)
++                {
++                    InstantComparators.onInstantComparator(p_180650_1_, p_180650_2_, comparator.buggy);
++                }
++                comparator.scheduledOutputSignal = 0;
++                comparator.buggy = false;
++            }
++        }
+     }
+ 
+     public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
