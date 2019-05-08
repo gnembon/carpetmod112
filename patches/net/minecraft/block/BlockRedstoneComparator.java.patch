@@ -19,20 +19,27 @@
      {
          return 2;
      }
-@@ -206,6 +209,12 @@
+@@ -206,6 +209,19 @@
                  {
                      p_176398_1_.func_175654_a(p_176398_2_, this, 2, 0);
                  }
-+                if (LoggerRegistry.__instantComparators && tileentity instanceof TileEntityComparator)
++                if (LoggerRegistry.__instantComparators)
 +                {
-+                    TileEntityComparator comparator = (TileEntityComparator) tileentity;
-+                    comparator.scheduledOutputSignal = Math.max(comparator.scheduledOutputSignal, i);
-+                    comparator.buggy |= i == j;
++                    if (tileentity instanceof TileEntityComparator)
++                    {
++                        TileEntityComparator comparator = (TileEntityComparator) tileentity;
++                        comparator.scheduledOutputSignal = Math.max(comparator.scheduledOutputSignal, i);
++                        comparator.buggy |= i == j;
++                    }
++                    else
++                    {
++                        InstantComparators.onNoTileEntity(p_176398_1_, p_176398_2_);
++                    }
 +                }
              }
          }
      }
-@@ -249,6 +258,23 @@
+@@ -249,6 +265,23 @@
          }
  
          this.func_176462_k(p_180650_1_, p_180650_2_, p_180650_3_);

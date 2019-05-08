@@ -8,6 +8,17 @@ import net.minecraft.world.World;
 
 public class InstantComparators {
 
+    public static void onNoTileEntity(World world, BlockPos pos) {
+        if (LoggerRegistry.__instantComparators) {
+            LoggerRegistry.getLogger("instantComparators").log(option -> new ITextComponent[] {
+                        Messenger.m(null, "y Comparator has no tile entity ", Messenger.tp("y", pos))
+                },
+            "X", pos.getX(),
+            "Y", pos.getY(),
+            "Z", pos.getZ());
+        }
+    }
+
     public static void onInstantComparator(World world, BlockPos pos, boolean buggy) {
         if (LoggerRegistry.__instantComparators) {
             LoggerRegistry.getLogger("instantComparators").log(option -> {
