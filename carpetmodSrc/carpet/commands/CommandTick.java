@@ -32,7 +32,7 @@ public class CommandTick extends CommandCarpetBase
      */
     public String getUsage(ICommandSender sender)
     {
-        return "Usage: tick rate <tickrate in tps> | warp <time in ticks to skip>";
+        return "Usage: tick rate <tickrate in tps> | warp [time in ticks to skip]";
     }
 
     /**
@@ -58,7 +58,7 @@ public class CommandTick extends CommandCarpetBase
         }
         else if ("warp".equalsIgnoreCase(args[0]))
         {
-            long advance = parseLong(args[1], 0, Long.MAX_VALUE);
+            long advance = args.length >= 2 ? parseLong(args[1], 0, Long.MAX_VALUE) : Long.MAX_VALUE;
             EntityPlayer player = null;
             if (sender instanceof EntityPlayer)
             {
