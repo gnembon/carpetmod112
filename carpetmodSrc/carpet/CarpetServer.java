@@ -56,6 +56,7 @@ public class CarpetServer // static for now - easier to handle all around the co
     {
         CarpetSettings.applySettingsFromConf(server);
         LoggerRegistry.initLoggers(server);
+        LoggerRegistry.readSaveFile(server);
         WorldEditBridge.onServerLoaded(server);
 
         // Precache mappings so as not to lag the server later

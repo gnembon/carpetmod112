@@ -26,7 +26,7 @@ public class TrajectoryLogHelper
     public TrajectoryLogHelper(String logName)
     {
         this.logger = LoggerRegistry.getLogger(logName);
-        this.doLog = this.logger.hasOnlineSubscribers();
+        this.doLog = this.logger.hasSubscribers();
         sentLogs = 0;
     }
 

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import carpet.logging.LoggerOptions;
 import org.apache.commons.lang3.ArrayUtils;
 
 import carpet.CarpetSettings;
@@ -25,7 +26,7 @@ import net.minecraft.util.math.BlockPos;
 
 public class CommandLog extends CommandCarpetBase {
 
-    private final String USAGE = "/log (interactive menu) OR /log <logName> [?option] [player] [handler ...] OR /log <logName> clear [player]";
+    private final String USAGE = "/log (interactive menu) OR /log <logName> [?option] [player] [handler ...] OR /log <logName> clear [player] OR /log defaults (interactive menu) OR /log setDefault <logName> [?option] [handler ...] OR /log removeDefault <logName>";
 
     @Override
     public String getName() {
@@ -53,7 +54,7 @@ public class CommandLog extends CommandCarpetBase {
             {
                 return;
             }
-            Map<String,String> subs = LoggerRegistry.getPlayerSubscriptions(player.getName());
+            Map<String, LoggerOptions> subs = LoggerRegistry.getPlayerSubscriptions(player.getName());
             if (subs == null)
             {
                 subs = new HashMap<>();
@@ -86,7 +87,7 @@ public class CommandLog extends CommandCarpetBase {
                 {
                     for (String option : logger.getOptions())
                     {
-                        if (subs.containsKey(lname) && subs.get(lname).equalsIgnoreCase(option))
+                        if (subs.containsKey(lname) && subs.get(lname).option.equalsIgnoreCase(option))
                         {
                             comp.add("l [" + option + "] ");
                         } else
@@ -108,8 +109,9 @@ public class CommandLog extends CommandCarpetBase {
             }
             return;
         }
+
         // toggle to default
-        if ("clear".equalsIgnoreCase(args[0]))
+        if ("reset".equalsIgnoreCase(args[0]))
         {
             if (args.length > 1)
             {
@@ -119,13 +121,113 @@ public class CommandLog extends CommandCarpetBase {
             {
                 throw new WrongUsageException("No player specified");
             }
-            for (String logname : LoggerRegistry.getLoggerNames())
-            {
-                LoggerRegistry.unsubscribePlayer(player.getName(), logname);
-            }
-            notifyCommandListener(sender, this, "Unsubscribed from all logs");
+            LoggerRegistry.resetSubscriptions(server, player.getName());
+            notifyCommandListener(sender, this, "Unsubscribed from all logs and restored default subscriptions");
             return;
         }
+
+        if ("defaults".equalsIgnoreCase(args[0])) {
+            if (player == null)
+            {
+                return;
+            }
+            Map<String, LoggerOptions> subs = LoggerRegistry.getDefaultSubscriptions();
+
+            List<String> all_logs = new ArrayList<>(LoggerRegistry.getLoggerNames());
+            Collections.sort(all_logs);
+
+            Messenger.m(player, "w _____________________");
+            Messenger.m(player, "w Available logging options:");
+            for (String lname: all_logs)
+            {
+                List<Object> comp = new ArrayList<>();
+                String color = subs.containsKey(lname)?"w":"g";
+                comp.add("w  - "+lname+": ");
+                Logger logger = LoggerRegistry.getLogger(lname);
+                String [] options = logger.getOptions();
+                if (options == null)
+                {
+                    if (subs.containsKey(lname))
+                    {
+                        comp.add("l Subscribed ");
+                    }
+                    else
+                    {
+                        comp.add(color + " [Subscribe] ");
+                        comp.add("^w set default subscription to " + lname);
+                        comp.add("!/log setDefault " + lname);
+                    }
+                }
+                else
+                {
+                    for (String option : logger.getOptions())
+                    {
+                        if (subs.containsKey(lname) && subs.get(lname).option.equalsIgnoreCase(option))
+                        {
+                            comp.add("l [" + option + "] ");
+                        } else
+                        {
+                            comp.add(color + " [" + option + "] ");
+                            comp.add("^w set default subscription to " + lname + " " + option);
+                            comp.add("!/log setDefault " + lname + " " + option);
+                        }
+
+                    }
+                }
+                if (subs.containsKey(lname))
+                {
+                    comp.add("nb [X]");
+                    comp.add("^w Click to remove default subscription");
+                    comp.add("!/log removeDefault " + lname);
+                }
+                Messenger.m(player,comp.toArray(new Object[0]));
+            }
+            return;
+        }
+
+        if ("setDefault".equalsIgnoreCase(args[0])) {
+            if (args.length >= 2) {
+                Logger logger = LoggerRegistry.getLogger(args[1]);
+                if (logger != null) {
+                    String option = logger.getDefault();
+                    if (args.length >= 3) {
+                        option = logger.getAcceptedOption(args[2]);
+                    }
+
+                    LogHandler handler = null;
+                    if (args.length >= 4) {
+                        handler = LogHandler.createHandler(args[3], ArrayUtils.subarray(args, 4, args.length));
+                        if (handler == null) {
+                            throw new CommandException("Invalid handler");
+                        }
+                    }
+
+                    LoggerRegistry.setDefault(server, args[1], option, handler);
+                    Messenger.m(player, "gi Added " + logger.getLogName() + " to default subscriptions.");
+                    return;
+                } else {
+                    throw new WrongUsageException("No logger named " + args[1] + ".");
+                }
+            } else {
+                throw new WrongUsageException("No logger specified.");
+            }
+        }
+
+        if ("removeDefault".equalsIgnoreCase(args[0])) {
+            if (args.length > 1) {
+                Logger logger = LoggerRegistry.getLogger(args[1]);
+                if (logger != null) {
+                    LoggerRegistry.removeDefault(server, args[1]);
+                    Messenger.m(player, "gi Removed " + logger.getLogName() + " from default subscriptions.");
+                    return;
+                } else {
+                    throw new WrongUsageException("No logger named " + args[1] + ".");
+                }
+            } else {
+                throw new WrongUsageException("No logger specified.");
+            }
+        }
+
         Logger logger = LoggerRegistry.getLogger(args[0]);
         if (logger != null)
         {
@@ -154,16 +256,16 @@ public class CommandLog extends CommandCarpetBase {
             boolean subscribed = true;
             if (args.length >= 2 && "clear".equalsIgnoreCase(args[1]))
             {
-                LoggerRegistry.unsubscribePlayer(player.getName(), logger.getLogName());
+                LoggerRegistry.unsubscribePlayer(server, player.getName(), logger.getLogName());
                 subscribed = false;
             }
             else if (option == null)
             {
-                subscribed = LoggerRegistry.togglePlayerSubscription(player.getName(), logger.getLogName(), handler);
+                subscribed = LoggerRegistry.togglePlayerSubscription(server, player.getName(), logger.getLogName(), handler);
             }
             else
             {
-                LoggerRegistry.subscribePlayer(player.getName(), logger.getLogName(), option, handler);
+                LoggerRegistry.subscribePlayer(server, player.getName(), logger.getLogName(), option, handler);
             }
             if (subscribed)
             {
@@ -191,6 +293,9 @@ public class CommandLog extends CommandCarpetBase {
         {
             Set<String> options = new HashSet<>(LoggerRegistry.getLoggerNames());
             options.add("clear");
+            options.add("defaults");
+            options.add("setDefault");
+            options.add("removeDefault");
             return getListOfStringsMatchingLastWord(args, options);
         }
         else if (args.length == 2)
@@ -200,6 +305,13 @@ public class CommandLog extends CommandCarpetBase {
                 List<String> players = Arrays.asList(server.getOnlinePlayerNames());
                 return getListOfStringsMatchingLastWord(args, players.toArray(new String[0]));
             }
+
+            if ("setDefault".equalsIgnoreCase(args[0]) || "removeDefault".equalsIgnoreCase(args[0]))
+            {
+                Set<String> options = new HashSet<>(LoggerRegistry.getLoggerNames());
+                return getListOfStringsMatchingLastWord(args, options);
+            }
+
             Logger logger = LoggerRegistry.getLogger(args[0]);
             if (logger != null)
             {
@@ -215,6 +327,20 @@ public class CommandLog extends CommandCarpetBase {
         }
         else if (args.length == 3)
         {
+            if ("setDefault".equalsIgnoreCase(args[0]))
+            {
+                Logger logger = LoggerRegistry.getLogger(args[1]);
+                if (logger != null)
+                {
+                    String [] opts = logger.getOptions();
+                    List<String> options = new ArrayList<>();
+                    if (opts != null)
+                        options.addAll(Arrays.asList(opts));
+
+                    return getListOfStringsMatchingLastWord(args, options.toArray(new String[0]));
+                }
+            }
+
             List<String> players = Arrays.asList(server.getOnlinePlayerNames());
             return getListOfStringsMatchingLastWord(args, players.toArray(new String[0]));
         }

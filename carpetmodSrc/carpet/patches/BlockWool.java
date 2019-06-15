@@ -19,6 +19,9 @@ import java.util.*;
 public class BlockWool extends BlockColored {
 
     private Map<EnumDyeColor, Set<Pair<Integer, BlockPos>>> woolBlocks = new EnumMap<>(EnumDyeColor.class);
+    private EnumSet<EnumDyeColor> alreadyCheckedColors = EnumSet.noneOf(EnumDyeColor.class);
+    private boolean updatingWool;
+    private Set<Pair<Integer, BlockPos>> updatedBlocks = new HashSet<>();
 
     public BlockWool() {
         super(Material.CLOTH);
@@ -62,11 +65,22 @@ public class BlockWool extends BlockColored {
         // Adds this location if absent
         woolBlocks.get(state.getValue(COLOR)).add(Pair.of(worldIn.provider.getDimensionType().getId(), pos));
 
+        boolean updateRoot = !updatingWool;
+        updatingWool = true;
+
+        if (!updatedBlocks.add(Pair.of(worldIn.provider.getDimensionType().getId(), pos)))
+            return;
+
         for (Pair<Integer, BlockPos> wool : getAllWoolOfType(worldIn.getMinecraftServer(), state.getValue(COLOR))) {
             World world = worldIn.getMinecraftServer().getWorld(wool.getLeft());
             CarpetClientChunkLogger.setReason("Carpet wireless redstone");
             world.notifyNeighborsOfStateChange(wool.getRight(), this, false);
             CarpetClientChunkLogger.resetReason();
+        }
+
+        if (updateRoot) {
+            updatingWool = false;
+            updatedBlocks.clear();
         }
     }
 
@@ -79,6 +93,9 @@ public class BlockWool extends BlockColored {
         // Adds this location if absent
         woolBlocks.get(state.getValue(COLOR)).add(Pair.of(worldIn.provider.getDimensionType().getId(), pos));
 
+        if (!alreadyCheckedColors.add(state.getValue(COLOR)))
+            return 0;
+
         int power = 0;
         for (Pair<Integer, BlockPos> location : getAllWoolOfType(worldIn.getMinecraftServer(), state.getValue(COLOR))) {
             World world = worldIn.getMinecraftServer().getWorld(location.getLeft());
@@ -90,6 +107,8 @@ public class BlockWool extends BlockColored {
             }
             CarpetClientChunkLogger.resetReason();
         }
+
+        alreadyCheckedColors.clear();
 
         return power;
     }
