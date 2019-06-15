@@ -58,7 +58,7 @@ public class CommandTick extends CommandCarpetBase
         }
         else if ("warp".equalsIgnoreCase(args[0]))
         {
-            long advance = args.length >= 2 ? parseLong(args[1], 0, Long.MAX_VALUE) : Long.MAX_VALUE;
+            long advance = args.length >= 2 ? parseLong(args[1], 0, Long.MAX_VALUE) : TickSpeed.time_bias > 0 ? 0 : Long.MAX_VALUE;
             EntityPlayer player = null;
             if (sender instanceof EntityPlayer)
             {
@@ -74,7 +74,7 @@ public class CommandTick extends CommandCarpetBase
             }
 
             String message = TickSpeed.tickrate_advance(player, advance, s, icommandsender);
-            if ("".equals(message))
+            if (!message.isEmpty())
             {
                 notifyCommandListener(sender, this, message);
             }
