@@ -413,8 +413,14 @@ public class CarpetSettings
         return true;
     }
 
-    @Rule(desc = "Lag optimizations for redstone Dust. By Theosib", category = {EXPERIMENTAL, OPTIMIZATIONS})
-    public static boolean fastRedstoneDust = false;
+    @Rule(desc = "Redstone dust algorithm", category = {EXPERIMENTAL, OPTIMIZATIONS}, extra = {
+            "Fast redstone dust by Theosib",
+            "Random redstone dust to test if your contraption is locational"
+    })
+    public static RedstoneDustAlgorithm redstoneDustAlgorithm = RedstoneDustAlgorithm.vanilla;
+    public static enum RedstoneDustAlgorithm {
+        vanilla, fast, random
+    }
 
     @Rule(desc = "TNT causes less lag when exploding in the same spot and in liquids", category = TNT)
     public static boolean optimizedTNT = false;

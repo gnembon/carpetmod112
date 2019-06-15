@@ -1,16 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneWire.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneWire.java
-@@ -27,6 +27,9 @@
+@@ -27,6 +27,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import carpet.CarpetSettings;
 +import carpet.helpers.RedstoneWireTurbo;
++import java.util.Collections;
 +
  public class BlockRedstoneWire extends Block
  {
      public static final PropertyEnum<BlockRedstoneWire.EnumAttachPosition> field_176348_a = PropertyEnum.<BlockRedstoneWire.EnumAttachPosition>func_177709_a("north", BlockRedstoneWire.EnumAttachPosition.class);
-@@ -35,9 +38,11 @@
+@@ -35,9 +39,11 @@
      public static final PropertyEnum<BlockRedstoneWire.EnumAttachPosition> field_176350_N = PropertyEnum.<BlockRedstoneWire.EnumAttachPosition>func_177709_a("west", BlockRedstoneWire.EnumAttachPosition.class);
      public static final PropertyInteger field_176351_O = PropertyInteger.func_177719_a("power", 0, 15);
      protected static final AxisAlignedBB[] field_185700_f = new AxisAlignedBB[] {new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D)};
@@ -23,7 +24,7 @@
      public BlockRedstoneWire()
      {
          super(Material.field_151594_q);
-@@ -142,21 +147,24 @@
+@@ -142,21 +148,26 @@
          return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() || p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c() == Blocks.field_150426_aN;
      }
  
@@ -31,12 +32,14 @@
 +    private IBlockState updateSurroundingRedstone(World worldIn, BlockPos pos, IBlockState state, BlockPos source)
      {
 -        p_176338_3_ = this.func_176345_a(p_176338_1_, p_176338_2_, p_176338_2_, p_176338_3_);
-+        if(CarpetSettings.fastRedstoneDust)
++        if(CarpetSettings.redstoneDustAlgorithm == CarpetSettings.RedstoneDustAlgorithm.fast)
 +            return turbo.updateSurroundingRedstone(worldIn, pos, state, source);
 +
 +        state = this.func_176345_a(worldIn, pos, pos, state);
          List<BlockPos> list = Lists.newArrayList(this.field_150179_b);
          this.field_150179_b.clear();
++        if (CarpetSettings.redstoneDustAlgorithm == CarpetSettings.RedstoneDustAlgorithm.random)
++            Collections.shuffle(list);
  
          for (BlockPos blockpos : list)
          {
@@ -53,12 +56,12 @@
      {
          IBlockState iblockstate = p_176345_4_;
          int i = ((Integer)p_176345_4_.func_177229_b(field_176351_O)).intValue();
-@@ -166,54 +174,65 @@
+@@ -166,54 +177,65 @@
          int k = p_176345_1_.func_175687_A(p_176345_2_);
          this.field_150181_a = true;
  
 -        if (k > 0 && k > j - 1)
-+        if(!CarpetSettings.fastRedstoneDust)
++        if(CarpetSettings.redstoneDustAlgorithm != CarpetSettings.RedstoneDustAlgorithm.fast)
          {
 -            j = k;
 +            //skipping unnecessary check
@@ -76,7 +79,7 @@
 -            boolean flag = blockpos.func_177958_n() != p_176345_3_.func_177958_n() || blockpos.func_177952_p() != p_176345_3_.func_177952_p();
 -
 -            if (flag)
-+        if(!CarpetSettings.fastRedstoneDust || k < 15){
++        if(CarpetSettings.redstoneDustAlgorithm != CarpetSettings.RedstoneDustAlgorithm.fast || k < 15){
 +            for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
              {
 -                l = this.func_176342_a(p_176345_1_, blockpos, l);
@@ -108,7 +111,7 @@
 -            else if (!p_176345_1_.func_180495_p(blockpos).func_185915_l() && flag && p_176345_2_.func_177956_o() <= p_176345_3_.func_177956_o())
 +        }
 +
-+        if(!CarpetSettings.fastRedstoneDust){
++        if(CarpetSettings.redstoneDustAlgorithm != CarpetSettings.RedstoneDustAlgorithm.fast){
 +            if (l > j)
              {
 -                l = this.func_176342_a(p_176345_1_, blockpos.func_177977_b(), l);
@@ -151,14 +154,14 @@
          if (i != j)
          {
              p_176345_4_ = p_176345_4_.func_177226_a(field_176351_O, Integer.valueOf(j));
-@@ -223,11 +242,15 @@
+@@ -223,11 +245,15 @@
                  p_176345_1_.func_180501_a(p_176345_2_, p_176345_4_, 2);
              }
  
 -            this.field_150179_b.add(p_176345_2_);
 -
 -            for (EnumFacing enumfacing1 : EnumFacing.values())
-+            if(!CarpetSettings.fastRedstoneDust)
++            if(CarpetSettings.redstoneDustAlgorithm != CarpetSettings.RedstoneDustAlgorithm.fast)
              {
 -                this.field_150179_b.add(p_176345_2_.func_177972_a(enumfacing1));
 +                //CM unneccessary
@@ -171,7 +174,7 @@
              }
          }
  
-@@ -251,7 +274,7 @@
+@@ -251,7 +277,7 @@
      {
          if (!p_176213_1_.field_72995_K)
          {
@@ -180,7 +183,7 @@
  
              for (EnumFacing enumfacing : EnumFacing.Plane.VERTICAL)
              {
-@@ -290,7 +313,7 @@
+@@ -290,7 +316,7 @@
                  p_180663_1_.func_175685_c(p_180663_2_.func_177972_a(enumfacing), this, false);
              }
  
@@ -189,7 +192,7 @@
  
              for (EnumFacing enumfacing1 : EnumFacing.Plane.HORIZONTAL)
              {
-@@ -332,7 +355,7 @@
+@@ -332,7 +358,7 @@
          {
              if (this.func_176196_c(p_189540_2_, p_189540_3_))
              {
