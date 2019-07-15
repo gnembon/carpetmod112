@@ -422,3 +422,27 @@ installer.enabled = false
 installer.dependsOn.remove downloadInstaller
 installer.dependsOn.remove outputJar
 installer.dependsOn.remove processJson
+
+//Adds idea tools tab
+
+task setupProject {
+	group = 'tools ' + capitalizedName
+	description = 'Sets project up from patches, or clean project running it the first time'
+	dependsOn 'setup' + capitalizedName
+}
+task generatePatches {
+	group = 'tools ' + capitalizedName
+	description = 'Convert project to patches for public distribution'
+	dependsOn genPatches
+}
+task releaseProject {
+	group = 'tools ' + capitalizedName
+	description = 'Creates a release from the current project'
+	dependsOn createRelease
+}
+//task runServer {
+//	group = 'tools ' + capitalizedName
+//	description = 'Runs server'
+//	dependsOn project(':' + settings.modname).runserver
+//}
+
