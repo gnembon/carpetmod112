@@ -27,6 +27,7 @@
 /test/
 /resources/
 /out/
+/server/
 
 # Patch rejects
 /patches-/
