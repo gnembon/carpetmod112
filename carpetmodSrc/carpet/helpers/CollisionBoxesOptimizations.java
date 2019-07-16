@@ -45,7 +45,7 @@ public class CollisionBoxesOptimizations
                 {
                     if (world.isChunkLoaded(cx, cz, false))
                     {
-                        Chunk chunk = world.getChunkFromChunkCoords(cx, cz);
+                        Chunk chunk = world.getChunk(cx, cz);
                         final int xMin = Math.max(cx << 4, startX);
                         final int zMin = Math.max(cz << 4, startZ);
                         final int xMax = Math.min((cx << 4) + 15, endX - 1);

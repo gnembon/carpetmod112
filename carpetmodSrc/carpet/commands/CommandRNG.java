@@ -500,7 +500,7 @@ public class CommandRNG extends CommandCarpetBase {
     }
 
     private static BlockPos getRandomChunkPosition(World worldIn, Random rand, int x, int z) {
-        Chunk chunk = worldIn.getChunkFromChunkCoords(x, z);
+        Chunk chunk = worldIn.getChunk(x, z);
         int i = x * 16 + rand.nextInt(16);
         int j = z * 16 + rand.nextInt(16);
         int k = MathHelper.roundUp(chunk.getHeight(new BlockPos(i, 0, j)) + 1, 16);

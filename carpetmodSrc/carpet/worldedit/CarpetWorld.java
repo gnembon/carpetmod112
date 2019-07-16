@@ -115,7 +115,7 @@ class CarpetWorld extends AbstractWorld {
         int z = position.getBlockZ();
 
         // First set the block
-        Chunk chunk = world.getChunkFromChunkCoords(x >> 4, z >> 4);
+        Chunk chunk = world.getChunk(x >> 4, z >> 4);
         IBlockState oldState = Blocks.AIR.getDefaultState();
 
         if (notifyAndLight) {
@@ -186,7 +186,7 @@ class CarpetWorld extends AbstractWorld {
 
         BlockPos pos = new BlockPos(position.getBlockX(), 0, position.getBlockZ());
         if (getWorld().isBlockLoaded(pos)) {
-            Chunk chunk = getWorld().getChunkFromBlockCoords(pos);
+            Chunk chunk = getWorld().getChunk(pos);
             chunk.getBiomeArray()[((position.getBlockZ() & 0xF) << 4 | position.getBlockX() & 0xF)] = (byte) biome.getId();
             return true;
         }
@@ -240,7 +240,7 @@ class CarpetWorld extends AbstractWorld {
                 }
                 u.setAccessible(true);
                 */
-                Set<Long> unloadQueue = chunkServer.droppedChunksSet;
+                Set<Long> unloadQueue = chunkServer.droppedChunks;
                 /*
                 Field m;
                 try {
@@ -250,7 +250,7 @@ class CarpetWorld extends AbstractWorld {
                 }
                 m.setAccessible(true);
                 */
-                Long2ObjectMap<Chunk> loadedMap = chunkServer.id2ChunkMap;
+                Long2ObjectMap<Chunk> loadedMap = chunkServer.loadedChunks;
                 /*
                 Field lc;
                 try {

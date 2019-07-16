@@ -227,7 +227,7 @@ public class OptimizedExplosion
                     }
 
                     world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 3);
-                    block.onBlockDestroyedByExplosion(world, blockpos, e);
+                    block.onExplosionDestroy(world, blockpos, e);
                 }
             }
         }
@@ -237,7 +237,7 @@ public class OptimizedExplosion
             for (BlockPos blockpos1 : e.affectedBlockPositions)
             {
                 // Use the same Chunk reference because the positions are in the same xz-column
-                Chunk chunk = world.getChunkFromChunkCoords(blockpos1.getX() >> 4, blockpos1.getZ() >> 4);
+                Chunk chunk = world.getChunk(blockpos1.getX() >> 4, blockpos1.getZ() >> 4);
 
                 if (chunk.getBlockState(blockpos1).getMaterial() == Material.AIR &&
                     chunk.getBlockState(blockpos1.down()).isFullBlock() &&

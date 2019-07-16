@@ -1206,11 +1206,11 @@ public class EntityAICrafter extends EntityAIBase {
 		}
 		ItemStack itemstack = itemEntity.getItem();
 		Item item = itemstack.getItem();
-		if (itemstack.getItem().getUnlocalizedName().equals(Blocks.COMMAND_BLOCK.getUnlocalizedName())) {
+		if (itemstack.getItem().getTranslationKey().equals(Blocks.COMMAND_BLOCK.getTranslationKey())) {
 			readoutDebugInfoOnMe();
 			itemEntity.setDead();
 			return true;
-		} else if (itemstack.getItem().getUnlocalizedName().equals(Blocks.STRUCTURE_BLOCK.getUnlocalizedName())) {
+		} else if (itemstack.getItem().getTranslationKey().equals(Blocks.STRUCTURE_BLOCK.getTranslationKey())) {
 			for (int i = 0; i < villagerInventory.getSizeInventory(); ++i) {
 				villagerInventory.getStackInSlot(i).setCount(0);
 			}
@@ -1484,7 +1484,7 @@ public class EntityAICrafter extends EntityAIBase {
 	 * @return Returns true if the item stack is of the type plank.
 	 */
 	private boolean plankCheck(ItemStack itemstack) {
-		return itemstack.getItem().getUnlocalizedName().equals(Blocks.PLANKS.getUnlocalizedName());
+		return itemstack.getItem().getTranslationKey().equals(Blocks.PLANKS.getTranslationKey());
 	}
 
 	/**

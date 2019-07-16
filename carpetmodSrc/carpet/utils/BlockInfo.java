@@ -193,7 +193,7 @@ public class BlockInfo
         lst.add(Messenger.s(null, ""));
         lst.add(Messenger.m(null, "w  - Can provide power: ", formatBoolean(state.canProvidePower())));
         lst.add(Messenger.s(null, String.format(" - Strong power level: %d", world.getStrongPower(pos))));
-        lst.add(Messenger.s(null, String.format(" - Redstone power level: %d", world.isBlockIndirectlyGettingPowered(pos))));
+        lst.add(Messenger.s(null, String.format(" - Redstone power level: %d", world.getRedstonePowerFromNeighbors(pos))));
         lst.add(Messenger.s(null, ""));
         lst.add(wander_chances(pos.up(), world));
 

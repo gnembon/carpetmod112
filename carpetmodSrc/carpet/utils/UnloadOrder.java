@@ -94,9 +94,9 @@ public class UnloadOrder
         ChunkProviderServer chunkproviderserver = server.getChunkProvider();
         try
         {
-            Field field = chunkproviderserver.droppedChunksSet.getClass().getDeclaredField("map");
+            Field field = chunkproviderserver.droppedChunks.getClass().getDeclaredField("map");
             field.setAccessible(true);
-            HashMap map = (HashMap<Object,Object>)field.get(chunkproviderserver.droppedChunksSet);
+            HashMap map = (HashMap<Object,Object>)field.get(chunkproviderserver.droppedChunks);
             field = map.getClass().getDeclaredField("table");
             field.setAccessible(true);
             Object [] table = (Object [])field.get(map);
@@ -347,7 +347,7 @@ public class UnloadOrder
 
     public static String stringify_chunk_id(ChunkProviderServer provider, int index, Long olong, int size)
     {
-        Chunk chunk = provider.id2ChunkMap.get(olong);
+        Chunk chunk = provider.loadedChunks.get(olong);
 
         return String.format(" - %4d: (%d, %d) at X %d, Z %d (order: %d / %d)",
                 index+1,
@@ -360,7 +360,7 @@ public class UnloadOrder
 
     public static String stringify_chunk_id_113(ChunkProviderServer provider, int index, Long olong, int size)
     {
-        Chunk chunk = provider.id2ChunkMap.get(olong);
+        Chunk chunk = provider.loadedChunks.get(olong);
 
         return String.format(" - %4d: (%d, %d) at X %d, Z %d (order: %d / %d)",
                 index+1,
@@ -385,9 +385,9 @@ public class UnloadOrder
         int current_size = UnloadOrder.getCurrentHashSize(world);
         if (!world.disableLevelSaving)
         {
-            if (!provider.droppedChunksSet.isEmpty())
+            if (!provider.droppedChunks.isEmpty())
             {
-                Iterator<Long> iterator = provider.droppedChunksSet.iterator();
+                Iterator<Long> iterator = provider.droppedChunks.iterator();
                 List<Long> chunks_ids_order = new ArrayList<>();
                 int selected_chunk = -1;
                 int iti = 0;
@@ -395,7 +395,7 @@ public class UnloadOrder
                 for (i = 0; iterator.hasNext(); iterator.remove())
                 {
                     Long olong = iterator.next();
-                    Chunk chunk = provider.id2ChunkMap.get(olong);
+                    Chunk chunk = provider.loadedChunks.get(olong);
 
                     if (chunk != null && chunk.unloadQueued)
                     {
@@ -502,8 +502,8 @@ public class UnloadOrder
                 {
 
                     Long olong = iterator.next();
-                    Chunk chunk = provider.id2ChunkMap.get(olong);
-                    provider.droppedChunksSet.remove(olong);
+                    Chunk chunk = provider.loadedChunks.get(olong);
+                    provider.droppedChunks.remove(olong);
 
                     if (chunk != null && chunk.unloadQueued)
                     {

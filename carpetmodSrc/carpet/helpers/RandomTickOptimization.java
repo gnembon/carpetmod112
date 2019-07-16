@@ -57,7 +57,7 @@ public class RandomTickOptimization {
             IChunkProvider provider = world.getChunkProvider();
             if (!(provider instanceof ChunkProviderServer))
                 continue;
-            for (Chunk chunk : ((ChunkProviderServer) provider).id2ChunkMap.values()) {
+            for (Chunk chunk : ((ChunkProviderServer) provider).loadedChunks.values()) {
                 for (ExtendedBlockStorage subchunk : chunk.getBlockStorageArray()) {
                     if (subchunk != null)
                         subchunk.recalculateRefCounts();

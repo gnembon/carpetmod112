@@ -119,7 +119,7 @@ public class CommandTickingArea extends CommandCarpetBase
         for (ChunkPos chunk : area.listIncludedChunks(sender.getEntityWorld()))
         {
             // Load chunk
-            sender.getEntityWorld().getChunkFromChunkCoords(chunk.x, chunk.z);
+            sender.getEntityWorld().getChunk(chunk.x, chunk.z);
         }
         
         notifyCommandListener(sender, this, "Added ticking area");

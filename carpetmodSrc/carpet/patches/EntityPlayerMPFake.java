@@ -90,7 +90,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     private static GameProfile fixSkin(GameProfile gameProfile)
     {
         if (!gameProfile.getProperties().containsKey("texture"))
-            return TileEntitySkull.updateGameprofile(gameProfile);
+            return TileEntitySkull.updateGameProfile(gameProfile);
         else
             return gameProfile;
     }

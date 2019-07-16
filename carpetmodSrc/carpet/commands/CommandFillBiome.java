@@ -77,7 +77,7 @@ public class CommandFillBiome extends CommandCarpetBase
         {
             for (int z = minZ; z <= maxZ; z++)
             {
-                Chunk chunk = world.getChunkFromBlockCoords(pos.setPos(x, 0, z));
+                Chunk chunk = world.getChunk(pos.setPos(x, 0, z));
                 chunk.getBiomeArray()[(x & 15) | (z & 15) << 4] = biomeId;
                 chunk.markDirty();
             }

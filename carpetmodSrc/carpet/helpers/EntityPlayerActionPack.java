@@ -697,7 +697,7 @@ public class EntityPlayerActionPack
 
                 if (flag)
                 {
-                    block.onBlockDestroyedByPlayer(world, pos, iblockstate);
+                    block.onPlayerDestroy(world, pos, iblockstate);
                 }
 
                 this.currentBlock = new BlockPos(this.currentBlock.getX(), -1, this.currentBlock.getZ());

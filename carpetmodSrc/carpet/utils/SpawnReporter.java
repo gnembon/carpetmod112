@@ -381,7 +381,7 @@ public class SpawnReporter
     {
         List<ITextComponent> rep = new ArrayList<>();
         int x = pos.getX(); int y = pos.getY(); int z = pos.getZ();
-        Chunk chunk = worldIn.getChunkFromBlockCoords(pos);
+        Chunk chunk = worldIn.getChunk(pos);
         int max_chunk = MathHelper.roundUp(chunk.getHeight(new BlockPos(x, 0, z)) + 1, 16);
         int lc = max_chunk > 0 ? max_chunk : chunk.getTopFilledSegment() + 16 - 1;
         String where = (y >= lc) ? "above" : "below";
