@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import carpet.CarpetSettings;
+import carpet.network.PacketSplitter;
 import carpet.network.PluginChannelHandler;
 import com.google.common.base.Charsets;
 
@@ -53,46 +54,40 @@ public class CarpetClientServer implements PluginChannelHandler {
         return players.contains(player);
     }
 
-    public static boolean sendProtected(PacketBuffer data)
-    {
-        try
-        {
+    public static boolean sendProtected(PacketBuffer data) {
+        try {
             sender(data);
             return true;
-        }
-        catch (IllegalArgumentException exc)
-        {
+        } catch (IllegalArgumentException exc) {
             // Payload too large
             return false;
         }
     }
 
-    public static boolean sendProtected(PacketBuffer data, EntityPlayerMP player)
-    {
-        try
-        {
+    public static boolean sendProtected(PacketBuffer data, EntityPlayerMP player) {
+        try {
             sender(data, player);
             return true;
-        }
-        catch (IllegalArgumentException exc)
-        {
+        } catch (IllegalArgumentException exc) {
             // Payload too large
             return false;
         }
     }
 
-    public static void sender(PacketBuffer data)
-    {
-        SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
+    public static void sender(PacketBuffer data) {
+//        SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
+
+//        System.out.println(packet);
         for (EntityPlayerMP player : CarpetClientServer.getRegisteredPlayers()) {
-            player.connection.sendPacket(packet);
+//            player.connection.sendPacket(packet);
+            PacketSplitter.send(player, CARPET_CHANNEL_NAME, data);
         }
     }
 
-    public static void sender(PacketBuffer data, EntityPlayerMP player)
-    {
-        SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
-        player.connection.sendPacket(packet);
+    public static void sender(PacketBuffer data, EntityPlayerMP player) {
+//        SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
+//        player.connection.sendPacket(packet);
+        PacketSplitter.send(player, CARPET_CHANNEL_NAME, data);
     }
 
     public MinecraftServer getMinecraftServer() {

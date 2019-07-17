@@ -18,13 +18,9 @@ public class CarpetClientMessageHandler {
     public static final int VILLAGE_MARKERS = 2;
     public static final int BOUNDINGBOX_MARKERS = 3;
     public static final int TICKRATE_CHANGES = 4;
-    public static final int LARGE_VILLAGE_MARKERS_START = 5;
-    public static final int LARGE_VILLAGE_MARKERS = 6;
-    public static final int LARGE_BOUNDINGBOX_MARKERS_START = 7;
-    public static final int LARGE_BOUNDINGBOX_MARKERS = 8;
-    public static final int CHUNK_LOGGER = 9;
-	public static final int PISTON_UPDATES = 10;
-    public static final int RANDOMTICK_DISPLAY = 11;
+    public static final int CHUNK_LOGGER = 5;
+    public static final int PISTON_UPDATES = 6;
+    public static final int RANDOMTICK_DISPLAY = 7;
 
     public static void handler(EntityPlayerMP sender, PacketBuffer data) {
         int type = data.readInt();
@@ -62,23 +58,29 @@ public class CarpetClientMessageHandler {
 
         String[] list = CarpetSettings.findAll(null);
 
-        data.writeString(CarpetSettings.carpetVersion);
-        data.writeFloat(TickSpeed.tickrate);
-        data.writeInt(list.length);
+        NBTTagCompound chunkData = new NBTTagCompound();
+
+        chunkData.setString("carpetVersion", CarpetSettings.carpetVersion);
+        chunkData.setFloat("tickrate", TickSpeed.tickrate);
+        NBTTagList listNBT = new NBTTagList();
         for (String rule : list) {
             String current = CarpetSettings.get(rule);
             String[] options = CarpetSettings.getOptions(rule);
             String def = CarpetSettings.getDefault(rule);
             boolean isfloat = CarpetSettings.isDouble(rule);
 
-            data.writeString(rule);
-            data.writeString(current);
-            data.writeString(def);
-            data.writeBoolean(isfloat);
-            // data.writeInt(options.length);
-            // for (String o : options) {
-            // data.writeString(o);
-            // }
+            NBTTagCompound ruleNBT = new NBTTagCompound();
+            ruleNBT.setString("rule", rule);
+            ruleNBT.setString("current", current);
+            ruleNBT.setString("default", def);
+            ruleNBT.setBoolean("isfloat", isfloat);
+            listNBT.appendTag(ruleNBT);
+        }
+        chunkData.setTag("ruleList", listNBT);
+
+        try {
+            data.writeCompoundTag(chunkData);
+        } catch (Exception e) {
         }
 
         CarpetClientServer.sender(data);
@@ -90,25 +92,7 @@ public class CarpetClientMessageHandler {
 
         data.writeCompoundTag(compound);
 
-        if (!CarpetClientServer.sendProtected(data, sender)) {
-            // Payload was too large, try large packets for newer CC versions
-            NBTTagList villages = compound.getTagList("Villages", 10);
-
-            data = new PacketBuffer(Unpooled.buffer());
-            data.writeInt(CarpetClientMessageHandler.LARGE_VILLAGE_MARKERS_START);
-            data.writeVarInt(villages.tagCount());
-            CarpetClientServer.sender(data, sender);
-
-            for (int i = 0; i < villages.tagCount(); i += 256) {
-                data = new PacketBuffer(Unpooled.buffer());
-                data.writeInt(CarpetClientMessageHandler.LARGE_VILLAGE_MARKERS);
-                data.writeByte(Math.min(villages.tagCount() - i - 1, 255));
-                for (int j = i; j < villages.tagCount() && j < i + 256; j++) {
-                    data.writeCompoundTag(villages.getCompoundTagAt(j));
-                }
-                CarpetClientServer.sender(data, sender);
-            }
-        }
+        CarpetClientServer.sender(data, sender);
     }
 
     public static void sendNBTBoundingboxData(EntityPlayerMP sender, NBTTagCompound compound) {
@@ -117,33 +101,7 @@ public class CarpetClientMessageHandler {
 
         data.writeCompoundTag(compound);
 
-        if (!CarpetClientServer.sendProtected(data, sender)) {
-            // Payload was too large, try large packets for newer CC versions
-            NBTTagList boxes = compound.getTagList("Boxes", 9);
-            compound.removeTag("Boxes");
-            List<NBTTagCompound> allBoxes = new ArrayList<>();
-            for (int i = 0; i < boxes.tagCount(); i++) {
-                NBTTagList list = (NBTTagList) boxes.get(i);
-                for (int j = 0; j < list.tagCount(); j++) {
-                    allBoxes.add(list.getCompoundTagAt(j));
-                }
-            }
-
-            data = new PacketBuffer(Unpooled.buffer());
-            data.writeInt(CarpetClientMessageHandler.LARGE_BOUNDINGBOX_MARKERS_START);
-            data.writeCompoundTag(compound);
-            data.writeVarInt(allBoxes.size());
-            CarpetClientServer.sender(data, sender);
-
-            for (int i = 0; i < allBoxes.size(); i += 256) {
-                data = new PacketBuffer(Unpooled.buffer());
-                data.writeInt(CarpetClientMessageHandler.LARGE_BOUNDINGBOX_MARKERS);
-                data.writeByte(Math.min(allBoxes.size() - i - 1, 255));
-                for (int j = i; j < allBoxes.size() && j < i + 256; j++)
-                    data.writeCompoundTag(allBoxes.get(j));
-                CarpetClientServer.sender(data, sender);
-            }
-        }
+        CarpetClientServer.sender(data, sender);
     }
 
     public static void sendTickRateChanges() {
@@ -160,23 +118,25 @@ public class CarpetClientMessageHandler {
         data.writeInt(dataType);
         try {
             data.writeCompoundTag(compound);
-        }catch(Exception e){ }
+        } catch (Exception e) {
+        }
         CarpetClientServer.sender(data, sender);
     }
 
-	public static void sendPistonUpdate() {
-		PacketBuffer data = new PacketBuffer(Unpooled.buffer());
-		data.writeInt(CarpetClientMessageHandler.PISTON_UPDATES);
+    public static void sendPistonUpdate() {
+        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+        data.writeInt(CarpetClientMessageHandler.PISTON_UPDATES);
 
-		CarpetClientServer.sender(data);
-	}
+        CarpetClientServer.sender(data);
+    }
 
     public static void sendNBTRandomTickData(EntityPlayerMP sender, NBTTagCompound compound) {
         PacketBuffer data = new PacketBuffer(Unpooled.buffer());
         data.writeInt(CarpetClientMessageHandler.RANDOMTICK_DISPLAY);
         try {
             data.writeCompoundTag(compound);
-        }catch(Exception e){ }
+        } catch (Exception e) {
+        }
         CarpetClientServer.sender(data, sender);
     }
 }
