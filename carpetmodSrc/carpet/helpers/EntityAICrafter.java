@@ -1565,6 +1565,22 @@ public class EntityAICrafter extends EntityAIBase {
 		return CraftingManager.getRecipe(new ResourceLocation(recipe));
 	}
 
+
+	/**
+	 * Drops the inventory of the killed villager except for blacklisted items that can have the chance to be used as id-converters.
+	 */
+	public void dropInventory(){
+		InventoryBasic villagerInventory = villager.getVillagerInventory();
+		for (int j = 0; j < villagerInventory.getSizeInventory(); ++j) {
+			ItemStack is = villagerInventory.getStackInSlot(j);
+			boolean planks = plankCheck(is);
+			boolean die = is.getItem() == Items.DYE;
+			if(!planks && !die) {
+				villager.entityDropItem(is, 0.0F);
+			}
+		}
+	}
+
 	/**
 	 * Server printout of all the information related to this specific crafting
 	 * villager.

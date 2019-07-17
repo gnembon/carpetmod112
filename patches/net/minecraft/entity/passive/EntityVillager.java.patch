@@ -109,7 +109,15 @@
          }
  
          NBTTagList nbttaglist = p_70037_1_.func_150295_c("Inventory", 10);
-@@ -497,6 +535,9 @@
+@@ -491,12 +529,17 @@
+             }
+         }
+ 
++        if (CarpetSettings.nitwitCrafter && this.func_70946_n() == 5) craftingAI.dropInventory();
++
+         super.func_70645_a(p_70645_1_);
+     }
+ 
      public void func_70932_a_(@Nullable EntityPlayer p_70932_1_)
      {
          this.field_70962_h = p_70932_1_;
@@ -119,7 +127,7 @@
      }
  
      @Nullable
-@@ -608,6 +649,17 @@
+@@ -608,6 +651,17 @@
          {
              this.func_175554_cu();
          }
@@ -137,7 +145,7 @@
  
          return this.field_70963_i;
      }
-@@ -616,6 +668,12 @@
+@@ -616,6 +670,12 @@
      {
          EntityVillager.ITradeList[][][] aentityvillager$itradelist = field_175561_bA[this.func_70946_n()];
  
@@ -150,7 +158,7 @@
          if (this.field_175563_bv != 0 && this.field_175562_bw != 0)
          {
              ++this.field_175562_bw;
-@@ -630,6 +688,9 @@
+@@ -630,6 +690,9 @@
          {
              this.field_70963_i = new MerchantRecipeList();
          }
@@ -160,7 +168,7 @@
  
          int i = this.field_175563_bv - 1;
          int j = this.field_175562_bw - 1;
-@@ -648,6 +709,7 @@
+@@ -648,6 +711,7 @@
                  }
              }
          }
@@ -168,7 +176,7 @@
      }
  
      public World func_190670_t_()
-@@ -842,6 +904,20 @@
+@@ -842,6 +906,20 @@
          ItemStack itemstack = p_175445_1_.func_92059_d();
          Item item = itemstack.func_77973_b();
  
@@ -189,7 +197,7 @@
          if (this.func_175558_a(item))
          {
              ItemStack itemstack1 = this.field_175560_bz.func_174894_a(itemstack);
-@@ -948,6 +1024,12 @@
+@@ -948,6 +1026,12 @@
          }
      }
  
@@ -202,7 +210,7 @@
      static class EmeraldForItems implements EntityVillager.ITradeList
          {
              public Item field_179405_a;
-@@ -1140,4 +1222,10 @@
+@@ -1140,4 +1224,10 @@
                  }
              }
          }
