@@ -26,8 +26,7 @@ public class CarpetClientMarkers {
     private static ArrayList<EntityPlayerMP> playersVillageMarkers = new ArrayList<>();
 
     public static void updateClientVillageMarkers(World worldObj) {
-        if (playersVillageMarkers.size()==0)
-        {
+        if (playersVillageMarkers.size() == 0) {
             return;
         }
         NBTTagList nbttaglist = new NBTTagList();

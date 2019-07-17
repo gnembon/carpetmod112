@@ -1,10 +1,10 @@
 package carpet.carpetclient;
 /*
- *  Authors: Xcom and 0x53ee71ebe11e 
- *  
+ *  Authors: Xcom and 0x53ee71ebe11e
+ *
  *  Backend for the the carpetclient chunk debugging tool by
  *  Earthcomputer, Xcom and 0x53ee71ebe11e
- *  
+ *
  */
 
 import carpet.CarpetSettings;
@@ -93,7 +93,7 @@ public class CarpetClientChunkLogger {
 
     /*
      * main logging function
-     * logs a change in a chunk including a stacktrace if required by the client 
+     * logs a change in a chunk including a stacktrace if required by the client
      */
     public void log(World w, int x, int z, Event e) {
         int stacktraceid = stackTraces.internStackTrace();
@@ -102,7 +102,7 @@ public class CarpetClientChunkLogger {
     }
 
     /*
-     * called at the end of a gametick to send all events to the registered clients 
+     * called at the end of a gametick to send all events to the registered clients
      */
     public void sendAll() {
         clients.sendUpdates();
