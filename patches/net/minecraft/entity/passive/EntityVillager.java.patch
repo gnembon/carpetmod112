@@ -176,7 +176,7 @@
      }
  
      public World func_190670_t_()
-@@ -842,6 +906,20 @@
+@@ -842,6 +906,11 @@
          ItemStack itemstack = p_175445_1_.func_92059_d();
          Item item = itemstack.func_77973_b();
  
@@ -185,19 +185,28 @@
 +        {
 +            if(craftingAI.updateEquipment(p_175445_1_, field_175560_bz)) return;
 +        }
+         if (this.func_175558_a(item))
+         {
+             ItemStack itemstack1 = this.field_175560_bz.func_174894_a(itemstack);
+@@ -855,6 +924,17 @@
+                 itemstack.func_190920_e(itemstack1.func_190916_E());
+             }
+         }
++        // Automatic villager trading AI CARPET-XCOM
 +        if(CarpetSettings.villagerAutoTrader && autotraderAI != null)
 +        {
 +            if(buyingListsorted == null){
 +                buyingListsorted = new MerchantRecipeList();
 +                autotraderAI.sortRepopulatedSortedList(field_70963_i, buyingListsorted, sortedTradeList);
 +            }
-+            if(autotraderAI.updateEquipment(p_175445_1_, buyingListsorted)) return;
++            if(!p_175445_1_.field_70128_L){
++                autotraderAI.updateEquipment(p_175445_1_, buyingListsorted);
++            }
 +        }
-+
-         if (this.func_175558_a(item))
-         {
-             ItemStack itemstack1 = this.field_175560_bz.func_174894_a(itemstack);
-@@ -948,6 +1026,12 @@
+     }
+ 
+     private boolean func_175558_a(Item p_175558_1_)
+@@ -948,6 +1028,12 @@
          }
      }
  
@@ -210,7 +219,7 @@
      static class EmeraldForItems implements EntityVillager.ITradeList
          {
              public Item field_179405_a;
-@@ -1140,4 +1224,10 @@
+@@ -1140,4 +1226,10 @@
                  }
              }
          }
