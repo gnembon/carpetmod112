@@ -180,7 +180,7 @@
      protected void func_85033_bc()
      {
 +        // Collision calculations are cancelled if canBePushed() is false. Return here to lag optimize the collision code. CARPET-XCOM
-+        if(CarpetSettings.optimizedCollisionCancellations && !func_70104_M()) return;
++        if(CarpetSettings.optimizedCollisionCancellations && !func_70104_M() && !(this instanceof net.minecraft.entity.boss.EntityDragon)) return;
 +
          List<Entity> list = this.field_70170_p.func_175674_a(this, this.func_174813_aQ(), EntitySelectors.func_188442_a(this));
  
