@@ -152,6 +152,7 @@ public class CarpetSettings
             "By Narcoleptic Frog"
     })
     public static boolean wirelessRedstone = false;
+
     private static boolean validateWirelessRedstone(boolean value) {
         if (!value)
             ((BlockWool) Blocks.WOOL).clearWirelessLocations();
@@ -357,6 +358,10 @@ public class CarpetSettings
     /*
      * Rules in this category should end with the "Fix" suffix
      */
+
+    @Rule(desc = "Fixes the collision cancelation lag when mobs are inside ladders and vines.", category = FIX)
+    @BugFixDefault
+    public static boolean optimizedCollisionCancellations = false;
 
     @Rule(desc = "Nether portals correctly place entities going through", category = FIX, extra = {
             "Entities shouldn't suffocate in obsidian"
