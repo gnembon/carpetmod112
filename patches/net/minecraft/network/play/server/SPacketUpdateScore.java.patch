@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketUpdateScore.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketUpdateScore.java
+@@ -22,7 +22,7 @@
+     {
+         this.field_149329_a = p_i46904_1_.func_96653_e();
+         this.field_149327_b = p_i46904_1_.func_96645_d().func_96679_b();
+-        this.field_149328_c = p_i46904_1_.func_96652_c();
++        this.field_149328_c = p_i46904_1_.getScorePointsDelta();
+         this.field_149326_d = SPacketUpdateScore.Action.CHANGE;
+     }
+ 

@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import carpet.carpetclient.CarpetClientChunkLogger;
 import carpet.carpetclient.CarpetClientRuleChanger;
 import carpet.helpers.RandomTickOptimization;
+import carpet.helpers.ScoreboardDelta;
 import carpet.patches.BlockWool;
 import carpet.utils.TickingArea;
 import carpet.worldedit.WorldEditBridge;
@@ -588,6 +589,18 @@ public class CarpetSettings
     public static boolean playerChunkLoadingFix = false;
 
     // ===== SURVIVAL FEATURES ===== //
+
+    @Rule(desc = "Scoreboard displays changes over time, specified in seconds.", options = {"0", "60", "600", "3600"}, validator = "validateScoreboardDelta", category = EXPERIMENTAL, extra = {
+            "Set to 0 to disable Scoreboard delta display."
+    })
+    public static int scoreboardDelta = 0;
+    private static boolean validateScoreboardDelta(int value) {
+        if(value == 0) {
+            scoreboardDelta = 0;
+            ScoreboardDelta.resetScoreboardDelta();
+        }
+        return true;
+    }
 
     @Rule(desc = "Dropping entire stacks works also from on the crafting UI result slot", category = {FIX, SURVIVAL})
     @SurvivalDefault
