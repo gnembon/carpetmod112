@@ -75,18 +75,13 @@ public class CarpetClientServer implements PluginChannelHandler {
     }
 
     public static void sender(PacketBuffer data) {
-//        SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
-
-//        System.out.println(packet);
         for (EntityPlayerMP player : CarpetClientServer.getRegisteredPlayers()) {
-//            player.connection.sendPacket(packet);
+            data.retain();
             PacketSplitter.send(player, CARPET_CHANNEL_NAME, data);
         }
     }
 
     public static void sender(PacketBuffer data, EntityPlayerMP player) {
-//        SPacketCustomPayload packet = new SPacketCustomPayload(CARPET_CHANNEL_NAME, data);
-//        player.connection.sendPacket(packet);
         PacketSplitter.send(player, CARPET_CHANNEL_NAME, data);
     }
 
