@@ -172,6 +172,8 @@ public class EntityAIAutotrader extends EntityAIBase {
      * @param sortedTradeList
      */
     public void sortRepopulatedSortedList(MerchantRecipeList buyingList, MerchantRecipeList buyingListsorted, List<Integer> sortedTradeList) {
+        if(buyingList == null) return;
+
         MerchantRecipeList copy = new MerchantRecipeList();
         copy.addAll(buyingList);
         buyingListsorted.clear();
