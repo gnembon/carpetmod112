@@ -201,3 +201,44 @@
              }
              else
              {
+@@ -361,6 +387,8 @@
+         else
+         {
+             int i = ((Integer)p_180656_1_.func_177229_b(field_176351_O)).intValue();
++    
++            IBlockState iblockstate = p_180656_2_.func_180495_p(p_180656_3_.func_177972_a(p_180656_4_.func_176734_d())); // [CM] RS Ore redirects dust
+ 
+             if (i == 0)
+             {
+@@ -370,6 +398,12 @@
+             {
+                 return i;
+             }
++            // [CM] RS Ore redirects dust - start
++            else if (CarpetSettings.redstoneOreRedirectsDust && p_180656_4_.func_176740_k().func_176722_c() && ((iblockstate.func_177230_c() == Blocks.field_150450_ax || iblockstate.func_177230_c() == Blocks.field_150439_ay)))
++            {
++                return i;
++            }
++            // [CM] RS Ore redirects dust - end
+             else
+             {
+                 EnumSet<EnumFacing> enumset = EnumSet.<EnumFacing>noneOf(EnumFacing.class);
+@@ -452,7 +486,17 @@
+         }
+         else
+         {
+-            return p_176343_0_.func_185897_m() && p_176343_1_ != null;
++            // [CM] RS Ore redirects dust - if else statement
++            if (!CarpetSettings.redstoneOreRedirectsDust)
++            {
++                // Vanilla
++                return p_176343_0_.func_185897_m() && p_176343_1_ != null;
++            }
++            else
++            {
++                // Carpet
++                return (p_176343_0_.func_185897_m() || block == Blocks.field_150450_ax || block == Blocks.field_150439_ay) && p_176343_1_ != null;
++            }
+         }
+     }
+ 

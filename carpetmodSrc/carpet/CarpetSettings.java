@@ -720,6 +720,9 @@ public class CarpetSettings
     private static boolean validateTileTickLimit(int value) {
         return value >= -1;
     }
+    
+    @Rule(desc = "Redstone ore blocks can redirect redstone dust", category = {EXPERIMENTAL, FEATURE})
+    public static boolean redstoneOreRedirectsDust = false;
 
 
     // ===== API ===== //
