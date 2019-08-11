@@ -30,7 +30,10 @@ public class CarpetClientServer implements PluginChannelHandler {
     }
 
     public void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player) {
-        CarpetClientMessageHandler.handler(player, packet.getBufferData());
+        PacketBuffer buffer = PacketSplitter.receive(player, packet);
+        if(buffer != null) {
+            CarpetClientMessageHandler.handler(player, buffer);
+        }
     }
 
     public boolean register(String channel, EntityPlayerMP sender) {
