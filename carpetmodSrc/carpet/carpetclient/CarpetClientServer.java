@@ -19,7 +19,7 @@ public class CarpetClientServer implements PluginChannelHandler {
 
     private MinecraftServer minecraftServer;
     private static ArrayList<EntityPlayerMP> players = new ArrayList<>();
-    public static final String CARPET_CHANNEL_NAME = "CarpetClient";
+    public static final String CARPET_CHANNEL_NAME = "carpet:client";
 
     public CarpetClientServer(MinecraftServer server) {
         this.minecraftServer = server;
@@ -82,6 +82,7 @@ public class CarpetClientServer implements PluginChannelHandler {
             data.retain();
             PacketSplitter.send(player, CARPET_CHANNEL_NAME, data);
         }
+        data.release();
     }
 
     public static void sender(PacketBuffer data, EntityPlayerMP player) {
