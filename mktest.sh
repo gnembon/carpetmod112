@@ -44,7 +44,7 @@ while [ $# -gt 0 ]; do
     esac
 done
 
-carpet_name="carpet-1.12.2-`date +%F`.jar"
+carpet_name="carpet-1.12-`date +%F`.jar"
 echo "Cleaning previous installations ..."
 rm -rf "build/tmp/fullRelease/*"
 mkdir -p "build/tmp/fullRelease"
@@ -60,16 +60,16 @@ fi
 
 echo "Copying server ..."
 BUILD_DIR="`pwd`/build/tmp/fullRelease"
-MC_JAR="$BUILD_DIR/minecraft_server.1.12.2.jar"
+MC_JAR="$BUILD_DIR/minecraft_server.1.12.jar"
 if [ -f "$MC_JAR.orig" ]; then
     cp "$MC_JAR.orig" "$MC_JAR"
 else
-    GRADLE_CACHE_JAR="$HOME/.gradle/caches/minecraft/net/minecraft/minecraft_server/1.12.2/minecraft_server-1.12.2.jar"
+    GRADLE_CACHE_JAR="$HOME/.gradle/caches/minecraft/net/minecraft/minecraft_server/1.12/minecraft_server-1.12.jar"
     if [ -f "$GRADLE_CACHE_JAR" ]; then
         cp "$GRADLE_CACHE_JAR" "$MC_JAR"
     else
         echo "Downloading server ..."
-        wget "https://s3.amazonaws.com/Minecraft.Download/versions/1.12.2/minecraft_server.1.12.2.jar" -O "$MC_JAR" || { echo "failed to download MC jar" && exit 1; }
+        wget "https://s3.amazonaws.com/Minecraft.Download/versions/1.12/minecraft_server.1.12.jar" -O "$MC_JAR" || { echo "failed to download MC jar" && exit 1; }
         cp "$MC_JAR" "$MC_JAR.orig"
     fi
 fi

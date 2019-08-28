@@ -34,29 +34,29 @@ Download
 First, create a clean directory (folder). For this tutorial, we call it
 ``carpet``. There, download the vanilla jar and Carpet patch.
 
-* `Download the 1.12.2 vanilla server jar
-  <https://s3.amazonaws.com/Minecraft.Download/versions/1.12.2/minecraft_server.1.12.2.jar>`_.
+* `Download the 1.12 vanilla server jar
+  <https://s3.amazonaws.com/Minecraft.Download/versions/1.12/minecraft_server.1.12.jar>`_.
 * `Download the latest Carpet patch
   <https://github.com/gnembon/carpetmod/releases/latest>`_.
 
 .. note::
    For the remainder of this tutorial, we will assume that the server jar is
-   called ``minecraft_server.1.12.2.jar``, and the carpet archive is called
+   called ``minecraft_server.1.12.jar``, and the carpet archive is called
    ``carpet-18_06_20.zip``.
 
 Splice
 ------
 
 Copy the vanilla server jar into a new file. Here, we'll call it
-``carpet-1.12.2-18_06_20.jar``.
+``carpet-1.12-18_06_20.jar``.
 
-.. note:: Using a filename like ``carpet-1.12.2-18_06_20.jar`` for your Carpet
+.. note:: Using a filename like ``carpet-1.12-18_06_20.jar`` for your Carpet
           installation allows you to differentiate between server
           brands (vanilla vs. spigot vs. carpet), Minecraft versions, and
           Carpet versions.
 
 Now, copy all the files from the Carpet archive into the Carpet jar, which is
-what we called ``carpet-1.12.2-18_06_20.jar``. Jar files are actually just zip
+what we called ``carpet-1.12-18_06_20.jar``. Jar files are actually just zip
 files.
 
 Windows
@@ -87,7 +87,7 @@ the following commands for our example.
     unzip ../carpet-18_06_20.zip
 
     # Splice into Carpet jar
-    jar -uvf ../carpet-1.12.2-18_06_20.jar *
+    jar -uvf ../carpet-1.12-18_06_20.jar *
 
 .. note:: The ``jar`` command shown is included in JDK packages. You might
           alternatively use the ``zip`` command, but that is currently

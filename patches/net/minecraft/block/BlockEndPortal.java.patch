@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/block/BlockEndPortal.java
 @@ -60,7 +60,10 @@
      {
-         if (!p_180634_1_.field_72995_K && !p_180634_4_.func_184218_aH() && !p_180634_4_.func_184207_aI() && p_180634_4_.func_184222_aU() && p_180634_4_.func_174813_aQ().func_72326_a(p_180634_3_.func_185900_c(p_180634_1_, p_180634_2_).func_186670_a(p_180634_2_)))
+         if (!p_180634_4_.func_184218_aH() && !p_180634_4_.func_184207_aI() && p_180634_4_.func_184222_aU() && !p_180634_1_.field_72995_K && p_180634_4_.func_174813_aQ().func_72326_a(p_180634_3_.func_185900_c(p_180634_1_, p_180634_2_).func_186670_a(p_180634_2_)))
          {
 +            if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
 +                carpet.carpetclient.CarpetClientChunkLogger.setReason("Entity going through end portal");

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSapling.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSapling.java
-@@ -25,6 +25,10 @@
+@@ -23,6 +23,10 @@
  import net.minecraft.world.gen.feature.WorldGenTrees;
  import net.minecraft.world.gen.feature.WorldGenerator;
  
@@ -11,7 +11,7 @@
  public class BlockSapling extends BlockBush implements IGrowable
  {
      public static final PropertyEnum<BlockPlanks.EnumType> field_176480_a = PropertyEnum.<BlockPlanks.EnumType>func_177709_a("type", BlockPlanks.EnumType.class);
-@@ -68,6 +72,12 @@
+@@ -66,6 +70,12 @@
          }
          else
          {

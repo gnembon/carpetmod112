@@ -8,7 +8,7 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.block.properties.IProperty;
  import net.minecraft.block.properties.PropertyEnum;
-@@ -24,6 +25,8 @@
+@@ -22,6 +23,8 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -17,7 +17,7 @@
  public class BlockDoublePlant extends BlockBush implements IGrowable
  {
      public static final PropertyEnum<BlockDoublePlant.EnumPlantType> field_176493_a = PropertyEnum.<BlockDoublePlant.EnumPlantType>func_177709_a("variant", BlockDoublePlant.EnumPlantType.class);
-@@ -219,7 +222,10 @@
+@@ -217,7 +220,10 @@
          }
          else
          {

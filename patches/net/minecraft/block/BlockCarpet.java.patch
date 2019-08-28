@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockCarpet.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockCarpet.java
-@@ -17,6 +17,10 @@
+@@ -15,6 +15,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -11,7 +11,7 @@
  public class BlockCarpet extends Block
  {
      public static final PropertyEnum<EnumDyeColor> field_176330_a = PropertyEnum.<EnumDyeColor>func_177709_a("color", EnumDyeColor.class);
-@@ -111,4 +115,13 @@
+@@ -101,4 +105,13 @@
      {
          return p_193383_4_ == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
      }

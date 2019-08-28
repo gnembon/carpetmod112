@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemBlock.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemBlock.java
-@@ -20,6 +20,9 @@
+@@ -18,6 +18,9 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  
@@ -10,7 +10,7 @@
  public class ItemBlock extends Item
  {
      protected final Block field_150939_a;
-@@ -44,8 +47,20 @@
+@@ -42,8 +45,20 @@
          if (!itemstack.func_190926_b() && p_180614_1_.func_175151_a(p_180614_3_, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(this.field_150939_a, p_180614_3_, false, p_180614_5_, (Entity)null))
          {
              int i = this.func_77647_b(itemstack.func_77960_j());

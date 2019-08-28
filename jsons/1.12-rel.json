@@ -1,5 +1,5 @@
 {
-	"inheritsFrom": "1.12.2",
+	"inheritsFrom": "1.12",
 	"libraries": [
 		{
 			"name": "com.sk89q.worldedit:worldedit-core:6.1",

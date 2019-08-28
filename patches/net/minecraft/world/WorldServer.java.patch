@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServer.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
-@@ -60,6 +60,7 @@
+@@ -59,6 +59,7 @@
  import net.minecraft.util.math.ChunkPos;
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.util.math.Vec3d;
@@ -8,7 +8,7 @@
  import net.minecraft.village.VillageCollection;
  import net.minecraft.village.VillageSiege;
  import net.minecraft.world.biome.Biome;
-@@ -80,14 +81,22 @@
+@@ -79,14 +80,22 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -34,7 +34,7 @@
      private final Map<UUID, Entity> field_175741_N = Maps.<UUID, Entity>newHashMap();
      public boolean field_73058_d;
      private boolean field_73068_P;
-@@ -99,6 +108,9 @@
+@@ -98,6 +107,9 @@
      private int field_147489_T;
      private final List<NextTickListEntry> field_94579_S = Lists.<NextTickListEntry>newArrayList();
  
@@ -44,7 +44,7 @@
      public WorldServer(MinecraftServer p_i45921_1_, ISaveHandler p_i45921_2_, WorldInfo p_i45921_3_, int p_i45921_4_, Profiler p_i45921_5_)
      {
          super(p_i45921_2_, p_i45921_3_, DimensionType.func_186069_a(p_i45921_4_).func_186070_d(), p_i45921_5_, false);
-@@ -184,12 +196,19 @@
+@@ -183,12 +195,19 @@
              this.func_73053_d();
          }
  
@@ -64,7 +64,7 @@
  
          this.field_72984_F.func_76318_c("chunkSource");
          this.field_73020_y.func_73156_b();
-@@ -200,26 +219,56 @@
+@@ -199,26 +218,56 @@
              this.func_175692_b(j);
          }
  
@@ -123,7 +123,7 @@
      }
  
      @Nullable
-@@ -255,8 +304,15 @@
+@@ -254,8 +303,15 @@
                      ++j;
                  }
              }
@@ -141,7 +141,7 @@
          }
      }
  
-@@ -287,6 +343,28 @@
+@@ -289,6 +345,28 @@
      {
          if (this.field_73068_P && !this.field_72995_K)
          {
@@ -170,7 +170,7 @@
              for (EntityPlayer entityplayer : this.field_73010_i)
              {
                  if (!entityplayer.func_175149_v() && !entityplayer.func_71026_bH())
-@@ -303,7 +381,7 @@
+@@ -305,7 +383,7 @@
          }
      }
  
@@ -179,7 +179,7 @@
      {
          return this.func_72863_F().func_73149_a(p_175680_1_, p_175680_2_);
      }
-@@ -344,6 +422,7 @@
+@@ -346,6 +424,7 @@
              boolean flag = this.func_72896_J();
              boolean flag1 = this.func_72911_I();
              this.field_72984_F.func_76320_a("pollingChunks");
@@ -187,7 +187,7 @@
  
              for (Iterator<Chunk> iterator = this.field_73063_M.func_187300_b(); iterator.hasNext(); this.field_72984_F.func_76319_b())
              {
-@@ -355,9 +434,14 @@
+@@ -357,9 +436,14 @@
                  chunk.func_76594_o();
                  this.field_72984_F.func_76318_c("tickChunk");
                  chunk.func_150804_b(false);
@@ -203,7 +203,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int l = this.field_73005_l >> 2;
-@@ -385,7 +469,7 @@
+@@ -387,7 +471,7 @@
  
                  this.field_72984_F.func_76318_c("iceandsnow");
  
@@ -212,7 +212,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int j2 = this.field_73005_l >> 2;
-@@ -443,7 +527,7 @@
+@@ -445,7 +529,7 @@
          }
      }
  
@@ -221,7 +221,7 @@
      {
          BlockPos blockpos = this.func_175725_q(p_175736_1_);
          AxisAlignedBB axisalignedbb = (new AxisAlignedBB(blockpos, new BlockPos(blockpos.func_177958_n(), this.func_72800_K(), blockpos.func_177952_p()))).func_186662_g(3.0D);
-@@ -503,9 +587,10 @@
+@@ -505,9 +589,10 @@
                      {
                          iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
                      }
@@ -233,7 +233,7 @@
              }
  
              p_175654_3_ = 1;
-@@ -644,9 +729,18 @@
+@@ -646,9 +731,18 @@
              }
              else
              {
@@ -254,7 +254,7 @@
                  }
  
                  this.field_72984_F.func_76320_a("cleaning");
-@@ -677,6 +771,8 @@
+@@ -679,6 +773,8 @@
  
                      if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0), nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0)))
                      {
@@ -263,7 +263,7 @@
                          IBlockState iblockstate = this.func_180495_p(nextticklistentry1.field_180282_a);
  
                          if (iblockstate.func_185904_a() != Material.field_151579_a && Block.func_149680_a(iblockstate.func_177230_c(), nextticklistentry1.func_151351_a()))
-@@ -699,6 +795,7 @@
+@@ -701,6 +797,7 @@
                          this.func_175684_a(nextticklistentry1.field_180282_a, nextticklistentry1.func_151351_a(), 0);
                      }
                  }
@@ -271,7 +271,7 @@
  
                  this.field_72984_F.func_76319_b();
                  this.field_94579_S.clear();
-@@ -1055,6 +1152,7 @@
+@@ -1057,6 +1154,7 @@
          this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
          this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
          Entity[] aentity = p_72923_1_.func_70021_al();
@@ -279,7 +279,7 @@
  
          if (aentity != null)
          {
-@@ -1150,11 +1248,14 @@
+@@ -1152,11 +1250,14 @@
  
              for (BlockEventData blockeventdata : this.field_147490_S[i])
              {

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSponge.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSponge.java
-@@ -18,6 +18,9 @@
+@@ -16,6 +16,9 @@
  import net.minecraft.util.text.translation.I18n;
  import net.minecraft.world.World;
  
@@ -10,7 +10,7 @@
  public class BlockSponge extends Block
  {
      public static final PropertyBool field_176313_a = PropertyBool.func_177716_a("wet");
-@@ -119,6 +122,38 @@
+@@ -111,6 +114,38 @@
          return ((Boolean)p_176201_1_.func_177229_b(field_176313_a)).booleanValue() ? 1 : 0;
      }
  

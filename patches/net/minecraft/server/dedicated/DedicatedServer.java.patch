@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
 +++ ../src-work/minecraft/net/minecraft/server/dedicated/DedicatedServer.java
-@@ -46,6 +46,8 @@
+@@ -43,6 +43,8 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +9,7 @@
  public class DedicatedServer extends MinecraftServer implements IServer
  {
      private static final Logger field_155771_h = LogManager.getLogger();
-@@ -257,6 +259,10 @@
+@@ -254,6 +256,10 @@
                  TileEntitySkull.func_184293_a(this.func_152358_ax());
                  TileEntitySkull.func_184294_a(this.func_147130_as());
                  PlayerProfileCache.func_187320_a(this.func_71266_T());

@@ -9,10 +9,10 @@ gradle.ext.modVersion = 'dev' //new java.text.SimpleDateFormat('yy_MM_dd').forma
 gradle.ext.side = 'server'
 
 // The Minecraft version to use
-gradle.ext.mcVersion = '1.12.2'
+gradle.ext.mcVersion = '1.12'
 
 // The MCP mappings to use
-gradle.ext.mappings = 'stable_39' // Same as MCP 9.40 snapshot_20161116
+gradle.ext.mappings = 'snapshot_20180814' // Same as MCP 9.40 snapshot_20161116
 
 // Whether the source should contain javadocs. false is recommended, set to true for compatibility with MCP.
 gradle.ext.useJavadocs = true
