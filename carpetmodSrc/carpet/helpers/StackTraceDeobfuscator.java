@@ -55,7 +55,7 @@ public class StackTraceDeobfuscator {
     }
 
     public StackTraceDeobfuscator withMinecraftVersion(String minecraftVersion) {
-        return withSrgUrl(String.format("http://mcpbot.bspk.rs/mcp/%1$s/mcp-%1$s-srg.zip", minecraftVersion));
+        return withSrgUrl(String.format("http://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/%1$s/mcp-%1$s-srg.zip", minecraftVersion));
     }
 
     public StackTraceDeobfuscator withNamesUrl(String namesUrl) {

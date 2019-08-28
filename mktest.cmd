@@ -16,4 +16,3 @@ pushd %appdata%\.minecraft\saves
 echo Starting server ...
 java -jar minecraft_server.1.12.2_carpet_test.jar --nogui
 popd
-pause
