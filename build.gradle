@@ -62,7 +62,7 @@ allprojects {
 	}
 	dependencies
 	{
-		implementation files('resources/server.jar')
+		implementation files('resources/1.12.2.jar')
 	}
 	configurations.compile.extendsFrom configurations.forgeGradleMcDeps
 }
@@ -343,7 +343,7 @@ task(copyResources, type: Sync) {
 }
 task downloadFile(type: Download) {
 	src 'https://launcher.mojang.com/mc/game/1.12.2/server/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar'
-	dest 'resources/'
+	dest 'resources/1.12.2.jar'
 }
 
 tasks.getByName('makeJar' + capitalizedName).dependsOn tasks.getByName('copy' + capitalizedName + 'FromSrc'), copyMcFromSrc
