@@ -60,6 +60,10 @@ allprojects {
 		maven {url 'https://files.minecraftforge.net/maven'}
 		maven {url 'https://libraries.minecraft.net/'}
 	}
+	dependencies
+	{
+		implementation files('resources/server.jar')
+	}
 	configurations.compile.extendsFrom configurations.forgeGradleMcDeps
 }
 
@@ -337,9 +341,13 @@ task(copyResources, type: Sync) {
 	dependsOn tasks.getByName('extract' + capitalizedName + 'Resources')
 	includeEmptyDirs = false
 }
+task downloadFile(type: Download) {
+	src 'https://launcher.mojang.com/mc/game/1.12.2/server/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar'
+	dest 'resources/'
+}
 
 tasks.getByName('makeJar' + capitalizedName).dependsOn tasks.getByName('copy' + capitalizedName + 'FromSrc'), copyMcFromSrc
-genIdeProjects.dependsOn copyCodeToSrc, copyResources
+genIdeProjects.dependsOn copyCodeToSrc, downloadFile
 
 clean {
 	delete 'src'
