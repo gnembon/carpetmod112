@@ -49,7 +49,7 @@
          this.func_77973_b().func_77622_d(this, p_77980_1_, p_77980_2_);
      }
  
-@@ -881,4 +887,9 @@
+@@ -881,4 +887,10 @@
      {
          this.func_190917_f(-p_190918_1_);
      }
@@ -58,4 +58,5 @@
 +	public boolean isGroundStackable() {
 +		return this.func_77973_b().itemGroundStacking(func_77942_o());
 +	}
++	public void forceStackSize(int size){this.field_77994_a = size;}
  }

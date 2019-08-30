@@ -1,0 +1,48 @@
+--- ../src-base/minecraft/net/minecraft/util/ServerRecipeBookHelper.java
++++ ../src-work/minecraft/net/minecraft/util/ServerRecipeBookHelper.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.util;
+ 
++import carpet.CarpetSettings;
+ import it.unimi.dsi.fastutil.ints.IntArrayList;
+ import it.unimi.dsi.fastutil.ints.IntList;
+ import it.unimi.dsi.fastutil.ints.IntListIterator;
+@@ -67,6 +68,8 @@
+                     if (this.field_194331_b.func_194116_a(p_194327_2_, (IntList)null))
+                     {
+                         this.func_194329_b();
++                        // Intentional duping bug added back for compatibility with 12.0, community request. CARPET-XCOM
++                        if(CarpetSettings.craftingWindowDuplication) craftingWindowDupingBugAddedBack(p_194327_1_);
+                     }
+                     else
+                     {
+@@ -304,4 +307,29 @@
+ 
+         return true;
+     }
++
++    // Intentional duping bug added back for compatibility with 12.0, community request. CARPET-XCOM
++    private void craftingWindowDupingBugAddedBack(EntityPlayerMP player){
++        int slot = player.getDupeItem();
++        if(slot == Integer.MIN_VALUE) return;
++        ItemStack dupeItem = player.field_71071_by.func_70301_a(slot);
++        if(dupeItem.func_190926_b()) return;
++
++        int size = dupeItem.func_190916_E();
++
++        for (int j = 0; j < this.field_194336_g.func_70302_i_(); ++j)
++        {
++            ItemStack itemstack = this.field_194336_g.func_70301_a(j);
++
++            if (!itemstack.func_190926_b())
++            {
++                size += itemstack.func_190916_E();
++                itemstack.func_190920_e(0);
++            }
++        }
++
++        dupeItem.forceStackSize(size);
++        field_194335_f.func_174888_l();
++        player.clearDupeItem();
++    }
+ }

@@ -63,7 +63,17 @@
          CriteriaTriggers.field_193135_v.func_193182_a(this);
  
          if (this.field_193107_ct != null)
-@@ -605,6 +633,7 @@
+@@ -373,6 +401,9 @@
+         }
+ 
+         this.field_192042_bX.func_192741_b(this);
++
++        // Clears the dupe item for the duping bug CARPET-XCOM
++        clearDupeItem();
+     }
+ 
+     public void func_71127_g()
+@@ -605,6 +636,7 @@
  
              if (!flag && this.field_147101_bU > 0 && p_70097_1_ != DamageSource.field_76380_i)
              {
@@ -71,7 +81,7 @@
                  return false;
              }
              else
-@@ -615,6 +644,7 @@
+@@ -615,6 +647,7 @@
  
                      if (entity instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entity))
                      {
@@ -79,7 +89,7 @@
                          return false;
                      }
  
-@@ -624,6 +654,7 @@
+@@ -624,6 +657,7 @@
  
                          if (entityarrow.field_70250_c instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entityarrow.field_70250_c))
                          {
@@ -87,7 +97,7 @@
                              return false;
                          }
                      }
-@@ -704,6 +735,8 @@
+@@ -704,6 +738,8 @@
          if (p_147097_1_ != null)
          {
              SPacketUpdateTileEntity spacketupdatetileentity = p_147097_1_.func_189518_D_();
@@ -96,7 +106,7 @@
  
              if (spacketupdatetileentity != null)
              {
-@@ -1035,6 +1068,10 @@
+@@ -1035,6 +1071,10 @@
              {
                  this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective).func_96649_a(p_71064_2_);
              }
@@ -107,7 +117,7 @@
          }
      }
  
-@@ -1169,7 +1206,7 @@
+@@ -1169,7 +1209,7 @@
  
      protected void func_70688_c(PotionEffect p_70688_1_)
      {
@@ -116,7 +126,7 @@
          this.field_71135_a.func_147359_a(new SPacketRemoveEntityEffect(this.func_145782_y(), p_70688_1_.func_188419_a()));
  
          if (p_70688_1_.func_188419_a() == MobEffects.field_188424_y)
-@@ -1178,6 +1215,7 @@
+@@ -1178,6 +1218,7 @@
          }
  
          CriteriaTriggers.field_193139_z.func_193153_a(this);
@@ -124,3 +134,26 @@
      }
  
      public void func_70634_a(double p_70634_1_, double p_70634_3_, double p_70634_5_)
+@@ -1439,4 +1480,22 @@
+     {
+         return this.field_193110_cw;
+     }
++
++    // Adding this dupe feature to make it compatible with carpet 12.0 as per community request. CARPET-XCOM
++    private int dupe;
++    private boolean scanForDuping;
++    public void clearDupeItem() {
++        dupe = Integer.MIN_VALUE;
++    }
++    public void dupeItem(int slot) {
++        if(scanForDuping){
++            dupe = slot;
++        }
++    }
++    public int getDupeItem() {
++        return dupe;
++    }
++    public void dupeItemScan(boolean s){
++        scanForDuping = s;
++    }
+ }

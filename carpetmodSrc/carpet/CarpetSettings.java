@@ -479,9 +479,6 @@ public class CarpetSettings
     @Rule(desc = "Fixes duplication of items when using item frames", category = FIX)
     public static boolean itemFrameDuplicationFix = false;
 
-    @Rule(desc = "Fixes the recipe book duplication caused by clicking to fast while crafting", category = FIX)
-    public static boolean craftingWindowDuplicationFix = false;
-
     @Rule(desc = "Uses alternative lighting engine by PhiPros. AKA NewLight mod", category = OPTIMIZATIONS)
     public static boolean newLight = false;
 
@@ -721,6 +718,8 @@ public class CarpetSettings
         return value >= -1;
     }
 
+    @Rule(desc = "Adds back the crafting window duplication bug.", category = EXPERIMENTAL)
+    public static boolean craftingWindowDuplication = false;
 
     // ===== API ===== //
 
