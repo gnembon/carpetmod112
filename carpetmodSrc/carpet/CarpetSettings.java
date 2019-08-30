@@ -721,6 +721,9 @@ public class CarpetSettings
     @Rule(desc = "Adds back the crafting window duplication bug.", category = EXPERIMENTAL)
     public static boolean craftingWindowDuplication = false;
 
+    @Rule(desc = "Adds back farmland bug where entities teleport on top of farmland that turns back to dirt.", category = EXPERIMENTAL)
+    public static boolean farmlandBug;
+
     // ===== API ===== //
 
     /**

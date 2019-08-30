@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFarmland.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFarmland.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.block;
+ 
+ import java.util.Random;
++
++import carpet.CarpetSettings;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.IProperty;
+ import net.minecraft.block.properties.PropertyInteger;
+@@ -86,7 +88,11 @@
+         for (Entity entity : p_190970_0_.func_72839_b((Entity)null, axisalignedbb))
+         {
+             double d0 = Math.min(axisalignedbb.field_72337_e - axisalignedbb.field_72338_b, axisalignedbb.field_72337_e - entity.func_174813_aQ().field_72338_b);
+-            entity.func_70634_a(entity.field_70165_t, entity.field_70163_u + d0 + 0.001D, entity.field_70161_v);
++            if(!CarpetSettings.farmlandBug){
++                entity.func_70634_a(entity.field_70165_t, entity.field_70163_u + d0 + 0.001D, entity.field_70161_v);
++            }else{
++                entity.func_70634_a(entity.field_70165_t, axisalignedbb.field_72337_e, entity.field_70161_v);
++            }
+         }
+     }
+ 
