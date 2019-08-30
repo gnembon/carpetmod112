@@ -585,7 +585,7 @@ public class CarpetSettings
     @Rule(desc = "Fixes player position truncation causing chunks to load with one block offset to chunk boarders in negative coordinates.", category = FIX)
     public static boolean playerChunkLoadingFix = false;
 
-    // ===== SURVIVAL FEATURES ===== //
+    // ===== FEATURES ===== //
 
     @Rule(desc = "Scoreboard displays changes over time, specified in seconds.", options = {"0", "60", "600", "3600"}, validator = "validateScoreboardDelta", category = EXPERIMENTAL, extra = {
             "Set to 0 to disable Scoreboard delta display."
@@ -723,6 +723,9 @@ public class CarpetSettings
 
     @Rule(desc = "Adds back farmland bug where entities teleport on top of farmland that turns back to dirt.", category = EXPERIMENTAL)
     public static boolean farmlandBug;
+
+    @Rule(desc = "Allows bedrock to drop as bedrock item if broken, similar to 1.8 and lower versions.", category = EXPERIMENTAL)
+    public static boolean bedrockDropsAsItem;
 
     // ===== API ===== //
 
