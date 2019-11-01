@@ -1,0 +1,10 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketRecipeBook.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketRecipeBook.java
+@@ -70,6 +70,7 @@
+         for (IRecipe irecipe : this.field_192596_a)
+         {
+             p_148840_1_.func_150787_b(CraftingManager.func_193375_a(irecipe));
++            System.out.println("Id CraftingManager.getIDForRecipe(irecipe) : " + CraftingManager.func_193375_a(irecipe) + " name " + irecipe.func_77571_b().func_77973_b().func_77658_a());
+         }
+ 
+         if (this.field_193646_a == SPacketRecipeBook.State.INIT)

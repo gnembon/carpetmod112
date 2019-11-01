@@ -360,6 +360,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Rule made for special case bugfixing.", category = FIX)
+    public static boolean logBugfixes;
+
     @Rule(desc = "Fixes the collision cancelation lag when mobs are inside ladders and vines.", category = FIX)
     @BugFixDefault
     public static boolean optimizedCollisionCancellations = false;

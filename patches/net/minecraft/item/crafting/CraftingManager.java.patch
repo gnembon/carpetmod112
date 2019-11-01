@@ -1,22 +1,35 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/CraftingManager.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/CraftingManager.java
-@@ -32,6 +32,8 @@
+@@ -32,9 +32,11 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-+import carpet.helpers.NewCrafting;
++import carpet.helpers.CustomCrafting;
 +
  public class CraftingManager
  {
-     private static final Logger field_192422_a = LogManager.getLogger();
+-    private static final Logger field_192422_a = LogManager.getLogger();
++    public static final Logger field_192422_a = LogManager.getLogger();
+     private static int field_193381_c;
+     public static final RegistryNamespaced<ResourceLocation, IRecipe> field_193380_a = new RegistryNamespaced<ResourceLocation, IRecipe>();
+ 
 @@ -53,7 +55,9 @@
              func_193379_a("banneraddpattern", new RecipesBanners.RecipeAddPattern());
              func_193379_a("shielddecoration", new ShieldRecipes.Decoration());
              func_193379_a("shulkerboxcoloring", new ShulkerBoxRecipes.ShulkerBoxColoring());
 -            return func_192420_c();
 +            boolean result = func_192420_c();
-+            NewCrafting.registerRecipes();
++            result = CustomCrafting.registerCustomRecipes(result);
 +            return result;
          }
          catch (Throwable var1)
          {
+@@ -155,7 +159,7 @@
+         return flag1;
+     }
+ 
+-    private static IRecipe func_193376_a(JsonObject p_193376_0_)
++    public static IRecipe func_193376_a(JsonObject p_193376_0_)
+     {
+         String s = JsonUtils.func_151200_h(p_193376_0_, "type");
+ 

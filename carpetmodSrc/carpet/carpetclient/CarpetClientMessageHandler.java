@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import carpet.CarpetSettings;
+import carpet.helpers.CustomCrafting;
 import carpet.helpers.TickSpeed;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.netty.buffer.Unpooled;
+import javafx.util.Pair;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -21,12 +25,13 @@ public class CarpetClientMessageHandler {
     public static final int CHUNK_LOGGER = 5;
     public static final int PISTON_UPDATES = 6;
     public static final int RANDOMTICK_DISPLAY = 7;
+    public static final int CUSTOM_RECIPES = 8;
 
     public static void handler(EntityPlayerMP sender, PacketBuffer data) {
         int type = data.readInt();
 
         if (GUI_ALL_DATA == type) {
-            sendAllGUIOptions();
+            sendAllGUIOptions(sender);
         } else if (RULE_REQUEST == type) {
             ruleRequest(sender, data);
         } else if (VILLAGE_MARKERS == type) {
@@ -52,7 +57,7 @@ public class CarpetClientMessageHandler {
         CarpetClientRuleChanger.ruleChanger(sender, data);
     }
 
-    public static void sendAllGUIOptions() {
+    public static void sendAllGUIOptions(EntityPlayerMP sender) {
         PacketBuffer data = new PacketBuffer(Unpooled.buffer());
         data.writeInt(GUI_ALL_DATA);
 
@@ -83,7 +88,7 @@ public class CarpetClientMessageHandler {
         } catch (Exception e) {
         }
 
-        CarpetClientServer.sender(data);
+        CarpetClientServer.sender(data, sender);
     }
 
     public static void sendNBTVillageData(EntityPlayerMP sender, NBTTagCompound compound) {
@@ -138,5 +143,47 @@ public class CarpetClientMessageHandler {
         } catch (Exception e) {
         }
         CarpetClientServer.sender(data, sender);
+    }
+
+    public static void sendCustomRecipes(EntityPlayerMP sender) {
+        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+        data.writeInt(CUSTOM_RECIPES);
+
+        NBTTagCompound chunkData = new NBTTagCompound();
+
+        NBTTagList listNBT = new NBTTagList();
+        for (Pair<String, JsonObject> pair : CustomCrafting.getRecipeList()) {
+            NBTTagCompound recipe = new NBTTagCompound();
+            recipe.setString("name", pair.getKey());
+            recipe.setString("recipe", pair.getValue().toString());
+            listNBT.appendTag(recipe);
+        }
+        chunkData.setTag("recipeList", listNBT);
+
+        try {
+            data.writeCompoundTag(chunkData);
+        } catch (Exception e) {
+        }
+
+        CarpetClientServer.sender(data, sender);
+        new DelayedPacket(2000, sender).start();
+    }
+
+    public static class DelayedPacket extends Thread {
+        private int delay;
+        EntityPlayerMP sender;
+
+        public DelayedPacket(int d, EntityPlayerMP s) {
+            delay = d;
+            sender = s;
+        }
+
+        public void run() {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+            }
+            sender.getRecipeBook().init(sender);
+        }
     }
 }
