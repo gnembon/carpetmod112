@@ -1,0 +1,57 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockWorkbench.java
++++ ../src-work/minecraft/net/minecraft/block/BlockWorkbench.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.block;
+ 
++import carpet.helpers.CraftingTableBlockEntity;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -9,6 +10,7 @@
+ import net.minecraft.inventory.Container;
+ import net.minecraft.inventory.ContainerWorkbench;
+ import net.minecraft.stats.StatList;
++import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.math.BlockPos;
+@@ -17,7 +19,9 @@
+ import net.minecraft.world.IInteractionObject;
+ import net.minecraft.world.World;
+ 
+-public class BlockWorkbench extends Block
++import javax.annotation.Nullable;
++
++public class BlockWorkbench extends BlockContainer
+ {
+     protected BlockWorkbench()
+     {
+@@ -33,8 +37,15 @@
+         }
+         else
+         {
+-            p_180639_4_.func_180468_a(new BlockWorkbench.InterfaceCraftingTable(p_180639_1_, p_180639_2_));
+-            p_180639_4_.func_71029_a(StatList.field_188062_ab);
++            if (func_149716_u()) {
++                TileEntity blockEntity = p_180639_1_.func_175625_s(p_180639_2_);
++                if (blockEntity instanceof CraftingTableBlockEntity) {
++                    p_180639_4_.func_180468_a((IInteractionObject) blockEntity);
++                }
++            }
++
++//            playerIn.displayGui(new BlockWorkbench.InterfaceCraftingTable(worldIn, pos));
++//            playerIn.addStat(StatList.CRAFTING_TABLE_INTERACTION);
+             return true;
+         }
+     }
+@@ -75,4 +86,10 @@
+                 return "minecraft:crafting_table";
+             }
+         }
++
++    @Nullable
++    @Override
++    public TileEntity func_149915_a(World worldIn, int meta) {
++        return new CraftingTableBlockEntity();
++    }
+ }

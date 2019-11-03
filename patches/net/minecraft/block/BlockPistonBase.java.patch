@@ -1,18 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -29,6 +29,11 @@
+@@ -29,6 +29,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
 +import narcolepticfrog.rsmm.events.PistonPushEventDispatcher;
 +import carpet.CarpetSettings;
 +import carpet.utils.PistonFixes;
-+import net.minecraft.world.WorldServer;
 +
  public class BlockPistonBase extends BlockDirectional
  {
      public static final PropertyBool field_176320_b = PropertyBool.func_177716_a("extended");
-@@ -99,7 +104,8 @@
+@@ -99,7 +103,8 @@
  
      public void func_180633_a(World p_180633_1_, BlockPos p_180633_2_, IBlockState p_180633_3_, EntityLivingBase p_180633_4_, ItemStack p_180633_5_)
      {
@@ -22,7 +21,7 @@
  
          if (!p_180633_1_.field_72995_K)
          {
-@@ -130,23 +136,83 @@
+@@ -130,23 +135,55 @@
  
      private void func_176316_e(World p_176316_1_, BlockPos p_176316_2_, IBlockState p_176316_3_)
      {
@@ -56,35 +55,7 @@
 +            {
 +                p_176316_1_.func_180501_a(p_176316_2_,  p_176316_3_.func_177226_a(field_176320_b,  Boolean.valueOf(false)), 2);
 +            }
-+            
-+            // [CM] Piston ghost blocks fix - start
-+            int suppress_move = 0;
-+            if (CarpetSettings.pistonGhostBlocksFix == CarpetSettings.PistonGhostBlocksFix.clientAndServer)
-+            {
-+                final EnumFacing facing = p_176316_3_.func_177229_b(field_176387_N);
-+    
-+                final BlockPos blockpos = new BlockPos(p_176316_2_).func_177967_a(facing, 2);
-+                final IBlockState iblockstate = p_176316_1_.func_180495_p(blockpos);
-+    
-+                if (iblockstate.func_177230_c() == Blocks.field_180384_M)
-+                {
-+                    final TileEntity tileentity = p_176316_1_.func_175625_s(blockpos);
-+        
-+                    if (tileentity instanceof TileEntityPiston)
-+                    {
-+                        final TileEntityPiston tileentitypiston = (TileEntityPiston) tileentity;
-+                        if (tileentitypiston.func_174930_e() == facing && tileentitypiston.func_145868_b()
-+                                    && (tileentitypiston.field_145870_n < 0.5F
-+                                                || tileentitypiston.func_145831_w().func_82737_E() == tileentitypiston.lastTicked
-+                                                || !((WorldServer) p_176316_1_).haveBlockActionsProcessed()))
-+                        {
-+                            suppress_move = 16;
-+                        }
-+                    }
-+                }
-+            }
-+            p_176316_1_.func_175641_c(p_176316_2_, this, 1,  enumfacing.func_176745_a() | suppress_move); // [CM] Piston ghost blocks fix - | suppress_move
-+            // [CM] Piston ghost blocks fix - end
++            p_176316_1_.func_175641_c(p_176316_2_, this, 1, enumfacing.func_176745_a() );
          }
 +
 +        carpet.carpetclient.CarpetClientChunkLogger.resetReason();
@@ -110,7 +81,7 @@
      {
          for (EnumFacing enumfacing : EnumFacing.values())
          {
-@@ -162,6 +228,12 @@
+@@ -162,6 +199,12 @@
          }
          else
          {
@@ -123,20 +94,17 @@
              BlockPos blockpos = p_176318_2_.func_177984_a();
  
              for (EnumFacing enumfacing1 : EnumFacing.values())
-@@ -240,7 +312,11 @@
-                         }
+@@ -241,7 +284,8 @@
                      }
                  }
--
-+                
-+                // [CM] Piston ghost blocks fix
-+                if ((p_189539_5_ & 16) == 16 && CarpetSettings.pistonGhostBlocksFix == CarpetSettings.PistonGhostBlocksFix.clientAndServer)
-+                    flag1 = true;
-+                
-                 if (!flag1 && iblockstate.func_185904_a() != Material.field_151579_a && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false, enumfacing) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
+ 
+-                if (!flag1 && iblockstate.func_185904_a() != Material.field_151579_a && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false, enumfacing) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
++                // (param & 16) == 0 means the piston shouldn't retract the block, implemented for ghost block fix. CARPET-XCOM
++                if (!flag1 && (p_189539_5_ & 16) == 0 && iblockstate.func_185904_a() != Material.field_151579_a && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false, enumfacing) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
                  {
                      this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
-@@ -307,7 +383,13 @@
+                 }
+@@ -307,7 +351,13 @@
                      return false;
                  }
  
@@ -151,7 +119,7 @@
              }
              else
              {
-@@ -319,6 +401,14 @@
+@@ -319,6 +369,14 @@
              return false;
          }
      }
@@ -166,7 +134,7 @@
  
      private boolean func_176319_a(World p_176319_1_, BlockPos p_176319_2_, EnumFacing p_176319_3_, boolean p_176319_4_)
      {
-@@ -358,15 +448,64 @@
+@@ -358,15 +416,64 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }
