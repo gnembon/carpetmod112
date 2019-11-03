@@ -9,6 +9,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.EnumFacing;
@@ -18,6 +19,7 @@ import net.minecraft.util.text.TextComponentTranslation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CraftingTableBlockEntity extends TileEntityLockable implements ISidedInventory //, RecipeUnlocker, RecipeInputProvider
 {
@@ -30,7 +32,7 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
      */
     private static final int[] OUTPUT_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     private static final int[] INPUT_SLOTS = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-    public NonNullList<ItemStack> inventory;
+    public InventoryCrafting inventory = new InventoryCrafting(null, 3, 3);
     public ItemStack output = ItemStack.EMPTY;
     private List<AutoCraftingTableContainer> openContainers = new ArrayList<>();
 
@@ -40,14 +42,9 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
     }
     */
 
-    private InventoryCrafting craftMatrix = new InventoryCrafting(null, 3, 3);
-
     public CraftingTableBlockEntity()
     {
         super();
-        this.inventory = NonNullList.withSize(9, ItemStack.EMPTY);
-//        craftingInventory.stackList = this.inventory;
-        craftMatrix.clear();
     }
 
     public static void init()
@@ -58,7 +55,7 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
     public NBTTagCompound writeToNBT(NBTTagCompound tag)
     {
         super.writeToNBT(tag);
-        ItemStackHelper.saveAllItems(tag, inventory);
+        ItemStackHelper.saveAllItems(tag, inventory.stackList);
         tag.setTag("Output", output.writeToNBT(new NBTTagCompound()));
         return tag;
     }
@@ -67,7 +64,7 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
     public void readFromNBT(NBTTagCompound tag)
     {
         super.readFromNBT(tag);
-        ItemStackHelper.loadAllItems(tag, inventory);
+        ItemStackHelper.loadAllItems(tag, inventory.stackList);
         this.output = new ItemStack(tag.getCompoundTag("Output"));
     }
 
@@ -113,7 +110,7 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
     @Override
     public int[] getSlotsForFace(EnumFacing dir)
     {
-        if (dir == EnumFacing.DOWN && (!output.isEmpty() /*|| getCurrentRecipe().isPresent()*/))
+        if (dir == EnumFacing.DOWN && (!output.isEmpty() || getCurrentRecipe().isPresent()))
             return OUTPUT_SLOTS;
         return INPUT_SLOTS;
     }
@@ -128,7 +125,7 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
     public boolean canExtractItem(int slot, ItemStack stack, EnumFacing dir)
     {
         if (slot == 0)
-            return !output.isEmpty() /*|| getCurrentRecipe().isPresent()*/;
+            return !output.isEmpty() || getCurrentRecipe().isPresent();
         return true;
     }
 
@@ -162,24 +159,18 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
     @Override
     public boolean isEmpty()
     {
-        for (ItemStack stack : this.inventory)
-        {
-            if (!stack.isEmpty())
-                return false;
-        }
-        return output.isEmpty();
+        return inventory.isEmpty() && output.isEmpty();
     }
 
     @Override
     public ItemStack getStackInSlot(int slot)
     {
         if (slot > 0)
-            return this.inventory.get(slot - 1);
+            return this.inventory.getStackInSlot(slot - 1);
         if (!output.isEmpty())
             return output;
-//        Optional<CraftingRecipe> recipe = getCurrentRecipe();
-//        return recipe.map(craftingRecipe -> craftingRecipe.craft(craftingInventory)).orElse(ItemStack.EMPTY);
-        return CraftingManager.getRemainingItems(this.craftMatrix, world).get(0); // TODO: this is wrong
+        Optional<IRecipe> recipe = getCurrentRecipe();
+        return recipe.map(r -> r.getCraftingResult(inventory)).orElse(ItemStack.EMPTY);
     }
 
     @Override
@@ -193,7 +184,7 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
             }
             return output.splitStack(amount);
         }
-        return ItemStackHelper.getAndSplit(this.inventory, slot - 1, amount);
+        return ItemStackHelper.getAndSplit(inventory.stackList, slot - 1, amount);
     }
 
     @Override
@@ -205,7 +196,7 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
             this.output = ItemStack.EMPTY;
             return output;
         }
-        return ItemStackHelper.getAndRemove(this.inventory, slot - 1);
+        return this.inventory.removeStackFromSlot(slot - 1);
     }
 
     @Override
@@ -216,12 +207,12 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
             output = stack;
             return;
         }
-        inventory.set(slot - 1, stack);
+        inventory.stackList.set(slot - 1, stack);
     }
 
     @Override
     public int getInventoryStackLimit() {
-        return 3;
+        return 64;
     }
 
     @Override
@@ -275,12 +266,12 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
         this.inventory.clear();
     }
 
-//    private Optional<CraftingRecipe> getCurrentRecipe()
-//    {
-//        if (this.world == null)
-//            return Optional.empty();
-//        return this.world.getRecipeManager().getFirstMatch(RecipeType.CRAFTING, craftingInventory, world);
-//    }
+    private Optional<IRecipe> getCurrentRecipe()
+    {
+        if (this.world == null)
+            return Optional.empty();
+        return Optional.ofNullable(CraftingManager.findMatchingRecipe(inventory, this.world));
+    }
 
 //    private ItemStack craft()
 //    {
@@ -322,30 +313,34 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
 
     public ItemStack craft()
     {
-        ItemStack stack = null;
-        NonNullList<ItemStack> nonnulllist = CraftingManager.getRemainingItems(this.craftMatrix, world);
+        if (this.world == null) return ItemStack.EMPTY;
+        Optional<IRecipe> optionalRecipe = getCurrentRecipe();
+        if (!optionalRecipe.isPresent()) return ItemStack.EMPTY;
+        IRecipe recipe = optionalRecipe.get();
+        ItemStack stack = recipe.getCraftingResult(this.inventory);
+        NonNullList<ItemStack> remaining = recipe.getRemainingItems(this.inventory);
 
-        for (int i = 0; i < nonnulllist.size(); ++i)
+        for (int i = 0; i < remaining.size(); ++i)
         {
-            ItemStack itemstack = this.craftMatrix.getStackInSlot(i);
-            stack = nonnulllist.get(i);
+            ItemStack itemstack = this.inventory.getStackInSlot(i);
+            ItemStack itemstack1 = remaining.get(i);
 
             if (!itemstack.isEmpty())
             {
-                this.craftMatrix.decrStackSize(i, 1);
-                itemstack = this.craftMatrix.getStackInSlot(i);
+                this.decrStackSize(i + 1, 1);
+                itemstack = this.inventory.getStackInSlot(i);
             }
 
-            if (!stack.isEmpty())
+            if (!itemstack1.isEmpty())
             {
                 if (itemstack.isEmpty())
                 {
-                    this.craftMatrix.setInventorySlotContents(i, stack);
+                    this.setInventorySlotContents(i + 1, itemstack1);
                 }
-                else if (ItemStack.areItemsEqual(itemstack, stack) && ItemStack.areItemStackTagsEqual(itemstack, stack))
+                else if (ItemStack.areItemsEqual(itemstack, stack) && ItemStack.areItemStackTagsEqual(itemstack, itemstack1))
                 {
-                    stack.grow(itemstack.getCount());
-                    this.craftMatrix.setInventorySlotContents(i, stack);
+                    itemstack1.grow(itemstack.getCount());
+                    this.setInventorySlotContents(i + 1, itemstack1);
                 }else{
                     // drop item
                     // this.player.dropItem(itemstack1, false);
@@ -356,7 +351,6 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
 //                }
             }
         }
-
         return stack;
     }
 
