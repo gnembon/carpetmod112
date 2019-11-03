@@ -42,6 +42,8 @@ public class CarpetClientMessageHandler {
             CarpetClientChunkLogger.logger.registerPlayer(sender, data);
         } else if (RANDOMTICK_DISPLAY == type) {
             CarpetClientRandomtickingIndexing.register(sender, data);
+        } else if (CUSTOM_RECIPES == type) {
+            confirmationReceivedCustomRecipesSendUpdate(sender);
         }
     }
 
@@ -146,6 +148,7 @@ public class CarpetClientMessageHandler {
     }
 
     public static void sendCustomRecipes(EntityPlayerMP sender) {
+        if (CustomCrafting.getRecipeList().size() == 0) return;
         PacketBuffer data = new PacketBuffer(Unpooled.buffer());
         data.writeInt(CUSTOM_RECIPES);
 
@@ -166,24 +169,9 @@ public class CarpetClientMessageHandler {
         }
 
         CarpetClientServer.sender(data, sender);
-        new DelayedPacket(2000, sender).start();
     }
 
-    public static class DelayedPacket extends Thread {
-        private int delay;
-        EntityPlayerMP sender;
-
-        public DelayedPacket(int d, EntityPlayerMP s) {
-            delay = d;
-            sender = s;
-        }
-
-        public void run() {
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-            }
-            sender.getRecipeBook().init(sender);
-        }
+    public static void confirmationReceivedCustomRecipesSendUpdate(EntityPlayerMP sender) {
+        sender.getRecipeBook().init(sender);
     }
 }

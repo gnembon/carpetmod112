@@ -47,7 +47,7 @@
          {
              nbttaglist1.func_74742_a(new NBTTagString(((ResourceLocation)CraftingManager.field_193380_a.func_177774_c(irecipe1)).toString()));
          }
-@@ -121,25 +126,35 @@
+@@ -121,25 +126,34 @@
          }
      }
  
@@ -64,7 +64,6 @@
 +                if(ir == null){
 +                    System.out.println("found null recipe");
 +                }
-+                System.out.println(ir.func_77571_b().func_77973_b().func_77653_i(ir.func_77571_b()));
 +                list.add(ir);
 +            }
          }
@@ -87,7 +86,7 @@
          }
  
          return list;
-@@ -147,6 +162,6 @@
+@@ -147,6 +161,6 @@
  
      public void func_192826_c(EntityPlayerMP p_192826_1_)
      {
