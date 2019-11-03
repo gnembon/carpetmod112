@@ -230,7 +230,6 @@ public class CommandWaypoint extends CommandCarpetBase {
     }
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-        System.out.println(Arrays.toString(args));
         if (args.length == 0) return Arrays.asList("add", "list", "remove");
         if (args.length == 1) return getListOfStringsMatchingLastWord(args, "add", "list", "remove");
         switch (args[0]) {

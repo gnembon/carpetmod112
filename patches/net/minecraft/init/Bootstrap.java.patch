@@ -21,7 +21,20 @@
  import net.minecraft.block.BlockLiquid;
  import net.minecraft.block.BlockPumpkin;
  import net.minecraft.block.BlockShulkerBox;
-@@ -476,6 +482,9 @@
+@@ -58,11 +64,7 @@
+ import net.minecraft.tileentity.TileEntityDispenser;
+ import net.minecraft.tileentity.TileEntityShulkerBox;
+ import net.minecraft.tileentity.TileEntitySkull;
+-import net.minecraft.util.EnumFacing;
+-import net.minecraft.util.LoggingPrintStream;
+-import net.minecraft.util.SoundCategory;
+-import net.minecraft.util.SoundEvent;
+-import net.minecraft.util.StringUtils;
++import net.minecraft.util.*;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+@@ -476,6 +478,9 @@
              }
          });
  

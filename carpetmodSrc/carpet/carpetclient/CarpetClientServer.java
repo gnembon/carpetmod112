@@ -1,6 +1,7 @@
 package carpet.carpetclient;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import carpet.CarpetSettings;
@@ -18,7 +19,7 @@ import net.minecraft.server.MinecraftServer;
 public class CarpetClientServer implements PluginChannelHandler {
 
     private MinecraftServer minecraftServer;
-    private static ArrayList<EntityPlayerMP> players = new ArrayList<>();
+    private static LinkedHashSet<EntityPlayerMP> players = new LinkedHashSet<>();
     public static final String CARPET_CHANNEL_NAME = "carpet:client";
 
     public CarpetClientServer(MinecraftServer server) {
@@ -38,7 +39,8 @@ public class CarpetClientServer implements PluginChannelHandler {
 
     public boolean register(String channel, EntityPlayerMP sender) {
         players.add(sender);
-        CarpetClientMessageHandler.sendAllGUIOptions();
+        CarpetClientMessageHandler.sendAllGUIOptions(sender);
+        CarpetClientMessageHandler.sendCustomRecipes(sender);
         return true;
     }
 
@@ -49,7 +51,7 @@ public class CarpetClientServer implements PluginChannelHandler {
         CarpetClientRandomtickingIndexing.unregisterPlayer(player);
     }
 
-    static public ArrayList<EntityPlayerMP> getRegisteredPlayers() {
+    static public LinkedHashSet<EntityPlayerMP> getRegisteredPlayers() {
         return players;
     }
 

@@ -1,0 +1,96 @@
+--- ../src-base/minecraft/net/minecraft/stats/RecipeBookServer.java
++++ ../src-work/minecraft/net/minecraft/stats/RecipeBookServer.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.stats;
+ 
++import carpet.helpers.CustomCrafting;
+ import com.google.common.collect.Lists;
+ import java.util.Collections;
+ import java.util.List;
+@@ -29,7 +30,9 @@
+             {
+                 this.func_194073_a(irecipe);
+                 this.func_193825_e(irecipe);
+-                list.add(irecipe);
++                if(CustomCrafting.filterCustomRecipesForOnlyCarpetClientUsers(irecipe, p_193835_2_)) { // Adding this to prevent custom recipes crashing vanilla clients. CARPET-XCOM
++                    list.add(irecipe);
++                }
+                 CriteriaTriggers.field_192126_f.func_192225_a(p_193835_2_, irecipe);
+             }
+         }
+@@ -46,7 +49,9 @@
+             if (this.field_194077_a.get(func_194075_d(irecipe)))
+             {
+                 this.func_193831_b(irecipe);
+-                list.add(irecipe);
++                if(CustomCrafting.filterCustomRecipesForOnlyCarpetClientUsers(irecipe, p_193834_2_)) { // Adding this to prevent custom recipes crashing vanilla clients. CARPET-XCOM
++                    list.add(irecipe);
++                }
+             }
+         }
+ 
+@@ -65,7 +70,7 @@
+         nbttagcompound.func_74757_a("isFilteringCraftable", this.field_192819_c);
+         NBTTagList nbttaglist = new NBTTagList();
+ 
+-        for (IRecipe irecipe : this.func_194079_d())
++        for (IRecipe irecipe : this.getRecipes(null))
+         {
+             nbttaglist.func_74742_a(new NBTTagString(((ResourceLocation)CraftingManager.field_193380_a.func_177774_c(irecipe)).toString()));
+         }
+@@ -73,7 +78,7 @@
+         nbttagcompound.func_74782_a("recipes", nbttaglist);
+         NBTTagList nbttaglist1 = new NBTTagList();
+ 
+-        for (IRecipe irecipe1 : this.func_194080_e())
++        for (IRecipe irecipe1 : this.getDisplayedRecipes(null))
+         {
+             nbttaglist1.func_74742_a(new NBTTagString(((ResourceLocation)CraftingManager.field_193380_a.func_177774_c(irecipe1)).toString()));
+         }
+@@ -121,25 +126,34 @@
+         }
+     }
+ 
+-    private List<IRecipe> func_194079_d()
++    private List<IRecipe> getRecipes(EntityPlayerMP player)
+     {
+         List<IRecipe> list = Lists.<IRecipe>newArrayList();
+ 
+         for (int i = this.field_194077_a.nextSetBit(0); i >= 0; i = this.field_194077_a.nextSetBit(i + 1))
+         {
+-            list.add(CraftingManager.field_193380_a.func_148754_a(i));
++            IRecipe ir = CraftingManager.field_193380_a.func_148754_a(i);
++            if(player == null || CustomCrafting.filterCustomRecipesForOnlyCarpetClientUsers(ir, player)) { // Adding this to prevent custom recipes crashing vanilla clients. CARPET-XCOM
++                if(ir == null){
++                    System.out.println("found null recipe");
++                }
++                list.add(ir);
++            }
+         }
+ 
+         return list;
+     }
+ 
+-    private List<IRecipe> func_194080_e()
++    private List<IRecipe> getDisplayedRecipes(EntityPlayerMP player)
+     {
+         List<IRecipe> list = Lists.<IRecipe>newArrayList();
+ 
+         for (int i = this.field_194078_b.nextSetBit(0); i >= 0; i = this.field_194078_b.nextSetBit(i + 1))
+         {
+-            list.add(CraftingManager.field_193380_a.func_148754_a(i));
++            IRecipe ir = CraftingManager.field_193380_a.func_148754_a(i);
++            if(player == null || CustomCrafting.filterCustomRecipesForOnlyCarpetClientUsers(ir, player)) { // Adding this to prevent custom recipes crashing vanilla clients. CARPET-XCOM
++                list.add(ir);
++            }
+         }
+ 
+         return list;
+@@ -147,6 +161,6 @@
+ 
+     public void func_192826_c(EntityPlayerMP p_192826_1_)
+     {
+-        p_192826_1_.field_71135_a.func_147359_a(new SPacketRecipeBook(SPacketRecipeBook.State.INIT, this.func_194079_d(), this.func_194080_e(), this.field_192818_b, this.field_192819_c));
++        p_192826_1_.field_71135_a.func_147359_a(new SPacketRecipeBook(SPacketRecipeBook.State.INIT, this.getRecipes(p_192826_1_), this.getDisplayedRecipes(p_192826_1_), this.field_192818_b, this.field_192819_c));
+     }
+ }

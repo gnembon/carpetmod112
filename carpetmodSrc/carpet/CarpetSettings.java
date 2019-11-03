@@ -360,6 +360,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Rule made to debug recipes by pasting all recipes when crafting.", category = FIX)
+    public static boolean debugRecipes;
+
     @Rule(desc = "Fixes the collision cancelation lag when mobs are inside ladders and vines.", category = FIX)
     @BugFixDefault
     public static boolean optimizedCollisionCancellations = false;
