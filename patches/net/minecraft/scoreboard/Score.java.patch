@@ -5,7 +5,7 @@
  
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
-+import javafx.util.Pair;
++import org.apache.commons.lang3.tuple.Pair;
 +import org.lwjgl.Sys;
 +
  import java.util.Comparator;
@@ -43,7 +43,7 @@
          this.field_96655_e = p_96647_1_;
  
 +        if (CarpetSettings.scoreboardDelta > 0) {
-+            list.add(new Pair<>(System.currentTimeMillis(), field_96655_e));
++            list.add(Pair.of(System.currentTimeMillis(), field_96655_e));
 +            computeScoreDelta();
 +        }
 +

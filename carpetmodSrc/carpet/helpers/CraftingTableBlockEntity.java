@@ -105,8 +105,9 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
     }
 
     @Override
-    public String getGuiID() {
-        return null;
+    public String getGuiID()
+    {
+        return "minecraft:crafting_table";
     }
 
     @Override
