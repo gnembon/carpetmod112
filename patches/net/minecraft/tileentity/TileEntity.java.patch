@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
 @@ -1,6 +1,8 @@
  package net.minecraft.tileentity;
- 
+
  import javax.annotation.Nullable;
 +
 +import carpet.helpers.CraftingTableBlockEntity;
@@ -23,6 +23,6 @@
          func_190560_a("command_block", TileEntityCommandBlock.class);
          func_190560_a("shulker_box", TileEntityShulkerBox.class);
          func_190560_a("bed", TileEntityBed.class);
-+        func_190560_a("autocrafting", CraftingTableBlockEntity.class);
++        func_190560_a("crafting_table", CraftingTableBlockEntity.class);
      }
  }
