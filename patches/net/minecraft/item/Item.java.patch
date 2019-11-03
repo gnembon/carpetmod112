@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
-@@ -970,4 +970,9 @@
+@@ -991,4 +991,9 @@
              }
          }
      }

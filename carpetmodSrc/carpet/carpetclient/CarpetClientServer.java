@@ -1,6 +1,7 @@
 package carpet.carpetclient;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import carpet.CarpetSettings;
@@ -18,8 +19,8 @@ import net.minecraft.server.MinecraftServer;
 public class CarpetClientServer implements PluginChannelHandler {
 
     private MinecraftServer minecraftServer;
-    private static ArrayList<EntityPlayerMP> players = new ArrayList<>();
-    public static final String CARPET_CHANNEL_NAME = "CarpetClient";
+    private static LinkedHashSet<EntityPlayerMP> players = new LinkedHashSet<>();
+    public static final String CARPET_CHANNEL_NAME = "carpet:client";
 
     public CarpetClientServer(MinecraftServer server) {
         this.minecraftServer = server;
@@ -30,12 +31,16 @@ public class CarpetClientServer implements PluginChannelHandler {
     }
 
     public void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player) {
-        CarpetClientMessageHandler.handler(player, packet.getBufferData());
+        PacketBuffer buffer = PacketSplitter.receive(player, packet);
+        if(buffer != null) {
+            CarpetClientMessageHandler.handler(player, buffer);
+        }
     }
 
     public boolean register(String channel, EntityPlayerMP sender) {
         players.add(sender);
-        CarpetClientMessageHandler.sendAllGUIOptions();
+        CarpetClientMessageHandler.sendAllGUIOptions(sender);
+        CarpetClientMessageHandler.sendCustomRecipes(sender);
         return true;
     }
 
@@ -46,7 +51,7 @@ public class CarpetClientServer implements PluginChannelHandler {
         CarpetClientRandomtickingIndexing.unregisterPlayer(player);
     }
 
-    static public ArrayList<EntityPlayerMP> getRegisteredPlayers() {
+    static public LinkedHashSet<EntityPlayerMP> getRegisteredPlayers() {
         return players;
     }
 
@@ -79,6 +84,7 @@ public class CarpetClientServer implements PluginChannelHandler {
             data.retain();
             PacketSplitter.send(player, CARPET_CHANNEL_NAME, data);
         }
+        data.release();
     }
 
     public static void sender(PacketBuffer data, EntityPlayerMP player) {

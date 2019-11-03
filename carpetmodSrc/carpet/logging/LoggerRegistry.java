@@ -43,6 +43,7 @@ public class LoggerRegistry
     public static boolean __tileTickLimit;
     public static boolean __portalCaching;
     public static boolean __instantComparators;
+    public static boolean __items;
 
     public static void initLoggers(MinecraftServer server)
     {
@@ -55,6 +56,7 @@ public class LoggerRegistry
         registerLogger("tileTickLimit", new Logger(server, "tileTickLimit", null, null, LogHandler.CHAT));
         registerLogger("portalCaching",new Logger(server, "portalCaching", "brief", new String[]{"brief", "full"}, LogHandler.CHAT));
         registerLogger("instantComparators", new Logger(server, "instantComparators", "all", new String[]{"all", "tileTick", "buggy"}, LogHandler.CHAT));
+        registerLogger("items",new Logger(server, "items", "brief", new String[]{"brief", "full"}, LogHandler.CHAT));
 
         registerLogger("tps", new Logger(server, "tps", null, null, LogHandler.HUD));
         registerLogger("packets", new Logger(server, "packets", null, null, LogHandler.HUD));

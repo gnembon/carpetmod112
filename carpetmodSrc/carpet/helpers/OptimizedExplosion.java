@@ -9,6 +9,7 @@ import java.util.List;
 
 import carpet.logging.LoggerRegistry;
 import carpet.utils.Messenger;
+import net.minecraft.entity.item.EntityMinecartTNT;
 import net.minecraft.util.text.ITextComponent;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -56,13 +57,15 @@ public class OptimizedExplosion
     private static boolean rayCalcDone;
     private static ArrayList<Float> chances = new ArrayList<>();
     private static BlockPos blastChanceLocation;
+    private static boolean minecartTNT;
 
     public static void doExplosionA(Explosion e) {
         blastCalc(e);
 
         if (!CarpetSettings.explosionNoBlockDamage) {
-			rayCalcDone = false;
-			firstRay = true;
+            rayCalcDone = false;
+            firstRay = true;
+            minecartTNT = e.exploder instanceof EntityMinecartTNT;
 			getAffectedPositionsOnPlaneY(e,  0,  0, 15,  0, 15); // bottom
 			getAffectedPositionsOnPlaneY(e, 15,  0, 15,  0, 15); // top
 			getAffectedPositionsOnPlaneX(e,  0,  1, 14,  0, 15); // west
@@ -427,7 +430,7 @@ public class OptimizedExplosion
             {
                 affectedBlockPositionsSet.add(posImmutable != null ? posImmutable : posMutable.toImmutable());
             }
-            else if (firstRay)
+            else if (firstRay && !minecartTNT)
             {
                 rayCalcDone = true;
                 return true;

@@ -43,9 +43,9 @@ public class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v19_05_02";
-    public static final String minecraftVersion = "1.12";
-    public static final String mcpMappings = "20180814-1.12";
+    public static final String carpetVersion = "v19_08_30";
+    public static final String minecraftVersion = "1.12.2";
+    public static final String mcpMappings = "39-1.12";
 
     public static final Logger LOG = LogManager.getLogger();
 
@@ -360,6 +360,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Rule made to debug recipes by pasting all recipes when crafting.", category = FIX)
+    public static boolean debugRecipes;
+
     @Rule(desc = "Fixes the collision cancelation lag when mobs are inside ladders and vines.", category = FIX)
     @BugFixDefault
     public static boolean optimizedCollisionCancellations = false;
@@ -479,9 +482,6 @@ public class CarpetSettings
     @Rule(desc = "Fixes duplication of items when using item frames", category = FIX)
     public static boolean itemFrameDuplicationFix = false;
 
-    @Rule(desc = "Fixes the recipe book duplication caused by clicking to fast while crafting", category = FIX)
-    public static boolean craftingWindowDuplicationFix = false;
-
     @Rule(desc = "Uses alternative lighting engine by PhiPros. AKA NewLight mod", category = OPTIMIZATIONS)
     public static boolean newLight = false;
 
@@ -492,11 +492,16 @@ public class CarpetSettings
     @Rule(desc = "Customizable maximal entity collision limits, 0 for no limits", category = OPTIMIZATIONS, options = {"0", "1", "20"}, validator = "validateNonNegative")
     public static int maxEntityCollisions = 0;
 
-    @Rule(desc = "Fix for piston ghost blocks", category = FIX, extra = {
-            "Does not work properly on vanilla clients with non-vanilla push limits"
-    })
+    @Rule(
+            desc = "Fix for piston ghost blocks. 'clientAndServer' option requires carpet-client", category = FIX,
+            extra = "Does not work properly on vanilla clients with non-vanilla push limits"
+    )
     @BugFixDefault
-    public static boolean pistonGhostBlocksFix = false;
+    public static PistonGhostBlocksFix pistonGhostBlocksFix = PistonGhostBlocksFix.off;
+    public static enum PistonGhostBlocksFix
+    {
+        off, serverOnly, clientAndServer
+    }
 
     @Rule(desc = "fixes water flowing issues", category = OPTIMIZATIONS)
     public static WaterFlow waterFlow = WaterFlow.vanilla;
@@ -588,7 +593,7 @@ public class CarpetSettings
     @Rule(desc = "Fixes player position truncation causing chunks to load with one block offset to chunk boarders in negative coordinates.", category = FIX)
     public static boolean playerChunkLoadingFix = false;
 
-    // ===== SURVIVAL FEATURES ===== //
+    // ===== FEATURES ===== //
 
     @Rule(desc = "Scoreboard displays changes over time, specified in seconds.", options = {"0", "60", "600", "3600"}, validator = "validateScoreboardDelta", category = EXPERIMENTAL, extra = {
             "Set to 0 to disable Scoreboard delta display."
@@ -724,6 +729,14 @@ public class CarpetSettings
     @Rule(desc = "Redstone ore blocks can redirect redstone dust", category = {EXPERIMENTAL, FEATURE})
     public static boolean redstoneOreRedirectsDust = false;
 
+    @Rule(desc = "Adds back the crafting window duplication bug.", category = EXPERIMENTAL)
+    public static boolean craftingWindowDuplication = false;
+
+    @Rule(desc = "Adds back farmland bug where entities teleport on top of farmland that turns back to dirt.", category = EXPERIMENTAL)
+    public static boolean farmlandBug;
+
+    @Rule(desc = "Allows bedrock to drop as bedrock item if broken, similar to 1.8 and lower versions.", category = EXPERIMENTAL)
+    public static boolean bedrockDropsAsItem;
 
     // ===== API ===== //
 
