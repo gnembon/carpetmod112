@@ -492,11 +492,16 @@ public class CarpetSettings
     @Rule(desc = "Customizable maximal entity collision limits, 0 for no limits", category = OPTIMIZATIONS, options = {"0", "1", "20"}, validator = "validateNonNegative")
     public static int maxEntityCollisions = 0;
 
-    @Rule(desc = "Fix for piston ghost blocks", category = FIX, extra = {
-            "Does not work properly on vanilla clients with non-vanilla push limits"
-    })
+    @Rule(
+            desc = "Fix for piston ghost blocks. 'clientAndServer' option requires carpet-client", category = FIX,
+            extra = "Does not work properly on vanilla clients with non-vanilla push limits"
+    )
     @BugFixDefault
-    public static boolean pistonGhostBlocksFix = false;
+    public static PistonGhostBlocksFix pistonGhostBlocksFix = PistonGhostBlocksFix.off;
+    public static enum PistonGhostBlocksFix
+    {
+        off, serverOnly, clientAndServer
+    }
 
     @Rule(desc = "fixes water flowing issues", category = OPTIMIZATIONS)
     public static WaterFlow waterFlow = WaterFlow.vanilla;
