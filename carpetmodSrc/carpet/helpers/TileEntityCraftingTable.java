@@ -21,15 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CraftingTableBlockEntity extends TileEntityLockable implements ISidedInventory //, RecipeUnlocker, RecipeInputProvider
+public class TileEntityCraftingTable extends TileEntityLockable implements ISidedInventory //, RecipeUnlocker, RecipeInputProvider
 {
-    /*
-    public static final BlockEntityType<CraftingTableBlockEntity> TYPE = Registry.register(
-            Registry.BLOCK_ENTITY,
-            "carpet:crafting_table",
-            BlockEntityType.Builder.create(CraftingTableBlockEntity::new, Blocks.CRAFTING_TABLE).build(null)
-    );
-     */
     private static final int[] OUTPUT_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     private static final int[] INPUT_SLOTS = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     public InventoryCrafting inventory = new InventoryCrafting(null, 3, 3);
@@ -37,12 +30,12 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
     private List<AutoCraftingTableContainer> openContainers = new ArrayList<>();
 
     /*
-    public CraftingTableBlockEntity() {  //this(BlockEntityType.BARREL);
+    public TileEntityCraftingTable() {  //this(BlockEntityType.BARREL);
         this(TYPE);
     }
     */
 
-    public CraftingTableBlockEntity()
+    public TileEntityCraftingTable()
     {
         super();
     }
@@ -239,27 +232,6 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
 
     }
 
-//    @Override
-//    public void provideRecipeInputs(RecipeFinder finder)
-//    {
-//        for (ItemStack stack : this.inventory)
-//        {
-//            finder.addItem(stack);
-//        }
-//    }
-//
-//    @Override
-//    public void setLastRecipe(Recipe<?> var1)
-//    {
-//
-//    }
-//
-//    @Override
-//    public Recipe<?> getLastRecipe()
-//    {
-//        return null;
-//    }
-
     @Override
     public void clear()
     {
@@ -272,44 +244,6 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
             return Optional.empty();
         return Optional.ofNullable(CraftingManager.findMatchingRecipe(inventory, this.world));
     }
-
-//    private ItemStack craft()
-//    {
-//        if (this.world == null)
-//            return ItemStack.EMPTY;
-//        Optional<CraftingRecipe> optionalRecipe = getCurrentRecipe();
-//        if (!optionalRecipe.isPresent())
-//            return ItemStack.EMPTY;
-//        CraftingRecipe recipe = optionalRecipe.get();
-//        ItemStack result = recipe.craft(craftingInventory);
-//        DefaultedList<ItemStack> remaining = world.getRecipeManager().getRemainingStacks(RecipeType.CRAFTING, craftingInventory, world);
-//        for (int i = 0; i < 9; i++)
-//        {
-//            ItemStack current = inventory.get(i);
-//            ItemStack remainingStack = remaining.get(i);
-//            if (!current.isEmpty())
-//            {
-//                current.decrement(1);
-//            }
-//            if (!remainingStack.isEmpty())
-//            {
-//                if (current.isEmpty())
-//                {
-//                    inventory.set(i, remainingStack);
-//                }
-//                else if (ItemStack.areItemsEqualIgnoreDamage(current, remainingStack) && ItemStack.areTagsEqual(current, remainingStack))
-//                {
-//                    current.increment(remainingStack.getCount());
-//                }
-//                else
-//                {
-//                    ItemScatterer.spawn(world, pos.getX(), pos.getY(), pos.getZ(), remainingStack);
-//                }
-//            }
-//        }
-//        markDirty();
-//        return result;
-//    }
 
     public ItemStack craft()
     {
@@ -342,13 +276,9 @@ public class CraftingTableBlockEntity extends TileEntityLockable implements ISid
                     itemstack1.grow(itemstack.getCount());
                     this.setInventorySlotContents(i + 1, itemstack1);
                 }else{
-                    // drop item
+                    // TODO: drop item
                     // this.player.dropItem(itemstack1, false);
                 }
-//                else if (!this.player.inventory.addItemStackToInventory(itemstack1))
-//                {
-//                    this.player.dropItem(itemstack1, false);
-//                }
             }
         }
         return stack;

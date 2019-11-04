@@ -13,10 +13,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class AutoCraftingTableContainer extends ContainerWorkbench {
-    private final CraftingTableBlockEntity blockEntity;
+    private final TileEntityCraftingTable blockEntity;
     private final EntityPlayer player;
 
-    AutoCraftingTableContainer(InventoryPlayer playerInventory, CraftingTableBlockEntity blockEntity, World world, BlockPos pos) {
+    AutoCraftingTableContainer(InventoryPlayer playerInventory, TileEntityCraftingTable blockEntity, World world, BlockPos pos) {
         super(playerInventory, world, pos);
         this.blockEntity = blockEntity;
         this.player = playerInventory.player;

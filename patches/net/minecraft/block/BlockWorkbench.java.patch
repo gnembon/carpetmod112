@@ -3,21 +3,21 @@
 @@ -1,5 +1,6 @@
  package net.minecraft.block;
  
-+import carpet.helpers.CraftingTableBlockEntity;
++import carpet.helpers.TileEntityCraftingTable;
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.creativetab.CreativeTabs;
-@@ -8,7 +9,9 @@
+@@ -8,7 +9,8 @@
  import net.minecraft.init.Blocks;
  import net.minecraft.inventory.Container;
  import net.minecraft.inventory.ContainerWorkbench;
+-import net.minecraft.stats.StatList;
 +import net.minecraft.item.ItemStack;
- import net.minecraft.stats.StatList;
 +import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.EnumFacing;
  import net.minecraft.util.EnumHand;
  import net.minecraft.util.math.BlockPos;
-@@ -17,7 +20,9 @@
+@@ -17,7 +19,9 @@
  import net.minecraft.world.IInteractionObject;
  import net.minecraft.world.World;
  
@@ -28,7 +28,7 @@
  {
      protected BlockWorkbench()
      {
-@@ -33,8 +38,15 @@
+@@ -33,8 +37,15 @@
          }
          else
          {
@@ -36,7 +36,7 @@
 -            p_180639_4_.func_71029_a(StatList.field_188062_ab);
 +            if (func_149716_u()) {
 +                TileEntity blockEntity = p_180639_1_.func_175625_s(p_180639_2_);
-+                if (blockEntity instanceof CraftingTableBlockEntity) {
++                if (blockEntity instanceof TileEntityCraftingTable) {
 +                    p_180639_4_.func_180468_a((IInteractionObject) blockEntity);
 +                }
 +            }
@@ -46,7 +46,7 @@
              return true;
          }
      }
-@@ -75,4 +87,26 @@
+@@ -75,4 +86,26 @@
                  return "minecraft:crafting_table";
              }
          }
@@ -54,7 +54,7 @@
 +    @Nullable
 +    @Override
 +    public TileEntity func_149915_a(World worldIn, int meta) {
-+        return new CraftingTableBlockEntity();
++        return new TileEntityCraftingTable();
 +    }
 +
 +    @Override
@@ -65,9 +65,9 @@
 +    @Override
 +    public int func_180641_l(IBlockState blockState, World worldIn, BlockPos pos) {
 +        TileEntity te = worldIn.func_175625_s(pos);
-+        if (!(te instanceof CraftingTableBlockEntity)) return 0;
++        if (!(te instanceof TileEntityCraftingTable)) return 0;
 +        int count = 0;
-+        for (ItemStack stack : ((CraftingTableBlockEntity) te).inventory.field_70466_a) {
++        for (ItemStack stack : ((TileEntityCraftingTable) te).inventory.field_70466_a) {
 +            if (!stack.func_190926_b()) count++;
 +        }
 +        return (count * 15) / 9;
