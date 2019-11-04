@@ -8,15 +8,7 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.item.ItemStack;
  import net.minecraft.util.NonNullList;
-@@ -9,6 +10,7 @@
- import net.minecraft.util.text.TextComponentTranslation;
- import net.minecraft.village.MerchantRecipe;
- import net.minecraft.village.MerchantRecipeList;
-+import net.minecraft.village.Village;
- 
- public class InventoryMerchant implements IInventory
- {
-@@ -164,6 +166,9 @@
+@@ -164,6 +165,9 @@
                  {
                      this.field_70472_d = merchantrecipe;
                      this.func_70299_a(2, merchantrecipe.func_77397_d().func_77946_l());

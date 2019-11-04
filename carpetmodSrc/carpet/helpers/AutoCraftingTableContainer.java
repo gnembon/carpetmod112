@@ -44,7 +44,6 @@ public class AutoCraftingTableContainer extends ContainerWorkbench {
     public void onCraftMatrixChanged(IInventory inv) {
         if (this.player instanceof EntityPlayerMP) {
             NetHandlerPlayServer netHandler = ((EntityPlayerMP) this.player).connection;
-//            System.out.println(this.tileEntity.getStackInSlot(0).getItem().getTranslationKey());
             netHandler.sendPacket(new SPacketSetSlot(this.windowId, 0, this.tileEntity.getStackInSlot(0)));
         }
     }
@@ -57,19 +56,31 @@ public class AutoCraftingTableContainer extends ContainerWorkbench {
             if (!this.mergeItemStack(current, 10, 46, true)) {
                 return ItemStack.EMPTY;
             }
+            tileEntity.setPlayer(player);
             this.tileEntity.decrStackSize(0, before.getCount() - current.getCount());
+            tileEntity.setPlayer(null);
             return this.tileEntity.getStackInSlot(0);
         }
         return super.transferStackInSlot(player, slot);
     }
 
-    public void close(EntityPlayer player) {
+    @Override
+    public void onContainerClosed(EntityPlayer player) {
         InventoryPlayer playerInventory = player.inventory;
         if (!playerInventory.getItemStack().isEmpty()) {
             player.dropItem(playerInventory.getItemStack(), false);
             playerInventory.setItemStack(ItemStack.EMPTY);
         }
         this.tileEntity.onContainerClose(this);
+    }
+
+    @Override
+    public ItemStack decrStackSize(EntityPlayer player, int slotId, int amount){
+        tileEntity.setPlayer(player);
+        Slot slot = this.inventorySlots.get(slotId);
+        ItemStack itemStack = slot.decrStackSize(amount);
+        tileEntity.setPlayer(null);
+        return itemStack;
     }
 
     private class OutputSlot extends Slot {
