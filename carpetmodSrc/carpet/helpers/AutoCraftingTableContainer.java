@@ -13,19 +13,19 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
 public class AutoCraftingTableContainer extends ContainerWorkbench {
-    private final TileEntityCraftingTable blockEntity;
+    private final TileEntityCraftingTable tileEntity;
     private final EntityPlayer player;
 
-    AutoCraftingTableContainer(InventoryPlayer playerInventory, TileEntityCraftingTable blockEntity, World world, BlockPos pos) {
+    AutoCraftingTableContainer(InventoryPlayer playerInventory, TileEntityCraftingTable tileEntity, World world, BlockPos pos) {
         super(playerInventory, world, pos);
-        this.blockEntity = blockEntity;
+        this.tileEntity = tileEntity;
         this.player = playerInventory.player;
         inventorySlots.clear();
-        this.addSlotToContainer(new OutputSlot(this.blockEntity));
+        this.addSlotToContainer(new OutputSlot(this.tileEntity));
 
         for (int y = 0; y < 3; ++y) {
             for (int x = 0; x < 3; ++x) {
-                this.addSlotToContainer(new Slot(this.blockEntity, x + y * 3 + 1, 30 + x * 18, 17 + y * 18));
+                this.addSlotToContainer(new Slot(this.tileEntity, x + y * 3 + 1, 30 + x * 18, 17 + y * 18));
             }
         }
 
@@ -44,20 +44,21 @@ public class AutoCraftingTableContainer extends ContainerWorkbench {
     public void onCraftMatrixChanged(IInventory inv) {
         if (this.player instanceof EntityPlayerMP) {
             NetHandlerPlayServer netHandler = ((EntityPlayerMP) this.player).connection;
-            netHandler.sendPacket(new SPacketSetSlot(this.windowId, 0, this.blockEntity.getStackInSlot(0)));
+//            System.out.println(this.tileEntity.getStackInSlot(0).getItem().getTranslationKey());
+            netHandler.sendPacket(new SPacketSetSlot(this.windowId, 0, this.tileEntity.getStackInSlot(0)));
         }
     }
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
         if (slot == 0) {
-            ItemStack before = this.blockEntity.getStackInSlot(0).copy();
+            ItemStack before = this.tileEntity.getStackInSlot(0).copy();
             ItemStack current = before.copy();
             if (!this.mergeItemStack(current, 10, 46, true)) {
                 return ItemStack.EMPTY;
             }
-            this.blockEntity.decrStackSize(0, before.getCount() - current.getCount());
-            return this.blockEntity.getStackInSlot(0);
+            this.tileEntity.decrStackSize(0, before.getCount() - current.getCount());
+            return this.tileEntity.getStackInSlot(0);
         }
         return super.transferStackInSlot(player, slot);
     }
@@ -68,7 +69,7 @@ public class AutoCraftingTableContainer extends ContainerWorkbench {
             player.dropItem(playerInventory.getItemStack(), false);
             playerInventory.setItemStack(ItemStack.EMPTY);
         }
-        this.blockEntity.onContainerClose(this);
+        this.tileEntity.onContainerClose(this);
     }
 
     private class OutputSlot extends Slot {
@@ -83,7 +84,7 @@ public class AutoCraftingTableContainer extends ContainerWorkbench {
 
         @Override
         protected void onSwapCraft(int amount) {
-            AutoCraftingTableContainer.this.blockEntity.decrStackSize(0, amount);
+            AutoCraftingTableContainer.this.tileEntity.decrStackSize(0, amount);
         }
     }
 }

@@ -1,12 +1,10 @@
 package carpet.helpers;
 
 
+import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ISidedInventory;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -14,8 +12,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.NonNullList;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -245,11 +245,32 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
         return Optional.ofNullable(CraftingManager.findMatchingRecipe(inventory, this.world));
     }
 
+    private int amountCrafted = 0;
+
+    protected void onCrafting(ItemStack stack, IRecipe irecipe, EntityPlayer player)
+    {
+        if (this.amountCrafted > 0)
+        {
+            stack.onCrafting(player.world, player, this.amountCrafted);
+        }
+
+        this.amountCrafted = 0;
+//        InventoryCraftResult inventorycraftresult = (InventoryCraftResult)this.inventory;
+//        IRecipe irecipe = inventorycraftresult.getRecipeUsed();
+
+        if (irecipe != null && !irecipe.isDynamic())
+        {
+            player.unlockRecipes(Lists.newArrayList(irecipe));
+//            inventorycraftresult.setRecipeUsed((IRecipe)null);
+        }
+    }
+
     public ItemStack craft()
     {
         if (this.world == null) return ItemStack.EMPTY;
         Optional<IRecipe> optionalRecipe = getCurrentRecipe();
         if (!optionalRecipe.isPresent()) return ItemStack.EMPTY;
+//        onCrafting(stack);
         IRecipe recipe = optionalRecipe.get();
         ItemStack stack = recipe.getCraftingResult(this.inventory);
         NonNullList<ItemStack> remaining = recipe.getRemainingItems(this.inventory);
@@ -276,8 +297,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
                     itemstack1.grow(itemstack.getCount());
                     this.setInventorySlotContents(i + 1, itemstack1);
                 }else{
-                    // TODO: drop item
-                    // this.player.dropItem(itemstack1, false);
+                    InventoryHelper.spawnItemStack(this.world, this.pos.getX(), this.pos.getY(), this.pos.getZ(), itemstack1);
                 }
             }
         }
@@ -287,5 +307,10 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     public void onContainerClose(AutoCraftingTableContainer container)
     {
         this.openContainers.remove(container);
+    }
+
+    public void dropContent(World worldIn, BlockPos pos){
+        InventoryHelper.dropInventoryItems(worldIn, pos, inventory);
+        InventoryHelper.spawnItemStack(worldIn, pos.getX(), pos.getY(), pos.getZ(), output);
     }
 }

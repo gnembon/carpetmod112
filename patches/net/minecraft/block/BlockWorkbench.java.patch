@@ -7,17 +7,18 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
  import net.minecraft.creativetab.CreativeTabs;
-@@ -8,7 +9,8 @@
+@@ -8,7 +9,10 @@
  import net.minecraft.init.Blocks;
  import net.minecraft.inventory.Container;
  import net.minecraft.inventory.ContainerWorkbench;
--import net.minecraft.stats.StatList;
++import net.minecraft.inventory.InventoryHelper;
 +import net.minecraft.item.ItemStack;
+ import net.minecraft.stats.StatList;
 +import net.minecraft.tileentity.TileEntity;
  import net.minecraft.util.EnumFacing;
  import net.minecraft.util.EnumHand;
  import net.minecraft.util.math.BlockPos;
-@@ -17,7 +19,9 @@
+@@ -17,7 +21,9 @@
  import net.minecraft.world.IInteractionObject;
  import net.minecraft.world.World;
  
@@ -28,25 +29,23 @@
  {
      protected BlockWorkbench()
      {
-@@ -33,8 +37,15 @@
+@@ -33,7 +39,14 @@
          }
          else
          {
 -            p_180639_4_.func_180468_a(new BlockWorkbench.InterfaceCraftingTable(p_180639_1_, p_180639_2_));
--            p_180639_4_.func_71029_a(StatList.field_188062_ab);
 +            if (func_149716_u()) {
 +                TileEntity blockEntity = p_180639_1_.func_175625_s(p_180639_2_);
 +                if (blockEntity instanceof TileEntityCraftingTable) {
 +                    p_180639_4_.func_180468_a((IInteractionObject) blockEntity);
 +                }
 +            }
-+
 +//            playerIn.displayGui(new BlockWorkbench.InterfaceCraftingTable(worldIn, pos));
-+//            playerIn.addStat(StatList.CRAFTING_TABLE_INTERACTION);
++
+             p_180639_4_.func_71029_a(StatList.field_188062_ab);
              return true;
          }
-     }
-@@ -75,4 +86,26 @@
+@@ -75,4 +88,40 @@
                  return "minecraft:crafting_table";
              }
          }
@@ -71,5 +70,19 @@
 +            if (!stack.func_190926_b()) count++;
 +        }
 +        return (count * 15) / 9;
++    }
++
++    @Override
++    public void func_180663_b(World worldIn, BlockPos pos, IBlockState state)
++    {
++        // Maybe also check for some carpet rule
++        TileEntity tileEntity = worldIn.func_175625_s(pos);
++        if (tileEntity instanceof TileEntityCraftingTable)
++        {
++            ((TileEntityCraftingTable)tileEntity).dropContent(worldIn, pos);
++//            InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityCraftingTable)tileEntity);
++            worldIn.func_175666_e(pos, this);
++        }
++        super.func_180663_b(worldIn, pos, state);
 +    }
  }
