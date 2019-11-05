@@ -143,7 +143,7 @@
 +            
 +         // Movable Tile entity fix CARPET-2No2Name
 +            List<TileEntity> list1_TileEntities = Lists.<TileEntity>newArrayList();
-+            if(CarpetSettings.movableTileEntities){
++            if(CarpetSettings.movableTileEntities || CarpetSettings.autocrafter){
 +                for (int i = 0; i < list.size(); ++i)
 +                {
 +                    BlockPos blockpos = list.get(i);
@@ -194,12 +194,12 @@
 +                    p_176319_1_.func_180501_a(blockpos3, Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_), 4);
 +                }
 +                // Movable Tile entity fix CARPET-2No2Name
-+                if(!CarpetSettings.movableTileEntities){
-+                    p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false));
-+                }else{
++                if(CarpetSettings.movableTileEntities || CarpetSettings.autocrafter){
 +                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false);
 +                    ((TileEntityPiston)tilePiston).setCarriedTileEntity(list1_TileEntities.get(l));
 +                    p_176319_1_.func_175690_a(blockpos3, tilePiston);
++                }else{
++                    p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false));
 +                }
                  --k;
                  aiblockstate[k] = iblockstate2;

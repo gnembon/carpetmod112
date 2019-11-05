@@ -166,7 +166,7 @@
 -                this.field_145850_b.func_180501_a(this.field_174879_c, this.field_174932_a, 3);
 -                this.field_145850_b.func_190524_a(this.field_174879_c, this.field_174932_a.func_177230_c(), this.field_174879_c);
 +                // Movable Tile entity fix CARPET-2No2Name
-+                if(CarpetSettings.movableTileEntities)
++                if(CarpetSettings.movableTileEntities || CarpetSettings.autocrafter)
 +                {
 +                    this.placeBlock();
 +                }
@@ -177,7 +177,7 @@
 +                    this.field_145850_b.func_190524_a(this.field_174879_c, this.field_174932_a.func_177230_c(), this.field_174879_c);
 +                }
              }
-+            else if(CarpetSettings.movableTileEntities)
++            else if(CarpetSettings.movableTileEntities || CarpetSettings.autocrafter)
 +            {
 +                //Handle TNT Explosions or other ways the movingBlock is broken
 +                //Also /setblock will cause this to be called, and drop e.g. a moving chest's contents. This is MC-40380 (BlockEntities that aren't Inventories drop stuff when setblock is called )
@@ -219,7 +219,7 @@
 +                //CM end
 +
 +                // Movable Tile entity fix CARPET-2No2Name
-+                if(CarpetSettings.movableTileEntities)
++                if(CarpetSettings.movableTileEntities || CarpetSettings.autocrafter)
 +                {
 +                    this.placeBlock();
 +                }
@@ -241,7 +241,7 @@
          this.field_145872_l = p_145839_1_.func_74767_n("source");
 +
 +        // Movable Tile entity fix CARPET-2No2Name
-+        if(CarpetSettings.movableTileEntities && p_145839_1_.func_150297_b("carriedTileEntity", 10))
++        if((CarpetSettings.movableTileEntities || CarpetSettings.autocrafter) && p_145839_1_.func_150297_b("carriedTileEntity", 10))
 +        {
 +            if(this.field_174932_a.func_177230_c() instanceof ITileEntityProvider)
 +                this.carriedTileEntity = ((ITileEntityProvider)(this.field_174932_a.func_177230_c())).func_149915_a(this.field_145850_b, this.field_174932_a.func_177230_c().func_176201_c(this.field_174932_a));
@@ -268,7 +268,7 @@
          p_189515_1_.func_74757_a("source", this.field_145872_l);
 +
 +        // Movable Tile entity fix CARPET-2No2Name
-+        if(CarpetSettings.movableTileEntities && this.carriedTileEntity != null)
++        if((CarpetSettings.movableTileEntities || CarpetSettings.autocrafter) && this.carriedTileEntity != null)
 +        {
 +            p_189515_1_.func_74782_a("carriedTileEntity", this.carriedTileEntity.func_189515_b(new NBTTagCompound()));
 +        }

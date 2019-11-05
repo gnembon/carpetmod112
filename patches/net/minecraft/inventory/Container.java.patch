@@ -40,7 +40,7 @@
                              {
                                  int k2 = p_184996_2_ == 0 ? itemstack11.func_190916_E() : 1;
  
-@@ -414,9 +422,22 @@
+@@ -414,9 +422,23 @@
  
              if (slot2 != null && slot2.func_75216_d() && slot2.func_82869_a(p_184996_4_))
              {
@@ -56,6 +56,7 @@
 +                    while (slot2.func_75216_d()) {
 +                        this.func_184996_a(p_184996_1_, 0, ClickType.THROW, p_184996_4_);
 +                    }
++                    func_75142_b();
 +                }
 +                else
 +                {

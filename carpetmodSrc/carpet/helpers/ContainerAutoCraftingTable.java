@@ -13,11 +13,11 @@ import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class AutoCraftingTableContainer extends ContainerWorkbench {
+public class ContainerAutoCraftingTable extends ContainerWorkbench {
     private final TileEntityCraftingTable tileEntity;
     private final EntityPlayer player;
 
-    AutoCraftingTableContainer(InventoryPlayer playerInventory, TileEntityCraftingTable tileEntity, World world, BlockPos pos) {
+    ContainerAutoCraftingTable(InventoryPlayer playerInventory, TileEntityCraftingTable tileEntity, World world, BlockPos pos) {
         super(playerInventory, world, pos);
         this.tileEntity = tileEntity;
         this.player = playerInventory.player;
@@ -96,7 +96,7 @@ public class AutoCraftingTableContainer extends ContainerWorkbench {
 
         @Override
         protected void onSwapCraft(int amount) {
-            AutoCraftingTableContainer.this.tileEntity.decrStackSize(0, amount);
+            ContainerAutoCraftingTable.this.tileEntity.decrStackSize(0, amount);
         }
     }
 

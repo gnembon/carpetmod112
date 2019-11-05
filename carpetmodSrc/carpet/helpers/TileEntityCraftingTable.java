@@ -27,7 +27,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     private static final int[] INPUT_SLOTS = {1, 2, 3, 4, 5, 6, 7, 8, 9};
     public InventoryCrafting inventory = new InventoryCrafting(null, 3, 3);
     public ItemStack output = ItemStack.EMPTY;
-    private List<AutoCraftingTableContainer> openContainers = new ArrayList<>();
+    private List<ContainerAutoCraftingTable> openContainers = new ArrayList<>();
     private int amountCrafted = 0;
     private EntityPlayer player;
 
@@ -82,7 +82,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     @Override
     protected Container createContainer(int id, PlayerInventory playerInventory)
     {
-        AutoCraftingTableContainer container = new AutoCraftingTableContainer(id, playerInventory, this);
+        ContainerAutoCraftingTable container = new ContainerAutoCraftingTable(id, playerInventory, this);
         this.openContainers.add(container);
         return container;
     }
@@ -91,7 +91,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     @Override
     public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
     {
-        AutoCraftingTableContainer container = new AutoCraftingTableContainer(playerInventory, this, this.world, this.pos);
+        ContainerAutoCraftingTable container = new ContainerAutoCraftingTable(playerInventory, this, this.world, this.pos);
         inventory.eventHandler = container;
         this.openContainers.add(container);
         return container;
@@ -217,7 +217,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     public void markDirty()
     {
         super.markDirty();
-        for (AutoCraftingTableContainer c : openContainers){
+        for (ContainerAutoCraftingTable c : openContainers){
             c.onCraftMatrixChanged(this);
         }
     }
@@ -309,7 +309,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
         return stack;
     }
 
-    public void onContainerClose(AutoCraftingTableContainer container)
+    public void onContainerClose(ContainerAutoCraftingTable container)
     {
         this.openContainers.remove(container);
     }
