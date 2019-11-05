@@ -104,12 +104,14 @@
                  {
                      this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
                  }
-@@ -307,7 +351,13 @@
+@@ -307,7 +351,15 @@
                      return false;
                  }
  
 -                return !block.func_149716_u();
 +                // Movable Tile entity fix CARPET-2No2Name
++                if (block instanceof BlockWorkbench)
++                    return true;
 +                if(!block.func_149716_u())
 +                    return true;
 +                else if(CarpetSettings.movableTileEntities)
@@ -119,7 +121,7 @@
              }
              else
              {
-@@ -319,6 +369,14 @@
+@@ -319,6 +371,14 @@
              return false;
          }
      }
@@ -134,7 +136,7 @@
  
      private boolean func_176319_a(World p_176319_1_, BlockPos p_176319_2_, EnumFacing p_176319_3_, boolean p_176319_4_)
      {
-@@ -358,15 +416,64 @@
+@@ -358,15 +418,64 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }

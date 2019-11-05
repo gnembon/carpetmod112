@@ -2,7 +2,6 @@ package carpet.helpers;
 
 
 import com.google.common.collect.Lists;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.*;
@@ -175,7 +174,6 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     {
         if (slot == 0)
         {
-            System.out.println("dec by : " + amount);
             if (output.isEmpty())
             {
                 amountCrafted += amount;
