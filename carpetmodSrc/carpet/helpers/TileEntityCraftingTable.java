@@ -93,6 +93,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
     {
         AutoCraftingTableContainer container = new AutoCraftingTableContainer(playerInventory, this, this.world, this.pos);
+        inventory.eventHandler = container;
         this.openContainers.add(container);
         return container;
     }

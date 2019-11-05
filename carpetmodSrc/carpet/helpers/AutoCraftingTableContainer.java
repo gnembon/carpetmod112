@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ContainerWorkbench;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
@@ -97,5 +98,10 @@ public class AutoCraftingTableContainer extends ContainerWorkbench {
         protected void onSwapCraft(int amount) {
             AutoCraftingTableContainer.this.tileEntity.decrStackSize(0, amount);
         }
+    }
+
+    @Override
+    public InventoryCrafting getInventoryCrafting(){
+        return tileEntity.inventory;
     }
 }

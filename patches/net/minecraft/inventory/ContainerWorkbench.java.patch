@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/inventory/ContainerWorkbench.java
++++ ../src-work/minecraft/net/minecraft/inventory/ContainerWorkbench.java
+@@ -140,4 +140,8 @@
+     {
+         return p_94530_2_.field_75224_c != this.field_75160_f && super.func_94530_a(p_94530_1_, p_94530_2_);
+     }
++
++    public InventoryCrafting getInventoryCrafting() {
++        return field_75162_e;
++    }
+ }
