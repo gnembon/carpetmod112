@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import javafx.util.Pair;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
@@ -13,6 +12,7 @@ import net.minecraft.util.JsonUtils;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -59,7 +59,7 @@ public class CustomCrafting {
                     try {
                         bufferedreader = Files.newBufferedReader(path1);
                         JsonObject json = (JsonObject) JsonUtils.fromJson(gson, bufferedreader, JsonObject.class);
-                        recipeList.add(new Pair(s, json));
+                        recipeList.add(Pair.of(s, json));
                         IRecipe ir = CraftingManager.parseRecipeJson(json);
                         recipes.add(ir);
                         CraftingManager.register(s, ir);
