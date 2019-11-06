@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityHopper;
 import net.minecraft.tileentity.TileEntityLockable;
 import net.minecraft.util.EnumFacing;
@@ -47,14 +48,15 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     {
     } // registers BE type
 
-    public static boolean checkIfCanCraft(IInventory source, IInventory destination, ItemStack itemstack, int index, EnumFacing direction) {
-        if (destination instanceof TileEntityCraftingTable) {
-            int i = destination.getSizeInventory();
-            for (int j = 0; j < i && !itemstack.isEmpty(); ++j) {
-                if(TileEntityHopper.canCombine(itemstack, destination.getStackInSlot(j))) {
-                    return true;
+    public static boolean checkIfCanCraft(IInventory source, IInventory destination, ItemStack itemstack) {
+        if (destination instanceof TileEntityCraftingTable && !itemstack.isEmpty()) {
+            int i = source.getSizeInventory();
+            for (int j = 0; j < i; ++j) {
+                if(TileEntityHopper.canCombine(itemstack, source.getStackInSlot(j))) {
+                    return false;
                 }
             }
+            return true;
         }
         return false;
     }

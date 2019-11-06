@@ -175,7 +175,7 @@
          ItemStack itemstack = p_174915_1_.func_70301_a(p_174915_2_);
  
 +        // Added method to fix auto crafting sucking out items to early CAPRET-XCOM
-+        if(CarpetSettings.autocrafter && TileEntityCraftingTable.checkIfCanCraft(p_174915_0_, p_174915_1_, itemstack, p_174915_2_, p_174915_3_)){
++        if(CarpetSettings.autocrafter && TileEntityCraftingTable.checkIfCanCraft(p_174915_0_, p_174915_1_, itemstack)){
 +            return false;
 +        }
 +
