@@ -23,7 +23,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class TileEntityCraftingTable extends TileEntityLockable implements ISidedInventory //, RecipeUnlocker, RecipeInputProvider
+/**
+ * Class provided by Skyrising ported to 1.12.2 by Xcom and DeadlyMC
+ *
+ * Auto crafting table tile entity class enabling autocrafting. When carpet rule enabled that tile
+ * crafting table turns into a automatic crafting table where it can be used to automatically craft items.
+ */
+public class TileEntityCraftingTable extends TileEntityLockable implements ISidedInventory
 {
     private static final int[] OUTPUT_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     private static final int[] INPUT_SLOTS = {1, 2, 3, 4, 5, 6, 7, 8, 9};

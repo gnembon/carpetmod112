@@ -13,6 +13,12 @@ import net.minecraft.network.play.server.SPacketSetSlot;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
+/**
+ * Class provided by Skyrising ported to 1.12.2 by Xcom and DeadlyMC
+ *
+ * Auto crafting table tile entity class enabling autocrafting. When carpet rule enabled that tile
+ * crafting table turns into a automatic crafting table where it can be used to automatically craft items.
+ */
 public class ContainerAutoCraftingTable extends ContainerWorkbench {
     private final TileEntityCraftingTable tileEntity;
     private final EntityPlayer player;
