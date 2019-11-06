@@ -379,7 +379,7 @@
 +                    TileEntity tileentity1;
  
 +                    // Movable Tile entity fix CARPET-2No2Name
-+                    if(CarpetSettings.movableTileEntities)
++                    if(CarpetSettings.movableTileEntities || CarpetSettings.autocrafter)
 +                    {  //this.getTileEntity(...) doesn't check pending TileEntities
 +                        tileentity1 = this.field_76637_e.func_175625_s(pos);
 +                    }

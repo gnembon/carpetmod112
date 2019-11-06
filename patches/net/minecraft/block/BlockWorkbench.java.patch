@@ -1,0 +1,99 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockWorkbench.java
++++ ../src-work/minecraft/net/minecraft/block/BlockWorkbench.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.block;
+ 
++import carpet.CarpetSettings;
++import carpet.helpers.TileEntityCraftingTable;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -8,7 +10,9 @@
+ import net.minecraft.init.Blocks;
+ import net.minecraft.inventory.Container;
+ import net.minecraft.inventory.ContainerWorkbench;
++import net.minecraft.item.ItemStack;
+ import net.minecraft.stats.StatList;
++import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.EnumHand;
+ import net.minecraft.util.math.BlockPos;
+@@ -17,7 +21,9 @@
+ import net.minecraft.world.IInteractionObject;
+ import net.minecraft.world.World;
+ 
+-public class BlockWorkbench extends Block
++import javax.annotation.Nullable;
++
++public class BlockWorkbench extends BlockContainer
+ {
+     protected BlockWorkbench()
+     {
+@@ -33,7 +39,15 @@
+         }
+         else
+         {
+-            p_180639_4_.func_180468_a(new BlockWorkbench.InterfaceCraftingTable(p_180639_1_, p_180639_2_));
++            // Code added for auto crafting CARPET-XCOM
++            if(func_149716_u() ) {
++                TileEntity blockEntity = p_180639_1_.func_175625_s(p_180639_2_);
++                if (blockEntity instanceof TileEntityCraftingTable) {
++                    p_180639_4_.func_180468_a((IInteractionObject) blockEntity);
++                }
++            }else {
++                p_180639_4_.func_180468_a(new BlockWorkbench.InterfaceCraftingTable(p_180639_1_, p_180639_2_));
++            }
+             p_180639_4_.func_71029_a(StatList.field_188062_ab);
+             return true;
+         }
+@@ -75,4 +89,50 @@
+                 return "minecraft:crafting_table";
+             }
+         }
++
++    // --- code added for auto crafting -- start
++    @Override
++    public boolean func_149716_u(){
++        return CarpetSettings.autocrafter;
++    }
++
++    @Nullable
++    @Override
++    public TileEntity func_149915_a(World worldIn, int meta) {
++        return new TileEntityCraftingTable();
++    }
++
++    @Override
++    public boolean func_149740_M(IBlockState state) {
++        return true;
++    }
++
++    @Override
++    public int func_180641_l(IBlockState blockState, World worldIn, BlockPos pos) {
++        if (!func_149716_u()) return 0;
++        TileEntity te = worldIn.func_175625_s(pos);
++        if (!(te instanceof TileEntityCraftingTable)) return 0;
++        int count = 0;
++        for (ItemStack stack : ((TileEntityCraftingTable) te).inventory.field_70466_a) {
++            if (!stack.func_190926_b()) count++;
++        }
++        return (count * 15) / 9;
++    }
++
++    @Override
++    public void func_180663_b(World worldIn, BlockPos pos, IBlockState state)
++    {
++        if (!func_149716_u()) return;
++        // Maybe also check for some carpet rule
++        TileEntity tileEntity = worldIn.func_175625_s(pos);
++        if (tileEntity instanceof TileEntityCraftingTable)
++        {
++            ((TileEntityCraftingTable)tileEntity).dropContent(worldIn, pos);
++//            InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityCraftingTable)tileEntity);
++            worldIn.func_175666_e(pos, this);
++        }
++        worldIn.func_175713_t(pos);
++        super.func_180663_b(worldIn, pos, state);
++    }
++    // --- code added for auto crafting -- end
+ }

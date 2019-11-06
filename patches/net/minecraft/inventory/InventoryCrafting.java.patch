@@ -1,0 +1,15 @@
+--- ../src-base/minecraft/net/minecraft/inventory/InventoryCrafting.java
++++ ../src-work/minecraft/net/minecraft/inventory/InventoryCrafting.java
+@@ -10,10 +10,10 @@
+ 
+ public class InventoryCrafting implements IInventory
+ {
+-    private final NonNullList<ItemStack> field_70466_a;
++    public final NonNullList<ItemStack> field_70466_a;
+     private final int field_70464_b;
+     private final int field_174924_c;
+-    private final Container field_70465_c;
++    public Container field_70465_c;
+ 
+     public InventoryCrafting(Container p_i1807_1_, int p_i1807_2_, int p_i1807_3_)
+     {

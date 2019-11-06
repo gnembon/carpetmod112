@@ -595,6 +595,9 @@ public class CarpetSettings
 
     // ===== FEATURES ===== //
 
+    @Rule(desc = "Turns crafting tables into automated crafting tables with inventorys.", category = FEATURE, extra = "WARNING! If the rule is turned off after use, any inventory content in crafting tables will permanently become lost after chunks are reloaded.")
+    public static boolean autocrafter;
+
     @Rule(desc = "Scoreboard displays changes over time, specified in seconds.", options = {"0", "60", "600", "3600"}, validator = "validateScoreboardDelta", category = EXPERIMENTAL, extra = {
             "Set to 0 to disable Scoreboard delta display."
     })

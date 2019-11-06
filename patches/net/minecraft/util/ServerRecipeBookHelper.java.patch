@@ -40,7 +40,17 @@
          if (p_194327_2_ != null && p_194327_1_.func_192037_E().func_193830_f(p_194327_2_))
          {
              this.field_194332_c = p_194327_1_;
-@@ -67,6 +80,8 @@
+@@ -48,7 +61,8 @@
+             if (container instanceof ContainerWorkbench)
+             {
+                 this.field_194335_f = ((ContainerWorkbench)container).field_75160_f;
+-                this.field_194336_g = ((ContainerWorkbench)container).field_75162_e;
++                // Method added for auto crafting CARPET-XCOM
++                this.field_194336_g = ((ContainerWorkbench)container).getInventoryCrafting();
+             }
+             else if (container instanceof ContainerPlayer)
+             {
+@@ -67,6 +81,8 @@
                      if (this.field_194331_b.func_194116_a(p_194327_2_, (IntList)null))
                      {
                          this.func_194329_b();
@@ -49,7 +59,7 @@
                      }
                      else
                      {
-@@ -304,4 +319,29 @@
+@@ -304,4 +320,29 @@
  
          return true;
      }
