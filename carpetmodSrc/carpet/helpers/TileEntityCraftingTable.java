@@ -58,6 +58,9 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
         if (destination instanceof TileEntityCraftingTable && !itemstack.isEmpty()) {
             int i = source.getSizeInventory();
             for (int j = 0; j < i; ++j) {
+                if(source.getStackInSlot(j).isEmpty()){
+                    return false;
+                }
                 if(TileEntityHopper.canCombine(itemstack, source.getStackInSlot(j))) {
                     return false;
                 }
