@@ -1,15 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/inventory/Container.java
 +++ ../src-work/minecraft/net/minecraft/inventory/Container.java
-@@ -17,6 +17,9 @@
+@@ -17,6 +17,8 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
  
-+import carpet.helpers.CtrlQcrafting;
 +import carpet.CarpetSettings;
 +
  public abstract class Container
  {
      public NonNullList<ItemStack> field_75153_a = NonNullList.<ItemStack>func_191196_a();
+@@ -281,7 +283,8 @@
+                             else
+                             {
+                                 int l2 = p_184996_2_ == 0 ? itemstack8.func_190916_E() : (itemstack8.func_190916_E() + 1) / 2;
+-                                inventoryplayer.func_70437_b(slot6.func_75209_a(l2));
++                                // Changed method for auto crafting CARPET-XCOM
++                                inventoryplayer.func_70437_b(decrStackSize(p_184996_4_, p_184996_1_, l2));
+ 
+                                 if (itemstack8.func_190926_b())
+                                 {
 @@ -293,7 +296,7 @@
                          }
                          else if (slot6.func_75214_a(itemstack11))
@@ -19,7 +28,7 @@
                              {
                                  int k2 = p_184996_2_ == 0 ? itemstack11.func_190916_E() : 1;
  
-@@ -414,9 +417,22 @@
+@@ -414,9 +417,23 @@
  
              if (slot2 != null && slot2.func_75216_d() && slot2.func_82869_a(p_184996_4_))
              {
@@ -31,17 +40,29 @@
 +                 */
 +                if(CarpetSettings.ctrlQCraftingFix && p_184996_1_ == 0 && p_184996_2_ == 1)
 +                {
-+                    for (ItemStack itemstackDropAll = CtrlQcrafting.dropAllCrafting(p_184996_4_, p_184996_1_, field_75151_b); !itemstackDropAll.func_190926_b() && ItemStack.func_179545_c(slot2.func_75211_c(), itemstackDropAll); itemstackDropAll = CtrlQcrafting.dropAllCrafting(p_184996_4_, p_184996_1_, field_75151_b))
-+                    {
-+                        itemstack = itemstackDropAll.func_77946_l();
++                    while (slot2.func_75216_d()) {
++                        this.func_184996_a(p_184996_1_, 0, ClickType.THROW, p_184996_4_);
 +                    }
++                    this.func_75142_b();
 +                }
 +                else
 +                {
-+                    ItemStack itemstack4 = slot2.func_75209_a(p_184996_2_ == 0 ? 1 : slot2.func_75211_c().func_190916_E());
++                    // Changed method for auto crafter CARPET-XCOM
++                    ItemStack itemstack4 = decrStackSize(p_184996_4_, p_184996_1_, p_184996_2_ == 0 ? 1 : slot2.func_75211_c().func_190916_E());
 +                    slot2.func_190901_a(p_184996_4_, itemstack4);
 +                    p_184996_4_.func_71019_a(itemstack4, true);
 +                }
              }
          }
          else if (p_184996_3_ == ClickType.PICKUP_ALL && p_184996_1_ >= 0)
+@@ -762,4 +779,10 @@
+             entityplayermp.field_71135_a.func_147359_a(new SPacketSetSlot(this.field_75152_c, 0, itemstack));
+         }
+     }
++
++    // Method added for auto crafting CARPET-XCOM
++    public ItemStack decrStackSize(EntityPlayer player, int slotId, int amount){
++        Slot slot = this.field_75151_b.get(slotId);
++        return slot.func_75209_a(amount);
++    }
+ }

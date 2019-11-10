@@ -136,12 +136,14 @@
                  if (!flag1 && iblockstate.func_185904_a() != Material.field_151579_a && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false, enumfacing) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
                  {
                      this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
-@@ -307,7 +383,13 @@
+@@ -307,7 +383,15 @@
                      return false;
                  }
  
 -                return !block.func_149716_u();
 +                // Movable Tile entity fix CARPET-2No2Name
++                if(block instanceof BlockWorkbench) // auto crafting CAPRET-XCOM
++                    return true;
 +                if(!block.func_149716_u())
 +                    return true;
 +                else if(CarpetSettings.movableTileEntities)
@@ -151,7 +153,7 @@
              }
              else
              {
-@@ -319,6 +401,14 @@
+@@ -319,6 +403,14 @@
              return false;
          }
      }
@@ -166,14 +168,14 @@
  
      private boolean func_176319_a(World p_176319_1_, BlockPos p_176319_2_, EnumFacing p_176319_3_, boolean p_176319_4_)
      {
-@@ -358,15 +448,64 @@
+@@ -358,15 +450,64 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }
 +            
 +         // Movable Tile entity fix CARPET-2No2Name
 +            List<TileEntity> list1_TileEntities = Lists.<TileEntity>newArrayList();
-+            if(CarpetSettings.movableTileEntities){
++            if(CarpetSettings.movableTileEntities || CarpetSettings.autocrafter){
 +                for (int i = 0; i < list.size(); ++i)
 +                {
 +                    BlockPos blockpos = list.get(i);
@@ -224,12 +226,12 @@
 +                    p_176319_1_.func_180501_a(blockpos3, Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_), 4);
 +                }
 +                // Movable Tile entity fix CARPET-2No2Name
-+                if(!CarpetSettings.movableTileEntities){
-+                    p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false));
-+                }else{
++                if(CarpetSettings.movableTileEntities || CarpetSettings.autocrafter){
 +                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false);
 +                    ((TileEntityPiston)tilePiston).setCarriedTileEntity(list1_TileEntities.get(l));
 +                    p_176319_1_.func_175690_a(blockpos3, tilePiston);
++                }else{
++                    p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false));
 +                }
                  --k;
                  aiblockstate[k] = iblockstate2;

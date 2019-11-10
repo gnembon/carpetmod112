@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntity.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntity.java
-@@ -29,6 +29,9 @@
+@@ -1,6 +1,8 @@
+ package net.minecraft.tileentity;
+ 
+ import javax.annotation.Nullable;
++
++import carpet.helpers.TileEntityCraftingTable;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockJukebox;
+ import net.minecraft.block.state.IBlockState;
+@@ -29,6 +31,9 @@
      private int field_145847_g = -1;
      protected Block field_145854_h;
  
@@ -10,3 +19,10 @@
      private static void func_190560_a(String p_190560_0_, Class <? extends TileEntity > p_190560_1_)
      {
          field_190562_f.func_82595_a(new ResourceLocation(p_190560_0_), p_190560_1_);
+@@ -307,5 +312,6 @@
+         func_190560_a("command_block", TileEntityCommandBlock.class);
+         func_190560_a("shulker_box", TileEntityShulkerBox.class);
+         func_190560_a("bed", TileEntityBed.class);
++        func_190560_a("crafting_table", TileEntityCraftingTable.class);
+     }
+ }

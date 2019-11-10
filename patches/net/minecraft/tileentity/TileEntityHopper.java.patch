@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -2,6 +2,8 @@
+@@ -2,6 +2,9 @@
  
  import java.util.List;
  import javax.annotation.Nullable;
 +
 +import carpet.carpetclient.CarpetClientChunkLogger;
++import carpet.helpers.TileEntityCraftingTable;
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockChest;
  import net.minecraft.block.BlockHopper;
-@@ -28,12 +30,21 @@
+@@ -28,12 +31,21 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
  
@@ -32,7 +33,7 @@
      public static void func_189683_a(DataFixer p_189683_0_)
      {
          p_189683_0_.func_188258_a(FixTypes.BLOCK_ENTITY, new ItemStackDataLists(TileEntityHopper.class, new String[] {"Items"}));
-@@ -132,14 +143,44 @@
+@@ -132,14 +144,44 @@
              {
                  boolean flag = false;
  
@@ -82,7 +83,7 @@
                  }
  
                  if (flag)
-@@ -191,10 +232,35 @@
+@@ -191,10 +233,35 @@
  
      private boolean func_145883_k()
      {
@@ -118,7 +119,7 @@
              return false;
          }
          else
-@@ -203,6 +269,10 @@
+@@ -203,6 +270,10 @@
  
              if (this.func_174919_a(iinventory, enumfacing))
              {
@@ -129,7 +130,7 @@
                  return false;
              }
              else
-@@ -297,7 +367,10 @@
+@@ -297,7 +368,10 @@
  
      public static boolean func_145891_a(IHopper p_145891_0_)
      {
@@ -140,7 +141,7 @@
  
          if (iinventory != null)
          {
-@@ -305,6 +378,14 @@
+@@ -305,6 +379,14 @@
  
              if (func_174917_b(iinventory, enumfacing))
              {
@@ -155,7 +156,7 @@
                  return false;
              }
  
-@@ -333,6 +414,13 @@
+@@ -333,6 +415,13 @@
                      }
                  }
              }
@@ -169,7 +170,19 @@
          }
          else
          {
-@@ -499,6 +587,14 @@
+@@ -352,6 +441,11 @@
+     {
+         ItemStack itemstack = p_174915_1_.func_70301_a(p_174915_2_);
+ 
++        // Added method to fix auto crafting sucking out items to early CAPRET-XCOM
++        if(CarpetSettings.autocrafter && TileEntityCraftingTable.checkIfCanCraft(p_174915_0_, p_174915_1_, itemstack)){
++            return false;
++        }
++
+         if (!itemstack.func_190926_b() && func_174921_b(p_174915_1_, itemstack, p_174915_2_, p_174915_3_))
+         {
+             ItemStack itemstack1 = itemstack.func_77946_l();
+@@ -499,6 +593,14 @@
          return func_145893_b(this.func_145831_w(), this.func_96107_aA() + (double)enumfacing.func_82601_c(), this.func_96109_aB() + (double)enumfacing.func_96559_d(), this.func_96108_aC() + (double)enumfacing.func_82599_e());
      }
  
@@ -184,7 +197,16 @@
      public static IInventory func_145884_b(IHopper p_145884_0_)
      {
          return func_145893_b(p_145884_0_.func_145831_w(), p_145884_0_.func_96107_aA(), p_145884_0_.func_96109_aB() + 1.0D, p_145884_0_.func_96108_aC());
-@@ -611,4 +707,15 @@
+@@ -546,7 +648,7 @@
+         return iinventory;
+     }
+ 
+-    private static boolean func_145894_a(ItemStack p_145894_0_, ItemStack p_145894_1_)
++    public static boolean func_145894_a(ItemStack p_145894_0_, ItemStack p_145894_1_)
+     {
+         if (p_145894_0_.func_77973_b() != p_145894_1_.func_77973_b())
+         {
+@@ -611,4 +713,15 @@
      {
          return this.field_145900_a;
      }

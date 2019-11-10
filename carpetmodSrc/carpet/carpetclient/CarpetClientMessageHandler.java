@@ -9,11 +9,11 @@ import carpet.helpers.TickSpeed;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import io.netty.buffer.Unpooled;
-import javafx.util.Pair;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class CarpetClientMessageHandler {
     // Main packet data names
