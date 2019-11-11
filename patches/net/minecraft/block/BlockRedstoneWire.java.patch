@@ -1,6 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneWire.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneWire.java
-@@ -27,6 +27,10 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.block;
+ 
++import carpet.helpers.RedstoneOreRedirectHelper;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Sets;
+ import java.util.EnumSet;
+@@ -27,6 +28,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -11,7 +18,7 @@
  public class BlockRedstoneWire extends Block
  {
      public static final PropertyEnum<BlockRedstoneWire.EnumAttachPosition> field_176348_a = PropertyEnum.<BlockRedstoneWire.EnumAttachPosition>func_177709_a("north", BlockRedstoneWire.EnumAttachPosition.class);
-@@ -35,9 +39,11 @@
+@@ -35,9 +40,11 @@
      public static final PropertyEnum<BlockRedstoneWire.EnumAttachPosition> field_176350_N = PropertyEnum.<BlockRedstoneWire.EnumAttachPosition>func_177709_a("west", BlockRedstoneWire.EnumAttachPosition.class);
      public static final PropertyInteger field_176351_O = PropertyInteger.func_177719_a("power", 0, 15);
      protected static final AxisAlignedBB[] field_185700_f = new AxisAlignedBB[] {new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D)};
@@ -24,7 +31,7 @@
      public BlockRedstoneWire()
      {
          super(Material.field_151594_q);
-@@ -142,21 +148,26 @@
+@@ -142,21 +149,26 @@
          return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() || p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c() == Blocks.field_150426_aN;
      }
  
@@ -56,7 +63,7 @@
      {
          IBlockState iblockstate = p_176345_4_;
          int i = ((Integer)p_176345_4_.func_177229_b(field_176351_O)).intValue();
-@@ -166,54 +177,65 @@
+@@ -166,54 +178,65 @@
          int k = p_176345_1_.func_175687_A(p_176345_2_);
          this.field_150181_a = true;
  
@@ -154,7 +161,7 @@
          if (i != j)
          {
              p_176345_4_ = p_176345_4_.func_177226_a(field_176351_O, Integer.valueOf(j));
-@@ -223,11 +245,15 @@
+@@ -223,11 +246,15 @@
                  p_176345_1_.func_180501_a(p_176345_2_, p_176345_4_, 2);
              }
  
@@ -174,7 +181,7 @@
              }
          }
  
-@@ -251,7 +277,7 @@
+@@ -251,7 +278,7 @@
      {
          if (!p_176213_1_.field_72995_K)
          {
@@ -183,7 +190,7 @@
  
              for (EnumFacing enumfacing : EnumFacing.Plane.VERTICAL)
              {
-@@ -290,7 +316,7 @@
+@@ -290,7 +317,7 @@
                  p_180663_1_.func_175685_c(p_180663_2_.func_177972_a(enumfacing), this, false);
              }
  
@@ -192,7 +199,7 @@
  
              for (EnumFacing enumfacing1 : EnumFacing.Plane.HORIZONTAL)
              {
-@@ -332,7 +358,7 @@
+@@ -332,7 +359,7 @@
          {
              if (this.func_176196_c(p_189540_2_, p_189540_3_))
              {
@@ -201,3 +208,48 @@
              }
              else
              {
+@@ -354,6 +381,12 @@
+ 
+     public int func_180656_a(IBlockState p_180656_1_, IBlockAccess p_180656_2_, BlockPos p_180656_3_, EnumFacing p_180656_4_)
+     {
++        // [CM] Redstone ore redirects dust
++        if (CarpetSettings.redstoneOreRedirectsDust)
++        {
++            RedstoneOreRedirectHelper redstoneOre = new RedstoneOreRedirectHelper(this);
++            return redstoneOre.getWeakPowerCM(p_180656_1_, p_180656_2_, p_180656_3_, p_180656_4_);
++        }
+         if (!this.field_150181_a)
+         {
+             return 0;
+@@ -361,6 +394,8 @@
+         else
+         {
+             int i = ((Integer)p_180656_1_.func_177229_b(field_176351_O)).intValue();
++    
++            IBlockState iblockstate = p_180656_2_.func_180495_p(p_180656_3_.func_177972_a(p_180656_4_.func_176734_d())); // [CM] RS Ore redirects dust
+ 
+             if (i == 0)
+             {
+@@ -398,7 +433,8 @@
+         }
+     }
+ 
+-    private boolean func_176339_d(IBlockAccess p_176339_1_, BlockPos p_176339_2_, EnumFacing p_176339_3_)
++    // [CM] Change access to public for redstone ore redirects dust
++    public boolean func_176339_d(IBlockAccess p_176339_1_, BlockPos p_176339_2_, EnumFacing p_176339_3_)
+     {
+         BlockPos blockpos = p_176339_2_.func_177972_a(p_176339_3_);
+         IBlockState iblockstate = p_176339_1_.func_180495_p(blockpos);
+@@ -435,6 +471,12 @@
+ 
+     protected static boolean func_176343_a(IBlockState p_176343_0_, @Nullable EnumFacing p_176343_1_)
+     {
++        // [CM] Redstone ore redirects dust
++        if (CarpetSettings.redstoneOreRedirectsDust)
++        {
++            return RedstoneOreRedirectHelper.canConnectToCM(p_176343_0_, p_176343_1_);
++        }
++        
+         Block block = p_176343_0_.func_177230_c();
+ 
+         if (block == Blocks.field_150488_af)

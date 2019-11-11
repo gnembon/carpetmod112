@@ -728,6 +728,9 @@ public class CarpetSettings
     private static boolean validateTileTickLimit(int value) {
         return value >= -1;
     }
+    
+    @Rule(desc = "Redstone ore blocks can redirect redstone dust", category = {EXPERIMENTAL, FEATURE})
+    public static boolean redstoneOreRedirectsDust = false;
 
     @Rule(desc = "Adds back the crafting window duplication bug.", category = EXPERIMENTAL)
     public static boolean craftingWindowDuplication = false;
