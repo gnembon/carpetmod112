@@ -117,7 +117,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -231,15 +273,43 @@
+@@ -231,15 +273,45 @@
                      Long olong = iterator.next();
                      Chunk chunk = (Chunk)this.field_73244_f.get(olong);
  
@@ -138,7 +138,7 @@
 +                        } else if (CarpetSettings.whereToChunkSavestate.canUnloadNearPlayers) {
 +                            //noinspection ConstantConditions
 +                            if (CarpetSettings.whereToChunkSavestate == CarpetSettings.WhereToChunkSavestate.everywhere
-+                                    || !field_73251_h.func_175661_b(Entity.class, player -> player.field_70176_ah == chunk.field_76635_g && player.field_70164_aj == chunk.field_76647_h).isEmpty()) {
++                                    || field_73251_h.func_175661_b(Entity.class, player -> player.field_70176_ah == chunk.field_76635_g && player.field_70164_aj == chunk.field_76647_h).isEmpty()) {
 +                                // Getting the chunk size is incredibly inefficient, but it's better than unloading and reloading the chunk
 +                                if ((UnloadOrder.getSavedChunkSize(chunk) + 5) / 4096 + 1 >= 256) {
 +                                    chunk.func_76623_d();
@@ -147,6 +147,8 @@
 +                                    this.field_73244_f.remove(olong);
 +                                    //++i; don't break stuff
 +                                    Chunk newChunk = this.func_186028_c(chunk.field_76635_g, chunk.field_76647_h);
++                                    if (newChunk != null)
++                                        newChunk.func_150804_b(true);
 +                                    PlayerChunkMapEntry pcmEntry = field_73251_h.field_73063_M.func_187301_b(chunk.field_76635_g, chunk.field_76647_h);
 +                                    if (pcmEntry != null) {
 +                                        pcmEntry.field_187286_f = newChunk;
@@ -162,7 +164,7 @@
              }
  
              this.field_73247_e.func_75817_a();
-@@ -283,9 +353,17 @@
+@@ -283,9 +355,17 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
      }
