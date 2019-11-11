@@ -1,23 +1,32 @@
 package carpet.utils;
 
 import carpet.CarpetSettings;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.management.PlayerChunkMap;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.gen.ChunkProviderServer;
 
+import java.io.BufferedOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.zip.DeflaterOutputStream;
 
 import com.google.common.collect.Lists;
 
 import it.unimi.dsi.fastutil.HashCommon;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import it.unimi.dsi.fastutil.longs.LongSet;
+import org.apache.commons.io.output.CountingOutputStream;
+import org.apache.commons.io.output.NullOutputStream;
 
 public class UnloadOrder
 {
@@ -584,5 +593,20 @@ public class UnloadOrder
             rep.add("Level Saving is disabled.");
         }
         return rep;
+    }
+
+    public static int getSavedChunkSize(Chunk chunk)
+    {
+        NBTTagCompound chunkTag = new NBTTagCompound();
+        NBTTagCompound levelTag = new NBTTagCompound();
+        chunkTag.setTag("Level", levelTag);
+        chunkTag.setInteger("DataVersion", 1343);
+        AnvilChunkLoader.writeChunkToNBT(chunk, chunk.getWorld(), levelTag);
+        CountingOutputStream counter = new CountingOutputStream(NullOutputStream.NULL_OUTPUT_STREAM);
+        try {
+            CompressedStreamTools.write(chunkTag, new DataOutputStream(new BufferedOutputStream(new DeflaterOutputStream(counter))));
+        }
+        catch (IOException ignore) {}
+        return counter.getCount();
     }
 }

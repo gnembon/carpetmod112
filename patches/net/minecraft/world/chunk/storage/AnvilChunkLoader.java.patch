@@ -211,7 +211,17 @@
      }
  
      private void func_183013_b(ChunkPos p_183013_1_, NBTTagCompound p_183013_2_) throws IOException
-@@ -295,6 +377,10 @@
+@@ -249,7 +331,8 @@
+         });
+     }
+ 
+-    private void func_75820_a(Chunk p_75820_1_, World p_75820_2_, NBTTagCompound p_75820_3_)
++    // CM: change access to public & static
++    public static void func_75820_a(Chunk p_75820_1_, World p_75820_2_, NBTTagCompound p_75820_3_)
+     {
+         p_75820_3_.func_74768_a("xPos", p_75820_1_.field_76635_g);
+         p_75820_3_.func_74768_a("zPos", p_75820_1_.field_76647_h);
+@@ -295,6 +378,10 @@
          }
  
          p_75820_3_.func_74782_a("Sections", nbttaglist);
@@ -222,7 +232,7 @@
          p_75820_3_.func_74773_a("Biomes", p_75820_1_.func_76605_m());
          p_75820_1_.func_177409_g(false);
          NBTTagList nbttaglist1 = new NBTTagList();
-@@ -383,6 +469,11 @@
+@@ -383,6 +470,11 @@
  
          chunk.func_76602_a(aextendedblockstorage);
  
