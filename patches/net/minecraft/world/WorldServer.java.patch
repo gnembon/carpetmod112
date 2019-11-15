@@ -291,8 +291,11 @@
  
                  this.field_72984_F.func_76319_b();
                  this.field_94579_S.clear();
-@@ -952,9 +1053,15 @@
+@@ -950,11 +1051,18 @@
  
+             chunkproviderserver.func_186027_a(p_73044_1_);
+ 
++            if (CarpetSettings.simulatePermaloader) chunkproviderserver.fakePermaloaderProtected = true;
              for (Chunk chunk : Lists.newArrayList(chunkproviderserver.func_189548_a()))
              {
 -                if (chunk != null && !this.field_73063_M.func_152621_a(chunk.field_76635_g, chunk.field_76647_h))
@@ -308,7 +311,7 @@
                  }
              }
          }
-@@ -1055,6 +1162,7 @@
+@@ -1055,6 +1163,7 @@
          this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
          this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
          Entity[] aentity = p_72923_1_.func_70021_al();
@@ -316,7 +319,7 @@
  
          if (aentity != null)
          {
-@@ -1150,14 +1258,19 @@
+@@ -1150,14 +1259,19 @@
  
              for (BlockEventData blockeventdata : this.field_147490_S[i])
              {
@@ -336,7 +339,7 @@
      }
  
      private boolean func_147485_a(BlockEventData p_147485_1_)
-@@ -1299,4 +1412,9 @@
+@@ -1299,4 +1413,9 @@
              {
              }
          }
