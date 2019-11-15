@@ -55,7 +55,7 @@
  
      public void func_73240_a()
      {
-+        this.fakePermaloaderProtected = true;
++        if (CarpetSettings.simulatePermaloader) this.fakePermaloaderProtected = true;
          ObjectIterator objectiterator = this.field_73244_f.values().iterator();
  
          while (objectiterator.hasNext())
