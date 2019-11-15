@@ -355,6 +355,18 @@ public class CarpetSettings
 
     @Rule(desc = "Allows players to place blocks inside entity's.", category = {CREATIVE})
     public static boolean ignoreEntityWhenPlacing = false;
+
+    public static enum WhereToChunkSavestate {
+        unload(false), everywhere_except_players(true), everywhere(true);
+        public final boolean canUnloadNearPlayers;
+        WhereToChunkSavestate(boolean canUnloadNearPlayers) {
+            this.canUnloadNearPlayers = canUnloadNearPlayers;
+        }
+    }
+
+    @Rule(desc = "Where chunk savestating is allowed to happen", category = CREATIVE)
+    public static WhereToChunkSavestate whereToChunkSavestate = WhereToChunkSavestate.unload;
+
     // ===== FIXES ===== //
     /*
      * Rules in this category should end with the "Fix" suffix

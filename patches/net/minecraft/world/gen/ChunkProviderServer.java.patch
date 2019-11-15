@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -27,13 +27,19 @@
+@@ -27,13 +27,21 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -8,7 +8,9 @@
 +import carpet.CarpetSettings;
 +import carpet.carpetclient.CarpetClientChunkLogger;
 +import carpet.utils.TickingArea;
++import carpet.utils.UnloadOrder;
 +import net.minecraft.entity.Entity;
++import net.minecraft.server.management.PlayerChunkMapEntry;
 +
  public class ChunkProviderServer implements IChunkProvider
  {
@@ -24,7 +26,7 @@
      private final WorldServer field_73251_h;
  
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
-@@ -50,8 +56,18 @@
+@@ -50,8 +58,18 @@
  
      public void func_189549_a(Chunk p_189549_1_)
      {
@@ -44,7 +46,7 @@
              this.field_73248_b.add(Long.valueOf(ChunkPos.func_77272_a(p_189549_1_.field_76635_g, p_189549_1_.field_76647_h)));
              p_189549_1_.field_189550_d = true;
          }
-@@ -76,6 +92,11 @@
+@@ -76,6 +94,11 @@
  
          if (chunk != null)
          {
@@ -56,7 +58,7 @@
              chunk.field_189550_d = false;
          }
  
-@@ -93,9 +114,17 @@
+@@ -93,9 +116,17 @@
  
              if (chunk != null)
              {
@@ -74,7 +76,7 @@
              }
          }
  
-@@ -113,6 +142,11 @@
+@@ -113,6 +144,11 @@
              try
              {
                  chunk = this.field_186029_c.func_185932_a(p_186025_1_, p_186025_2_);
@@ -86,7 +88,7 @@
              }
              catch (Throwable throwable)
              {
-@@ -123,7 +157,7 @@
+@@ -123,7 +159,7 @@
                  crashreportcategory.func_71507_a("Generator", this.field_186029_c);
                  throw new ReportedException(crashreport);
              }
@@ -95,7 +97,7 @@
              this.field_73244_f.put(i, chunk);
              chunk.func_76631_c();
              chunk.func_186030_a(this, this.field_186029_c);
-@@ -185,6 +219,8 @@
+@@ -185,6 +221,8 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
@@ -104,7 +106,7 @@
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -224,6 +260,10 @@
+@@ -224,6 +262,10 @@
          {
              if (!this.field_73248_b.isEmpty())
              {
@@ -115,14 +117,46 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -238,8 +278,14 @@
+@@ -231,15 +273,45 @@
+                     Long olong = iterator.next();
+                     Chunk chunk = (Chunk)this.field_73244_f.get(olong);
+ 
+-                    if (chunk != null && chunk.field_189550_d)
++                    if (chunk != null /*&& chunk.unloadQueued*/) // CM: moved check below
+                     {
++                        if (chunk.field_189550_d) {
+                         chunk.func_76623_d();
+                         this.func_73242_b(chunk);
                          this.func_73243_a(chunk);
                          this.field_73244_f.remove(olong);
                          ++i;
-+                     
++
 +                    	// ChunkLogger - 0x-CARPET
 +                        if(CarpetClientChunkLogger.logger.enabled) {
 +                            CarpetClientChunkLogger.logger.log(this.field_73251_h,chunk.field_76635_g,chunk.field_76647_h,CarpetClientChunkLogger.Event.UNLOADING);
++                        }
++                        } else if (CarpetSettings.whereToChunkSavestate.canUnloadNearPlayers) {
++                            //noinspection ConstantConditions
++                            if (CarpetSettings.whereToChunkSavestate == CarpetSettings.WhereToChunkSavestate.everywhere
++                                    || field_73251_h.func_175661_b(Entity.class, player -> player.field_70176_ah == chunk.field_76635_g && player.field_70164_aj == chunk.field_76647_h).isEmpty()) {
++                                // Getting the chunk size is incredibly inefficient, but it's better than unloading and reloading the chunk
++                                if ((UnloadOrder.getSavedChunkSize(chunk) + 5) / 4096 + 1 >= 256) {
++                                    chunk.func_76623_d();
++                                    //this.saveChunkData(chunk); no point saving the chunk data, we know that won't work
++                                    this.func_73243_a(chunk);
++                                    this.field_73244_f.remove(olong);
++                                    //++i; don't break stuff
++                                    Chunk newChunk = this.func_186028_c(chunk.field_76635_g, chunk.field_76647_h);
++                                    if (newChunk != null)
++                                        newChunk.func_150804_b(true);
++                                    PlayerChunkMapEntry pcmEntry = field_73251_h.field_73063_M.func_187301_b(chunk.field_76635_g, chunk.field_76647_h);
++                                    if (pcmEntry != null) {
++                                        pcmEntry.field_187286_f = newChunk;
++                                        pcmEntry.field_187290_j = false;
++                                        pcmEntry.func_187272_b();
++                                    }
++                                }
++                            }
 +                        }
                      }
                  }
@@ -130,7 +164,7 @@
              }
  
              this.field_73247_e.func_75817_a();
-@@ -283,9 +329,17 @@
+@@ -283,9 +355,17 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
      }
