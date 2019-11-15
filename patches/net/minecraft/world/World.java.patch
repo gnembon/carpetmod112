@@ -283,7 +283,7 @@
                  }
                  catch (Throwable throwable1)
                  {
-@@ -1437,31 +1566,31 @@
+@@ -1437,15 +1566,21 @@
  
                  if (entity2.field_70175_ag && this.func_175680_a(l1, i2, true))
                  {
@@ -305,16 +305,7 @@
  
          this.field_72984_F.func_76318_c("blockEntities");
  
--        if (!this.field_147483_b.isEmpty())
--        {
--            this.field_175730_i.removeAll(this.field_147483_b);
--            this.field_147482_g.removeAll(this.field_147483_b);
--            this.field_147483_b.clear();
--        }
--
-         this.field_147481_N = true;
-         Iterator<TileEntity> iterator = this.field_175730_i.iterator();
- 
+@@ -1462,6 +1597,7 @@
          while (iterator.hasNext())
          {
              TileEntity tileentity = iterator.next();
@@ -322,7 +313,7 @@
  
              if (!tileentity.func_145837_r() && tileentity.func_145830_o())
              {
-@@ -1498,11 +1627,19 @@
+@@ -1498,6 +1634,7 @@
                      this.func_175726_f(tileentity.func_174877_v()).func_177425_e(tileentity.func_174877_v());
                  }
              }
@@ -330,18 +321,6 @@
          }
  
          this.field_147481_N = false;
-         this.field_72984_F.func_76318_c("pendingBlockEntities");
- 
-+        if (!this.field_147483_b.isEmpty())
-+        {
-+            this.field_175730_i.removeAll(this.field_147483_b);
-+            this.field_147482_g.removeAll(this.field_147483_b);
-+            this.field_147483_b.clear();
-+        }
-+
-         if (!this.field_147484_a.isEmpty())
-         {
-             for (int j1 = 0; j1 < this.field_147484_a.size(); ++j1)
 @@ -1528,6 +1665,7 @@
  
              this.field_147484_a.clear();
