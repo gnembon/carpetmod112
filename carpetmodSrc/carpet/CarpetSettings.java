@@ -612,6 +612,17 @@ public class CarpetSettings
 
     @Rule(desc = "Turns crafting tables into automated crafting tables with inventorys.", category = FEATURE, extra = "WARNING! If the rule is turned off after use, any inventory content in crafting tables will permanently become lost after chunks are reloaded.")
     public static boolean autocrafter;
+    
+    @Rule(
+            desc = "Auto-crafting dropper",
+            extra = {"Is a dropper points to the crafting table ",
+                    "and has a valid recipe in its 3x3 it crafts it.",
+                    "Overrides comparators so they indicate number of filled slots instead",
+                    "Also makes hoppers, droppers and dispensers input max 1 item per slot"
+            },
+            category = {FEATURE}
+    )
+    public static boolean autoCraftingDropper = false;
 
     @Rule(desc = "Scoreboard displays changes over time, specified in seconds.", options = {"0", "60", "600", "3600"}, validator = "validateScoreboardDelta", category = EXPERIMENTAL, extra = {
             "Set to 0 to disable Scoreboard delta display."
