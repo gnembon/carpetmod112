@@ -761,11 +761,7 @@ public class CarpetSettings
             extra = "try super cache please",
             category = {EXPERIMENTAL, OPTIMIZATIONS}
     )
-    public static EnumPortalSearcher betterPortalSearcher = EnumPortalSearcher.VANILLA;
-
-    public enum EnumPortalSearcher {
-        VANILLA, SPIRAL, BOX, SUPER_CACHE
-    }
+    public static boolean portalSuperCache = false;
 
     // ===== API ===== //
 
