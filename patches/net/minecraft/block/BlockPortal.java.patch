@@ -59,7 +59,7 @@
              }
          }
          else if (enumfacing$axis == EnumFacing.Axis.Z)
-@@ -146,10 +171,30 @@
+@@ -146,10 +171,34 @@
              if (!blockportal$size1.func_150860_b() || blockportal$size1.field_150864_e < blockportal$size1.field_150868_h * blockportal$size1.field_150862_g)
              {
                  p_189540_2_.func_175656_a(p_189540_3_, Blocks.field_150350_a.func_176223_P());
@@ -73,19 +73,23 @@
          }
      }
  
-+    // betterPortalSearcher
++    // portalSuperCache
 +    @Override
 +    public void func_180663_b(World worldIn, BlockPos pos, IBlockState state) {
-+        (worldIn.field_73011_w.func_186058_p().func_186068_a() == -1 ? SuperCacheHandler.getHandlerNether() : SuperCacheHandler.getHandlerOverworld()).removePortal(pos);
++        if (pos.func_177956_o() < worldIn.func_72940_L()) {
++            (worldIn.field_73011_w.func_186058_p().func_186068_a() == -1 ? SuperCacheHandler.getHandlerNether() : SuperCacheHandler.getHandlerOverworld()).removePortal(pos);
++        }
 +        super.func_180663_b(worldIn, pos, state);
 +    }
 +
 +    @Override
 +    public void func_176213_c(World worldIn, BlockPos pos, IBlockState state) {
-+        (worldIn.field_73011_w.func_186058_p().func_186068_a() == -1 ? SuperCacheHandler.getHandlerNether() : SuperCacheHandler.getHandlerOverworld()).addPortal(pos);
++        if (pos.func_177956_o() < worldIn.func_72940_L()) {
++            (worldIn.field_73011_w.func_186058_p().func_186068_a() == -1 ? SuperCacheHandler.getHandlerNether() : SuperCacheHandler.getHandlerOverworld()).addPortal(pos);
++        }
 +        super.func_176213_c(worldIn, pos, state);
 +    }
-+    // end betterPortalSearcher
++    // end portalSuperCache
 +
      public int func_149745_a(Random p_149745_1_)
      {

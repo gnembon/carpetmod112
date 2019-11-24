@@ -45,7 +45,7 @@
          BlockPos blockpos = BlockPos.field_177992_a;
          long l = ChunkPos.func_77272_a(j, k);
  
-@@ -85,46 +96,60 @@
+@@ -85,46 +96,49 @@
              teleporter$portalposition.field_85087_d = this.field_85192_a.func_82737_E();
              flag = false;
          }
@@ -60,28 +60,7 @@
 +            //just to verify nobody is cheating the system with update suppression
              {
 -                BlockPos blockpos2;
-+                d0 = 0.0D;
-+                blockpos = teleporter$portalposition_cm;
-+                flag_cm = false;
-+            }
-+        }
-+            /* end */
-+        d0 = -1.0D;
-+        if (d0 < 0.0D)
-+        {
-+            // TISCM betterPortalSearcher
-+            PortalSearcherAbstract searcher;
-+            switch (CarpetSettings.betterPortalSearcher) {
-+            case BOX: // similar to spiral, but slightly faster
-+                searcher = new PortalSearcherBox(field_85192_a);
-+                break;
-+            case SPIRAL:
-+                searcher = new PortalSearcherSpiral(field_85192_a);
-+                break;
-+            case SUPER_CACHE: // slightly slower than vanilla for the first time, but can be super fast later on
-+                searcher = new PortalSearcherSuperCache(field_85192_a);
-+                break;
- 
+-
 -                for (int j1 = -128; j1 <= 128; ++j1)
 -                {
 -                    for (BlockPos blockpos1 = blockpos3.func_177982_a(i1, this.field_85192_a.func_72940_L() - 1 - blockpos3.func_177956_o(), j1); blockpos1.func_177956_o() >= 0; blockpos1 = blockpos2)
@@ -105,19 +84,30 @@
 -                        }
 -                    }
 -                }
-+            case VANILLA:
-+            default: // it should be the same as vanilla
-+                searcher = new PortalSearcherVanilla(field_85192_a);
-+                break;
++                d0 = 0.0D;
++                blockpos = teleporter$portalposition_cm;
++                flag_cm = false;
              }
+         }
++            /* end */
++        d0 = -1.0D;
++        if (d0 < 0.0D)
++        {
++            // TISCM portalSuperCache
++            PortalSearcherAbstract searcher;
++            if (CarpetSettings.portalSuperCache) {
++                searcher = new PortalSearcherSuperCache(field_85192_a);
++            } else {
++                searcher = new PortalSearcherVanilla(field_85192_a);
++            }
 +            PortalSearchResult result = searcher.search(new BlockPos(p_180620_1_));
 +            d0 = result.getDistanceSq();
 +            blockpos = result.getResult();
 +//            LogManager.getLogger().info(result.toString()); // only for debug
-+
-+            // end TISCM betterPortalSearcher
-         }
  
++            // end TISCM portalSuperCache
++        }
++
          if (d0 >= 0.0D)
          {
              if (flag)
@@ -135,7 +125,7 @@
  
              double d5 = (double)blockpos.func_177958_n() + 0.5D;
              double d7 = (double)blockpos.func_177952_p() + 0.5D;
-@@ -137,14 +162,35 @@
+@@ -137,14 +151,35 @@
              {
                  ++d2;
              }
@@ -174,7 +164,7 @@
              }
  
              float f = 0.0F;
-@@ -182,6 +228,13 @@
+@@ -182,6 +217,13 @@
              if (p_180620_1_ instanceof EntityPlayerMP)
              {
                  ((EntityPlayerMP)p_180620_1_).field_71135_a.func_147364_a(d5, d6, d7, p_180620_1_.field_70177_z, p_180620_1_.field_70125_A);
@@ -188,7 +178,7 @@
              }
              else
              {
-@@ -395,6 +448,12 @@
+@@ -395,6 +437,12 @@
                  }
              }
          }
@@ -201,7 +191,7 @@
  
          return true;
      }
-@@ -405,27 +464,66 @@
+@@ -405,27 +453,66 @@
          {
              long i = p_85189_1_ - 300L;
              ObjectIterator<Teleporter.PortalPosition> objectiterator = this.field_85191_c.values().iterator();
@@ -230,11 +220,11 @@
 +                PortalCaching.portalCachingCleared(field_85192_a, field_85191_c.size(), uncachings);
 +            }
 +
-+            // TISCM betterPortalSearcher
-+            if (CarpetSettings.betterPortalSearcher != CarpetSettings.EnumPortalSearcher.SUPER_CACHE) {
++            // TISCM portalSuperCache
++            if (!CarpetSettings.portalSuperCache) {
 +                (this.field_85192_a.field_73011_w.func_186058_p().func_186068_a() == -1 ? SuperCacheHandler.getHandlerNether() : SuperCacheHandler.getHandlerOverworld()).clear();
 +            }
-+            // end TISCM betterPortalSearcher
++            // end TISCM portalSuperCache
 +            /* carpet mod end */
          }
      }
