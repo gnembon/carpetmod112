@@ -44,6 +44,8 @@ public class PortalSearcherSuperCache extends PortalSearcherAbstract {
                             }
                         }
                     }
+                } else {// fix chunkloading
+                    this.worldIn.getChunk(cPos.getBlock(0, 0, 0));
                 }
 
                 // look into the portal map

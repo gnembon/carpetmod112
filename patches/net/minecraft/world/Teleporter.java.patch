@@ -5,8 +5,8 @@
  
 +import carpet.CarpetSettings;
 +import carpet.logging.LoggerRegistry;
-+import carpet.logging.logHelpers.PortalCaching;
 +import carpet.utils.portalsearcher.*;
++import carpet.logging.logHelpers.PortalCaching;
  import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
@@ -45,69 +45,45 @@
          BlockPos blockpos = BlockPos.field_177992_a;
          long l = ChunkPos.func_77272_a(j, k);
  
-@@ -85,46 +96,49 @@
+@@ -85,10 +96,30 @@
              teleporter$portalposition.field_85087_d = this.field_85192_a.func_82737_E();
              flag = false;
          }
 -        else
 +        else if (CarpetSettings.portalCaching && this.destinationHistoryCache.containsKey(l)) // potential best candidate for linkage.
          {
--            BlockPos blockpos3 = new BlockPos(p_180620_1_);
--
--            for (int i1 = -128; i1 <= 128; ++i1)
 +            Teleporter.PortalPosition teleporter$portalposition_cm = (Teleporter.PortalPosition)this.destinationHistoryCache.get(l);
 +            if (this.field_85192_a.func_180495_p(teleporter$portalposition_cm).func_177230_c() == Blocks.field_150427_aO)
 +            //just to verify nobody is cheating the system with update suppression
-             {
--                BlockPos blockpos2;
--
--                for (int j1 = -128; j1 <= 128; ++j1)
--                {
--                    for (BlockPos blockpos1 = blockpos3.func_177982_a(i1, this.field_85192_a.func_72940_L() - 1 - blockpos3.func_177956_o(), j1); blockpos1.func_177956_o() >= 0; blockpos1 = blockpos2)
--                    {
--                        blockpos2 = blockpos1.func_177977_b();
--
--                        if (this.field_85192_a.func_180495_p(blockpos1).func_177230_c() == Blocks.field_150427_aO)
--                        {
--                            for (blockpos2 = blockpos1.func_177977_b(); this.field_85192_a.func_180495_p(blockpos2).func_177230_c() == Blocks.field_150427_aO; blockpos2 = blockpos2.func_177977_b())
--                            {
--                                blockpos1 = blockpos2;
--                            }
--
--                            double d1 = blockpos1.func_177951_i(blockpos3);
--
--                            if (d0 < 0.0D || d1 < d0)
--                            {
--                                d0 = d1;
--                                blockpos = blockpos1;
--                            }
--                        }
--                    }
--                }
++            {
 +                d0 = 0.0D;
 +                blockpos = teleporter$portalposition_cm;
 +                flag_cm = false;
-             }
-         }
++            }
++        }
 +            /* end */
-+        d0 = -1.0D;
 +        if (d0 < 0.0D)
 +        {
-+            // TISCM portalSuperCache
-+            PortalSearcherAbstract searcher;
-+            if (CarpetSettings.portalSuperCache) {
-+                searcher = new PortalSearcherSuperCache(field_85192_a);
-+            } else {
-+                searcher = new PortalSearcherVanilla(field_85192_a);
-+            }
-+            PortalSearchResult result = searcher.search(new BlockPos(p_180620_1_));
-+            d0 = result.getDistanceSq();
-+            blockpos = result.getResult();
-+//            LogManager.getLogger().info(result.toString()); // only for debug
+             BlockPos blockpos3 = new BlockPos(p_180620_1_);
  
-+            // end TISCM portalSuperCache
-+        }
-+
++            // begin portalSuperCache
++            if (CarpetSettings.portalSuperCache) {
++                PortalSearcherAbstract searcher = new PortalSearcherSuperCache(this.field_85192_a);
++                PortalSearchResult result = searcher.search(blockpos3);
++                blockpos = result.getResult();
++                d0 = result.getDistanceSq();
++            } else {
++            // end portalSuperCache
+             for (int i1 = -128; i1 <= 128; ++i1)
+             {
+                 BlockPos blockpos2;
+@@ -117,14 +148,22 @@
+                     }
+                 }
+             }
++            }
+         }
+ 
          if (d0 >= 0.0D)
          {
              if (flag)
@@ -125,7 +101,7 @@
  
              double d5 = (double)blockpos.func_177958_n() + 0.5D;
              double d7 = (double)blockpos.func_177952_p() + 0.5D;
-@@ -137,14 +151,35 @@
+@@ -137,14 +176,35 @@
              {
                  ++d2;
              }
@@ -164,7 +140,7 @@
              }
  
              float f = 0.0F;
-@@ -182,6 +217,13 @@
+@@ -182,6 +242,13 @@
              if (p_180620_1_ instanceof EntityPlayerMP)
              {
                  ((EntityPlayerMP)p_180620_1_).field_71135_a.func_147364_a(d5, d6, d7, p_180620_1_.field_70177_z, p_180620_1_.field_70125_A);
@@ -178,7 +154,7 @@
              }
              else
              {
-@@ -395,6 +437,12 @@
+@@ -395,6 +462,12 @@
                  }
              }
          }
@@ -191,7 +167,7 @@
  
          return true;
      }
-@@ -405,27 +453,66 @@
+@@ -405,27 +478,65 @@
          {
              long i = p_85189_1_ - 300L;
              ObjectIterator<Teleporter.PortalPosition> objectiterator = this.field_85191_c.values().iterator();
@@ -219,13 +195,12 @@
 +            if(LoggerRegistry.__portalCaching) {
 +                PortalCaching.portalCachingCleared(field_85192_a, field_85191_c.size(), uncachings);
 +            }
-+
-+            // TISCM portalSuperCache
++            /* carpet mod end */
++            // begin portalSuperCache
 +            if (!CarpetSettings.portalSuperCache) {
 +                (this.field_85192_a.field_73011_w.func_186058_p().func_186068_a() == -1 ? SuperCacheHandler.getHandlerNether() : SuperCacheHandler.getHandlerOverworld()).clear();
 +            }
-+            // end TISCM portalSuperCache
-+            /* carpet mod end */
++            // end portalSuperCache
          }
      }
 +    
