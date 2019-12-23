@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/network/NettyVarint21FrameEncoder.java
++++ ../src-work/minecraft/net/minecraft/network/NettyVarint21FrameEncoder.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.network;
+ 
++import carpet.CarpetSettings;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.channel.ChannelHandler.Sharable;
+@@ -13,7 +14,8 @@
+         int i = p_encode_2_.readableBytes();
+         int j = PacketBuffer.func_150790_a(i);
+ 
+-        if (j > 3)
++        // Disable this check to prevent book banning serverside. CARPET-XCOM
++        if (!CarpetSettings.disableBookBan && j > 3)
+         {
+             throw new IllegalArgumentException("unable to fit " + i + " into " + 3);
+         }

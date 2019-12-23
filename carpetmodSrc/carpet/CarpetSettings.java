@@ -360,6 +360,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Disables the packet limit that causes the book banning.", category = FIX)
+    public static boolean disableBookBan;
+
     @Rule(desc = "Rule made to debug recipes by pasting all recipes when crafting.", category = FIX)
     public static boolean debugRecipes;
 
