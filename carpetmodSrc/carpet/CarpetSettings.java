@@ -43,7 +43,7 @@ public class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v19_11_06 beta";
+    public static final String carpetVersion = "v19_12_24";
     public static final String minecraftVersion = "1.12.2";
     public static final String mcpMappings = "39-1.12";
 
@@ -374,6 +374,9 @@ public class CarpetSettings
     /*
      * Rules in this category should end with the "Fix" suffix
      */
+
+    @Rule(desc = "Disables the packet limit that causes the book banning.", category = FIX)
+    public static boolean disableBookBan;
 
     @Rule(desc = "Rule made to debug recipes by pasting all recipes when crafting.", category = FIX)
     public static boolean debugRecipes;

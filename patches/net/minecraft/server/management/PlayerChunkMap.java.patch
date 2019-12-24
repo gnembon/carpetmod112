@@ -29,7 +29,45 @@
      }
  
      public boolean func_152621_a(int p_152621_1_, int p_152621_2_)
-@@ -327,16 +337,32 @@
+@@ -271,8 +281,16 @@
+ 
+     public void func_72683_a(EntityPlayerMP p_72683_1_)
+     {
+-        int i = (int)p_72683_1_.field_70165_t >> 4;
+-        int j = (int)p_72683_1_.field_70161_v >> 4;
++        int i;
++        int j;
++        // Fix the player chunk map trunkation in negative coords causing offsets in chunk loading CARPET-XCOM
++        if(!CarpetSettings.playerChunkLoadingFix) {
++            i = (int)p_72683_1_.field_70165_t >> 4;
++            j = (int)p_72683_1_.field_70161_v >> 4;
++        } else {
++            i = MathHelper.func_76128_c(p_72683_1_.field_70165_t) >> 4;
++            j = MathHelper.func_76128_c(p_72683_1_.field_70161_v) >> 4;
++        }
+         p_72683_1_.field_71131_d = p_72683_1_.field_70165_t;
+         p_72683_1_.field_71132_e = p_72683_1_.field_70161_v;
+ 
+@@ -290,8 +308,16 @@
+ 
+     public void func_72695_c(EntityPlayerMP p_72695_1_)
+     {
+-        int i = (int)p_72695_1_.field_71131_d >> 4;
+-        int j = (int)p_72695_1_.field_71132_e >> 4;
++        int i;
++        int j;
++        // Fix the player chunk map trunkation in negative coords causing offsets in chunk loading CARPET-XCOM
++        if(!CarpetSettings.playerChunkLoadingFix) {
++            i = (int)p_72695_1_.field_71131_d >> 4;
++            j = (int)p_72695_1_.field_71132_e >> 4;
++        } else {
++            i = MathHelper.func_76128_c(p_72695_1_.field_71131_d) >> 4;
++            j = MathHelper.func_76128_c(p_72695_1_.field_71132_e) >> 4;
++        }
+ 
+         for (int k = i - this.field_72698_e; k <= i + this.field_72698_e; ++k)
+         {
+@@ -327,16 +353,32 @@
  
      public void func_72685_d(EntityPlayerMP p_72685_1_)
      {
@@ -66,7 +104,7 @@
              int i1 = this.field_72698_e;
              int j1 = i - k;
              int k1 = j - l;
-@@ -460,7 +486,28 @@
+@@ -460,7 +502,28 @@
  
          if (chunk != null)
          {
