@@ -1,12 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityTNTPrimed.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityTNTPrimed.java
-@@ -11,17 +11,32 @@
+@@ -11,17 +11,36 @@
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.world.World;
  
 +import carpet.CarpetSettings;
 +import carpet.logging.logHelpers.TNTLogHelper;
 +import carpet.logging.LoggerRegistry;
++
++import java.util.Random;
 +
  public class EntityTNTPrimed extends Entity
  {
@@ -19,6 +21,8 @@
 +    private int mergedTNT;
 +    private boolean mergeBool;
  
++    public static Random randAngle = new Random();
++
 +    // ----- Carpet Start ----- //
 +    private TNTLogHelper logHelper = null;
 +    public String cm_name() { return "Primed TNT"; }
@@ -33,7 +37,7 @@
          this.field_70156_m = true;
          this.field_70178_ae = true;
          this.func_70105_a(0.98F, 0.98F);
-@@ -31,10 +46,21 @@
+@@ -31,10 +50,26 @@
      {
          this(p_i1730_1_);
          this.func_70107_b(p_i1730_2_, p_i1730_4_, p_i1730_6_);
@@ -43,7 +47,12 @@
 -        this.field_70179_y = (double)(-((float)Math.cos((double)f)) * 0.02F);
 +        float f = 0F;
 +        if(!CarpetSettings.tntPrimerMomentumRemoved){
-+            f = (float)(Math.random() * (Math.PI * 2D));
++            if(!CarpetSettings.TNTAdjustableRandomAngle){
++                f = (float)(Math.random() * (Math.PI * 2D));
++            } else {
++                // Use predictable RNG seed to find bugs in TNT prime momentum with large dupers. CARPET-XCOM
++                f = (float)(randAngle.nextDouble() * (Math.PI * 2D));
++            }
 +            if(CarpetSettings.hardcodeTNTangle > 0) f = (float) CarpetSettings.hardcodeTNTangle;
 +            this.field_70159_w = (double)(-((float)Math.sin((double)f)) * 0.02F);
 +            this.field_70181_x = 0.20000000298023224D;
@@ -59,7 +68,7 @@
          this.func_184534_a(80);
          this.field_70169_q = p_i1730_2_;
          this.field_70167_r = p_i1730_4_;
-@@ -75,11 +101,33 @@
+@@ -75,11 +110,33 @@
  
          if (this.field_70122_E)
          {
@@ -93,7 +102,7 @@
          --this.field_70516_a;
  
          if (this.field_70516_a <= 0)
-@@ -100,8 +148,14 @@
+@@ -100,8 +157,14 @@
  
      private void func_70515_d()
      {
