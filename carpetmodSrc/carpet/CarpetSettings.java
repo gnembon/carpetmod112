@@ -518,16 +518,36 @@ public class CarpetSettings
     @Rule(desc = "Blocks inherit the original light opacity and light values while being pushed with a piston", category = OPTIMIZATIONS)
     public static boolean movingBlockLightOptimization = false;
 
-    @Rule(desc = "Hopper duplication fix by Theosib. Fixed in 1.12.2", category = FIX)
-    @BugFixDefault
-    public static boolean hopperDuplicationFix = false;
-
     @Rule(desc = "Chunk saving issues that causes entites and blocks to duplicate or disappear", category = FIX, extra = "By Theosib")
     @BugFixDefault
     public static boolean entityDuplicationFix = false;
 
     @Rule(desc = "Fixes duplication of items when using item frames", category = FIX)
-    public static boolean itemFrameDuplicationFix = false;
+    public static boolean duplicationFixItemFrame = false;
+
+    @Rule(desc = "Fixes duplication of items when using gravity blocks through portals", category = FIX)
+    public static boolean duplicationFixGravityBlocks = false;
+
+    @Rule(desc = "Fixes duplication of items when entitys enter end portals and die the same time", category = FIX)
+    public static boolean duplicationFixPortalEntitys = false;
+
+    @Rule(desc = "Fixes duplication of TNT when pushed by pistons", category = FIX)
+    public static boolean duplicationFixMovingTNT = false;
+
+    @Rule(desc = "Fixes duplication of rails when pushed by pistons", category = FIX)
+    public static boolean duplicationFixMovingRail = false;
+
+    @Rule(desc = "Fixes duplication of carpets when pushed by pistons", category = FIX)
+    public static boolean duplicationFixMovingCarpets = false;
+
+    @Rule(desc = "Fixes duplication of items when players drop items on the ground and log out the same time", category = FIX)
+    public static boolean duplicationFixLogout = false;
+
+    @Rule(desc = "Fixes duplication of entitys when players log out riding entitys in unloaded chunks", category = FIX)
+    public static boolean duplicationFixRidingEntitys = false;
+
+    @Rule(desc = "Fixes duplication of blocks when using update suppression", category = FIX)
+    public static boolean duplicationFixUpdateSuppression = false;
 
     @Rule(desc = "Uses alternative lighting engine by PhiPros. AKA NewLight mod", category = OPTIMIZATIONS)
     public static boolean newLight = false;

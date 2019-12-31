@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRailBase.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRailBase.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.block;
+ 
++import carpet.CarpetSettings;
+ import com.google.common.collect.Lists;
+ import java.util.List;
+ import javax.annotation.Nullable;
+@@ -117,6 +118,7 @@
+ 
+             if (flag && !p_189540_2_.func_175623_d(p_189540_3_))
+             {
++                if(CarpetSettings.duplicationFixMovingRail && BlockPistonBase.isBeingPushed(p_189540_3_)) return; // Added duplication fix for moving rails CARPET-XCOM
+                 this.func_176226_b(p_189540_2_, p_189540_3_, p_189540_1_, 0);
+                 p_189540_2_.func_175698_g(p_189540_3_);
+             }

@@ -67,16 +67,17 @@
          Block block = this.field_175132_d.func_177230_c();
  
          if (this.field_175132_d.func_185904_a() == Material.field_151579_a)
-@@ -123,7 +153,7 @@
-             }
+@@ -124,6 +154,9 @@
  
              this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
--
+ 
++            //Fix falling blocks duplication when going through portals. CARPET-XCOM
++            if(CarpetSettings.duplicationFixGravityBlocks && field_70128_L) return;
 +            
              if (!this.field_70170_p.field_72995_K)
              {
                  BlockPos blockpos1 = new BlockPos(this);
-@@ -168,6 +198,24 @@
+@@ -168,6 +201,24 @@
                      this.field_70179_y *= 0.699999988079071D;
                      this.field_70181_x *= -0.5D;
  

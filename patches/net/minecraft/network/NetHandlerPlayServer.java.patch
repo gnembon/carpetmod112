@@ -90,7 +90,16 @@
                              {
                                  boolean flag1 = worldserver.func_184144_a(this.field_147369_b, this.field_147369_b.func_174813_aQ().func_186664_h(0.0625D)).isEmpty();
  
-@@ -731,7 +759,10 @@
+@@ -627,6 +655,8 @@
+ 
+     public void func_147345_a(CPacketPlayerDigging p_147345_1_)
+     {
++        // Prevent player preforming actions after disconnecting. CARPET-XCOM
++        if(CarpetSettings.duplicationFixLogout && field_147369_b.func_193105_t()) return;
+         PacketThreadUtil.func_180031_a(p_147345_1_, this, this.field_147369_b.func_71121_q());
+         WorldServer worldserver = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
+         BlockPos blockpos = p_147345_1_.func_179715_a();
+@@ -731,7 +761,10 @@
          {
              if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < 64.0D && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
              {
@@ -101,7 +110,7 @@
              }
          }
          else
-@@ -755,6 +786,7 @@
+@@ -755,6 +788,7 @@
  
          if (!itemstack.func_190926_b())
          {
@@ -109,7 +118,7 @@
              this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, worldserver, itemstack, enumhand);
          }
      }
-@@ -1666,13 +1698,14 @@
+@@ -1666,13 +1700,14 @@
                      String s8 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
                      tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
@@ -130,7 +139,7 @@
                      tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
                      String s2 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184411_a(Mirror.valueOf(s2));
-@@ -1709,6 +1742,17 @@
+@@ -1709,6 +1744,17 @@
                          }
                          else
                          {
@@ -148,7 +157,7 @@
                              this.field_147369_b.func_146105_b(new TextComponentTranslation("structure_block.load_prepare", new Object[] {s4}), false);
                          }
                      }
-@@ -1750,5 +1794,9 @@
+@@ -1750,5 +1796,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }

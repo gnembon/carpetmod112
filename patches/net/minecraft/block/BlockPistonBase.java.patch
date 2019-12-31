@@ -1,6 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -29,6 +29,11 @@
+@@ -1,8 +1,12 @@
+ package net.minecraft.block;
+ 
+ import com.google.common.collect.Lists;
++
++import java.util.HashSet;
+ import java.util.List;
+ import javax.annotation.Nullable;
++
++import it.unimi.dsi.fastutil.booleans.BooleanStack;
+ import net.minecraft.block.material.EnumPushReaction;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.IProperty;
+@@ -29,6 +33,11 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -12,7 +25,15 @@
  public class BlockPistonBase extends BlockDirectional
  {
      public static final PropertyBool field_176320_b = PropertyBool.func_177716_a("extended");
-@@ -99,7 +104,8 @@
+@@ -39,6 +48,7 @@
+     protected static final AxisAlignedBB field_185652_f = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.75D, 1.0D);
+     protected static final AxisAlignedBB field_185653_g = new AxisAlignedBB(0.0D, 0.25D, 0.0D, 1.0D, 1.0D, 1.0D);
+     private final boolean field_150082_a;
++    private static HashSet<BlockPos> dupeFixLocations = new HashSet<>();
+ 
+     public BlockPistonBase(boolean p_i45443_1_)
+     {
+@@ -99,7 +109,8 @@
  
      public void func_180633_a(World p_180633_1_, BlockPos p_180633_2_, IBlockState p_180633_3_, EntityLivingBase p_180633_4_, ItemStack p_180633_5_)
      {
@@ -22,7 +43,7 @@
  
          if (!p_180633_1_.field_72995_K)
          {
-@@ -130,23 +136,83 @@
+@@ -130,23 +141,83 @@
  
      private void func_176316_e(World p_176316_1_, BlockPos p_176316_2_, IBlockState p_176316_3_)
      {
@@ -110,7 +131,7 @@
      {
          for (EnumFacing enumfacing : EnumFacing.values())
          {
-@@ -162,6 +228,12 @@
+@@ -162,6 +233,12 @@
          }
          else
          {
@@ -123,7 +144,7 @@
              BlockPos blockpos = p_176318_2_.func_177984_a();
  
              for (EnumFacing enumfacing1 : EnumFacing.values())
-@@ -240,7 +312,11 @@
+@@ -240,7 +317,11 @@
                          }
                      }
                  }
@@ -136,7 +157,7 @@
                  if (!flag1 && iblockstate.func_185904_a() != Material.field_151579_a && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false, enumfacing) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
                  {
                      this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
-@@ -307,7 +383,15 @@
+@@ -307,7 +388,15 @@
                      return false;
                  }
  
@@ -153,7 +174,7 @@
              }
              else
              {
-@@ -319,6 +403,14 @@
+@@ -319,6 +408,14 @@
              return false;
          }
      }
@@ -168,7 +189,15 @@
  
      private boolean func_176319_a(World p_176319_1_, BlockPos p_176319_2_, EnumFacing p_176319_3_, boolean p_176319_4_)
      {
-@@ -358,15 +450,64 @@
+@@ -342,6 +439,7 @@
+             {
+                 BlockPos blockpos = list.get(i);
+                 list1.add(p_176319_1_.func_180495_p(blockpos).func_185899_b(p_176319_1_, blockpos));
++                dupeFixLocations.add(blockpos); // Added for duping fix CARPET-XCOM
+             }
+ 
+             List<BlockPos> list2 = blockpistonstructurehelper.func_177252_d();
+@@ -358,15 +456,64 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }
@@ -236,3 +265,22 @@
                  --k;
                  aiblockstate[k] = iblockstate2;
              }
+@@ -397,6 +544,8 @@
+                 p_176319_1_.func_175685_c(blockpos2, Blocks.field_150332_K, false);
+             }
+ 
++            dupeFixLocations.clear(); // Added for duping fix CARPET-XCOM
++
+             return true;
+         }
+     }
+@@ -439,4 +588,9 @@
+         p_193383_2_ = this.func_176221_a(p_193383_2_, p_193383_1_, p_193383_3_);
+         return p_193383_2_.func_177229_b(field_176387_N) != p_193383_4_.func_176734_d() && ((Boolean)p_193383_2_.func_177229_b(field_176320_b)).booleanValue() ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
+     }
++
++    // Added method for checking if block is being pushed for duping fixes CARPET-XCOM
++    public static boolean isBeingPushed(BlockPos pos){
++        return dupeFixLocations.contains(pos);
++    }
+ }
