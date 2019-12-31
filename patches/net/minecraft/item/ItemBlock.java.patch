@@ -10,7 +10,7 @@
  public class ItemBlock extends Item
  {
      protected final Block field_150939_a;
-@@ -44,8 +47,20 @@
+@@ -44,8 +47,21 @@
          if (!itemstack.func_190926_b() && p_180614_1_.func_175151_a(p_180614_3_, p_180614_5_, itemstack) && p_180614_2_.func_190527_a(this.field_150939_a, p_180614_3_, false, p_180614_5_, (Entity)null))
          {
              int i = this.func_77647_b(itemstack.func_77960_j());
@@ -29,6 +29,18 @@
 +            //IBlockState iblockstate1 = this.block.onBlockPlaced(playerIn, worldIn, hand, facing, hitX, hitY, i, stack); //this got replaced
 +            //END CM
 +
++            if(CarpetSettings.duplicationFixUpdateSuppression) itemstack.func_190918_g(1); // Fix for duping when update suppressing. CARPET-XCOM
              if (p_180614_2_.func_180501_a(p_180614_3_, iblockstate1, 11))
              {
                  iblockstate1 = p_180614_2_.func_180495_p(p_180614_3_);
+@@ -63,7 +79,9 @@
+ 
+                 SoundType soundtype = this.field_150939_a.func_185467_w();
+                 p_180614_2_.func_184133_a(p_180614_1_, p_180614_3_, soundtype.func_185841_e(), SoundCategory.BLOCKS, (soundtype.func_185843_a() + 1.0F) / 2.0F, soundtype.func_185847_b() * 0.8F);
+-                itemstack.func_190918_g(1);
++                if(!CarpetSettings.duplicationFixUpdateSuppression) itemstack.func_190918_g(1);
++            } else {
++                if(CarpetSettings.duplicationFixUpdateSuppression) itemstack.func_190918_g(-1); // Fix for duping when update suppressing. CARPET-XCOM
+             }
+ 
+             return EnumActionResult.SUCCESS;
