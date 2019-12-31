@@ -24,6 +24,7 @@ import carpet.helpers.ScoreboardDelta;
 import carpet.patches.BlockWool;
 import carpet.utils.TickingArea;
 import carpet.worldedit.WorldEditBridge;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -114,6 +115,34 @@ public class CarpetSettings
 
 
     // ===== CREATIVE TOOLS ===== //
+
+    @Rule(desc = "Sets the instant falling flag to true. The boolean used in world population that can be exploited turning true making falling blocks fall instantly.", category = CREATIVE, validator = "validateInstantFallingFlag")
+    public static boolean instantFallingFlag = false;
+    private static boolean validateInstantFallingFlag(boolean value) {
+        if (value) {
+            BlockFalling.fallInstantly = true;
+        }else {
+            BlockFalling.fallInstantly = false;
+        }
+        return true;
+    }
+
+    @Rule(desc = "Sets the instant scheduled updates instantly to true. The boolean used in world population that can be exploited turning true making all repeaters, comperators, observers and similar components update instantly.", category = CREATIVE, validator = "validateInstantScheduling")
+    public static boolean instantScheduling = false;
+    private static boolean validateInstantScheduling(boolean value) {
+        if (value) {
+            for (int dim = 0; dim < 3; dim++) {
+                WorldServer world = CarpetServer.minecraft_server.worlds[dim];
+                world.scheduledUpdatesAreImmediate = true;
+            }
+        }else {
+            for (int dim = 0; dim < 3; dim++) {
+                WorldServer world = CarpetServer.minecraft_server.worlds[dim];
+                world.scheduledUpdatesAreImmediate = false;
+            }
+        }
+        return true;
+    }
 
     @Rule(desc = "Quasi Connectivity doesn't require block updates.", category = EXPERIMENTAL, extra = {
             "All redstone components will send extra block updates downwards",
