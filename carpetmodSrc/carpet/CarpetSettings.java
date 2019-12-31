@@ -118,6 +118,7 @@ public class CarpetSettings
 
     @Rule(desc = "Sets the instant falling flag to true. The boolean used in world population that can be exploited turning true making falling blocks fall instantly.", category = CREATIVE, validator = "validateInstantFallingFlag")
     public static boolean instantFallingFlag = false;
+
     private static boolean validateInstantFallingFlag(boolean value) {
         if (value) {
             BlockFalling.fallInstantly = true;
@@ -406,6 +407,9 @@ public class CarpetSettings
     /*
      * Rules in this category should end with the "Fix" suffix
      */
+
+    @Rule(desc = "Fixes the speed los on entitys after reload.", category = FIX)
+    public static boolean reloadEntitySpeedlossFix;
 
     @Rule(desc = "Disables the packet limit that causes the book banning.", category = FIX)
     public static boolean disableBookBan;

@@ -142,6 +142,37 @@
  
          return this.field_70171_ac;
      }
+@@ -1663,19 +1711,19 @@
+             this.field_70181_x = nbttaglist2.func_150309_d(1);
+             this.field_70179_y = nbttaglist2.func_150309_d(2);
+ 
+-            if (Math.abs(this.field_70159_w) > 10.0D)
+-            {
+-                this.field_70159_w = 0.0D;
+-            }
++            // Fix to entitys losing speed when reloaded CARPET-XCOM
++            if(!CarpetSettings.reloadEntitySpeedlossFix) {
++                if (Math.abs(this.field_70159_w) > 10.0D) {
++                    this.field_70159_w = 0.0D;
++                }
+ 
+-            if (Math.abs(this.field_70181_x) > 10.0D)
+-            {
+-                this.field_70181_x = 0.0D;
+-            }
++                if (Math.abs(this.field_70181_x) > 10.0D) {
++                    this.field_70181_x = 0.0D;
++                }
+ 
+-            if (Math.abs(this.field_70179_y) > 10.0D)
+-            {
+-                this.field_70179_y = 0.0D;
++                if (Math.abs(this.field_70179_y) > 10.0D) {
++                    this.field_70179_y = 0.0D;
++                }
+             }
+ 
+             this.field_70165_t = nbttaglist.func_150309_d(0);
 @@ -1908,7 +1956,12 @@
  
      public double func_70042_X()
