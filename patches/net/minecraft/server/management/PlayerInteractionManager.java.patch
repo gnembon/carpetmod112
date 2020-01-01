@@ -48,7 +48,31 @@
          if (flag)
          {
              iblockstate.func_177230_c().func_176206_d(this.field_73092_a, p_180235_1_, iblockstate);
-@@ -402,10 +419,22 @@
+@@ -288,7 +305,13 @@
+                 }
+ 
+                 this.field_73092_a.func_180498_a(this.field_73090_b, 2001, p_180237_1_, Block.func_176210_f(iblockstate));
+-                boolean flag1 = this.func_180235_c(p_180237_1_);
++                boolean flag1;
++                // Fix update suppression from not damaging tools or preventing dropping harvested blocks CARPET-XCOM
++                if(CarpetSettings.duplicationFixUpdateSuppression) {
++                    flag1 = field_73092_a.isRemovableBlock(p_180237_1_);
++                } else {
++                    flag1 = this.func_180235_c(p_180237_1_);
++                }
+ 
+                 if (this.func_73083_d())
+                 {
+@@ -311,6 +334,8 @@
+                     }
+                 }
+ 
++                if(CarpetSettings.duplicationFixUpdateSuppression) this.func_180235_c(p_180237_1_);
++
+                 return flag1;
+             }
+         }
+@@ -402,10 +427,22 @@
          }
          else
          {
