@@ -106,7 +106,7 @@
 +
 +		if(LoggerRegistry.__rng){
 +            LoggerRegistry.getLogger("rng").log(() -> new ITextComponent[] {
-+                    Messenger.s(null, String.format("RNG seed after tick updates: %d dim: %s", getRandSeed(), field_73011_w.func_186058_p().name()))
++                    Messenger.s(null, String.format("RNG TickUp. t:%d seed:%d d:%s", field_73061_a.func_71259_af(), getRandSeed(), field_73011_w.func_186058_p().name()))
 +            });
 +        }
 +		if(CarpetSettings.setSeed != 0){
@@ -144,7 +144,7 @@
 +
 +        if(LoggerRegistry.__rng){
 +            LoggerRegistry.getLogger("rng").log(() -> new ITextComponent[] {
-+                    Messenger.s(null, String.format("RNG seed after tick updates: %d dim: %s", getRandSeed(), field_73011_w.func_186058_p().name()))
++                    Messenger.s(null, String.format("RNG BlockEv. t:%d seed:%d d:%s", field_73061_a.func_71259_af(), getRandSeed(), field_73011_w.func_186058_p().name()))
 +            });
 +        }
 +        if(CarpetSettings.setSeed != 0){
