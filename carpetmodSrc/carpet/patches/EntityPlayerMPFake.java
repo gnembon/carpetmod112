@@ -6,11 +6,14 @@ import net.minecraft.network.EnumPacketDirection;
 import net.minecraft.network.play.server.SPacketEntityHeadLook;
 import net.minecraft.network.play.server.SPacketEntityTeleport;
 import net.minecraft.network.play.server.SPacketPlayerListItem;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
 
@@ -55,6 +58,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityTeleport(instance),instance.dimension);
         server.getPlayerList().serverUpdateMovingPlayer(instance);
         instance.dataManager.set(PLAYER_MODEL_FLAG, (byte) 0x7f); // show all model layers (incl. capes)
+        createAndAddFakePlayerToTeamBot(server, instance);
         return instance;
     }
 
@@ -79,6 +83,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityHeadLook(playerShadow, (byte)(player.rotationYawHead * 256 / 360) ),playerShadow.dimension);
         server.getPlayerList().sendPacketToAllPlayers(new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, playerShadow));
         server.getPlayerList().serverUpdateMovingPlayer(playerShadow);
+        createAndAddFakePlayerToTeamBot(server, playerShadow);
         return playerShadow;
     }
 
@@ -144,5 +149,19 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     public void resetToSetPosition()
     {
         setLocationAndAngles(setX, setY, setZ, setYaw, setPitch);
+    }
+
+    private static void createAndAddFakePlayerToTeamBot(MinecraftServer server, EntityPlayerMPFake player)
+    {
+        Scoreboard scoreboard = server.getWorld(0).getScoreboard();
+        if(!scoreboard.getTeamNames().contains("Bots")){
+            scoreboard.createTeam("Bots");
+            ScorePlayerTeam scoreplayerteam = scoreboard.getTeam("Bots");
+            TextFormatting textformatting = TextFormatting.getValueByName("dark_green");
+            scoreplayerteam.setColor(textformatting);
+            scoreplayerteam.setPrefix(textformatting.toString());
+            scoreplayerteam.setSuffix(TextFormatting.RESET.toString());
+        }
+        scoreboard.addPlayerToTeam(player.getName(), "Bots");
     }
 }
