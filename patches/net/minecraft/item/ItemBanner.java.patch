@@ -1,0 +1,28 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemBanner.java
++++ ../src-work/minecraft/net/minecraft/item/ItemBanner.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.item;
+ 
+ import javax.annotation.Nullable;
++
++import carpet.CarpetSettings;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.block.BlockStandingSign;
+ import net.minecraft.block.BlockWallSign;
+@@ -51,6 +53,7 @@
+                 }
+                 else
+                 {
++                    if(CarpetSettings.duplicationFixUpdateSuppression) itemstack.func_190918_g(1); // Fix for duping when update suppressing. CARPET-XCOM
+                     p_180614_3_ = flag ? p_180614_3_.func_177977_b() : p_180614_3_;
+ 
+                     if (p_180614_5_ == EnumFacing.UP)
+@@ -75,7 +78,7 @@
+                         CriteriaTriggers.field_193137_x.func_193173_a((EntityPlayerMP)p_180614_1_, p_180614_3_, itemstack);
+                     }
+ 
+-                    itemstack.func_190918_g(1);
++                    if(!CarpetSettings.duplicationFixUpdateSuppression) itemstack.func_190918_g(1);
+                     return EnumActionResult.SUCCESS;
+                 }
+             }

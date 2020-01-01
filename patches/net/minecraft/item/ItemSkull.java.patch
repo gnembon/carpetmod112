@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemSkull.java
++++ ../src-work/minecraft/net/minecraft/item/ItemSkull.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.item;
+ 
++import carpet.CarpetSettings;
+ import com.mojang.authlib.GameProfile;
+ import java.util.UUID;
+ import net.minecraft.advancements.CriteriaTriggers;
+@@ -67,6 +68,8 @@
+                 }
+                 else
+                 {
++                    if(CarpetSettings.duplicationFixUpdateSuppression) itemstack.func_190918_g(1); // Fix for duping when update suppressing. CARPET-XCOM
++
+                     p_180614_2_.func_180501_a(p_180614_3_, Blocks.field_150465_bP.func_176223_P().func_177226_a(BlockSkull.field_176418_a, p_180614_5_), 11);
+                     int i = 0;
+ 
+@@ -115,7 +118,7 @@
+                         CriteriaTriggers.field_193137_x.func_193173_a((EntityPlayerMP)p_180614_1_, p_180614_3_, itemstack);
+                     }
+ 
+-                    itemstack.func_190918_g(1);
++                    if(!CarpetSettings.duplicationFixUpdateSuppression) itemstack.func_190918_g(1);
+                     return EnumActionResult.SUCCESS;
+                 }
+             }
