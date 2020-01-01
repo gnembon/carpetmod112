@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
@@ -56,6 +57,7 @@ public class CommandGMS extends CommandCarpetBase
             EntityPlayer entityplayer = getCommandSenderAsPlayer(sender);
             entityplayer.setGameType(gametype);
             entityplayer.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
+            if(entityplayer instanceof EntityPlayerMP)((EntityPlayerMP)entityplayer).moveToStoredCameraData();
         }
     }
 

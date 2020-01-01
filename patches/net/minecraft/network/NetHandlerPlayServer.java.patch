@@ -110,7 +110,7 @@
              }
          }
          else
-@@ -755,6 +788,7 @@
+@@ -755,12 +788,16 @@
  
          if (!itemstack.func_190926_b())
          {
@@ -118,7 +118,16 @@
              this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, worldserver, itemstack, enumhand);
          }
      }
-@@ -1666,13 +1700,14 @@
+ 
+     public void func_175088_a(CPacketSpectate p_175088_1_)
+     {
++        // Disables spectating other players when using /c and carpet rule cameraModeDisableSpectatePlayers is true CARPET-XCOM
++        if(field_147369_b.isDisableSpectatePlayers()) return;
++
+         PacketThreadUtil.func_180031_a(p_175088_1_, this, this.field_147369_b.func_71121_q());
+ 
+         if (this.field_147369_b.func_175149_v())
+@@ -1666,13 +1703,14 @@
                      String s8 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
                      tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
@@ -139,7 +148,7 @@
                      tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
                      String s2 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184411_a(Mirror.valueOf(s2));
-@@ -1709,6 +1744,17 @@
+@@ -1709,6 +1747,17 @@
                          }
                          else
                          {
@@ -157,7 +166,7 @@
                              this.field_147369_b.func_146105_b(new TextComponentTranslation("structure_block.load_prepare", new Object[] {s4}), false);
                          }
                      }
-@@ -1750,5 +1796,9 @@
+@@ -1750,5 +1799,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }

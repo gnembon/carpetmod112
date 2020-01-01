@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
@@ -60,6 +61,7 @@ public class CommandGMC extends CommandCarpetBase
             }
             GameType gametype = GameType.parseGameTypeWithDefault("spectator", GameType.NOT_SET);
             EntityPlayer entityplayer = getCommandSenderAsPlayer(sender);
+            if(entityplayer instanceof EntityPlayerMP)((EntityPlayerMP)entityplayer).storeCameraData();
             entityplayer.setGameType(gametype);
             PotionEffect potioneffect = new PotionEffect(Potion.getPotionFromResourceLocation("night_vision"), 999999, 0, false, false);
             entityplayer.addPotionEffect(potioneffect);

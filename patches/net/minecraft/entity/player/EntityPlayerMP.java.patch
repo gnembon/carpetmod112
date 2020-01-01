@@ -134,7 +134,15 @@
      }
  
      public void func_70634_a(double p_70634_1_, double p_70634_3_, double p_70634_5_)
-@@ -1439,4 +1480,22 @@
+@@ -1221,6 +1262,7 @@
+         }
+         else
+         {
++            disableSpectatePlayers = false; // Rule to prevent /c camera mode to spectate other players, disable after exiting spectator mode CARPET-XCOM
+             this.func_175399_e(this);
+         }
+ 
+@@ -1439,4 +1481,49 @@
      {
          return this.field_193110_cw;
      }
@@ -155,5 +163,32 @@
 +    }
 +    public void dupeItemScan(boolean s){
 +        scanForDuping = s;
++    }
++
++    // Remove some exploits caused by /c to and /s
++    private double storeX;
++    private double storeY;
++    private double storeZ;
++    private float storeYaw;
++    private float storePitch;
++    private int storedDim;
++    protected boolean disableSpectatePlayers;
++    public void storeCameraData() {
++        storeX = field_70165_t;
++        storeY = field_70163_u;
++        storeZ = field_70161_v;
++        storeYaw = field_70177_z;
++        storePitch = field_70125_A;
++        storedDim = field_71093_bK;
++        disableSpectatePlayers = CarpetSettings.cameraModeDisableSpectatePlayers;
++    }
++    public void moveToStoredCameraData(){
++        if(CarpetSettings.cameraModeRestoreLocation){
++            if(storedDim != field_71093_bK) func_184204_a(storedDim);
++            field_71135_a.func_147364_a(storeX, storeY, storeZ, storeYaw, storePitch);
++        }
++    }
++    public boolean isDisableSpectatePlayers(){
++        return disableSpectatePlayers;
 +    }
  }

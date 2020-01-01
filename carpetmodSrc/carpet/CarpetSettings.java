@@ -113,6 +113,11 @@ public class CarpetSettings
     @Rule(desc = "Enables /waypoint for saving coordinates", category = COMMANDS)
     public static boolean commandWaypoint = true;
 
+    @Rule(desc = "Disables players in /c from spectating other players", category = COMMANDS)
+    public static boolean cameraModeDisableSpectatePlayers;
+
+    @Rule(desc = "Places players back to the original location when using camera mode by using /c then /s", category = COMMANDS)
+    public static boolean cameraModeRestoreLocation;
 
     // ===== CREATIVE TOOLS ===== //
 
