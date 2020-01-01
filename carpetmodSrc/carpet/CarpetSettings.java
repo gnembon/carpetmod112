@@ -267,7 +267,7 @@ public class CarpetSettings
 
     @Rule(desc = "Allows to always be able to eat cakes.", category = CREATIVE)
     public static boolean cakeAlwaysEat;
-    
+
     private static boolean validateFlyingMachineTransparent(boolean value) {
         int newOpacity = value ? 0 : 255;
         Blocks.OBSERVER.setLightOpacity(newOpacity);
@@ -710,6 +710,9 @@ public class CarpetSettings
     @SurvivalDefault
     public static boolean persistentParrots = false;
 
+    @Rule(desc = "Wet sponges dry in the nether dimension", category = FEATURE)
+    public static boolean spongesDryInTheNether = false;
+
     @Rule(desc = "Empty shulker boxes can stack to 64 when dropped on the ground", category = SURVIVAL, extra = {
             "To move them around between inventories, use shift click to move entire stacks"
     })
@@ -807,7 +810,7 @@ public class CarpetSettings
     private static boolean validateTileTickLimit(int value) {
         return value >= -1;
     }
-    
+
     @Rule(desc = "Redstone ore blocks can redirect redstone dust", category = {EXPERIMENTAL, FEATURE})
     public static boolean redstoneOreRedirectsDust = false;
 
