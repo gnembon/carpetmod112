@@ -492,6 +492,9 @@ public class CarpetSettings
 
     @Rule(desc = "TNT causes less lag when exploding in the same spot and in liquids", category = TNT)
     public static boolean optimizedTNT = false;
+    
+    @Rule(desc = "Optimized elytra deployment", extra = "Ported from 1.15", category = {EXPERIMENTAL, OPTIMIZATIONS})
+    public static boolean optimizedElytraDeployment = false;
 
     @Rule(desc = "Fixes server crashing under heavy load and low tps", category = FIX, extra = {
             "Won't prevent crashes if the server doesn't respond in max-tick-time ticks"
