@@ -9,17 +9,7 @@
  public abstract class Container
  {
      public NonNullList<ItemStack> field_75153_a = NonNullList.<ItemStack>func_191196_a();
-@@ -28,6 +30,9 @@
-     protected List<IContainerListener> field_75149_d = Lists.<IContainerListener>newArrayList();
-     private final Set<EntityPlayer> field_75148_f = Sets.<EntityPlayer>newHashSet();
- 
-+    private boolean cacheCrafting; // Add caching for fast crafting CARPET-XCOM
-+    private IRecipe irecipe;
-+
-     protected Slot func_75146_a(Slot p_75146_1_)
-     {
-         p_75146_1_.field_75222_d = this.field_75151_b.size();
-@@ -281,7 +286,8 @@
+@@ -281,7 +283,8 @@
                              else
                              {
                                  int l2 = p_184996_2_ == 0 ? itemstack8.func_190916_E() : (itemstack8.func_190916_E() + 1) / 2;
@@ -29,7 +19,7 @@
  
                                  if (itemstack8.func_190926_b())
                                  {
-@@ -293,7 +299,7 @@
+@@ -293,7 +296,7 @@
                          }
                          else if (slot6.func_75214_a(itemstack11))
                          {
@@ -38,7 +28,7 @@
                              {
                                  int k2 = p_184996_2_ == 0 ? itemstack11.func_190916_E() : 1;
  
-@@ -414,9 +420,26 @@
+@@ -414,9 +417,23 @@
  
              if (slot2 != null && slot2.func_75216_d() && slot2.func_82869_a(p_184996_4_))
              {
@@ -50,12 +40,9 @@
 +                 */
 +                if(CarpetSettings.ctrlQCraftingFix && p_184996_1_ == 0 && p_184996_2_ == 1)
 +                {
-+                    cacheCrafting = true;
-+                    irecipe = null;
 +                    while (slot2.func_75216_d()) {
 +                        this.func_184996_a(p_184996_1_, 0, ClickType.THROW, p_184996_4_);
 +                    }
-+                    cacheCrafting = false;
 +                    this.func_75142_b();
 +                }
 +                else
@@ -68,18 +55,7 @@
              }
          }
          else if (p_184996_3_ == ClickType.PICKUP_ALL && p_184996_1_ >= 0)
-@@ -750,7 +773,9 @@
-         {
-             EntityPlayerMP entityplayermp = (EntityPlayerMP)p_192389_2_;
-             ItemStack itemstack = ItemStack.field_190927_a;
--            IRecipe irecipe = CraftingManager.func_192413_b(p_192389_3_, p_192389_1_);
-+            if(!cacheCrafting || irecipe == null) {
-+                irecipe = CraftingManager.func_192413_b(p_192389_3_, p_192389_1_);
-+            }
- 
-             if (irecipe != null && (irecipe.func_192399_d() || !p_192389_1_.func_82736_K().func_82766_b("doLimitedCrafting") || entityplayermp.func_192037_E().func_193830_f(irecipe)))
-             {
-@@ -762,4 +787,10 @@
+@@ -762,4 +779,10 @@
              entityplayermp.field_71135_a.func_147359_a(new SPacketSetSlot(this.field_75152_c, 0, itemstack));
          }
      }
