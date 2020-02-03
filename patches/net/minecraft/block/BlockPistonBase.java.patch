@@ -197,7 +197,7 @@
              }
  
              List<BlockPos> list2 = blockpistonstructurehelper.func_177252_d();
-@@ -358,15 +456,64 @@
+@@ -358,15 +456,65 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }
@@ -243,13 +243,14 @@
 +                            break;
 +                        }
 +                    }
-+                    p_176319_1_.func_180501_a(blockpos3,
-+                            Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_)
-+                                    .func_177226_a(BlockPistonMoving.OPACITY, Math.min(iblockstate2.func_185891_c(), 15))
-+                                    .func_177226_a(BlockPistonMoving.LIGHT, iblockstate2.func_185906_d()), 4);
++                    IBlockState iBlockState = Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_)
++                            .func_177226_a(BlockPistonMoving.OPACITY, Math.min(iblockstate2.func_185891_c(), 15))
++                            .func_177226_a(BlockPistonMoving.LIGHT, iblockstate2.func_185906_d());
++                    p_176319_1_.func_180501_a(blockpos3, iBlockState, 20);
 +                    if(remove){
 +                        p_176319_1_.func_180501_a(posOld, Blocks.field_150350_a.func_176223_P(), 2);
 +                    }
++                    p_176319_1_.func_190522_c(blockpos3, iBlockState.func_177230_c());
 +                }else{
 +                    p_176319_1_.func_180501_a(list.get(l), Blocks.field_150350_a.func_176223_P(), 2);
 +                    p_176319_1_.func_180501_a(blockpos3, Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_), 4);
@@ -265,7 +266,7 @@
                  --k;
                  aiblockstate[k] = iblockstate2;
              }
-@@ -397,6 +544,8 @@
+@@ -397,6 +545,8 @@
                  p_176319_1_.func_175685_c(blockpos2, Blocks.field_150332_K, false);
              }
  
@@ -274,7 +275,7 @@
              return true;
          }
      }
-@@ -439,4 +588,9 @@
+@@ -439,4 +589,9 @@
          p_193383_2_ = this.func_176221_a(p_193383_2_, p_193383_1_, p_193383_3_);
          return p_193383_2_.func_177229_b(field_176387_N) != p_193383_4_.func_176734_d() && ((Boolean)p_193383_2_.func_177229_b(field_176320_b)).booleanValue() ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
      }
