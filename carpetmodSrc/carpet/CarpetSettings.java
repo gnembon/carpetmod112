@@ -674,6 +674,9 @@ public class CarpetSettings
 
     // ===== FEATURES ===== //
 
+    @Rule(desc = "Allows fake players to gain stats.", category = FEATURE)
+    public static boolean fakePlayerStats;
+
     @Rule(desc = "Turns crafting tables into automated crafting tables with inventorys.", category = FEATURE, extra = "WARNING! If the rule is turned off after use, any inventory content in crafting tables will permanently become lost after chunks are reloaded.")
     public static boolean autocrafter;
 
