@@ -630,12 +630,12 @@ public class CarpetSettings
     @BugFixDefault
     public static boolean ridingPlayerUpdateFix = false;
 
-    @Rule(desc = "Fixes players clipping through moving piston blocks partially.", category = FIX, options = {"0", "20", "40", "100"}, validator = "validatePistonClippingFix")
+//    @Rule(desc = "Fixes players clipping through moving piston blocks partially.", category = FIX, options = {"0", "20", "40", "100"}, validator = "validatePistonClippingFix")
     public static int pistonClippingFix = 0;
-    private static boolean validatePistonClippingFix(int pistonClippingFix) {
-        // TODO
-        return true;
-    }
+//    private static boolean validatePistonClippingFix(int pistonClippingFix) {
+//        // TODO
+//        return true;
+//    }
 
     @Rule(desc = "Recovers potion effects when they were replaced and the replacement ended", category = FIX)
     @BugFixDefault

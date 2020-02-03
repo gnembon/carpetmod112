@@ -26,7 +26,7 @@ public class CommandPing extends CommandCarpetBase
     {
         if (!command_enabled("commandPing", sender))
             return;
-        
+
         if (sender instanceof EntityPlayerMP)
         {
             int ping = ((EntityPlayerMP) sender).ping;
