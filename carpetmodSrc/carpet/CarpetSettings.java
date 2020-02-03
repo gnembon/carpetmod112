@@ -471,18 +471,19 @@ public class CarpetSettings
     @BugFixDefault
     public static boolean growingUpWallJumpFix = false;
 
-    @Rule(desc = "Won't let mobs glitch into blocks when reloaded.", category = {FIX, EXPERIMENTAL}, validator = "validateReloadSuffocationFix", extra = {
-            "Can cause slight differences in mobs behaviour"
-    })
+//    @Rule(desc = "Won't let mobs glitch into blocks when reloaded.", category = {FIX, EXPERIMENTAL}, validator = "validateReloadSuffocationFix", extra = {
+//            "Can cause slight differences in mobs behaviour"
+//    })
+    @Rule(desc = "Won't let mobs glitch into blocks when reloaded.", category = FIX)
     @BugFixDefault
     public static boolean reloadSuffocationFix = false;
-    private static boolean validateReloadSuffocationFix(boolean value) {
-        if (value)
-            AxisAlignedBB.margin = 1.0 / (1L << 27);
-        else
-            AxisAlignedBB.margin = 0;
-        return true;
-    }
+//    private static boolean validateReloadSuffocationFix(boolean value) {
+//        if (value)
+//            AxisAlignedBB.margin = 1.0 / (1L << 27);
+//        else
+//            AxisAlignedBB.margin = 0;
+//        return true;
+//    }
 
     @Rule(desc = "Redstone dust algorithm", category = {EXPERIMENTAL, OPTIMIZATIONS}, extra = {
             "Fast redstone dust by Theosib",
