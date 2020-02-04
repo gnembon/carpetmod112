@@ -45,7 +45,11 @@ public class ItemLogHelper {
             switch (option)
             {
                 case "brief":
-                    comp.add(Messenger.m(null,"w ----" + type + "---- t: " + positions.size()));
+                    Vec3d p = new Vec3d(0,0,0);
+                    if(positions.size() > 0) {
+                        p = positions.get(positions.size() - 1);
+                    }
+                    comp.add(Messenger.m(null,"w ----" + type + "---- t: " + positions.size() + "  pos: ", Messenger.dblt("w",p.x, p.y, p.z)));
                     return comp.toArray(new ITextComponent[0]);
                 case "full":
                     comp.add(Messenger.m(null,"w ----" + type + "---- t: " + positions.size()));
