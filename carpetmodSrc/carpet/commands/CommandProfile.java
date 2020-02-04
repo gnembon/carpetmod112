@@ -12,24 +12,24 @@ import net.minecraft.util.math.BlockPos;
 import java.util.Collections;
 import java.util.List;
 
-public class CommandTickHealth extends CommandCarpetBase
+public class CommandProfile extends CommandCarpetBase
 {
     @Override
     public String getName()
     {
-        return "tickhealth";
+        return "profile";
     }
 
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "Usage: /tickheath <entities>";
+        return "Usage: /profile <entities>";
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
-        if (!command_enabled("commandTick", sender)) return;
+        if (!command_enabled("commandProfile", sender)) return;
         if (args.length > 0 && "entities".equalsIgnoreCase(args[0]))
         {
             CarpetProfiler.prepare_entity_report(100);
@@ -42,7 +42,7 @@ public class CommandTickHealth extends CommandCarpetBase
     }
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
-        if (!CarpetSettings.commandTick)
+        if (!CarpetSettings.commandProfile)
         {
             return Collections.<String>emptyList();
         }

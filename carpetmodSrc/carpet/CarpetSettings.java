@@ -63,6 +63,9 @@ public class CarpetSettings
     @Rule(desc = "Enables /tick command to control game speed", category = COMMANDS)
     public static boolean commandTick = true;
 
+    @Rule(desc = "Enables /profile command to profile lag", category = COMMANDS)
+    public static boolean commandProfile = true;
+
     @Rule(desc = "Enables /log command to monitor events in the game via chat and overlays", category = COMMANDS)
     public static boolean commandLog = true;
 

@@ -1,9 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/item/crafting/CraftingManager.java
 +++ ../src-work/minecraft/net/minecraft/item/crafting/CraftingManager.java
-@@ -32,9 +32,11 @@
+@@ -32,9 +32,13 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
++import java.util.ArrayList;
++import java.util.List;
 +import carpet.helpers.CustomCrafting;
 +
  public class CraftingManager
@@ -13,7 +15,7 @@
      private static int field_193381_c;
      public static final RegistryNamespaced<ResourceLocation, IRecipe> field_193380_a = new RegistryNamespaced<ResourceLocation, IRecipe>();
  
-@@ -53,7 +55,9 @@
+@@ -53,7 +57,9 @@
              func_193379_a("banneraddpattern", new RecipesBanners.RecipeAddPattern());
              func_193379_a("shielddecoration", new ShieldRecipes.Decoration());
              func_193379_a("shulkerboxcoloring", new ShulkerBoxRecipes.ShulkerBoxColoring());
@@ -24,7 +26,24 @@
          }
          catch (Throwable var1)
          {
-@@ -155,7 +159,7 @@
+@@ -95,6 +101,16 @@
+ 
+                 Iterator<Path> iterator = Files.walk(path).iterator();
+ 
++                // Hardcode the correctly sorted recipes to fix instances when users scrambles this list. CARPET-XCOM
++                List<Path> list = new ArrayList<>();
++                while (iterator.hasNext()) {
++                    Path path1 = iterator.next();
++                    list.add(path1);
++                }
++                Collections.sort(list, (a, b) -> b.toString().compareTo(a.toString()));
++                iterator = list.iterator();
++                //
++
+                 while (iterator.hasNext())
+                 {
+                     Path path1 = iterator.next();
+@@ -155,7 +171,7 @@
          return flag1;
      }
  

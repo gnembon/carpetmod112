@@ -20,7 +20,7 @@
 +        this.func_71560_a(new CommandEntityInfo());
 +        this.func_71560_a(new CommandSpawn());
 +        this.func_71560_a(new CommandTick());
-+        this.func_71560_a(new CommandTickHealth());
++        this.func_71560_a(new CommandProfile());
 +        this.func_71560_a(new CommandDistance());
 +        this.func_71560_a(new CommandBlockInfo());
 +        this.func_71560_a(new CommandCarpet());
