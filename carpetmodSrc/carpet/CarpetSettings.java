@@ -126,7 +126,6 @@ public class CarpetSettings
 
     @Rule(desc = "Sets the instant falling flag to true. The boolean used in world population that can be exploited turning true making falling blocks fall instantly.", category = CREATIVE, validator = "validateInstantFallingFlag")
     public static boolean instantFallingFlag = false;
-
     private static boolean validateInstantFallingFlag(boolean value) {
         if (value) {
             BlockFalling.fallInstantly = true;
@@ -677,6 +676,9 @@ public class CarpetSettings
     public static boolean playerChunkLoadingFix = false;
 
     // ===== FEATURES ===== //
+
+    @Rule(desc = "Allows empty shulkerboxes to stack in the player inventory.", category = FEATURE)
+    public static boolean stackableShulkersPlayerInventory;
 
     @Rule(desc = "Allows fake players to gain stats.", category = FEATURE)
     public static boolean fakePlayerStats;

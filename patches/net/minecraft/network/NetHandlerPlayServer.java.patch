@@ -127,7 +127,17 @@
          PacketThreadUtil.func_180031_a(p_175088_1_, this, this.field_147369_b.func_71121_q());
  
          if (this.field_147369_b.func_175149_v())
-@@ -1666,13 +1703,14 @@
+@@ -1147,7 +1184,9 @@
+             }
+             else
+             {
++                CarpetServer.playerInventoryStacking = true;
+                 ItemStack itemstack2 = this.field_147369_b.field_71070_bA.func_184996_a(p_147351_1_.func_149544_d(), p_147351_1_.func_149543_e(), p_147351_1_.func_186993_f(), this.field_147369_b);
++                CarpetServer.playerInventoryStacking = true;
+ 
+                 if (ItemStack.func_77989_b(p_147351_1_.func_149546_g(), itemstack2))
+                 {
+@@ -1666,13 +1705,14 @@
                      String s8 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
                      tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
@@ -148,7 +158,7 @@
                      tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
                      String s2 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184411_a(Mirror.valueOf(s2));
-@@ -1709,6 +1747,17 @@
+@@ -1709,6 +1749,17 @@
                          }
                          else
                          {
@@ -166,7 +176,7 @@
                              this.field_147369_b.func_146105_b(new TextComponentTranslation("structure_block.load_prepare", new Object[] {s4}), false);
                          }
                      }
-@@ -1750,5 +1799,9 @@
+@@ -1750,5 +1801,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }
