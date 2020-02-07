@@ -107,7 +107,7 @@ public class CarpetUpdater {
 
         name = carpetFileName + tag;
 
-        if (checkVersion(tag + ".zip")) return null;
+        if (checkVersion(tag)) return null;
         if (checkFile(name + ".zip")) return name;
 
         JsonArray array = rootobj.get("assets").getAsJsonArray();
