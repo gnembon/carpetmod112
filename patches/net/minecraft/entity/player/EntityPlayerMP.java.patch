@@ -150,15 +150,18 @@
      }
  
      public void func_70634_a(double p_70634_1_, double p_70634_3_, double p_70634_5_)
-@@ -1221,6 +1265,7 @@
+@@ -1221,8 +1265,10 @@
          }
          else
          {
 +            disableSpectatePlayers = false; // Rule to prevent /c camera mode to spectate other players, disable after exiting spectator mode CARPET-XCOM
              this.func_175399_e(this);
          }
++        gamemodeCamera = false;
  
-@@ -1439,4 +1484,49 @@
+         this.func_71016_p();
+         this.func_175136_bO();
+@@ -1439,4 +1485,56 @@
      {
          return this.field_193110_cw;
      }
@@ -189,6 +192,7 @@
 +    private float storePitch;
 +    private int storedDim;
 +    protected boolean disableSpectatePlayers;
++    private boolean gamemodeCamera;
 +    public void storeCameraData() {
 +        storeX = field_70165_t;
 +        storeY = field_70163_u;
@@ -197,6 +201,12 @@
 +        storePitch = field_70125_A;
 +        storedDim = field_71093_bK;
 +        disableSpectatePlayers = CarpetSettings.cameraModeDisableSpectatePlayers;
++    }
++    public void setGamemodeCamera(){
++        gamemodeCamera = true;
++    }
++    public boolean getGamemodeCamera(){
++        return gamemodeCamera;
 +    }
 +    public void moveToStoredCameraData(){
 +        if(CarpetSettings.cameraModeRestoreLocation){

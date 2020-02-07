@@ -53,11 +53,17 @@ public class CommandGMS extends CommandCarpetBase
         }
         else
         {
-            GameType gametype = GameType.parseGameTypeWithDefault("survival", GameType.NOT_SET);
-            EntityPlayer entityplayer = getCommandSenderAsPlayer(sender);
+            EntityPlayerMP entityplayer = getCommandSenderAsPlayer(sender);
+            setPlayerToSurvival(entityplayer);
+        }
+    }
+
+    public static void setPlayerToSurvival(EntityPlayerMP entityplayer) {
+        GameType gametype = GameType.parseGameTypeWithDefault("survival", GameType.NOT_SET);
+        if(entityplayer.interactionManager.getGameType() != GameType.SURVIVAL) {
             entityplayer.setGameType(gametype);
             entityplayer.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
-            if(entityplayer instanceof EntityPlayerMP)((EntityPlayerMP)entityplayer).moveToStoredCameraData();
+            if (entityplayer instanceof EntityPlayerMP) entityplayer.moveToStoredCameraData();
         }
     }
 
@@ -65,5 +71,6 @@ public class CommandGMS extends CommandCarpetBase
     {
         return Collections.<String>emptyList();
     }
+
 
 }
