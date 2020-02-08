@@ -12,8 +12,8 @@ buildscript
 	{
 		mavenCentral()
 		maven {url 'https://masa.dy.fi/maven/'}
-		maven {url 'http://files.minecraftforge.net/maven'}
-		maven {url 'http://plugins.gradle.org/m2/'}
+		maven {url 'https://files.minecraftforge.net/maven'}
+		maven {url 'https://plugins.gradle.org/m2/'}
 	}
 	dependencies
 	{
