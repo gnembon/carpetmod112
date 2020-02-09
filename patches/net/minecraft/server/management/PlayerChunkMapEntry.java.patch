@@ -1,9 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerChunkMapEntry.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerChunkMapEntry.java
-@@ -19,25 +19,31 @@
+@@ -19,25 +19,33 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
++import carpet.CarpetSettings;
 +import carpet.carpetclient.CarpetClientChunkLogger;
 +import carpet.helpers.IPlayerSensitiveTileEntity;
 +
@@ -24,18 +25,23 @@
 -    private boolean field_187290_j;
 +    public boolean field_187290_j; // CM: changed to public
  
-     public PlayerChunkMapEntry(PlayerChunkMap p_i1518_1_, int p_i1518_2_, int p_i1518_3_)
+-    public PlayerChunkMapEntry(PlayerChunkMap p_i1518_1_, int p_i1518_2_, int p_i1518_3_)
++    public PlayerChunkMapEntry(PlayerChunkMap mapIn, int chunkX, int chunkZ, EntityPlayerMP player)
      {
-         this.field_187282_b = p_i1518_1_;
-         this.field_187284_d = new ChunkPos(p_i1518_2_, p_i1518_3_);
+-        this.field_187282_b = p_i1518_1_;
+-        this.field_187284_d = new ChunkPos(p_i1518_2_, p_i1518_3_);
+-        this.field_187286_f = p_i1518_1_.func_72688_a().func_72863_F().func_186028_c(p_i1518_2_, p_i1518_3_);
++        this.field_187282_b = mapIn;
++        this.field_187284_d = new ChunkPos(chunkX, chunkZ);
 +        if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
 +            carpet.carpetclient.CarpetClientChunkLogger.setReason("Player loading chunk");
-         this.field_187286_f = p_i1518_1_.func_72688_a().func_72863_F().func_186028_c(p_i1518_2_, p_i1518_3_);
++        // Added a way to remove spectators loading chunks. CARPET-XCOM
++        if(!CarpetSettings.spectatorsDontLoadChunks || !player.func_175149_v()) this.field_187286_f = mapIn.func_72688_a().func_72863_F().func_186028_c(chunkX, chunkZ);
 +        carpet.carpetclient.CarpetClientChunkLogger.resetReason();
      }
  
      public ChunkPos func_187264_a()
-@@ -53,6 +59,14 @@
+@@ -53,6 +61,14 @@
          }
          else
          {
@@ -50,7 +56,7 @@
              if (this.field_187283_c.isEmpty())
              {
                  this.field_187289_i = this.field_187282_b.func_72688_a().func_82737_E();
-@@ -65,6 +79,9 @@
+@@ -65,6 +81,9 @@
                  this.func_187278_c(p_187276_1_);
              }
          }
@@ -60,7 +66,7 @@
      }
  
      public void func_187277_b(EntityPlayerMP p_187277_1_)
-@@ -80,9 +97,20 @@
+@@ -80,9 +99,20 @@
  
              if (this.field_187283_c.isEmpty())
              {
@@ -81,7 +87,7 @@
      }
  
      public boolean func_187268_a(boolean p_187268_1_)
-@@ -95,7 +123,10 @@
+@@ -95,7 +125,10 @@
          {
              if (p_187268_1_)
              {
@@ -92,7 +98,7 @@
              }
              else
              {
-@@ -248,12 +279,28 @@
+@@ -248,12 +281,28 @@
      {
          if (p_187273_1_ != null)
          {

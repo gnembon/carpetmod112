@@ -271,15 +271,18 @@ public class CarpetSettings
     @Rule(desc = "Observers don't pulse when placed", category = CREATIVE)
     public static boolean observersDoNonUpdate = false;
 
-    @Rule(desc = "Transparent observers, TNT and redstone blocks. May cause lighting artifacts", category = CREATIVE, validator = "validateFlyingMachineTransparent")
-    public static boolean flyingMachineTransparent = false;
 
     @Rule(desc = "Structure blocks remove entities in the bounding box when load entity option is enabled.", category = CREATIVE)
     public static boolean structuresReplaceEntities = false;
 
     @Rule(desc = "Allows to always be able to eat cakes.", category = CREATIVE)
-    public static boolean cakeAlwaysEat;
-    
+    public static boolean cakeAlwaysEat = false;
+
+    @Rule(desc = "Spectators can no longer load chunks. WARNING! this is a highly experimental feature, use with care and with chunk debug to understand the chunkloading side effects.", category = {CREATIVE, EXPERIMENTAL})
+    public static boolean spectatorsDontLoadChunks = false;
+
+    @Rule(desc = "Transparent observers, TNT and redstone blocks. May cause lighting artifacts", category = CREATIVE, validator = "validateFlyingMachineTransparent")
+    public static boolean flyingMachineTransparent = false;
     private static boolean validateFlyingMachineTransparent(boolean value) {
         int newOpacity = value ? 0 : 255;
         Blocks.OBSERVER.setLightOpacity(newOpacity);

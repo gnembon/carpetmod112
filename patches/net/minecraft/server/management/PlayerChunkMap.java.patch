@@ -29,7 +29,33 @@
      }
  
      public boolean func_152621_a(int p_152621_1_, int p_152621_2_)
-@@ -271,8 +281,16 @@
+@@ -232,20 +242,21 @@
+         return (PlayerChunkMapEntry)this.field_72700_c.get(func_187307_d(p_187301_1_, p_187301_2_));
+     }
+ 
+-    private PlayerChunkMapEntry func_187302_c(int p_187302_1_, int p_187302_2_)
++    private PlayerChunkMapEntry getOrCreateEntry(int chunkX, int chunkZ, EntityPlayerMP player)
+     {
+-        long i = func_187307_d(p_187302_1_, p_187302_2_);
++        long i = func_187307_d(chunkX, chunkZ);
+         PlayerChunkMapEntry playerchunkmapentry = (PlayerChunkMapEntry)this.field_72700_c.get(i);
+ 
+         if (playerchunkmapentry == null)
+         {
+-            playerchunkmapentry = new PlayerChunkMapEntry(this, p_187302_1_, p_187302_2_);
++            playerchunkmapentry = new PlayerChunkMapEntry(this, chunkX, chunkZ, player);
+             this.field_72700_c.put(i, playerchunkmapentry);
+             this.field_111193_e.add(playerchunkmapentry);
+ 
+             if (playerchunkmapentry.func_187266_f() == null)
+             {
+-                this.field_187311_h.add(playerchunkmapentry);
++                // Added a way to remove spectators loading chunks. CARPET-XCOM
++                if(!CarpetSettings.spectatorsDontLoadChunks || !player.func_175149_v()) this.field_187311_h.add(playerchunkmapentry);
+             }
+ 
+             if (!playerchunkmapentry.func_187272_b())
+@@ -271,8 +282,16 @@
  
      public void func_72683_a(EntityPlayerMP p_72683_1_)
      {
@@ -48,7 +74,16 @@
          p_72683_1_.field_71131_d = p_72683_1_.field_70165_t;
          p_72683_1_.field_71132_e = p_72683_1_.field_70161_v;
  
-@@ -290,8 +308,16 @@
+@@ -280,7 +299,7 @@
+         {
+             for (int l = j - this.field_72698_e; l <= j + this.field_72698_e; ++l)
+             {
+-                this.func_187302_c(k, l).func_187276_a(p_72683_1_);
++                this.getOrCreateEntry(k, l, p_72683_1_).func_187276_a(p_72683_1_);
+             }
+         }
+ 
+@@ -290,8 +309,16 @@
  
      public void func_72695_c(EntityPlayerMP p_72695_1_)
      {
@@ -67,7 +102,7 @@
  
          for (int k = i - this.field_72698_e; k <= i + this.field_72698_e; ++k)
          {
-@@ -327,16 +353,32 @@
+@@ -327,16 +354,32 @@
  
      public void func_72685_d(EntityPlayerMP p_72685_1_)
      {
@@ -104,7 +139,34 @@
              int i1 = this.field_72698_e;
              int j1 = i - k;
              int k1 = j - l;
-@@ -460,7 +502,28 @@
+@@ -349,7 +392,7 @@
+                     {
+                         if (!this.func_72684_a(l1, i2, k, l, i1))
+                         {
+-                            this.func_187302_c(l1, i2).func_187276_a(p_72685_1_);
++                            this.getOrCreateEntry(l1, i2, p_72685_1_).func_187276_a(p_72685_1_);
+                         }
+ 
+                         if (!this.func_72684_a(l1 - j1, i2 - k1, i, j, i1))
+@@ -396,7 +439,7 @@
+                     {
+                         for (int k1 = k - p_152622_1_; k1 <= k + p_152622_1_; ++k1)
+                         {
+-                            PlayerChunkMapEntry playerchunkmapentry = this.func_187302_c(j1, k1);
++                            PlayerChunkMapEntry playerchunkmapentry = this.getOrCreateEntry(j1, k1, entityplayermp);
+ 
+                             if (!playerchunkmapentry.func_187275_d(entityplayermp))
+                             {
+@@ -413,7 +456,7 @@
+                         {
+                             if (!this.func_72684_a(l, i1, j, k, p_152622_1_))
+                             {
+-                                this.func_187302_c(l, i1).func_187277_b(entityplayermp);
++                                this.getOrCreateEntry(l, i1, entityplayermp).func_187277_b(entityplayermp);
+                             }
+                         }
+                     }
+@@ -460,7 +503,28 @@
  
          if (chunk != null)
          {
