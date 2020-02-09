@@ -161,7 +161,19 @@
  
          this.func_71016_p();
          this.func_175136_bO();
-@@ -1439,4 +1485,56 @@
+@@ -1233,6 +1279,11 @@
+         return this.field_71134_c.func_73081_b() == GameType.SPECTATOR;
+     }
+ 
++    public boolean isSurvival()
++    {
++        return this.field_71134_c.func_73081_b() == GameType.SURVIVAL;
++    }
++
+     public boolean func_184812_l_()
+     {
+         return this.field_71134_c.func_73081_b() == GameType.CREATIVE;
+@@ -1439,4 +1490,56 @@
      {
          return this.field_193110_cw;
      }

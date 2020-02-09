@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -54,12 +53,12 @@ public class CommandGMS extends CommandCarpetBase
         else
         {
             EntityPlayerMP entityplayer = getCommandSenderAsPlayer(sender);
-            setPlayerToSurvival(entityplayer);
+            setPlayerToSurvival(server, entityplayer);
         }
     }
 
-    public static void setPlayerToSurvival(EntityPlayerMP entityplayer) {
-        GameType gametype = GameType.parseGameTypeWithDefault("survival", GameType.NOT_SET);
+    public static void setPlayerToSurvival(MinecraftServer server, EntityPlayerMP entityplayer) {
+        GameType gametype = server.getGameType();
         if(entityplayer.interactionManager.getGameType() != GameType.SURVIVAL) {
             entityplayer.setGameType(gametype);
             entityplayer.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));

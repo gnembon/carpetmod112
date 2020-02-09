@@ -5,9 +5,11 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 
@@ -59,9 +61,17 @@ public class CommandGMC extends CommandCarpetBase
             {
                 notifyCommandListener(sender, this, "Quick gamemode switching is disabled");
             }
-            GameType gametype = GameType.parseGameTypeWithDefault("spectator", GameType.NOT_SET);
             EntityPlayerMP entityplayer = getCommandSenderAsPlayer(sender);
-            if(entityplayer instanceof EntityPlayerMP)((EntityPlayerMP)entityplayer).storeCameraData();
+            if(entityplayer.isSpectator()) return;
+            if(CarpetSettings.cameraModeSurvivalRestrictions && entityplayer.isSurvival()) {
+                List<EntityMob> hostiles = sender.getEntityWorld().getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB(entityplayer.posX - 8.0D, entityplayer.posY - 5.0D, entityplayer.posZ - 8.0D, entityplayer.posX + 8.0D, entityplayer.posY + 5.0D, entityplayer.posZ + 8.0D), new EntityPlayer.SleepEnemyPredicate(entityplayer));
+                if(!entityplayer.onGround || entityplayer.isElytraFlying() || entityplayer.getFire() >= 0 || entityplayer.isInWater() || !hostiles.isEmpty()){
+                    notifyCommandListener(sender, this, "Restricted use to: on ground, not in water, not on fire, not flying/falling, not near hostile mobs.");
+                    return;
+                }
+            }
+            entityplayer.storeCameraData();
+            GameType gametype = GameType.parseGameTypeWithDefault("spectator", GameType.NOT_SET);
             entityplayer.setGameType(gametype);
             PotionEffect potioneffect = new PotionEffect(Potion.getPotionFromResourceLocation("night_vision"), 999999, 0, false, false);
             entityplayer.addPotionEffect(potioneffect);

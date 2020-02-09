@@ -119,19 +119,23 @@ public class CarpetSettings
     @Rule(desc = "Enables /waypoint for saving coordinates", category = COMMANDS)
     public static boolean commandWaypoint = true;
 
+    @Rule(desc = "Allows the use of scoreboardPublic, a lower permition level score display.", category = COMMANDS)
+    public static boolean commandPublicScoreboard = true;
+
     @Rule(desc = "Disables players in /c from spectating other players", category = COMMANDS)
     public static boolean cameraModeDisableSpectatePlayers;
 
     @Rule(desc = "Places players back to the original location when using camera mode by using /c then /s", category = COMMANDS)
     public static boolean cameraModeRestoreLocation;
 
-    @Rule(desc = "Allows the use of scoreboardPublic, a lower permition level score display.", category = COMMANDS)
-    public static boolean commandPublicScoreboard = true;
+    @Rule(desc = "Restricts the use of /c in survival mode.", category = COMMANDS)
+    public static boolean cameraModeSurvivalRestrictions;
 
     // ===== CREATIVE TOOLS ===== //
 
     @Rule(desc = "Sets the instant falling flag to true. The boolean used in world population that can be exploited turning true making falling blocks fall instantly.", category = CREATIVE, validator = "validateInstantFallingFlag")
     public static boolean instantFallingFlag = false;
+
     private static boolean validateInstantFallingFlag(boolean value) {
         if (value) {
             BlockFalling.fallInstantly = true;

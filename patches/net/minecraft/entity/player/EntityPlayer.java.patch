@@ -202,3 +202,17 @@
  
      public static enum EnumChatVisibility
      {
+@@ -2333,11 +2419,11 @@
+         }
+     }
+ 
+-    static class SleepEnemyPredicate implements Predicate<EntityMob>
++    public static class SleepEnemyPredicate implements Predicate<EntityMob>
+         {
+             private final EntityPlayer field_192387_a;
+ 
+-            private SleepEnemyPredicate(EntityPlayer p_i47461_1_)
++            public SleepEnemyPredicate(EntityPlayer p_i47461_1_)
+             {
+                 this.field_192387_a = p_i47461_1_;
+             }
