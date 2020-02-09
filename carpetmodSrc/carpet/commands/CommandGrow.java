@@ -1,5 +1,6 @@
 package carpet.commands;
 
+import carpet.CarpetSettings;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -20,11 +21,6 @@ public class CommandGrow extends CommandCarpetBase {
     private static final ItemStack STACK = new ItemStack(Items.DYE, 1, EnumDyeColor.WHITE.getDyeDamage());
 
     @Override
-    public int getRequiredPermissionLevel() {
-        return 0;
-    }
-
-    @Override
     public String getName() {
         return "grow";
     }
@@ -36,6 +32,8 @@ public class CommandGrow extends CommandCarpetBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+        if(!command_enabled("commandGrow", sender)) return;
+
         if (args.length < 3) {
             throw new WrongUsageException(this.getUsage(sender));
         }

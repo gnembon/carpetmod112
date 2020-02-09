@@ -57,6 +57,9 @@ public class CarpetSettings
      * Rules in this category should start with the "command" prefix
      */
 
+    @Rule(desc = "Enables /grow command for growing plants", category = COMMANDS)
+    public static boolean commandGrow = true;
+
     @Rule(desc = "Enables /spawn command for spawn tracking", category = COMMANDS)
     public static boolean commandSpawn = true;
 
