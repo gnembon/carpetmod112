@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockSponge.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockSponge.java
-@@ -18,6 +18,9 @@
+@@ -9,15 +9,21 @@
+ import net.minecraft.block.state.BlockStateContainer;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
++import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.init.Blocks;
++import net.minecraft.init.SoundEvents;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.NonNullList;
++import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.Tuple;
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.text.translation.I18n;
  import net.minecraft.world.World;
  
@@ -10,7 +22,7 @@
  public class BlockSponge extends Block
  {
      public static final PropertyBool field_176313_a = PropertyBool.func_177716_a("wet");
-@@ -119,6 +122,38 @@
+@@ -119,6 +125,50 @@
          return ((Boolean)p_176201_1_.func_177229_b(field_176313_a)).booleanValue() ? 1 : 0;
      }
  
@@ -36,13 +48,25 @@
 +                touches_wet = true;
 +            }
 +        }
-+        if ((state.func_177229_b(field_176313_a)).booleanValue() && !touches_water && worldIn.func_175678_i(pos.func_177984_a()) && worldIn.func_72935_r() && !worldIn.func_175727_C(pos.func_177984_a()))
++        if (state.func_177229_b(field_176313_a).booleanValue() && !touches_water && worldIn.func_175678_i(pos.func_177984_a()) && worldIn.func_72935_r() && !worldIn.func_175727_C(pos.func_177984_a()))
 +        {
 +            worldIn.func_180501_a(pos, state.func_177226_a(field_176313_a, Boolean.valueOf(false)), 2);
 +        }
-+        else if ( !(state.func_177229_b(field_176313_a)).booleanValue() && (touches_wet || touches_water || worldIn.func_175727_C(pos.func_177984_a())) && random.nextInt(3)==0)
++        else if ( !state.func_177229_b(field_176313_a).booleanValue() && (touches_wet || touches_water || worldIn.func_175727_C(pos.func_177984_a())) && random.nextInt(3)==0)
 +        {
 +            worldIn.func_180501_a(pos, state.func_177226_a(field_176313_a, Boolean.valueOf(true)), 2);
++        }
++    }
++
++    @Override
++    public void func_180633_a(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack)
++    {
++        super.func_180633_a(worldIn, pos, state, placer, stack);
++
++        if (worldIn.field_73011_w.func_177495_o() && CarpetSettings.spongesDryInTheNether && state.func_177229_b(field_176313_a).booleanValue())
++        {
++            worldIn.func_184133_a(null, pos, SoundEvents.field_187646_bt, SoundCategory.BLOCKS, 0.5F, 2.6F + (worldIn.field_73012_v.nextFloat() - worldIn.field_73012_v.nextFloat()) * 0.8F);
++            worldIn.func_180501_a(pos, state.func_177226_a(field_176313_a, Boolean.valueOf(false)), 2);
 +        }
 +    }
 +
