@@ -274,7 +274,6 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
         }
         if (this.amountCrafted > 0)
         {
-            System.out.println("crafting item stat");
             stack.onCrafting(player.world, player, this.amountCrafted);
         }
 
