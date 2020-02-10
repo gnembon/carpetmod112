@@ -428,6 +428,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Fixes the elytra check similar to 1.15 where the player do not have to fall to deploy elytra anymore.", category = FIX)
+    public static boolean elytraCheckFix;
+
     @Rule(desc = "Fixes the speed los on entitys after reload.", category = FIX)
     public static boolean reloadEntitySpeedlossFix;
 
