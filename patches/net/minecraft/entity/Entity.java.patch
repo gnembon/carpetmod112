@@ -147,7 +147,7 @@
          if (!this.field_70128_L && s != null && !this.func_184218_aH())
          {
 +            // Fix for fixing duplication caused by riding entitys into unloaded chunks CARPET-XCOM
-+            if(CarpetSettings.duplicationFixRidingEntitys && !hasPlayerPassenger(this)) return false;
++            if(CarpetSettings.duplicationFixRidingEntitys && hasPlayerPassenger(this)) return false;
 +
              p_70039_1_.func_74778_a("id", s);
              this.func_189511_e(p_70039_1_);
