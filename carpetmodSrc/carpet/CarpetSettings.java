@@ -428,6 +428,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Fixes item desynchs when transfering items.", category = FIX)
+    public static boolean itemDesynchFix = false;
+
     @Rule(desc = "Fixes the elytra check similar to 1.15 where the player do not have to fall to deploy elytra anymore.", category = FIX)
     public static boolean elytraCheckFix;
 
