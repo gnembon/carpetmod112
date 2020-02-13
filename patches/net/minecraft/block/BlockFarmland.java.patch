@@ -9,7 +9,18 @@
  import net.minecraft.block.material.Material;
  import net.minecraft.block.properties.IProperty;
  import net.minecraft.block.properties.PropertyInteger;
-@@ -86,7 +88,11 @@
+@@ -81,12 +83,21 @@
+     protected static void func_190970_b(World p_190970_0_, BlockPos p_190970_1_)
+     {
+         p_190970_0_.func_175656_a(p_190970_1_, Blocks.field_150346_d.func_176223_P());
+-        AxisAlignedBB axisalignedbb = field_194405_c.func_186670_a(p_190970_1_);
++        AxisAlignedBB axisalignedbb;
++        if(!CarpetSettings.farmlandBug){
++            axisalignedbb = field_194405_c.func_186670_a(p_190970_1_);
++        } else {
++            axisalignedbb = field_185665_b.func_186670_a(p_190970_1_);
++        }
+ 
          for (Entity entity : p_190970_0_.func_72839_b((Entity)null, axisalignedbb))
          {
              double d0 = Math.min(axisalignedbb.field_72337_e - axisalignedbb.field_72338_b, axisalignedbb.field_72337_e - entity.func_174813_aQ().field_72338_b);
