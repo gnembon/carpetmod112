@@ -5,7 +5,7 @@
  import net.minecraft.util.math.Vec3d;
  
 +import carpet.CarpetSettings;
-+import carpet.helpers.OptimizedExplosion;
++import carpet.helpers.OptimizedTNT;
 +
  public class Explosion
  {
@@ -47,7 +47,7 @@
 +         * CARPET-XCOM
 +         */
 +        if(CarpetSettings.optimizedTNT){
-+            OptimizedExplosion.doExplosionA(this);
++            OptimizedTNT.doExplosionA(this);
 +            return;
 +        }
 +
@@ -73,7 +73,7 @@
 +         * CARPET-MASA
 +         */
 +        if (CarpetSettings.optimizedTNT) {
-+            OptimizedExplosion.doExplosionB(this, p_77279_1_);
++            OptimizedTNT.doExplosionB(this, p_77279_1_);
 +            return;
 +        }
          this.field_77287_j.func_184148_a((EntityPlayer)null, this.field_77284_b, this.field_77285_c, this.field_77282_d, SoundEvents.field_187539_bB, SoundCategory.BLOCKS, 4.0F, (1.0F + (this.field_77287_j.field_73012_v.nextFloat() - this.field_77287_j.field_73012_v.nextFloat()) * 0.2F) * 0.7F);

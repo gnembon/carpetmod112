@@ -1,7 +1,7 @@
 package carpet.commands;
 
 import carpet.CarpetSettings;
-import carpet.helpers.OptimizedExplosion;
+import carpet.helpers.OptimizedTNT;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -47,7 +47,7 @@ public class CommandTNT extends CommandCarpetBase{
             y = (int) Math.round(parseCoordinate(sender.getPosition().getY(), args[1], false).getResult());
             z = (int) Math.round(parseCoordinate(sender.getPosition().getZ(), args[2], false).getResult());
             tntScanPos = new BlockPos(x, y, z);
-            OptimizedExplosion.setBlastChanceLocation(tntScanPos);
+            OptimizedTNT.setBlastChanceLocation(tntScanPos);
             notifyCommandListener(sender, this,
                     String.format("TNT scanning block at: %d %d %d", x, y, z));
         } else {

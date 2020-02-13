@@ -1,5 +1,5 @@
 package carpet.helpers;
-//Author: masa
+//Author: xcom & masa
 
 import java.math.RoundingMode;
 import java.text.NumberFormat;
@@ -39,7 +39,7 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-public class OptimizedExplosion
+public class OptimizedTNT
 {
     private static List<Entity> entitylist;
     private static Vec3d vec3dmem;
@@ -47,7 +47,6 @@ public class OptimizedExplosion
     // For disabling the explosion particles and sound
     public static int explosionSound = 0;
 
-    // masa's optimizations
     private static Object2DoubleOpenHashMap<Pair<Vec3d, AxisAlignedBB>> densityCache = new Object2DoubleOpenHashMap<>();
     private static MutablePair<Vec3d, AxisAlignedBB> pairMutable = new MutablePair<>();
     private static Object2ObjectOpenHashMap<BlockPos, IBlockState> stateCache = new Object2ObjectOpenHashMap<>();
@@ -550,4 +549,6 @@ public class OptimizedExplosion
             );
         }
     }
+
+
 }
