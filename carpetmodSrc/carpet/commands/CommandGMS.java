@@ -60,9 +60,9 @@ public class CommandGMS extends CommandCarpetBase
     public static void setPlayerToSurvival(MinecraftServer server, EntityPlayerMP entityplayer) {
         GameType gametype = server.getGameType();
         if(entityplayer.interactionManager.getGameType() != GameType.SURVIVAL) {
+            if (entityplayer instanceof EntityPlayerMP) entityplayer.moveToStoredCameraData();
             entityplayer.setGameType(gametype);
             entityplayer.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
-            if (entityplayer instanceof EntityPlayerMP) entityplayer.moveToStoredCameraData();
         }
     }
 
