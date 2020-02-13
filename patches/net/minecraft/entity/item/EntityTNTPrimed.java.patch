@@ -68,7 +68,47 @@
          this.func_184534_a(80);
          this.field_70169_q = p_i1730_2_;
          this.field_70167_r = p_i1730_4_;
-@@ -75,11 +110,33 @@
+@@ -68,18 +103,72 @@
+             this.field_70181_x -= 0.03999999910593033D;
+         }
+ 
+-        this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
++        // Optimized TNT movement skipping the move code given its expensive if identical tnt movement is done. CARPET-XCOM
++        if(CarpetSettings.TNTmovementOptimization) {
++            this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
++        } else {
++            if(!cacheMatching()) {
++                cache[0] = field_70165_t;
++                cache[1] = field_70163_u;
++                cache[2] = field_70161_v;
++                cache[3] = field_70159_w;
++                cache[4] = field_70181_x;
++                cache[5] = field_70179_y;
++                this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
++                if (!field_70128_L) {
++                    cache[6] = field_70165_t;
++                    cache[7] = field_70163_u;
++                    cache[8] = field_70161_v;
++                    cache[9] = field_70159_w;
++                    cache[10] = field_70181_x;
++                    cache[11] = field_70179_y;
++                    cacheBool[0] = field_70134_J;
++                    cacheBool[1] = field_70122_E;
++                } else {
++                    cache[0] = Integer.MAX_VALUE;
++                }
++            } else {
++                this.func_70107_b(cache[6], cache[7], cache[8]);
++                field_70159_w = cache[9];
++                field_70181_x = cache[10];
++                field_70179_y = cache[11];
++                field_70134_J = cacheBool[0];
++                field_70122_E = cacheBool[1];
++            }
++        }
+         this.field_70159_w *= 0.9800000190734863D;
+         this.field_70181_x *= 0.9800000190734863D;
+         this.field_70179_y *= 0.9800000190734863D;
  
          if (this.field_70122_E)
          {
@@ -102,7 +142,7 @@
          --this.field_70516_a;
  
          if (this.field_70516_a <= 0)
-@@ -100,8 +157,14 @@
+@@ -100,8 +189,14 @@
  
      private void func_70515_d()
      {
@@ -118,3 +158,15 @@
      }
  
      protected void func_70014_b(NBTTagCompound p_70014_1_)
+@@ -148,4 +243,11 @@
+     {
+         return this.field_70516_a;
+     }
++
++    // Optimization methods CARPET-XCOM
++    private static double[] cache = new double[12];
++    private static boolean[] cacheBool = new boolean[2];
++    private boolean cacheMatching() {
++        return cache[0] == field_70165_t && cache[1] == field_70163_u && cache[2] == field_70161_v && cache[3] == field_70159_w && cache[4] == field_70181_x && cache[5] == field_70179_y;
++    }
+ }

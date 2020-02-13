@@ -428,6 +428,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Optimizes TNT movement when using cannons.", category = OPTIMIZATIONS)
+    public static boolean TNTmovementOptimization = false;
+
     @Rule(desc = "Fixes item desynchs when transfering items.", category = FIX)
     public static boolean itemDesynchFix = false;
 
