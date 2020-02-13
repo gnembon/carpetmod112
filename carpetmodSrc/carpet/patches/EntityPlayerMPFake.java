@@ -58,7 +58,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityTeleport(instance),instance.dimension);
         server.getPlayerList().serverUpdateMovingPlayer(instance);
         instance.dataManager.set(PLAYER_MODEL_FLAG, (byte) 0x7f); // show all model layers (incl. capes)
-        createAndAddFakePlayerToTeamBot(server, instance);
+        createAndAddFakePlayerToTeamBot(instance);
         return instance;
     }
 
@@ -83,7 +83,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityHeadLook(playerShadow, (byte)(player.rotationYawHead * 256 / 360) ),playerShadow.dimension);
         server.getPlayerList().sendPacketToAllPlayers(new SPacketPlayerListItem(SPacketPlayerListItem.Action.ADD_PLAYER, playerShadow));
         server.getPlayerList().serverUpdateMovingPlayer(playerShadow);
-        createAndAddFakePlayerToTeamBot(server, playerShadow);
+        createAndAddFakePlayerToTeamBot(playerShadow);
         return playerShadow;
     }
 
@@ -124,6 +124,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     private void logout() {
         this.dismountRidingEntity();
         getServer().getPlayerList().playerLoggedOut(this);
+        removePlayerFromTeams(this);
     }
 
     private void playerMoved()
@@ -151,9 +152,9 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         setLocationAndAngles(setX, setY, setZ, setYaw, setPitch);
     }
 
-    private static void createAndAddFakePlayerToTeamBot(MinecraftServer server, EntityPlayerMPFake player)
+    private static void createAndAddFakePlayerToTeamBot(EntityPlayerMPFake player)
     {
-        Scoreboard scoreboard = server.getWorld(0).getScoreboard();
+        Scoreboard scoreboard = player.getServer().getWorld(0).getScoreboard();
         if(!scoreboard.getTeamNames().contains("Bots")){
             scoreboard.createTeam("Bots");
             ScorePlayerTeam scoreplayerteam = scoreboard.getTeam("Bots");
@@ -163,5 +164,10 @@ public class EntityPlayerMPFake extends EntityPlayerMP
             scoreplayerteam.setSuffix(TextFormatting.RESET.toString());
         }
         scoreboard.addPlayerToTeam(player.getName(), "Bots");
+    }
+
+    private static void removePlayerFromTeams(EntityPlayerMPFake player){
+        Scoreboard scoreboard = player.getServer().getWorld(0).getScoreboard();
+        scoreboard.removePlayerFromTeams(player.getName());
     }
 }
