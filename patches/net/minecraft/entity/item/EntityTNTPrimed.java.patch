@@ -74,7 +74,7 @@
  
 -        this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
 +        // Optimized TNT movement skipping the move code given its expensive if identical tnt movement is done. CARPET-XCOM
-+        if(CarpetSettings.TNTmovementOptimization) {
++        if(!CarpetSettings.TNTmovementOptimization) {
 +            this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
 +        } else {
 +            if(!cacheMatching()) {
