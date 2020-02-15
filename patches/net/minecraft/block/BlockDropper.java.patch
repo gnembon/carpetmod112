@@ -1,0 +1,128 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDropper.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDropper.java
+@@ -1,16 +1,31 @@
+ package net.minecraft.block;
+ 
++import carpet.CarpetSettings;
++import carpet.helpers.AutoCraftingDropperHelper;
++import carpet.utils.VoidContainer;
++import net.minecraft.block.state.IBlockState;
+ import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
+ import net.minecraft.dispenser.IBehaviorDispenseItem;
++import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.init.Blocks;
++import net.minecraft.init.SoundEvents;
+ import net.minecraft.inventory.IInventory;
++import net.minecraft.inventory.InventoryCrafting;
+ import net.minecraft.item.ItemStack;
++import net.minecraft.item.crafting.CraftingManager;
++import net.minecraft.item.crafting.IRecipe;
++import net.minecraft.network.play.server.SPacketCustomSound;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.tileentity.TileEntityDispenser;
+ import net.minecraft.tileentity.TileEntityDropper;
+ import net.minecraft.tileentity.TileEntityHopper;
+ import net.minecraft.util.EnumFacing;
++import net.minecraft.util.NonNullList;
++import net.minecraft.util.SoundCategory;
+ import net.minecraft.util.math.BlockPos;
++import net.minecraft.util.math.Vec3d;
+ import net.minecraft.world.World;
++import net.minecraft.world.WorldServer;
+ 
+ public class BlockDropper extends BlockDispenser
+ {
+@@ -28,6 +43,13 @@
+ 
+     protected void func_176439_d(World p_176439_1_, BlockPos p_176439_2_)
+     {
++        // [CM] Auto crafting table - start
++        if (CarpetSettings.autoCraftingDropper)
++        {
++            if (this.autoCraftingDispense(p_176439_1_, p_176439_2_))
++                return;
++        }
++        // [CM] Auto crafting table - end
+         BlockSourceImpl blocksourceimpl = new BlockSourceImpl(p_176439_1_, p_176439_2_);
+         TileEntityDispenser tileentitydispenser = (TileEntityDispenser)blocksourceimpl.func_150835_j();
+ 
+@@ -74,4 +96,79 @@
+             }
+         }
+     }
++    
++    // [CM] Auto crafting dropper
++    @Override
++    public int func_180641_l(IBlockState blockState, World worldIn, BlockPos pos)
++    {
++        if (CarpetSettings.autoCraftingDropper)
++        {
++            BlockPos front = pos.func_177972_a(worldIn.func_180495_p(pos).func_177229_b(BlockDispenser.field_176441_a));
++            if (worldIn.func_180495_p(front).func_177230_c() == Blocks.field_150462_ai)
++            {
++                TileEntityDispenser dispenserTE = (TileEntityDispenser) worldIn.func_175625_s(pos);
++                if (dispenserTE != null)
++                {
++                    int filled = 0;
++                    for (ItemStack stack : dispenserTE.func_190576_q())
++                    {
++                        if (!stack.func_190926_b()) filled++;
++                    }
++                    return (filled * 15) / 9;
++                }
++            }
++        }
++        return super.func_180641_l(blockState, worldIn, pos);
++    }
++    
++    private boolean autoCraftingDispense(World worldIn, BlockPos pos)
++    {
++        BlockPos front = pos.func_177972_a(worldIn.func_180495_p(pos).func_177229_b(BlockDispenser.field_176441_a));
++        if (worldIn.func_180495_p(front).func_177230_c() != Blocks.field_150462_ai)
++            return false;
++        TileEntityDispenser dispenserTE = (TileEntityDispenser) worldIn.func_175625_s(pos);
++        if (dispenserTE == null)
++            return false;
++        InventoryCrafting craftingInventory = new InventoryCrafting(new VoidContainer(), 3, 3);
++        for (int i = 0; i < 9; i++)
++            craftingInventory.func_70299_a(i, dispenserTE.func_70301_a(i));
++        IRecipe recipe = CraftingManager.func_192413_b(craftingInventory, worldIn);
++        if (recipe == null)
++            return false;
++        // crafting it
++        Vec3d target = new Vec3d(front).func_72441_c(0.5, 0.2, 0.5);
++        ItemStack result = recipe.func_77572_b(craftingInventory);
++        AutoCraftingDropperHelper.spawnItemStack(worldIn, target.field_72450_a, target.field_72448_b, target.field_72449_c, result);
++        
++        // copied from CraftingResultSlot.onTakeItem()
++        NonNullList<ItemStack> nonNullList = recipe.func_179532_b(craftingInventory);
++        for (int i = 0; i < nonNullList.size(); ++i)
++        {
++            ItemStack itemStack_2 = dispenserTE.func_70301_a(i);
++            ItemStack itemStack_3 = nonNullList.get(i);
++            if (!itemStack_2.func_190926_b())
++            {
++                dispenserTE.func_70298_a(i, 1);
++                itemStack_2 = dispenserTE.func_70301_a(i);
++            }
++            
++            if (!itemStack_3.func_190926_b())
++            {
++                if (itemStack_2.func_190926_b())
++                {
++                    dispenserTE.func_70299_a(i, itemStack_3);
++                }
++                else if (ItemStack.func_185132_d(itemStack_2, itemStack_3) && ItemStack.func_77970_a(itemStack_2, itemStack_3))
++                {
++                    itemStack_3.func_190917_f(itemStack_2.func_190916_E());
++                    dispenserTE.func_70299_a(i, itemStack_3);
++                }
++                else
++                {
++                    AutoCraftingDropperHelper.spawnItemStack(worldIn, target.field_72450_a, target.field_72448_b, target.field_72449_c, itemStack_3);
++                }
++            }
++        }
++        return true;
++    }
+ }
