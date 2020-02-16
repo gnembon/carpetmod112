@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
 +++ ../src-work/minecraft/net/minecraft/server/management/PlayerInteractionManager.java
-@@ -26,6 +26,10 @@
+@@ -8,6 +8,7 @@
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.entity.player.EntityPlayerMP;
++import net.minecraft.init.Blocks;
+ import net.minecraft.inventory.IInventory;
+ import net.minecraft.item.ItemBlock;
+ import net.minecraft.item.ItemStack;
+@@ -26,6 +27,10 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
@@ -11,7 +19,7 @@
  public class PlayerInteractionManager
  {
      public World field_73092_a;
-@@ -137,6 +141,12 @@
+@@ -137,6 +142,12 @@
  
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
@@ -24,7 +32,7 @@
          if (this.func_73083_d())
          {
              if (!this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_))
-@@ -191,6 +201,11 @@
+@@ -191,6 +202,11 @@
                  this.field_73088_d = true;
                  this.field_180240_f = p_180784_1_;
                  int i = (int)(f * 10.0F);
@@ -36,7 +44,7 @@
                  this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), p_180784_1_, i);
                  this.field_73094_o = i;
              }
-@@ -235,8 +250,10 @@
+@@ -235,8 +251,10 @@
      {
          IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180235_1_);
          iblockstate.func_177230_c().func_176208_a(this.field_73092_a, p_180235_1_, iblockstate, this.field_73090_b);
@@ -48,7 +56,7 @@
          if (flag)
          {
              iblockstate.func_177230_c().func_176206_d(this.field_73092_a, p_180235_1_, iblockstate);
-@@ -288,7 +305,13 @@
+@@ -288,7 +306,13 @@
                  }
  
                  this.field_73092_a.func_180498_a(this.field_73090_b, 2001, p_180237_1_, Block.func_176210_f(iblockstate));
@@ -63,16 +71,17 @@
  
                  if (this.func_73083_d())
                  {
-@@ -311,6 +334,8 @@
+@@ -311,6 +335,9 @@
                      }
                  }
  
-+                if(CarpetSettings.duplicationFixUpdateSuppression) this.func_180235_c(p_180237_1_);
++                // Update suppression duplication fix removing the block post inventory updates with exception to flowing water as ice can turn into flowing water CARPET-XCOM
++                if(CarpetSettings.duplicationFixUpdateSuppression && field_73092_a.func_180495_p(p_180237_1_) != Blocks.field_150358_i.func_176223_P()) this.func_180235_c(p_180237_1_);
 +
                  return flag1;
              }
          }
-@@ -402,10 +427,22 @@
+@@ -402,10 +429,22 @@
          }
          else
          {
