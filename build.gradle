@@ -27,6 +27,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
 apply plugin: 'idea'
+apply plugin: 'application'
 def patcher_plugin = plugins.apply 'net.minecraftforge.gradle.patcher'
 apply plugin: 'de.undercouch.download'
 apply plugin: "com.dorongold.task-tree" // For debug purposes
@@ -67,7 +68,17 @@ allprojects {
 	}
 	configurations.compile.extendsFrom configurations.forgeGradleMcDeps
 }
-
+sourceSets {
+	main {
+		java {
+			srcDirs = ['src']
+			mainClassName = 'net.minecraft.server.MinecraftServer'
+		}
+	}
+}
+File runningDir = new File('build/run/')
+runningDir.mkdirs()
+tasks.run.workingDir = runningDir
 // ForgeGradle settings
 minecraft
 {
