@@ -135,6 +135,9 @@ public class CommandPlayer extends CommandCarpetBase
             {
                 throw new WrongUsageException("player names can only be 3 to 16 chars long");
             }
+            if (isWhitelistedPlayer(server, playerName) && !sender.canUseCommand(2, "gamemode")) {
+                throw new CommandException("You are not allowed to spawn a whitelisted player");
+            }
             Vec3d vec3d = sender.getPositionVector();
             double d0 = vec3d.x;
             double d1 = vec3d.y;
@@ -279,6 +282,13 @@ public class CommandPlayer extends CommandCarpetBase
             }
         }
         throw new WrongUsageException("unknown action: "+action);
+    }
+
+    private boolean isWhitelistedPlayer(MinecraftServer server, String playerName) {
+        for(String s : server.getPlayerList().getWhitelistedPlayerNames()){
+            if(s.toLowerCase().equals(playerName.toLowerCase())) return true;
+        }
+        return false;
     }
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
