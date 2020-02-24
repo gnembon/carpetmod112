@@ -1,14 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockContainer.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockContainer.java
-@@ -1,6 +1,7 @@
+@@ -1,6 +1,8 @@
  package net.minecraft.block;
  
  import javax.annotation.Nullable;
 +
++import carpet.CarpetSettings;
  import net.minecraft.block.material.MapColor;
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
-@@ -18,6 +19,8 @@
+@@ -9,6 +11,7 @@
+ import net.minecraft.init.Enchantments;
+ import net.minecraft.init.Items;
+ import net.minecraft.item.Item;
++import net.minecraft.item.ItemShulkerBox;
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.stats.StatList;
+ import net.minecraft.tileentity.TileEntity;
+@@ -18,6 +21,8 @@
  import net.minecraft.world.IWorldNameable;
  import net.minecraft.world.World;
  
@@ -17,7 +26,7 @@
  public abstract class BlockContainer extends Block implements ITileEntityProvider
  {
      protected BlockContainer(Material p_i45386_1_)
-@@ -56,7 +59,10 @@
+@@ -56,7 +61,10 @@
      {
          if (p_180657_5_ instanceof IWorldNameable && ((IWorldNameable)p_180657_5_).func_145818_k_())
          {
@@ -29,3 +38,15 @@
              p_180657_2_.func_71020_j(0.005F);
  
              if (p_180657_1_.field_72995_K)
+@@ -71,6 +79,11 @@
+             {
+                 return;
+             }
++            // Remove ability to drop shulker boxes given the set block to air already does it. This causes duplication with duplicationFixUpdateSuppression.
++            // In vanilla this behavior never triggers CARPET-XCOM
++            if(CarpetSettings.duplicationFixUpdateSuppression && item instanceof ItemShulkerBox) {
++                return;
++            }
+ 
+             ItemStack itemstack = new ItemStack(item, this.func_149745_a(p_180657_1_.field_73012_v));
+             itemstack.func_151001_c(((IWorldNameable)p_180657_5_).func_70005_c_());
