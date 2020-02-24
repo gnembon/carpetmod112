@@ -1,0 +1,27 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandTime.java
++++ ../src-work/minecraft/net/minecraft/command/CommandTime.java
+@@ -83,6 +83,15 @@
+                     func_152373_a(p_184881_2_, this, "commands.time.query", new Object[] {i});
+                     return;
+                 }
++
++                // Added ability to query server time. CARPET-XCOM
++                if ("servertime".equals(p_184881_3_[1]))
++                {
++                    int i = (int)(p_184881_1_.func_71259_af() % 2147483647L);
++                    p_184881_2_.func_174794_a(CommandResultStats.Type.QUERY_RESULT, i);
++                    func_152373_a(p_184881_2_, this, "commands.time.query", new Object[] {i});
++                    return;
++                }
+             }
+         }
+ 
+@@ -101,7 +110,7 @@
+         }
+         else
+         {
+-            return p_184883_3_.length == 2 && "query".equals(p_184883_3_[0]) ? func_71530_a(p_184883_3_, new String[] {"daytime", "gametime", "day"}) : Collections.emptyList();
++            return p_184883_3_.length == 2 && "query".equals(p_184883_3_[0]) ? func_71530_a(p_184883_3_, new String[] {"daytime", "gametime", "day", "servertime"}) : Collections.emptyList();
+         }
+     }
+ 
