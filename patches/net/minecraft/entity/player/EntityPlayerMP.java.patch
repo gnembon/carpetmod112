@@ -7,7 +7,39 @@
  import com.google.common.collect.Lists;
  import com.mojang.authlib.GameProfile;
  import io.netty.buffer.Unpooled;
-@@ -114,6 +115,15 @@
+@@ -43,30 +44,7 @@
+ import net.minecraft.network.Packet;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.network.play.client.CPacketClientSettings;
+-import net.minecraft.network.play.server.SPacketAnimation;
+-import net.minecraft.network.play.server.SPacketCamera;
+-import net.minecraft.network.play.server.SPacketChangeGameState;
+-import net.minecraft.network.play.server.SPacketChat;
+-import net.minecraft.network.play.server.SPacketCloseWindow;
+-import net.minecraft.network.play.server.SPacketCombatEvent;
+-import net.minecraft.network.play.server.SPacketCustomPayload;
+-import net.minecraft.network.play.server.SPacketDestroyEntities;
+-import net.minecraft.network.play.server.SPacketEffect;
+-import net.minecraft.network.play.server.SPacketEntityEffect;
+-import net.minecraft.network.play.server.SPacketEntityStatus;
+-import net.minecraft.network.play.server.SPacketOpenWindow;
+-import net.minecraft.network.play.server.SPacketPlayerAbilities;
+-import net.minecraft.network.play.server.SPacketRemoveEntityEffect;
+-import net.minecraft.network.play.server.SPacketResourcePackSend;
+-import net.minecraft.network.play.server.SPacketSetExperience;
+-import net.minecraft.network.play.server.SPacketSetSlot;
+-import net.minecraft.network.play.server.SPacketSignEditorOpen;
+-import net.minecraft.network.play.server.SPacketSoundEffect;
+-import net.minecraft.network.play.server.SPacketUpdateHealth;
+-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+-import net.minecraft.network.play.server.SPacketUseBed;
+-import net.minecraft.network.play.server.SPacketWindowItems;
+-import net.minecraft.network.play.server.SPacketWindowProperty;
++import net.minecraft.network.play.server.*;
+ import net.minecraft.potion.PotionEffect;
+ import net.minecraft.scoreboard.IScoreCriteria;
+ import net.minecraft.scoreboard.Score;
+@@ -114,6 +92,15 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -23,7 +55,7 @@
  public class EntityPlayerMP extends EntityPlayer implements IContainerListener
  {
      private static final Logger field_147102_bM = LogManager.getLogger();
-@@ -153,6 +163,12 @@
+@@ -153,6 +140,12 @@
      public int field_71138_i;
      public boolean field_71136_j;
  
@@ -36,7 +68,7 @@
      public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_)
      {
          super(p_i45285_2_, p_i45285_3_);
-@@ -188,6 +204,9 @@
+@@ -188,6 +181,9 @@
          {
              this.func_70107_b(this.field_70165_t, this.field_70163_u + 1.0D, this.field_70161_v);
          }
@@ -46,7 +78,7 @@
      }
  
      public void func_70037_a(NBTTagCompound p_70037_1_)
-@@ -313,6 +332,9 @@
+@@ -313,6 +309,9 @@
  
      public void func_70071_h_()
      {
@@ -56,7 +88,7 @@
          this.field_71134_c.func_73075_a();
          --this.field_147101_bU;
  
-@@ -365,6 +387,13 @@
+@@ -365,6 +364,13 @@
              }
          }
  
@@ -70,7 +102,7 @@
          CriteriaTriggers.field_193135_v.func_193182_a(this);
  
          if (this.field_193107_ct != null)
-@@ -373,6 +402,9 @@
+@@ -373,6 +379,9 @@
          }
  
          this.field_192042_bX.func_192741_b(this);
@@ -80,7 +112,7 @@
      }
  
      public void func_71127_g()
-@@ -605,6 +637,7 @@
+@@ -605,6 +614,7 @@
  
              if (!flag && this.field_147101_bU > 0 && p_70097_1_ != DamageSource.field_76380_i)
              {
@@ -88,7 +120,7 @@
                  return false;
              }
              else
-@@ -615,6 +648,7 @@
+@@ -615,6 +625,7 @@
  
                      if (entity instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entity))
                      {
@@ -96,7 +128,7 @@
                          return false;
                      }
  
-@@ -624,6 +658,7 @@
+@@ -624,6 +635,7 @@
  
                          if (entityarrow.field_70250_c instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entityarrow.field_70250_c))
                          {
@@ -104,7 +136,7 @@
                              return false;
                          }
                      }
-@@ -704,6 +739,8 @@
+@@ -704,6 +716,8 @@
          if (p_147097_1_ != null)
          {
              SPacketUpdateTileEntity spacketupdatetileentity = p_147097_1_.func_189518_D_();
@@ -113,7 +145,7 @@
  
              if (spacketupdatetileentity != null)
              {
-@@ -1027,6 +1064,8 @@
+@@ -1027,6 +1041,8 @@
  
      public void func_71064_a(StatBase p_71064_1_, int p_71064_2_)
      {
@@ -122,7 +154,7 @@
          if (p_71064_1_ != null)
          {
              this.field_147103_bO.func_150871_b(this, p_71064_1_, p_71064_2_);
-@@ -1035,6 +1074,10 @@
+@@ -1035,6 +1051,10 @@
              {
                  this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective).func_96649_a(p_71064_2_);
              }
@@ -133,7 +165,7 @@
          }
      }
  
-@@ -1169,7 +1212,7 @@
+@@ -1169,7 +1189,7 @@
  
      protected void func_70688_c(PotionEffect p_70688_1_)
      {
@@ -142,7 +174,7 @@
          this.field_71135_a.func_147359_a(new SPacketRemoveEntityEffect(this.func_145782_y(), p_70688_1_.func_188419_a()));
  
          if (p_70688_1_.func_188419_a() == MobEffects.field_188424_y)
-@@ -1178,6 +1221,7 @@
+@@ -1178,6 +1198,7 @@
          }
  
          CriteriaTriggers.field_193139_z.func_193153_a(this);
@@ -150,7 +182,7 @@
      }
  
      public void func_70634_a(double p_70634_1_, double p_70634_3_, double p_70634_5_)
-@@ -1221,8 +1265,10 @@
+@@ -1221,8 +1242,10 @@
          }
          else
          {
@@ -161,7 +193,7 @@
  
          this.func_71016_p();
          this.func_175136_bO();
-@@ -1233,6 +1279,11 @@
+@@ -1233,6 +1256,11 @@
          return this.field_71134_c.func_73081_b() == GameType.SPECTATOR;
      }
  
@@ -173,7 +205,7 @@
      public boolean func_184812_l_()
      {
          return this.field_71134_c.func_73081_b() == GameType.CREATIVE;
-@@ -1439,4 +1490,56 @@
+@@ -1439,4 +1467,80 @@
      {
          return this.field_193110_cw;
      }
@@ -222,8 +254,32 @@
 +    }
 +    public void moveToStoredCameraData(){
 +        if(CarpetSettings.cameraModeRestoreLocation){
-+            if(storedDim != field_71093_bK) func_184204_a(storedDim);
-+            field_71135_a.func_147364_a(storeX, storeY, storeZ, storeYaw, storePitch);
++            if(storedDim != field_71093_bK){
++                WorldServer worldserver1 = func_71121_q();
++                WorldServer worldserver2 = (WorldServer)field_71133_b.func_71218_a(storedDim);
++                field_71093_bK = storedDim;
++                field_71135_a.func_147359_a(new SPacketRespawn(field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), this.field_71134_c.func_73081_b()));
++                this.field_71133_b.func_184103_al().func_187243_f(this);
++                worldserver1.func_72973_f(this);
++                field_70128_L = false;
++                func_70012_b(storeX, storeY, storeZ, storeYaw, storePitch);
++
++                if (func_70089_S())
++                {
++                    worldserver1.func_72866_a(this, false);
++                    worldserver2.func_72838_d(this);
++                    worldserver2.func_72866_a(this, false);
++                }
++
++                func_70029_a(worldserver2);
++                this.field_71133_b.func_184103_al().func_72375_a(this, worldserver1);
++                func_70634_a(storeX, storeY, storeZ);
++                field_71134_c.func_73080_a(worldserver2);
++                this.field_71133_b.func_184103_al().func_72354_b(this, worldserver2);
++                this.field_71133_b.func_184103_al().func_72385_f(this);
++            }else {
++                field_71135_a.func_147364_a(storeX, storeY, storeZ, storeYaw, storePitch);
++            }
 +        }
 +    }
 +    public boolean isDisableSpectatePlayers(){
