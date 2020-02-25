@@ -76,9 +76,10 @@ sourceSets {
 		}
 	}
 }
-File runningDir = new File('build/run/')
+File runningDir = new File('run/')
 runningDir.mkdirs()
 tasks.run.workingDir = runningDir
+tasks.run.args = ['nogui']
 // ForgeGradle settings
 minecraft
 {
