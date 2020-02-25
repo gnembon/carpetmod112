@@ -76,10 +76,10 @@ sourceSets {
 		}
 	}
 }
-File runningDir = new File('run/')
+File runningDir = new File('server/')
 runningDir.mkdirs()
 tasks.run.workingDir = runningDir
-tasks.run.args = ['nogui']
+//tasks.run.args = ['nogui'] // add this to remove server gui
 // ForgeGradle settings
 minecraft
 {
@@ -461,9 +461,9 @@ task releaseProject {
 	description = 'Creates a release from the current project'
 	dependsOn createRelease
 }
-//task runServer {
-//	group = 'tools ' + capitalizedName
-//	description = 'Runs server'
-//	dependsOn project(':' + settings.modname).runserver
-//}
+task runServer {
+	group = 'tools ' + capitalizedName
+	description = 'runs the minecraft server'
+	dependsOn run
+}
 
