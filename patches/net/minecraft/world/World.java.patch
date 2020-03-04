@@ -395,7 +395,7 @@
 +                        if (LoggerRegistry.__weather)
 +                        {
 +                            LoggerRegistry.getLogger("weather").log(()-> new ITextComponent[]{
-+                                            Messenger.s(null, "Thunder is set to: " + this.field_72986_A.func_76061_m() + " time: " + this.field_72986_A.func_76071_n())
++                                            Messenger.s(null, "Thunder is set to: " + this.field_72986_A.func_76061_m() + " time: " + this.field_72986_A.func_76071_n() + " Server time: " + func_73046_m().func_71259_af())
 +                                    },
 +                                    "TYPE", "Thunder",
 +                                    "THUNDERING", this.field_72986_A.func_76061_m(),
@@ -412,7 +412,7 @@
 +                        if (LoggerRegistry.__weather)
 +                        {
 +                            LoggerRegistry.getLogger("weather").log(()-> new ITextComponent[]{
-+                                            Messenger.s(null, "Rain is set to: " + this.field_72986_A.func_76059_o() + " time: " + this.field_72986_A.func_76083_p())
++                                            Messenger.s(null, "Rain is set to: " + this.field_72986_A.func_76059_o() + " time: " + this.field_72986_A.func_76083_p() + " Server time: " + func_73046_m().func_71259_af())
 +                                    },
 +                                    "TYPE", "Rain",
 +                                    "RAINING", this.field_72986_A.func_76059_o(),
