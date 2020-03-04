@@ -157,7 +157,7 @@
                      }
                  }
                  else
-@@ -1147,12 +1188,15 @@
+@@ -1147,11 +1188,15 @@
              }
              else
              {
@@ -168,13 +168,12 @@
                  if (ItemStack.func_77989_b(p_147351_1_.func_149546_g(), itemstack2))
                  {
                      this.field_147369_b.field_71135_a.func_147359_a(new SPacketConfirmTransaction(p_147351_1_.func_149548_c(), p_147351_1_.func_149547_f(), true));
--                    this.field_147369_b.field_71137_h = true;
-+                    // Remove this boolean given it causes item desynches CARPET-XCOM
-+                    if(!CarpetSettings.itemDesynchFix) this.field_147369_b.field_71137_h = true;
++                    // Update item changes before setting boolean true given it can cause desynchs. CARPET-XCOM
++                    if(CarpetSettings.itemDesynchFix) this.field_147369_b.field_71070_bA.func_75142_b();
+                     this.field_147369_b.field_71137_h = true;
                      this.field_147369_b.field_71070_bA.func_75142_b();
                      this.field_147369_b.func_71113_k();
-                     this.field_147369_b.field_71137_h = false;
-@@ -1666,13 +1710,14 @@
+@@ -1666,13 +1711,14 @@
                      String s8 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
                      tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
@@ -195,7 +194,7 @@
                      tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
                      String s2 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184411_a(Mirror.valueOf(s2));
-@@ -1709,6 +1754,17 @@
+@@ -1709,6 +1755,17 @@
                          }
                          else
                          {
@@ -213,7 +212,7 @@
                              this.field_147369_b.func_146105_b(new TextComponentTranslation("structure_block.load_prepare", new Object[] {s4}), false);
                          }
                      }
-@@ -1750,5 +1806,9 @@
+@@ -1750,5 +1807,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }
