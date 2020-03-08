@@ -205,7 +205,7 @@
      public boolean func_184812_l_()
      {
          return this.field_71134_c.func_73081_b() == GameType.CREATIVE;
-@@ -1439,4 +1467,80 @@
+@@ -1439,4 +1467,85 @@
      {
          return this.field_193110_cw;
      }
@@ -252,7 +252,7 @@
 +    public boolean getGamemodeCamera(){
 +        return gamemodeCamera;
 +    }
-+    public void moveToStoredCameraData(){
++    public boolean moveToStoredCameraData(){
 +        if(CarpetSettings.cameraModeRestoreLocation){
 +            if(storedDim != field_71093_bK){
 +                WorldServer worldserver1 = func_71121_q();
@@ -277,10 +277,15 @@
 +                field_71134_c.func_73080_a(worldserver2);
 +                this.field_71133_b.func_184103_al().func_72354_b(this, worldserver2);
 +                this.field_71133_b.func_184103_al().func_72385_f(this);
++                return true;
 +            }else {
++                if(storeX == 0 && storeY == 0 && storeZ == 0) storeY = 256.0f;
++                double dist = Math.sqrt(new BlockPos(storeX, storeY, storeZ).func_177954_c(field_70165_t, field_70163_u, field_70161_v));
 +                field_71135_a.func_147364_a(storeX, storeY, storeZ, storeYaw, storePitch);
++                return dist > (this.field_71133_b.func_184103_al().func_72395_o()-2)*16;
 +            }
 +        }
++        return false;
 +    }
 +    public boolean isDisableSpectatePlayers(){
 +        return disableSpectatePlayers;

@@ -1,11 +1,13 @@
 package carpet.patches;
 
+import carpet.CarpetSettings;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.EnumPacketDirection;
 import net.minecraft.network.play.server.SPacketEntityHeadLook;
 import net.minecraft.network.play.server.SPacketEntityTeleport;
 import net.minecraft.network.play.server.SPacketPlayerListItem;
+import net.minecraft.potion.Potion;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
@@ -64,6 +66,12 @@ public class EntityPlayerMPFake extends EntityPlayerMP
 
     public static EntityPlayerMPFake createShadow(MinecraftServer server, EntityPlayerMP player)
     {
+        if(CarpetSettings.cameraModeRestoreLocation && player.getGamemodeCamera()) {
+            GameType gametype = server.getGameType();
+            player.moveToStoredCameraData();
+            player.setGameType(gametype);
+            player.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
+        }
         player.getServer().getPlayerList().playerLoggedOut(player);
         player.connection.disconnect(new TextComponentTranslation("multiplayer.disconnect.duplicate_login"));
         WorldServer worldIn = server.getWorld(player.dimension);
