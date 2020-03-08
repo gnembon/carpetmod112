@@ -9,12 +9,3 @@
  public class NextTickListEntry implements Comparable<NextTickListEntry>
  {
      private static long field_77177_f;
-@@ -50,6 +52,8 @@
- 
-     public int compareTo(NextTickListEntry p_compareTo_1_)
-     {
-+        if (CarpetSettings.doubleTileTickSchedulingFix && equals(p_compareTo_1_))
-+            return 0;
-         if (this.field_77180_e < p_compareTo_1_.field_77180_e)
-         {
-             return -1;
