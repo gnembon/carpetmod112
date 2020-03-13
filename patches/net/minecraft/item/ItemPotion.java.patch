@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemPotion.java
++++ ../src-work/minecraft/net/minecraft/item/ItemPotion.java
+@@ -20,6 +20,8 @@
+ 
+ public class ItemPotion extends Item
+ {
++    public static boolean itemPotion;
++
+     public ItemPotion()
+     {
+         this.func_77625_d(1);
+@@ -50,7 +52,10 @@
+                 }
+                 else
+                 {
++                    // Use this boolean to check if the player gets a potions from drinking it instead of splashing CARPET-XCOM
++                    itemPotion = true;
+                     p_77654_3_.func_70690_d(new PotionEffect(potioneffect));
++                    itemPotion = false;
+                 }
+             }
+         }

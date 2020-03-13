@@ -699,6 +699,9 @@ public class CarpetSettings
 
     // ===== FEATURES ===== //
 
+    @Rule(desc = "Combines the duration of potions when drinking out of a bottle. The combined duration capped by this carpet rule in gameticks.", options = {"0", "18000", "36000", "72000"}, category = FEATURE)
+    public static int combinePotionDuration = 0;
+
     @Rule(desc = "Allows empty shulkerboxes to stack in the player inventory.", category = FEATURE)
     public static boolean stackableShulkersPlayerInventory;
 

@@ -1,6 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/potion/PotionEffect.java
 +++ ../src-work/minecraft/net/minecraft/potion/PotionEffect.java
-@@ -6,6 +6,8 @@
+@@ -2,10 +2,13 @@
+ 
+ import com.google.common.collect.ComparisonChain;
+ import net.minecraft.entity.EntityLivingBase;
++import net.minecraft.item.ItemPotion;
+ import net.minecraft.nbt.NBTTagCompound;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +14,7 @@
  public class PotionEffect implements Comparable<PotionEffect>
  {
      private static final Logger field_180155_a = LogManager.getLogger();
-@@ -16,6 +18,9 @@
+@@ -16,6 +19,9 @@
      private boolean field_82724_e;
      private boolean field_188421_h;
  
@@ -19,7 +24,7 @@
      public PotionEffect(Potion p_i46811_1_)
      {
          this(p_i46811_1_, 0, 0);
-@@ -49,28 +54,49 @@
+@@ -49,28 +55,58 @@
          this.field_188421_h = p_i1577_1_.field_188421_h;
      }
  
@@ -61,6 +66,15 @@
 +            this.field_76460_b = other.field_76460_b;
          }
 -        else if (p_76452_1_.field_76461_c == this.field_76461_c && this.field_76460_b < p_76452_1_.field_76460_b)
++        // Combines the potion durations of identical potions when a player drinks the potions. CARPET-XCOM
++        else if(CarpetSettings.combinePotionDuration > 0 && ItemPotion.itemPotion && other.field_76461_c == this.field_76461_c){
++            if(this.field_76460_b < 0) this.field_76460_b = 0;
++            this.field_76460_b += other.field_76460_b;
++            // Cap the duration to the carpet rule amount. Also make sure its more then the amount being added.
++            if(this.field_76460_b > CarpetSettings.combinePotionDuration && CarpetSettings.combinePotionDuration > other.field_76460_b){
++                this.field_76460_b = CarpetSettings.combinePotionDuration;
++            }
++        }
 +        else if (other.field_76461_c == this.field_76461_c && this.field_76460_b < other.field_76460_b)
          {
 -            this.field_76460_b = p_76452_1_.field_76460_b;
