@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/network/play/server/SPacketEntityEffect.java
++++ ../src-work/minecraft/net/minecraft/network/play/server/SPacketEntityEffect.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.network.play.server;
+ 
+ import java.io.IOException;
++
++import carpet.CarpetSettings;
+ import net.minecraft.network.Packet;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.network.play.INetHandlerPlayClient;
+@@ -25,7 +27,8 @@
+         this.field_149432_b = (byte)(Potion.func_188409_a(p_i46891_2_.func_188419_a()) & 255);
+         this.field_149433_c = (byte)(p_i46891_2_.func_76458_c() & 255);
+ 
+-        if (p_i46891_2_.func_76459_b() > 32767)
++        // Fix the duration cap for sending smaller packets for effect durations CARPET-XCOM
++        if (CarpetSettings.combinePotionDuration == 0 && p_i46891_2_.func_76459_b() > 32767)
+         {
+             this.field_149431_d = 32767;
+         }
