@@ -28,7 +28,7 @@
      public PotionEffect(Potion p_i46811_1_)
      {
          this(p_i46811_1_, 0, 0);
-@@ -49,28 +58,61 @@
+@@ -49,28 +58,58 @@
          this.field_188421_h = p_i1577_1_.field_188421_h;
      }
  
@@ -45,7 +45,7 @@
 +        if (other == this) {
 +            return this;
 +        }
-+        if (CarpetSettings.effectsFix && !this.field_82724_e && other.field_76461_c >= this.field_76461_c && other.field_76460_b < this.field_76460_b) {
++        if (CarpetSettings.effectsFix && !ItemPotion.itemPotion && !this.field_82724_e && other.field_76461_c >= this.field_76461_c && other.field_76460_b < this.field_76460_b) {
 +            boolean stack = true;
 +            for (PotionEffect e = other; e != null; e = e.previous) {
 +                if (e == this) {
@@ -62,9 +62,6 @@
 +        // CM END
  
 -        if (p_76452_1_.field_76461_c > this.field_76461_c)
-+        if(LoggerRegistry.__potion){ // Added debugger for the instance where potions don't stack properly. CARPET-XCOM
-+            Messenger.print_server_message(CarpetServer.minecraft_server, "Amp: " + this.field_76461_c +" "+ other.field_76461_c + " Dur: " + this.field_76460_b + " " + other.field_76460_b + " Amb: " + this.field_82724_e +" "+ other.field_82724_e);
-+        }
 +        if (other.field_76461_c > this.field_76461_c)
          {
 -            this.field_76461_c = p_76452_1_.field_76461_c;

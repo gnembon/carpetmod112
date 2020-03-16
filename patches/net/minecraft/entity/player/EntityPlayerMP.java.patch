@@ -205,7 +205,7 @@
      public boolean func_184812_l_()
      {
          return this.field_71134_c.func_73081_b() == GameType.CREATIVE;
-@@ -1439,4 +1467,85 @@
+@@ -1439,4 +1467,88 @@
      {
          return this.field_193110_cw;
      }
@@ -237,7 +237,8 @@
 +    private int storedDim;
 +    protected boolean disableSpectatePlayers;
 +    private boolean gamemodeCamera;
-+    public void storeCameraData() {
++    private boolean nightvision;
++    public void storeCameraData(boolean hasNightvision) {
 +        storeX = field_70165_t;
 +        storeY = field_70163_u;
 +        storeZ = field_70161_v;
@@ -245,6 +246,7 @@
 +        storePitch = field_70125_A;
 +        storedDim = field_71093_bK;
 +        disableSpectatePlayers = CarpetSettings.cameraModeDisableSpectatePlayers;
++        nightvision = hasNightvision;
 +    }
 +    public void setGamemodeCamera(){
 +        gamemodeCamera = true;
@@ -252,6 +254,7 @@
 +    public boolean getGamemodeCamera(){
 +        return gamemodeCamera;
 +    }
++    public boolean hadNightvision() {return nightvision;}
 +    public boolean moveToStoredCameraData(){
 +        if(CarpetSettings.cameraModeRestoreLocation){
 +            if(storedDim != field_71093_bK){

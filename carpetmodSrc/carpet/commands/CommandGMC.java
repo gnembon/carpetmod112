@@ -70,11 +70,15 @@ public class CommandGMC extends CommandCarpetBase
                     return;
                 }
             }
-            entityplayer.storeCameraData();
+            Potion nightvision = Potion.getPotionFromResourceLocation("night_vision");
+            boolean hasNightvision = entityplayer.getActivePotionEffect(nightvision) != null;
+            entityplayer.storeCameraData(hasNightvision);
             GameType gametype = GameType.parseGameTypeWithDefault("spectator", GameType.NOT_SET);
             entityplayer.setGameType(gametype);
-            PotionEffect potioneffect = new PotionEffect(Potion.getPotionFromResourceLocation("night_vision"), 999999, 0, false, false);
-            entityplayer.addPotionEffect(potioneffect);
+            if(!hasNightvision) {
+                PotionEffect potioneffect = new PotionEffect(nightvision, 999999, 0, false, false);
+                entityplayer.addPotionEffect(potioneffect);
+            }
             entityplayer.setGamemodeCamera();
         }
     }
