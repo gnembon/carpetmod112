@@ -63,7 +63,7 @@
  
 -        if (p_76452_1_.field_76461_c > this.field_76461_c)
 +        if(LoggerRegistry.__potion){ // Added debugger for the instance where potions don't stack properly. CARPET-XCOM
-+            Messenger.print_server_message(CarpetServer.minecraft_server, "Amp: " + other.field_76461_c +" "+ this.field_76461_c + " Dur: " + this.field_76460_b + " " + other.field_76460_b);
++            Messenger.print_server_message(CarpetServer.minecraft_server, "Amp: " + this.field_76461_c +" "+ other.field_76461_c + " Dur: " + this.field_76460_b + " " + other.field_76460_b + " Amb: " + this.field_82724_e +" "+ other.field_82724_e);
 +        }
 +        if (other.field_76461_c > this.field_76461_c)
          {
