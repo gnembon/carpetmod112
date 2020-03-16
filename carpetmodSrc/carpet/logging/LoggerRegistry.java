@@ -46,6 +46,7 @@ public class LoggerRegistry
     public static boolean __instantComparators;
     public static boolean __items;
     public static boolean __rng;
+    public static boolean __recipes;
 
     public static void initLoggers(MinecraftServer server)
     {
@@ -65,6 +66,8 @@ public class LoggerRegistry
         registerLogger("packets", new Logger(server, "packets", null, null, LogHandler.HUD));
         registerLogger("counter",new Logger(server, "counter","white", Arrays.stream(EnumDyeColor.values()).map(Object::toString).toArray(String[]::new), LogHandler.HUD));
         registerLogger("mobcaps", new Logger(server, "mobcaps", "dynamic",new String[]{"dynamic", "overworld", "nether","end"}, LogHandler.HUD));
+
+        registerDebugger("recipes", new Logger(server, "recipes", null, null, LogHandler.CHAT));
     }
 
     private static File getSaveFile(MinecraftServer server) { return server.getActiveAnvilConverter().getFile(server.getFolderName(), "loggerData.json"); }

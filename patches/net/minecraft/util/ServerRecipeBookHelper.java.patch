@@ -1,14 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/util/ServerRecipeBookHelper.java
 +++ ../src-work/minecraft/net/minecraft/util/ServerRecipeBookHelper.java
-@@ -1,5 +1,7 @@
+@@ -1,5 +1,8 @@
  package net.minecraft.util;
  
 +import carpet.CarpetSettings;
++import carpet.logging.LoggerRegistry;
 +import carpet.utils.Messenger;
  import it.unimi.dsi.fastutil.ints.IntArrayList;
  import it.unimi.dsi.fastutil.ints.IntList;
  import it.unimi.dsi.fastutil.ints.IntListIterator;
-@@ -7,6 +9,7 @@
+@@ -7,6 +10,7 @@
  import java.util.List;
  import javax.annotation.Nullable;
  import net.minecraft.client.util.RecipeItemHelper;
@@ -16,7 +17,7 @@
  import net.minecraft.entity.player.EntityPlayerMP;
  import net.minecraft.entity.player.InventoryPlayer;
  import net.minecraft.inventory.Container;
-@@ -16,6 +19,7 @@
+@@ -16,9 +20,11 @@
  import net.minecraft.inventory.InventoryCrafting;
  import net.minecraft.inventory.Slot;
  import net.minecraft.item.ItemStack;
@@ -24,12 +25,16 @@
  import net.minecraft.item.crafting.IRecipe;
  import net.minecraft.item.crafting.ShapedRecipes;
  import net.minecraft.network.play.server.SPacketPlaceGhostRecipe;
-@@ -35,6 +39,15 @@
++import net.minecraft.util.text.ITextComponent;
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
+@@ -35,6 +41,15 @@
  
      public void func_194327_a(EntityPlayerMP p_194327_1_, @Nullable IRecipe p_194327_2_, boolean p_194327_3_)
      {
 +
-+        if(CarpetSettings.debugRecipes){ // Added debugger for the instance people need help debuging why there recipes don't work. CARPET-XCOM
++        if(LoggerRegistry.__recipes){ // Added debugger for the instance people need help debuging why there recipes don't work. CARPET-XCOM
 +            int i = 0;
 +            for(ResourceLocation r : CraftingManager.field_193380_a.func_148742_b()) {
 +                Messenger.print_server_message(p_194327_1_.field_71133_b, i + ": " + r.func_110623_a());
@@ -40,7 +45,7 @@
          if (p_194327_2_ != null && p_194327_1_.func_192037_E().func_193830_f(p_194327_2_))
          {
              this.field_194332_c = p_194327_1_;
-@@ -48,7 +61,8 @@
+@@ -48,7 +63,8 @@
              if (container instanceof ContainerWorkbench)
              {
                  this.field_194335_f = ((ContainerWorkbench)container).field_75160_f;
@@ -50,7 +55,7 @@
              }
              else if (container instanceof ContainerPlayer)
              {
-@@ -67,6 +81,8 @@
+@@ -67,6 +83,8 @@
                      if (this.field_194331_b.func_194116_a(p_194327_2_, (IntList)null))
                      {
                          this.func_194329_b();
@@ -59,7 +64,7 @@
                      }
                      else
                      {
-@@ -304,4 +320,29 @@
+@@ -304,4 +322,29 @@
  
          return true;
      }

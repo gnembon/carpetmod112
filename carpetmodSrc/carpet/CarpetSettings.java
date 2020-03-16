@@ -443,9 +443,6 @@ public class CarpetSettings
     @Rule(desc = "Disables the packet limit that causes the book banning.", category = FIX)
     public static boolean disableBookBan;
 
-    @Rule(desc = "Rule made to debug recipes by pasting all recipes when crafting.", category = FIX)
-    public static boolean debugRecipes;
-
     @Rule(desc = "Fixes the collision cancelation lag when mobs are inside ladders and vines.", category = FIX)
     @BugFixDefault
     public static boolean optimizedCollisionCancellations = false;
