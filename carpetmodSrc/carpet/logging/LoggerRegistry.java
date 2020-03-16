@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class LoggerRegistry
 {
@@ -159,7 +160,7 @@ public class LoggerRegistry
     /**
      * Gets the set of logger names.
      */
-    public static Set<String> getLoggerNames() { return loggerRegistry.keySet(); }
+    public static String[] getLoggerNames(int debugger) { return loggerRegistry.entrySet().stream().filter(s -> s.getValue().debuggerFilter(debugger)).map(Map.Entry::getKey).toArray(String[]::new);}
 
     /**
      * Sets a log as a default log with the specified option and handler
@@ -323,7 +324,12 @@ public class LoggerRegistry
         loggerRegistry.put(name, logger);
         setAccess(logger);
     }
-
+    /**
+     * Used to register runtime debugging logger.
+     */
+    private static void registerDebugger(String recipes, Logger recipes1) {
+        registerLogger(recipes, recipes1.asDebugger());
+    }
 
     public static void playerConnected(EntityPlayer player)
     {
@@ -342,7 +348,7 @@ public class LoggerRegistry
     {
         String playerName = player.getName();
 
-        for (String logName : LoggerRegistry.getLoggerNames()) {
+        for (String logName : LoggerRegistry.getLoggerNames(0)) {
             unsubscribePlayer(playerName, logName);
         }
     }

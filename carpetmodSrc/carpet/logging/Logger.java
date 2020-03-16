@@ -29,7 +29,9 @@ public class Logger
     
     // The map of player names to the log handler used
     private Map<String, LogHandler> handlers;
-    
+    // Added boolean to create a sublist of loggers as a debugger list and use this boolean to distingwish the two.
+    private boolean debugger = false;
+
     public Logger(MinecraftServer server, String logName, String def, String [] options, LogHandler defaultHandler)
     {
         this.server = server;
@@ -100,6 +102,15 @@ public class Logger
     public boolean hasSubscribers()
     {
         return subscribedPlayers.size() > 0;
+    }
+
+    public Logger asDebugger() {
+        debugger = true;
+        return this;
+    }
+
+    public boolean debuggerFilter(int compareDebugger) {
+        return 0 == compareDebugger || debugger && 1 == compareDebugger || !debugger && 2 == compareDebugger;
     }
 
     /**
