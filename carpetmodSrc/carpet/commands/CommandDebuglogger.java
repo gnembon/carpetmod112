@@ -18,7 +18,7 @@ import java.util.*;
 
 public class CommandDebuglogger extends CommandLog {
 
-    private final String USAGE = "/debuglogger (interactive menu) OR /log <logName> [?option] [player] [handler ...] OR /log <logName> clear [player] OR /log defaults (interactive menu) OR /log setDefault <logName> [?option] [handler ...] OR /log removeDefault <logName>";
+    private final String USAGE = "/logdebug (interactive menu) OR /logdebug <logName> [?option] [player] [handler ...] OR /logdebug <logName> clear [player] OR /logdebug defaults (interactive menu) OR /logdebug setDefault <logName> [?option] [handler ...] OR /logdebug removeDefault <logName>";
 
     @Override
     public String getName() {
