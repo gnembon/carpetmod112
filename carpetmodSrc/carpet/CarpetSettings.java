@@ -696,6 +696,9 @@ public class CarpetSettings
 
     // ===== FEATURES ===== //
 
+    @Rule(desc = "Places the mined block in the player inventory when sneaking.", category = FEATURE)
+    public static boolean carefulBreak = false;
+
     @Rule(desc = "Combines the duration of potions when drinking out of a bottle. The combined duration capped by this carpet rule in gameticks.", options = {"0", "18000", "36000", "72000"}, category = FEATURE)
     public static int combinePotionDuration = 0;
 
