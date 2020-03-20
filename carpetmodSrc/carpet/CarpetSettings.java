@@ -696,6 +696,9 @@ public class CarpetSettings
 
     // ===== FEATURES ===== //
 
+    @Rule(desc = "Players drop there skulls when blown up by charged creepers.", category = FEATURE)
+    public static boolean playerSkullsByChargedCreeper = false;
+
     @Rule(desc = "Places the mined block in the player inventory when sneaking.", category = FEATURE)
     public static boolean carefulBreak = false;
 
