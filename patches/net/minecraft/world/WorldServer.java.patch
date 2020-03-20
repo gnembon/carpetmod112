@@ -112,7 +112,7 @@
 +		this.func_72955_a(false);
 +
 +		if(LoggerRegistry.__rng){
-+            LoggerRegistry.getLogger("rng").log(() -> new ITextComponent[] {
++            LoggerRegistry.getLogger("rng").log(()-> new ITextComponent[]{
 +                    Messenger.s(null, String.format("RNG TickUp. t:%d seed:%d d:%s", field_73061_a.func_71259_af(), getRandSeed(), field_73011_w.func_186058_p().name()))
 +            });
 +        }
@@ -150,7 +150,7 @@
          this.func_147488_Z();
 +
 +        if(LoggerRegistry.__rng){
-+            LoggerRegistry.getLogger("rng").log(() -> new ITextComponent[] {
++            LoggerRegistry.getLogger("rng").log(()-> new ITextComponent[]{
 +                    Messenger.s(null, String.format("RNG BlockEv. t:%d seed:%d d:%s", field_73061_a.func_71259_af(), getRandSeed(), field_73011_w.func_186058_p().name()))
 +            });
 +        }
