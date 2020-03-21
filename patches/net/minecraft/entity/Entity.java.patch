@@ -18,7 +18,13 @@
  public abstract class Entity implements ICommandSender
  {
      private static final Logger field_184243_a = LogManager.getLogger();
-@@ -136,7 +141,7 @@
+@@ -131,12 +136,12 @@
+     public float field_70138_W;
+     public boolean field_70145_X;
+     public float field_70144_Y;
+-    protected Random field_70146_Z;
++    public Random field_70146_Z;
+     public int field_70173_aa;
      private int field_190534_ay;
      protected boolean field_70171_ac;
      public int field_70172_ad;
