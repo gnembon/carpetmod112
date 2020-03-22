@@ -235,14 +235,16 @@
      }
  
      public void func_71190_q()
-@@ -689,8 +769,11 @@
+@@ -688,9 +768,12 @@
+                 }
                  catch (Throwable throwable1)
                  {
-                     CrashReport crashreport = CrashReport.func_85055_a(throwable1, "Exception ticking world");
+-                    CrashReport crashreport = CrashReport.func_85055_a(throwable1, "Exception ticking world");
 -                    worldserver.func_72914_a(crashreport);
 -                    throw new ReportedException(crashreport);
 +                    // Update Suppression crash fixes CARPET-XCOM
-+                    if(!CarpetSettings.updateSuppressionCrashFix || !(crashreport.func_71505_b() instanceof ThrowableSuppression)){
++                    if(!CarpetSettings.updateSuppressionCrashFix || !(throwable1.getCause() instanceof ThrowableSuppression)){
++                        CrashReport crashreport = CrashReport.func_85055_a(throwable1, "Exception ticking world");
 +                        worldserver.func_72914_a(crashreport);
 +                        throw new ReportedException(crashreport);
 +                    }
