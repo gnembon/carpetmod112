@@ -64,6 +64,7 @@ public class CommandGMS extends CommandCarpetBase
                 if(entityplayer.moveToStoredCameraData()) return;
             }
             entityplayer.setGameType(gametype);
+            entityplayer.hurtResistantTime = 60;
             if(!entityplayer.hadNightvision()) entityplayer.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
         }
     }

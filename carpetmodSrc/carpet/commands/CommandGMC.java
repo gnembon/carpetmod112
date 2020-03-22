@@ -65,7 +65,8 @@ public class CommandGMC extends CommandCarpetBase
             if(entityplayer.isSpectator()) return;
             if(CarpetSettings.cameraModeSurvivalRestrictions && entityplayer.isSurvival()) {
                 List<EntityMob> hostiles = sender.getEntityWorld().getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB(entityplayer.posX - 8.0D, entityplayer.posY - 5.0D, entityplayer.posZ - 8.0D, entityplayer.posX + 8.0D, entityplayer.posY + 5.0D, entityplayer.posZ + 8.0D), new EntityPlayer.SleepEnemyPredicate(entityplayer));
-                if(!entityplayer.onGround || entityplayer.isElytraFlying() || entityplayer.getFire() >= 0 || entityplayer.isInWater() || !hostiles.isEmpty()){
+                PotionEffect fireresist = entityplayer.getActivePotionEffect(Potion.getPotionFromResourceLocation("fire_resistance"));
+                if(!entityplayer.onGround || entityplayer.isElytraFlying() || (entityplayer.getFire() > 0 && (fireresist == null || fireresist.getDuration() < entityplayer.getFire())) || entityplayer.getAir() != 300 || !hostiles.isEmpty()){
                     notifyCommandListener(sender, this, "Restricted use to: on ground, not in water, not on fire, not flying/falling, not near hostile mobs.");
                     return;
                 }
