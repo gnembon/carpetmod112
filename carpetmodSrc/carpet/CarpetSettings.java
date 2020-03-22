@@ -428,6 +428,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Optimizes tile entity removal from the world.", category = OPTIMIZATIONS)
+    public static boolean optimizedTileEntityRemoval;
+
     @Rule(desc = "Optimizes TNT movement when using cannons.", category = OPTIMIZATIONS)
     public static boolean TNTmovementOptimization = false;
 
