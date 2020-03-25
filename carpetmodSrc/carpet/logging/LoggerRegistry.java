@@ -47,6 +47,7 @@ public class LoggerRegistry
     public static boolean __items;
     public static boolean __rng;
     public static boolean __recipes;
+    public static boolean __damageDebug;
 
     public static void initLoggers(MinecraftServer server)
     {
@@ -68,6 +69,7 @@ public class LoggerRegistry
         registerLogger("mobcaps", new Logger(server, "mobcaps", "dynamic",new String[]{"dynamic", "overworld", "nether","end"}, LogHandler.HUD));
 
         registerDebugger("recipes", new Logger(server, "recipes", null, null, LogHandler.CHAT));
+        registerDebugger("damageDebug", new Logger(server, "damageDebug", null, null, LogHandler.CHAT));
     }
 
     private static File getSaveFile(MinecraftServer server) { return server.getActiveAnvilConverter().getFile(server.getFolderName(), "loggerData.json"); }

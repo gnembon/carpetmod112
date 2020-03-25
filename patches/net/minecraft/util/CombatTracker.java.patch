@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/util/CombatTracker.java
++++ ../src-work/minecraft/net/minecraft/util/CombatTracker.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.util;
+ 
++import carpet.logging.LoggerRegistry;
++import carpet.utils.Messenger;
+ import com.google.common.collect.Lists;
+ import java.util.List;
+ import javax.annotation.Nullable;
+@@ -125,6 +127,11 @@
+                 else
+                 {
+                     itextcomponent = new TextComponentTranslation("death.fell.accident." + this.func_94548_b(combatentry), new Object[] {this.field_94554_b.func_145748_c_()});
++                    if(LoggerRegistry.__damageDebug){ // Added debugger for the instance people need help debuging why there recipes don't work. CARPET-XCOM
++                        LoggerRegistry.getLogger("damageDebug").log(()-> new ITextComponent[]{
++                                Messenger.s(null, "Dmg: " + combatentry.func_94561_i())
++                        });
++                    }
+                 }
+             }
+             else
