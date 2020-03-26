@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityItem.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityItem.java
-@@ -1,10 +1,15 @@
+@@ -1,10 +1,16 @@
  package net.minecraft.entity.item;
  
  import javax.annotation.Nullable;
 +
++import carpet.CarpetServer;
 +import carpet.CarpetSettings;
 +import carpet.logging.LoggerRegistry;
 +import carpet.logging.logHelpers.ItemLogHelper;
@@ -16,7 +17,7 @@
  import net.minecraft.init.Items;
  import net.minecraft.init.SoundEvents;
  import net.minecraft.item.Item;
-@@ -13,7 +18,6 @@
+@@ -13,7 +19,6 @@
  import net.minecraft.network.datasync.DataParameter;
  import net.minecraft.network.datasync.DataSerializers;
  import net.minecraft.network.datasync.EntityDataManager;
@@ -24,7 +25,7 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.datafix.DataFixer;
  import net.minecraft.util.datafix.FixTypes;
-@@ -25,6 +29,8 @@
+@@ -25,6 +30,8 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -33,7 +34,7 @@
  public class EntityItem extends Entity
  {
      private static final Logger field_145803_d = LogManager.getLogger();
-@@ -35,6 +41,9 @@
+@@ -35,6 +42,9 @@
      private String field_145801_f;
      private String field_145802_g;
      public float field_70290_d;
@@ -43,7 +44,7 @@
  
      public EntityItem(World p_i1709_1_, double p_i1709_2_, double p_i1709_4_, double p_i1709_6_)
      {
-@@ -47,6 +56,12 @@
+@@ -47,6 +57,12 @@
          this.field_70159_w = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
          this.field_70181_x = 0.20000000298023224D;
          this.field_70179_y = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
@@ -56,7 +57,7 @@
      }
  
      public EntityItem(World p_i1710_1_, double p_i1710_2_, double p_i1710_4_, double p_i1710_6_, ItemStack p_i1710_8_)
-@@ -165,8 +180,20 @@
+@@ -165,8 +181,20 @@
                  }
              }
  
@@ -77,7 +78,7 @@
                  this.func_70106_y();
              }
          }
-@@ -221,8 +248,23 @@
+@@ -221,8 +249,23 @@
                      }
                      else if (itemstack1.func_190916_E() + itemstack.func_190916_E() > itemstack1.func_77976_d())
                      {
@@ -101,7 +102,7 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -256,6 +298,8 @@
+@@ -256,6 +299,8 @@
  
      public boolean func_70072_I()
      {
@@ -110,7 +111,7 @@
          if (this.field_70170_p.func_72918_a(this.func_174813_aQ(), Material.field_151586_h, this))
          {
              if (!this.field_70171_ac && !this.field_70148_d)
-@@ -269,7 +313,8 @@
+@@ -269,7 +314,8 @@
          {
              this.field_70171_ac = false;
          }
@@ -120,7 +121,7 @@
          return this.field_70171_ac;
      }
  
-@@ -295,6 +340,11 @@
+@@ -295,6 +341,11 @@
  
              if (this.field_70291_e <= 0)
              {
@@ -132,32 +133,33 @@
                  this.func_70106_y();
              }
  
-@@ -366,6 +416,9 @@
+@@ -366,6 +417,10 @@
              Item item = itemstack.func_77973_b();
              int i = itemstack.func_190916_E();
  
 +            if(CarpetSettings.craftingWindowDuplication && p_70100_1_ instanceof EntityPlayerMP){
 +                ((EntityPlayerMP)p_70100_1_).dupeItemScan(true);
 +            }
++            CarpetServer.playerInventoryStacking = true;
              if (this.field_145804_b == 0 && (this.field_145802_g == null || 6000 - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && p_70100_1_.field_71071_by.func_70441_a(itemstack))
              {
                  p_70100_1_.func_71001_a(this, i);
-@@ -376,8 +429,13 @@
+@@ -376,8 +431,13 @@
                      itemstack.func_190920_e(i);
                  }
  
 -                p_70100_1_.func_71064_a(StatList.func_188056_d(item), i);
 +                // CM add meta
 +                p_70100_1_.func_71064_a(StatHelper.getObjectsPickedUpStats(item, itemstack.func_77960_j()), i);
-+
              }
++            CarpetServer.playerInventoryStacking = false;
 +            if(CarpetSettings.craftingWindowDuplication && p_70100_1_ instanceof EntityPlayerMP){
 +                ((EntityPlayerMP)p_70100_1_).dupeItemScan(false);
 +            }
          }
      }
  
-@@ -470,4 +528,9 @@
+@@ -470,4 +530,9 @@
          this.func_174871_r();
          this.field_70292_b = 5999;
      }
