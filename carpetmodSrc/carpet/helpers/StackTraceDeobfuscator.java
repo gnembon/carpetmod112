@@ -55,7 +55,7 @@ public class StackTraceDeobfuscator {
     }
 
     public StackTraceDeobfuscator withMinecraftVersion(String minecraftVersion) {
-        return withSrgUrl(String.format("http://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/%1$s/mcp-%1$s-srg.zip", minecraftVersion));
+        return withSrgUrl(String.format("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/%1$s/mcp-%1$s-srg.zip", minecraftVersion));
     }
 
     public StackTraceDeobfuscator withNamesUrl(String namesUrl) {
@@ -65,12 +65,12 @@ public class StackTraceDeobfuscator {
 
     // e.g. 39-1.12
     public StackTraceDeobfuscator withStableMcpNames(String mcpVersion) {
-        return withNamesUrl(String.format("http://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_stable/%1$s/mcp_stable-%1$s.zip", mcpVersion));
+        return withNamesUrl(String.format("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_stable/%1$s/mcp_stable-%1$s.zip", mcpVersion));
     }
 
     // e.g. 20180204-1.12
     public StackTraceDeobfuscator withSnapshotMcpNames(String mcpVersion) {
-        return withNamesUrl(String.format("http://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_snapshot/%1$s/mcp_snapshot-%1$s.zip", mcpVersion));
+        return withNamesUrl(String.format("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_snapshot/%1$s/mcp_snapshot-%1$s.zip", mcpVersion));
     }
 
     public StackTraceDeobfuscator withStackTrace(StackTraceElement[] stackTrace) {
