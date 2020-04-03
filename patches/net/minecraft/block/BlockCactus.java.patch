@@ -1,0 +1,35 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockCactus.java
++++ ../src-work/minecraft/net/minecraft/block/BlockCactus.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.block;
+ 
+ import java.util.Random;
++
++import carpet.CarpetSettings;
++import carpet.helpers.HopperCounter;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.IProperty;
+ import net.minecraft.block.properties.PropertyInteger;
+@@ -9,7 +12,10 @@
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.Entity;
++import net.minecraft.entity.item.EntityItem;
+ import net.minecraft.init.Blocks;
++import net.minecraft.item.EnumDyeColor;
++import net.minecraft.item.ItemStack;
+ import net.minecraft.util.DamageSource;
+ import net.minecraft.util.EnumFacing;
+ import net.minecraft.util.math.AxisAlignedBB;
+@@ -109,6 +115,11 @@
+ 
+     public void func_180634_a(World p_180634_1_, BlockPos p_180634_2_, IBlockState p_180634_3_, Entity p_180634_4_)
+     {
++        // Add cactus counter CARPET-XCOM
++        if(CarpetSettings.hopperCounters && p_180634_4_ instanceof EntityItem){
++            ItemStack items = ((EntityItem) p_180634_4_).func_92059_d();
++            HopperCounter.COUNTERS.get(EnumDyeColor.GREEN).add(p_180634_1_.func_73046_m(), items);
++        }
+         p_180634_4_.func_70097_a(DamageSource.field_76367_g, 1.0F);
+     }
+ 
