@@ -697,6 +697,9 @@ public class CarpetSettings
     @Rule(desc = "Fixes player position truncation causing chunks to load with one block offset to chunk boarders in negative coordinates.", category = FIX)
     public static boolean playerChunkLoadingFix = false;
 
+    @Rule(desc = "Fixes comparator powered state not updating correctly from power level 15.", category = FIX)
+    public static boolean ComparatorPowerFix;
+
     // ===== FEATURES ===== //
 
     @Rule(desc = "Players drop there skulls when blown up by charged creepers.", category = FEATURE)
