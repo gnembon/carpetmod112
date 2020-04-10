@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/entity/EntityTracker.java
++++ ../src-work/minecraft/net/minecraft/entity/EntityTracker.java
+@@ -398,4 +398,8 @@
+             entitytrackerentry.func_187259_a(this.field_72792_d);
+         }
+     }
++
++    public Set<EntityTrackerEntry> getEntries(){
++        return field_72793_b;
++    }
+ }
