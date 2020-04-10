@@ -437,6 +437,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Villagers drop there inventory contents when they die.", category = FIX)
+    public static boolean villagerInventoryDropFix;
+
     @Rule(desc = "Optimizes tile entity removal from the world.", category = OPTIMIZATIONS)
     public static boolean optimizedTileEntityRemoval;
 

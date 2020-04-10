@@ -113,7 +113,7 @@
              }
          }
  
-+        if (CarpetSettings.nitwitCrafter && this.func_70946_n() == 5) craftingAI.dropInventory();
++        if (CarpetSettings.nitwitCrafter && this.func_70946_n() == 5 || CarpetSettings.villagerInventoryDropFix) craftingAI.dropInventory();
 +
          super.func_70645_a(p_70645_1_);
      }
