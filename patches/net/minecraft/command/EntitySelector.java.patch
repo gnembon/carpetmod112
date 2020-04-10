@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/command/EntitySelector.java
++++ ../src-work/minecraft/net/minecraft/command/EntitySelector.java
+@@ -123,7 +123,7 @@
+     {
+         Matcher matcher = field_82389_a.matcher(p_179656_1_);
+ 
+-        if (matcher.matches() && p_179656_0_.func_70003_b(1, "@"))
++        if (matcher.matches())
+         {
+             Map<String, String> map = func_82381_h(matcher.group(2));
+ 
