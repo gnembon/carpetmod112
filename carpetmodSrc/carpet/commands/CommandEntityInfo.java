@@ -107,8 +107,6 @@ public class CommandEntityInfo extends CommandCarpetBase
                 grep = args[2];
             }
             print_multi_message(report, sender, grep);
-
-            
         }
     }
 

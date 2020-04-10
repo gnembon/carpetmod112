@@ -21,15 +21,3 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.EnumFacing;
  import net.minecraft.util.math.AxisAlignedBB;
-@@ -109,6 +115,11 @@
- 
-     public void func_180634_a(World p_180634_1_, BlockPos p_180634_2_, IBlockState p_180634_3_, Entity p_180634_4_)
-     {
-+        // Add cactus counter CARPET-XCOM
-+        if(CarpetSettings.hopperCounters && p_180634_4_ instanceof EntityItem){
-+            ItemStack items = ((EntityItem) p_180634_4_).func_92059_d();
-+            HopperCounter.COUNTERS.get(EnumDyeColor.GREEN).add(p_180634_1_.func_73046_m(), items);
-+        }
-         p_180634_4_.func_70097_a(DamageSource.field_76367_g, 1.0F);
-     }
- 

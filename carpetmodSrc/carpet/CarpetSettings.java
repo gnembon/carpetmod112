@@ -240,6 +240,12 @@ public class CarpetSettings
     @SurvivalDefault
     public static boolean hopperCounters = false;
 
+    @Rule(desc = "Items thrown into a cactus will count items that are destroyed in them.", category = {COMMANDS, CREATIVE, SURVIVAL}, extra = {
+    })
+    @CreativeDefault
+    @SurvivalDefault
+    public static boolean cactusCounter = false;
+
     @Rule(desc = "Enables integration with redstone multimeter mod", category = {CREATIVE, SURVIVAL}, validator = "validateRedstoneMultimeter", extra = {
             "Required clients with RSMM Mod by Narcoleptic Frog. Enables multiplayer experience with RSMM Mod"
     })

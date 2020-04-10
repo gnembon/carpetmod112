@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import carpet.helpers.HopperCounter;
+import carpet.utils.Messenger;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -38,7 +39,10 @@ public class CommandCounter extends CommandCarpetBase
      */
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
-        if (!command_enabled("hopperCounters", sender)) return;
+        if (!CarpetSettings.hopperCounters && !CarpetSettings.cactusCounter){
+            msg(sender, Messenger.m(null, "Need cactusCounter or hopperCounters to be enabled to use this command."));
+            return;
+        }
         if (args.length == 0) {
             msg(sender, HopperCounter.formatAll(server, false));
             return;
@@ -73,8 +77,9 @@ public class CommandCounter extends CommandCarpetBase
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
-        if (!CarpetSettings.hopperCounters)
+        if (!CarpetSettings.hopperCounters && !CarpetSettings.cactusCounter)
         {
+            msg(sender, Messenger.m(null, "Need cactusCounter or hopperCounters to be enabled to use this command."));
             return Collections.<String>emptyList();
         }
         if (args.length == 1)
