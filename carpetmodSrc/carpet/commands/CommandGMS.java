@@ -63,7 +63,6 @@ public class CommandGMS extends CommandCarpetBase
             if (entityplayer instanceof EntityPlayerMP) {
                 if(entityplayer.moveToStoredCameraData()) return;
             }
-            System.out.println(entityplayer.fallDistance);
             entityplayer.fallDistance = 0;
             entityplayer.setGameType(gametype);
             if(!entityplayer.hadNightvision()) entityplayer.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
