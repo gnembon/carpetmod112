@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
 +++ ../src-work/minecraft/net/minecraft/server/network/NetHandlerLoginServer.java
-@@ -44,6 +44,7 @@
+@@ -1,5 +1,7 @@
+ package net.minecraft.server.network;
+ 
++import carpet.CarpetServer;
++import carpet.CarpetSettings;
+ import com.mojang.authlib.GameProfile;
+ import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
+ import io.netty.channel.ChannelFuture;
+@@ -44,6 +46,7 @@
      public final NetworkManager field_147333_a;
      private NetHandlerLoginServer.LoginState field_147328_g = NetHandlerLoginServer.LoginState.HELLO;
      private int field_147336_h;
@@ -8,7 +16,7 @@
      private GameProfile field_147337_i;
      private final String field_147334_j = "";
      private SecretKey field_147335_k;
-@@ -54,6 +55,7 @@
+@@ -54,6 +57,7 @@
          this.field_147327_f = p_i45298_1_;
          this.field_147333_a = p_i45298_2_;
          field_147329_d.nextBytes(this.field_147330_e);
@@ -16,13 +24,13 @@
      }
  
      public void func_73660_a()
-@@ -74,7 +76,8 @@
+@@ -74,7 +78,8 @@
              }
          }
  
 -        if (this.field_147336_h++ == 600)
 +//        if (this.connectionTimer++ == 600)
-+        if(connectionSystemTimer > System.currentTimeMillis()) // Hard swap to system time check to prevent players logging in when tick warping CARPET-XCOM
++        if(!CarpetSettings.removeConnectionTimeout && connectionSystemTimer > System.currentTimeMillis()) // Hard swap to system time check to prevent players logging in when tick warping CARPET-XCOM
          {
              this.func_194026_b(new TextComponentTranslation("multiplayer.disconnect.slow_login", new Object[0]));
          }

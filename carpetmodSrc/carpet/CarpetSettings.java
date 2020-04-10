@@ -437,6 +437,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Removes the timeout caused by delays attempting to login.", category = FIX)
+    public static boolean removeConnectionTimeout;
+
     @Rule(desc = "Villagers drop there inventory contents when they die.", category = FIX)
     public static boolean villagerInventoryDropFix;
 
@@ -728,7 +731,7 @@ public class CarpetSettings
 
     @Rule(desc = "Turns crafting tables into automated crafting tables with inventorys.", category = FEATURE, extra = "WARNING! If the rule is turned off after use, any inventory content in crafting tables will permanently become lost after chunks are reloaded.")
     public static boolean autocrafter;
-    
+
     @Rule(
             desc = "Auto-crafting dropper",
             extra = {"Is a dropper points to the crafting table ",
@@ -870,7 +873,7 @@ public class CarpetSettings
     private static boolean validateTileTickLimit(int value) {
         return value >= -1;
     }
-    
+
     @Rule(desc = "Redstone ore blocks can redirect redstone dust", category = {EXPERIMENTAL, FEATURE})
     public static boolean redstoneOreRedirectsDust = false;
 
