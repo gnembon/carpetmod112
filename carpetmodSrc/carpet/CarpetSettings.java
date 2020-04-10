@@ -122,6 +122,9 @@ public class CarpetSettings
     @Rule(desc = "Allows the use of scoreboardPublic, a lower permition level score display.", category = COMMANDS)
     public static boolean commandPublicScoreboard = true;
 
+    @Rule(desc = "Enables /light for changing light levels", category = COMMANDS)
+    public static boolean commandLight = true;
+
     @Rule(desc = "Disables players in /c from spectating other players", category = COMMANDS)
     public static boolean cameraModeDisableSpectatePlayers;
 
