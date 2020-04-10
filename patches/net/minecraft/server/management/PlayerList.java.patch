@@ -67,7 +67,15 @@
              entityplayermp1.field_71135_a.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.duplicate_login", new Object[0]));
          }
  
-@@ -630,6 +647,12 @@
+@@ -496,6 +513,7 @@
+         entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
+         entityplayermp.func_174817_o(p_72368_1_);
+         entityplayermp.func_184819_a(p_72368_1_.func_184591_cq());
++        entityplayermp.setCameraData(p_72368_1_);
+ 
+         for (String s : p_72368_1_.func_184216_O())
+         {
+@@ -630,6 +648,12 @@
              }
          }
  

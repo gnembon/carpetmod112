@@ -243,7 +243,7 @@
      public boolean func_184812_l_()
      {
          return this.field_71134_c.func_73081_b() == GameType.CREATIVE;
-@@ -1439,4 +1486,88 @@
+@@ -1439,4 +1486,99 @@
      {
          return this.field_193110_cw;
      }
@@ -276,6 +276,17 @@
 +    protected boolean disableSpectatePlayers;
 +    private boolean gamemodeCamera;
 +    private boolean nightvision;
++    public void setCameraData(EntityPlayerMP player) {
++        storeX = player.storeX;
++        storeY = player.storeY;
++        storeZ = player.storeZ;
++        storeYaw = player.storeYaw;
++        storePitch = player.storePitch;
++        storedDim = player.storedDim;
++        disableSpectatePlayers = player.disableSpectatePlayers;
++        gamemodeCamera = player.gamemodeCamera;
++        nightvision = player.nightvision;
++    }
 +    public void storeCameraData(boolean hasNightvision) {
 +        storeX = field_70165_t;
 +        storeY = field_70163_u;
@@ -303,11 +314,11 @@
 +                this.field_71133_b.func_184103_al().func_187243_f(this);
 +                worldserver1.func_72973_f(this);
 +                field_70128_L = false;
-+                func_70012_b(storeX, storeY, storeZ, storeYaw, storePitch);
 +
 +                if (func_70089_S())
 +                {
 +                    worldserver1.func_72866_a(this, false);
++                    func_70012_b(storeX, storeY, storeZ, storeYaw, storePitch);
 +                    worldserver2.func_72838_d(this);
 +                    worldserver2.func_72866_a(this, false);
 +                }
