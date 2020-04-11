@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/SaveHandler.java
++++ ../src-work/minecraft/net/minecraft/world/storage/SaveHandler.java
+@@ -7,6 +7,9 @@
+ import java.io.FileOutputStream;
+ import java.io.IOException;
+ import javax.annotation.Nullable;
++
++import carpet.patches.EntityPlayerMPFake;
++import net.minecraft.entity.Entity;
+ import net.minecraft.entity.player.EntityPlayer;
+ import net.minecraft.nbt.CompressedStreamTools;
+ import net.minecraft.nbt.NBTTagCompound;
+@@ -178,6 +181,7 @@
+     {
+         try
+         {
++            if(p_75753_1_ instanceof EntityPlayerMPFake) EntityPlayerMPFake.removePlayerFromTeams((EntityPlayerMPFake)p_75753_1_);
+             NBTTagCompound nbttagcompound = p_75753_1_.func_189511_e(new NBTTagCompound());
+             File file1 = new File(this.field_75771_c, p_75753_1_.func_189512_bd() + ".dat.tmp");
+             File file2 = new File(this.field_75771_c, p_75753_1_.func_189512_bd() + ".dat");

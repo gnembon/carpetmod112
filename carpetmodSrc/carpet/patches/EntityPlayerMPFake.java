@@ -102,7 +102,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
 
     private static GameProfile fixSkin(GameProfile gameProfile)
     {
-        if (!gameProfile.getProperties().containsKey("texture"))
+        if (!CarpetSettings.removeFakePlayerSkins && !gameProfile.getProperties().containsKey("texture"))
             return TileEntitySkull.updateGameProfile(gameProfile);
         else
             return gameProfile;
@@ -132,7 +132,6 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     private void logout() {
         this.dismountRidingEntity();
         getServer().getPlayerList().playerLoggedOut(this);
-        removePlayerFromTeams(this);
     }
 
     private void playerMoved()
@@ -174,7 +173,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         scoreboard.addPlayerToTeam(player.getName(), "Bots");
     }
 
-    private static void removePlayerFromTeams(EntityPlayerMPFake player){
+    public static void removePlayerFromTeams(EntityPlayerMPFake player){
         Scoreboard scoreboard = player.getServer().getWorld(0).getScoreboard();
         scoreboard.removePlayerFromTeams(player.getName());
     }
