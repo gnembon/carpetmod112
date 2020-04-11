@@ -44,7 +44,7 @@ public class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v20_04_10";
+    public static final String carpetVersion = "v20_04_11";
     public static final String minecraftVersion = "1.12.2";
     public static final String mcpMappings = "39-1.12";
 
@@ -728,6 +728,9 @@ public class CarpetSettings
 
     @Rule(desc = "Allows fake players to gain stats.", category = FEATURE)
     public static boolean fakePlayerStats;
+
+    @Rule(desc = "Removes the skin from fake players to reduce player data requests to mojang servers.", category = FEATURE)
+    public static boolean removeFakePlayerSkins;
 
     @Rule(desc = "Turns crafting tables into automated crafting tables with inventorys.", category = FEATURE, extra = "WARNING! If the rule is turned off after use, any inventory content in crafting tables will permanently become lost after chunks are reloaded.")
     public static boolean autocrafter;
