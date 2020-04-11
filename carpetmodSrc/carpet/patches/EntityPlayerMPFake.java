@@ -95,6 +95,37 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         return playerShadow;
     }
 
+    public static EntityPlayerMPFake create(String username, MinecraftServer server)
+    {
+        WorldServer worldIn = server.getWorld(0);
+        PlayerInteractionManager interactionManagerIn = new PlayerInteractionManager(worldIn);
+        GameProfile gameprofile = server.getPlayerProfileCache().getGameProfileForUsername(username);
+        gameprofile = fixSkin(gameprofile);
+        EntityPlayerMPFake instance = new EntityPlayerMPFake(server, worldIn, gameprofile, interactionManagerIn);
+        server.getPlayerList().readPlayerDataFromFile(instance);
+        instance.setSetPosition(instance.posX, instance.posY, instance.posZ, instance.rotationYaw, instance.rotationPitch);
+        server.getPlayerList().initializeConnectionToPlayer(new NetworkManagerFake(EnumPacketDirection.CLIENTBOUND), instance);
+        if (instance.dimension != 0) //player was logged in in a different dimension
+        {
+            WorldServer old_world = server.getWorld(instance.dimension);
+            old_world.removeEntity(instance);
+            instance.isDead = false;
+            worldIn.spawnEntity(instance);
+            instance.setWorld(worldIn);
+            server.getPlayerList().preparePlayer(instance, old_world);
+            instance.interactionManager.setWorld(worldIn);
+        }
+        instance.setHealth(20.0F);
+        instance.isDead = false;
+        instance.stepHeight = 0.6F;
+        server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityHeadLook(instance, (byte)(instance.rotationYawHead * 256 / 360) ),instance.dimension);
+        server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityTeleport(instance),instance.dimension);
+        server.getPlayerList().serverUpdateMovingPlayer(instance);
+        instance.dataManager.set(PLAYER_MODEL_FLAG, (byte) 0x7f); // show all model layers (incl. capes)
+        createAndAddFakePlayerToTeamBot(instance);
+        return instance;
+    }
+
     private EntityPlayerMPFake(MinecraftServer server, WorldServer worldIn, GameProfile profile, PlayerInteractionManager interactionManagerIn)
     {
         super(server, worldIn, profile, interactionManagerIn);

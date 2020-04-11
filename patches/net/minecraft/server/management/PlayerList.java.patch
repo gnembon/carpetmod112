@@ -7,7 +7,19 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Sets;
-@@ -65,6 +66,10 @@
+@@ -8,10 +9,7 @@
+ import java.io.File;
+ import java.net.SocketAddress;
+ import java.text.SimpleDateFormat;
+-import java.util.List;
+-import java.util.Map;
+-import java.util.Set;
+-import java.util.UUID;
++import java.util.*;
+ import javax.annotation.Nullable;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.advancements.PlayerAdvancements;
+@@ -65,6 +63,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -18,7 +30,7 @@
  public abstract class PlayerList
  {
      public static final File field_152613_a = new File("banned-players.json");
-@@ -112,6 +117,8 @@
+@@ -112,6 +114,8 @@
          String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
          playerprofilecache.func_152649_a(gameprofile);
          NBTTagCompound nbttagcompound = this.func_72380_a(p_72355_2_);
@@ -27,7 +39,7 @@
          p_72355_2_.func_70029_a(this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK));
          p_72355_2_.field_71134_c.func_73080_a((WorldServer)p_72355_2_.field_70170_p);
          String s1 = "local";
-@@ -125,7 +132,8 @@
+@@ -125,7 +129,8 @@
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
          WorldInfo worldinfo = worldserver.func_72912_H();
          this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, worldserver);
@@ -37,7 +49,7 @@
          nethandlerplayserver.func_147359_a(new SPacketJoinGame(p_72355_2_.func_145782_y(), p_72355_2_.field_71134_c.func_73081_b(), worldinfo.func_76093_s(), worldserver.field_73011_w.func_186058_p().func_186068_a(), worldserver.func_175659_aa(), this.func_72352_l(), worldinfo.func_76067_t(), worldserver.func_82736_K().func_82766_b("reducedDebugInfo")));
          nethandlerplayserver.func_147359_a(new SPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
          nethandlerplayserver.func_147359_a(new SPacketServerDifficulty(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
-@@ -343,6 +351,8 @@
+@@ -343,6 +348,8 @@
  
          worldserver.func_72838_d(p_72377_1_);
          this.func_72375_a(p_72377_1_, (WorldServer)null);
@@ -46,7 +58,7 @@
      }
  
      public void func_72358_d(EntityPlayerMP p_72358_1_)
-@@ -352,6 +362,8 @@
+@@ -352,6 +359,8 @@
  
      public void func_72367_e(EntityPlayerMP p_72367_1_)
      {
@@ -55,7 +67,7 @@
          WorldServer worldserver = p_72367_1_.func_71121_q();
          p_72367_1_.func_71029_a(StatList.field_75947_j);
          this.func_72391_b(p_72367_1_);
-@@ -452,6 +464,11 @@
+@@ -452,6 +461,11 @@
  
          for (EntityPlayerMP entityplayermp1 : list)
          {
@@ -67,7 +79,7 @@
              entityplayermp1.field_71135_a.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.duplicate_login", new Object[0]));
          }
  
-@@ -496,6 +513,7 @@
+@@ -496,6 +510,7 @@
          entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
          entityplayermp.func_174817_o(p_72368_1_);
          entityplayermp.func_184819_a(p_72368_1_.func_184591_cq());
@@ -75,7 +87,7 @@
  
          for (String s : p_72368_1_.func_184216_O())
          {
-@@ -560,7 +578,11 @@
+@@ -560,7 +575,11 @@
          WorldServer worldserver1 = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
          p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, p_187242_1_.field_70170_p.func_175659_aa(), p_187242_1_.field_70170_p.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
          this.func_187243_f(p_187242_1_);
@@ -88,7 +100,7 @@
          p_187242_1_.field_70128_L = false;
          this.func_82448_a(p_187242_1_, i, worldserver, worldserver1);
          this.func_72375_a(p_187242_1_, worldserver);
-@@ -630,6 +652,12 @@
+@@ -630,6 +649,12 @@
              }
          }
  
@@ -101,3 +113,30 @@
          p_82448_3_.field_72984_F.func_76319_b();
  
          if (p_82448_2_ != 1)
+@@ -1097,4 +1122,26 @@
+             playeradvancements.func_193766_b();
+         }
+     }
++
++    public void removeBotTeam(){
++        for (EntityPlayerMP p : field_72404_b) {
++            if(p instanceof EntityPlayerMPFake){
++                EntityPlayerMPFake.removePlayerFromTeams((EntityPlayerMPFake)p);
++            }
++        }
++    }
++
++    public void storeFakePlayerData() {
++        ArrayList<String> list = new ArrayList<>();
++        if(!CarpetSettings.reloadFakePlayers){
++            CarpetServer.writeConf(field_72400_f, list);
++            return;
++        }
++        for (EntityPlayerMP p : field_72404_b) {
++            if(p instanceof EntityPlayerMPFake){
++                list.add(p.func_70005_c_());
++            }
++        }
++        CarpetServer.writeConf(field_72400_f, list);
++    }
+ }

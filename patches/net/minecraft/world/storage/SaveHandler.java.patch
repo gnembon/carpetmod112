@@ -10,11 +10,3 @@
  import net.minecraft.entity.player.EntityPlayer;
  import net.minecraft.nbt.CompressedStreamTools;
  import net.minecraft.nbt.NBTTagCompound;
-@@ -178,6 +181,7 @@
-     {
-         try
-         {
-+            if(MinecraftServer.serverStop && p_75753_1_ instanceof EntityPlayerMPFake) EntityPlayerMPFake.removePlayerFromTeams((EntityPlayerMPFake)p_75753_1_);
-             NBTTagCompound nbttagcompound = p_75753_1_.func_189511_e(new NBTTagCompound());
-             File file1 = new File(this.field_75771_c, p_75753_1_.func_189512_bd() + ".dat.tmp");
-             File file2 = new File(this.field_75771_c, p_75753_1_.func_189512_bd() + ".dat");

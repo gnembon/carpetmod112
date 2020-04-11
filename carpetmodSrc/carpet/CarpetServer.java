@@ -3,14 +3,13 @@ package carpet;
 import carpet.helpers.StackTraceDeobfuscator;
 import carpet.network.PluginChannelManager;
 import carpet.network.ToggleableChannelHandler;
+import carpet.patches.EntityPlayerMPFake;
 import carpet.pubsub.*;
 import carpet.utils.*;
 import carpet.worldedit.WorldEditBridge;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.Locale;
-import java.util.Random;
+import java.io.*;
+import java.util.*;
 
 import narcolepticfrog.rsmm.events.TickStartEventDispatcher;
 import narcolepticfrog.rsmm.server.RSMMServer;
@@ -136,5 +135,51 @@ public class CarpetServer // static for now - easier to handle all around the co
         long i = (long)p_72843_1_ * 341873128712L + (long)p_72843_2_ * 132897987541L + CCServer.getMinecraftServer().worlds[0].getWorldInfo().getSeed() + (long)p_72843_3_;
         rand.setSeed(i);
         return rand;
+    }
+
+    public static void loadBots(MinecraftServer server) {
+        try
+        {
+            File settings_file = server.getActiveAnvilConverter().getFile(server.getFolderName(), "bot.conf");
+            BufferedReader b = new BufferedReader(new FileReader(settings_file));
+            String line = "";
+            boolean temp = CarpetSettings.removeFakePlayerSkins;
+            CarpetSettings.removeFakePlayerSkins = true;
+            while ((line = b.readLine()) != null)
+            {
+                EntityPlayerMPFake.create(line, server);
+            }
+            b.close();
+            CarpetSettings.removeFakePlayerSkins = temp;
+        }
+        catch(FileNotFoundException e)
+        {
+            System.out.println(e);
+        }
+        catch (IOException e)
+        {
+            System.out.println(e);
+        }
+    }
+
+    public static void writeConf(MinecraftServer server, ArrayList<String> names)
+    {
+        try
+        {
+            File settings_file = server.getActiveAnvilConverter().getFile(server.getFolderName(), "bot.conf");
+            if(names != null) {
+                FileWriter fw = new FileWriter(settings_file);
+                for (String name : names) {
+                    fw.write(name +"\n");
+                }
+                fw.close();
+            } else {
+                settings_file.delete();
+            }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
     }
 }

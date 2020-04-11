@@ -732,6 +732,9 @@ public class CarpetSettings
     @Rule(desc = "Removes the skin from fake players to reduce player data requests to mojang servers.", category = FEATURE)
     public static boolean removeFakePlayerSkins;
 
+    @Rule(desc = "Reloads fake players on server startup that were loaded before server shutdown.", category = FEATURE)
+    public static boolean reloadFakePlayers;
+
     @Rule(desc = "Turns crafting tables into automated crafting tables with inventorys.", category = FEATURE, extra = "WARNING! If the rule is turned off after use, any inventory content in crafting tables will permanently become lost after chunks are reloaded.")
     public static boolean autocrafter;
 
