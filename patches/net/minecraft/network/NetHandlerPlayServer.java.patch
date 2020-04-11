@@ -135,6 +135,15 @@
          PacketThreadUtil.func_180031_a(p_175088_1_, this, this.field_147369_b.func_71121_q());
  
          if (this.field_147369_b.func_175149_v())
+@@ -796,7 +834,7 @@
+                     this.field_147369_b.field_71093_bK = entity.field_71093_bK;
+                     this.func_147359_a(new SPacketRespawn(this.field_147369_b.field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), this.field_147369_b.field_71134_c.func_73081_b()));
+                     this.field_147367_d.func_184103_al().func_187243_f(this.field_147369_b);
+-                    worldserver1.func_72973_f(this.field_147369_b);
++                    worldserver1.func_72900_e(this.field_147369_b);
+                     this.field_147369_b.field_70128_L = false;
+                     this.field_147369_b.func_70012_b(entity.field_70165_t, entity.field_70163_u, entity.field_70161_v, entity.field_70177_z, entity.field_70125_A);
+ 
 @@ -841,6 +879,14 @@
          textcomponenttranslation.func_150256_b().func_150238_a(TextFormatting.YELLOW);
          this.field_147367_d.func_184103_al().func_148539_a(textcomponenttranslation);

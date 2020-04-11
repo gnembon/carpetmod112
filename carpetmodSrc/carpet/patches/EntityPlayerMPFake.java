@@ -44,7 +44,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         {
             WorldServer old_world = server.getWorld(instance.dimension);
             instance.dimension = dimension;
-            old_world.removeEntityDangerously(instance);
+            old_world.removeEntity(instance);
             instance.isDead = false;
             worldIn.spawnEntity(instance);
             instance.setWorld(worldIn);

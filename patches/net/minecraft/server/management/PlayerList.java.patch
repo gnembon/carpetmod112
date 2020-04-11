@@ -75,7 +75,20 @@
  
          for (String s : p_72368_1_.func_184216_O())
          {
-@@ -630,6 +648,12 @@
+@@ -560,7 +578,11 @@
+         WorldServer worldserver1 = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
+         p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, p_187242_1_.field_70170_p.func_175659_aa(), p_187242_1_.field_70170_p.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
+         this.func_187243_f(p_187242_1_);
+-        worldserver.func_72973_f(p_187242_1_);
++        if(!CarpetSettings.portalTurningPlayersInvisibleFix) {
++            worldserver.func_72973_f(p_187242_1_);
++        }else{
++            worldserver.func_72900_e(p_187242_1_);
++        }
+         p_187242_1_.field_70128_L = false;
+         this.func_82448_a(p_187242_1_, i, worldserver, worldserver1);
+         this.func_72375_a(p_187242_1_, worldserver);
+@@ -630,6 +652,12 @@
              }
          }
  
