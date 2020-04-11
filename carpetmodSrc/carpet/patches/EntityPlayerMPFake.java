@@ -132,6 +132,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     private void logout() {
         this.dismountRidingEntity();
         getServer().getPlayerList().playerLoggedOut(this);
+        removePlayerFromTeams(this);
     }
 
     private void playerMoved()

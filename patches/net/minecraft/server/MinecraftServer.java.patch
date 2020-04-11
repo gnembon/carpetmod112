@@ -24,7 +24,11 @@
  public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
  {
      private static final Logger field_147145_h = LogManager.getLogger();
-@@ -144,6 +155,7 @@
+@@ -141,9 +152,11 @@
+     protected final Queue < FutureTask<? >> field_175589_i = Queues. < FutureTask<? >> newArrayDeque();
+     private Thread field_175590_aa;
+     private long field_175591_ab = func_130071_aq();
++    public static boolean serverStop;
  
      public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
      {
@@ -32,7 +36,7 @@
          this.field_110456_c = p_i47054_2_;
          this.field_152364_T = p_i47054_4_;
          this.field_147143_S = p_i47054_5_;
-@@ -273,6 +285,7 @@
+@@ -273,6 +286,7 @@
  
          this.field_71318_t.func_72364_a(this.field_71305_c);
          this.func_147139_a(this.func_147135_j());
@@ -40,7 +44,7 @@
          this.func_71222_d();
      }
  
-@@ -285,25 +298,32 @@
+@@ -285,25 +299,32 @@
          int i1 = 0;
          this.func_71192_d("menu.generatingTerrain");
          int j1 = 0;
@@ -88,7 +92,7 @@
              }
          }
  
-@@ -341,7 +361,7 @@
+@@ -341,7 +362,7 @@
  
      public abstract boolean func_183002_r();
  
@@ -97,7 +101,7 @@
      {
          this.field_71302_d = p_71216_1_;
          this.field_71303_e = p_71216_2_;
-@@ -375,6 +395,7 @@
+@@ -375,10 +396,12 @@
                  }
              }
          }
@@ -105,7 +109,12 @@
      }
  
      protected void func_71260_j()
-@@ -450,18 +471,33 @@
+     {
++        serverStop = true;
+         field_147145_h.info("Stopping server");
+ 
+         if (this.func_147137_ag() != null)
+@@ -450,18 +473,33 @@
              {
                  this.field_175591_ab = func_130071_aq();
                  long i = 0L;
@@ -141,7 +150,7 @@
                          j = 2000L;
                          this.field_71299_R = this.field_175591_ab;
                      }
-@@ -474,6 +510,7 @@
+@@ -474,6 +512,7 @@
  
                      i += j;
                      this.field_175591_ab = k;
@@ -149,7 +158,7 @@
  
                      if (this.field_71305_c[0].func_73056_e())
                      {
-@@ -482,14 +519,33 @@
+@@ -482,14 +521,33 @@
                      }
                      else
                      {
@@ -186,7 +195,7 @@
                      this.field_71296_Q = true;
                  }
              }
-@@ -594,6 +650,12 @@
+@@ -594,6 +652,12 @@
          long i = System.nanoTime();
          ++this.field_71315_w;
  
@@ -199,7 +208,7 @@
          if (this.field_71295_T)
          {
              this.field_71295_T = false;
-@@ -622,10 +684,15 @@
+@@ -622,10 +686,15 @@
  
          if (this.field_71315_w % 900 == 0)
          {
@@ -215,7 +224,7 @@
          }
  
          this.field_71304_b.func_76320_a("tallying");
-@@ -645,6 +712,20 @@
+@@ -645,6 +714,20 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -236,7 +245,7 @@
      }
  
      public void func_71190_q()
-@@ -686,22 +767,38 @@
+@@ -686,22 +769,38 @@
                  {
                      worldserver.func_72835_b();
                  }
@@ -277,7 +286,7 @@
                  }
  
                  this.field_71304_b.func_76319_b();
-@@ -714,10 +811,12 @@
+@@ -714,10 +813,12 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  
@@ -290,7 +299,7 @@
          this.field_71304_b.func_76318_c("commandFunctions");
          this.func_193030_aL().func_73660_a();
          this.field_71304_b.func_76318_c("tickables");
-@@ -728,6 +827,8 @@
+@@ -728,6 +829,8 @@
          }
  
          this.field_71304_b.func_76319_b();
@@ -299,7 +308,7 @@
      }
  
      public boolean func_71255_r()
-@@ -939,7 +1040,7 @@
+@@ -939,7 +1042,7 @@
  
      public String getServerModName()
      {
