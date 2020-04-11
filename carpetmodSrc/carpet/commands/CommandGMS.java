@@ -4,9 +4,12 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 
+import carpet.logging.LoggerRegistry;
+import carpet.utils.Messenger;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.GameType;
 
 import net.minecraft.command.WrongUsageException;
@@ -60,12 +63,34 @@ public class CommandGMS extends CommandCarpetBase
     public static void setPlayerToSurvival(MinecraftServer server, EntityPlayerMP entityplayer) {
         GameType gametype = server.getGameType();
         if(entityplayer.interactionManager.getGameType() != GameType.SURVIVAL) {
+            if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
+                LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
+                        Messenger.s(null, "s1: " + entityplayer.world.loadedEntityList.contains(entityplayer))
+                });
+            }
             if (entityplayer instanceof EntityPlayerMP) {
-                if(entityplayer.moveToStoredCameraData()) return;
+                if(entityplayer.moveToStoredCameraData()){
+                    if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
+                        LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
+                                Messenger.s(null, "s7: " + entityplayer.world.loadedEntityList.contains(entityplayer))
+                        });
+                    }
+                    return;
+                }
             }
             entityplayer.fallDistance = 0;
+            if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
+                LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
+                        Messenger.s(null, "s5: " + entityplayer.world.loadedEntityList.contains(entityplayer))
+                });
+            }
             entityplayer.setGameType(gametype);
             if(!entityplayer.hadNightvision()) entityplayer.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
+            if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
+                LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
+                        Messenger.s(null, "s6: " + entityplayer.world.loadedEntityList.contains(entityplayer))
+                });
+            }
         }
     }
 
