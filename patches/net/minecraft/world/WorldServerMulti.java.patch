@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/world/WorldServerMulti.java
++++ ../src-work/minecraft/net/minecraft/world/WorldServerMulti.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.world;
+ 
++import carpet.helpers.ScheduledBlockEventSerializer;
+ import net.minecraft.profiler.Profiler;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.village.VillageCollection;
+@@ -73,6 +74,14 @@
+             this.field_72982_D.func_82566_a(this);
+         }
+ 
++        blockEventSerializer = (ScheduledBlockEventSerializer)this.field_72988_C.func_75742_a(ScheduledBlockEventSerializer.class, "blockEvents");
++
++        if (blockEventSerializer == null)
++        {
++            blockEventSerializer = new ScheduledBlockEventSerializer();
++            this.field_72988_C.func_75745_a("blockEvents", blockEventSerializer);
++        }
++
+         return this;
+     }
+ 

@@ -437,6 +437,19 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Saves the block event on server shutdown and loads at server startup.", category = FIX, validator = "validateBlockEventSerializer")
+    public static boolean blockEventSerializer;
+    private static boolean validateBlockEventSerializer(boolean value) {
+        if (!value){
+            for (int dim = 0; dim < 3; dim++) {
+                WorldServer world = CarpetServer.minecraft_server.worlds[dim];
+                world.blockEventSerializer.markDirty();
+            }
+        }
+
+        return true;
+    }
+
     @Rule(desc = "Removes the timeout caused by delays attempting to login.", category = FIX)
     public static boolean removeConnectionTimeout;
 
