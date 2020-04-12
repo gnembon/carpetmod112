@@ -429,7 +429,7 @@ public class EntityPlayerActionPack
         return player.getEntityWorld().rayTraceBlocks(eyeVec, pointVec, false, false, true);
     }
 
-    private RayTraceResult mouseOver()
+    public RayTraceResult mouseOver()
     {
         World world = player.getEntityWorld();
         if (world == null)

@@ -10,11 +10,13 @@ import carpet.CarpetSettings;
 import carpet.utils.EntityInfo;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.util.math.RayTraceResult;
 
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -127,6 +129,11 @@ public class CommandEntityInfo extends CommandCarpetBase
         {
             notifyCommandListener(sender, this, "Command is disabled in carpet settings");
         }
-        return args.length == 1 ? getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames()) : Collections.emptyList();
+        List<String> list = getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
+        RayTraceResult result = ((EntityPlayerMP)sender).actionPack.mouseOver();
+        if(result != null && result.typeOfHit == RayTraceResult.Type.ENTITY){
+            list.add(result.entityHit.getUniqueID().toString());
+        }
+        return args.length == 1 ? list : Collections.emptyList();
     }
 }
