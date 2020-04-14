@@ -12,6 +12,24 @@
  public class ChunkGeneratorEnd implements IChunkGenerator
  {
      private final Random field_73220_k;
+@@ -325,7 +330,7 @@
+ 
+     public void func_185931_b(int p_185931_1_, int p_185931_2_)
+     {
+-        BlockFalling.field_149832_M = true;
++        BlockFalling.field_149832_M.set(true);
+         BlockPos blockpos = new BlockPos(p_185931_1_ * 16, 0, p_185931_2_ * 16);
+ 
+         if (this.field_73229_q)
+@@ -394,7 +399,7 @@
+             }
+         }
+ 
+-        BlockFalling.field_149832_M = false;
++        BlockFalling.field_149832_M.set(false);
+     }
+ 
+     public boolean func_185933_a(Chunk p_185933_1_, int p_185933_2_, int p_185933_3_)
 @@ -404,6 +409,13 @@
  
      public List<Biome.SpawnListEntry> func_177458_a(EnumCreatureType p_177458_1_, BlockPos p_177458_2_)

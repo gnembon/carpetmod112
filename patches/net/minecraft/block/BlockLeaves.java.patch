@@ -1,0 +1,118 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLeaves.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLeaves.java
+@@ -10,13 +10,14 @@
+ import net.minecraft.item.ItemStack;
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
++import net.minecraft.world.WorldServer;
+ 
+ public abstract class BlockLeaves extends Block
+ {
+     public static final PropertyBool field_176237_a = PropertyBool.func_177716_a("decayable");
+     public static final PropertyBool field_176236_b = PropertyBool.func_177716_a("check_decay");
+     protected boolean field_185686_c;
+-    int[] field_150128_a;
++    //int[] surroundings; //this has to be changed for parallel access
+ 
+     public BlockLeaves()
+     {
+@@ -59,7 +60,7 @@
+ 
+     public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
+     {
+-        if (!p_180650_1_.field_72995_K)
++        if (!p_180650_1_.field_72995_K && p_180650_1_ instanceof WorldServer)
+         {
+             if (((Boolean)p_180650_3_.func_177229_b(field_176236_b)).booleanValue() && ((Boolean)p_180650_3_.func_177229_b(field_176237_a)).booleanValue())
+             {
+@@ -72,10 +73,7 @@
+                 int k1 = 1024;
+                 int l1 = 16;
+ 
+-                if (this.field_150128_a == null)
+-                {
+-                    this.field_150128_a = new int[32768];
+-                }
++                int[] surroundings = ((WorldServer) p_180650_1_).getLeavesDecayArray();
+ 
+                 if (p_180650_1_.func_175707_a(new BlockPos(k - 5, l - 5, i1 - 5), new BlockPos(k + 5, l + 5, i1 + 5)))
+                 {
+@@ -94,16 +92,16 @@
+                                 {
+                                     if (iblockstate.func_185904_a() == Material.field_151584_j)
+                                     {
+-                                        this.field_150128_a[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = -2;
++                                        surroundings[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = -2;
+                                     }
+                                     else
+                                     {
+-                                        this.field_150128_a[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = -1;
++                                        surroundings[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = -1;
+                                     }
+                                 }
+                                 else
+                                 {
+-                                    this.field_150128_a[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = 0;
++                                    surroundings[(i2 + 16) * 1024 + (j2 + 16) * 32 + k2 + 16] = 0;
+                                 }
+                             }
+                         }
+@@ -117,36 +115,36 @@
+                             {
+                                 for (int l3 = -4; l3 <= 4; ++l3)
+                                 {
+-                                    if (this.field_150128_a[(j3 + 16) * 1024 + (k3 + 16) * 32 + l3 + 16] == i3 - 1)
++                                    if (surroundings[(j3 + 16) * 1024 + (k3 + 16) * 32 + l3 + 16] == i3 - 1)
+                                     {
+-                                        if (this.field_150128_a[(j3 + 16 - 1) * 1024 + (k3 + 16) * 32 + l3 + 16] == -2)
++                                        if (surroundings[(j3 + 16 - 1) * 1024 + (k3 + 16) * 32 + l3 + 16] == -2)
+                                         {
+-                                            this.field_150128_a[(j3 + 16 - 1) * 1024 + (k3 + 16) * 32 + l3 + 16] = i3;
++                                            surroundings[(j3 + 16 - 1) * 1024 + (k3 + 16) * 32 + l3 + 16] = i3;
+                                         }
+ 
+-                                        if (this.field_150128_a[(j3 + 16 + 1) * 1024 + (k3 + 16) * 32 + l3 + 16] == -2)
++                                        if (surroundings[(j3 + 16 + 1) * 1024 + (k3 + 16) * 32 + l3 + 16] == -2)
+                                         {
+-                                            this.field_150128_a[(j3 + 16 + 1) * 1024 + (k3 + 16) * 32 + l3 + 16] = i3;
++                                            surroundings[(j3 + 16 + 1) * 1024 + (k3 + 16) * 32 + l3 + 16] = i3;
+                                         }
+ 
+-                                        if (this.field_150128_a[(j3 + 16) * 1024 + (k3 + 16 - 1) * 32 + l3 + 16] == -2)
++                                        if (surroundings[(j3 + 16) * 1024 + (k3 + 16 - 1) * 32 + l3 + 16] == -2)
+                                         {
+-                                            this.field_150128_a[(j3 + 16) * 1024 + (k3 + 16 - 1) * 32 + l3 + 16] = i3;
++                                            surroundings[(j3 + 16) * 1024 + (k3 + 16 - 1) * 32 + l3 + 16] = i3;
+                                         }
+ 
+-                                        if (this.field_150128_a[(j3 + 16) * 1024 + (k3 + 16 + 1) * 32 + l3 + 16] == -2)
++                                        if (surroundings[(j3 + 16) * 1024 + (k3 + 16 + 1) * 32 + l3 + 16] == -2)
+                                         {
+-                                            this.field_150128_a[(j3 + 16) * 1024 + (k3 + 16 + 1) * 32 + l3 + 16] = i3;
++                                            surroundings[(j3 + 16) * 1024 + (k3 + 16 + 1) * 32 + l3 + 16] = i3;
+                                         }
+ 
+-                                        if (this.field_150128_a[(j3 + 16) * 1024 + (k3 + 16) * 32 + (l3 + 16 - 1)] == -2)
++                                        if (surroundings[(j3 + 16) * 1024 + (k3 + 16) * 32 + (l3 + 16 - 1)] == -2)
+                                         {
+-                                            this.field_150128_a[(j3 + 16) * 1024 + (k3 + 16) * 32 + (l3 + 16 - 1)] = i3;
++                                            surroundings[(j3 + 16) * 1024 + (k3 + 16) * 32 + (l3 + 16 - 1)] = i3;
+                                         }
+ 
+-                                        if (this.field_150128_a[(j3 + 16) * 1024 + (k3 + 16) * 32 + l3 + 16 + 1] == -2)
++                                        if (surroundings[(j3 + 16) * 1024 + (k3 + 16) * 32 + l3 + 16 + 1] == -2)
+                                         {
+-                                            this.field_150128_a[(j3 + 16) * 1024 + (k3 + 16) * 32 + l3 + 16 + 1] = i3;
++                                            surroundings[(j3 + 16) * 1024 + (k3 + 16) * 32 + l3 + 16 + 1] = i3;
+                                         }
+                                     }
+                                 }
+@@ -155,7 +153,7 @@
+                     }
+                 }
+ 
+-                int l2 = this.field_150128_a[16912];
++                int l2 = surroundings[16912];
+ 
+                 if (l2 >= 0)
+                 {

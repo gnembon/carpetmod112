@@ -23,15 +23,16 @@
      public static final PropertyInteger field_176351_O = PropertyInteger.func_177719_a("power", 0, 15);
      protected static final AxisAlignedBB[] field_185700_f = new AxisAlignedBB[] {new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D)};
 -    private boolean field_150181_a = true;
-+    public boolean field_150181_a = true;
-     private final Set<BlockPos> field_150179_b = Sets.<BlockPos>newHashSet();
+-    private final Set<BlockPos> field_150179_b = Sets.<BlockPos>newHashSet();
++    public final ThreadLocal<Boolean> field_150181_a = ThreadLocal.withInitial(() -> true);
++    private final ThreadLocal<Set<BlockPos>> field_150179_b = ThreadLocal.withInitial(Sets::newHashSet);
  
 +    RedstoneWireTurbo turbo = new RedstoneWireTurbo(this);
 +
      public BlockRedstoneWire()
      {
          super(Material.field_151594_q);
-@@ -142,21 +149,26 @@
+@@ -142,80 +149,98 @@
          return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() || p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c() == Blocks.field_150426_aN;
      }
  
@@ -39,15 +40,18 @@
 +    private IBlockState updateSurroundingRedstone(World worldIn, BlockPos pos, IBlockState state, BlockPos source)
      {
 -        p_176338_3_ = this.func_176345_a(p_176338_1_, p_176338_2_, p_176338_2_, p_176338_3_);
+-        List<BlockPos> list = Lists.newArrayList(this.field_150179_b);
+-        this.field_150179_b.clear();
 +        if(CarpetSettings.redstoneDustAlgorithm == CarpetSettings.RedstoneDustAlgorithm.fast)
 +            return turbo.updateSurroundingRedstone(worldIn, pos, state, source);
-+
+ 
 +        state = this.func_176345_a(worldIn, pos, pos, state);
-         List<BlockPos> list = Lists.newArrayList(this.field_150179_b);
-         this.field_150179_b.clear();
++        Set<BlockPos> blocksNeedingUpdate = this.field_150179_b.get();
++        List<BlockPos> list = Lists.newArrayList(blocksNeedingUpdate);
++        blocksNeedingUpdate.clear();
 +        if (CarpetSettings.redstoneDustAlgorithm == CarpetSettings.RedstoneDustAlgorithm.random)
 +            Collections.shuffle(list);
- 
++
          for (BlockPos blockpos : list)
          {
 -            p_176338_1_.func_175685_c(blockpos, this, false);
@@ -63,9 +67,13 @@
      {
          IBlockState iblockstate = p_176345_4_;
          int i = ((Integer)p_176345_4_.func_177229_b(field_176351_O)).intValue();
-@@ -166,54 +178,65 @@
+         int j = 0;
+         j = this.func_176342_a(p_176345_1_, p_176345_3_, j);
+-        this.field_150181_a = false;
++        this.field_150181_a.set(false);
          int k = p_176345_1_.func_175687_A(p_176345_2_);
-         this.field_150181_a = true;
+-        this.field_150181_a = true;
++        this.field_150181_a.set(true);
  
 -        if (k > 0 && k > j - 1)
 +        if(CarpetSettings.redstoneDustAlgorithm != CarpetSettings.RedstoneDustAlgorithm.fast)
@@ -160,8 +168,11 @@
 -
          if (i != j)
          {
++            Set<BlockPos> blocksNeedingUpdate = this.field_150179_b.get();
              p_176345_4_ = p_176345_4_.func_177226_a(field_176351_O, Integer.valueOf(j));
-@@ -223,11 +246,15 @@
+ 
+             if (p_176345_1_.func_180495_p(p_176345_2_) == iblockstate)
+@@ -223,11 +248,15 @@
                  p_176345_1_.func_180501_a(p_176345_2_, p_176345_4_, 2);
              }
  
@@ -172,16 +183,16 @@
              {
 -                this.field_150179_b.add(p_176345_2_.func_177972_a(enumfacing1));
 +                //CM unneccessary
-+                this.field_150179_b.add(p_176345_2_);
++                blocksNeedingUpdate.add(p_176345_2_);
 +
 +                for (EnumFacing enumfacing1 : EnumFacing.values())
 +                {
-+                    this.field_150179_b.add(p_176345_2_.func_177972_a(enumfacing1));
++                    blocksNeedingUpdate.add(p_176345_2_.func_177972_a(enumfacing1));
 +                }
              }
          }
  
-@@ -251,7 +278,7 @@
+@@ -251,7 +280,7 @@
      {
          if (!p_176213_1_.field_72995_K)
          {
@@ -190,7 +201,7 @@
  
              for (EnumFacing enumfacing : EnumFacing.Plane.VERTICAL)
              {
-@@ -290,7 +317,7 @@
+@@ -290,7 +319,7 @@
                  p_180663_1_.func_175685_c(p_180663_2_.func_177972_a(enumfacing), this, false);
              }
  
@@ -199,7 +210,7 @@
  
              for (EnumFacing enumfacing1 : EnumFacing.Plane.HORIZONTAL)
              {
-@@ -332,7 +359,7 @@
+@@ -332,7 +361,7 @@
          {
              if (this.func_176196_c(p_189540_2_, p_189540_3_))
              {
@@ -208,20 +219,27 @@
              }
              else
              {
-@@ -354,6 +381,12 @@
+@@ -349,18 +378,26 @@
+ 
+     public int func_176211_b(IBlockState p_176211_1_, IBlockAccess p_176211_2_, BlockPos p_176211_3_, EnumFacing p_176211_4_)
+     {
+-        return !this.field_150181_a ? 0 : p_176211_1_.func_185911_a(p_176211_2_, p_176211_3_, p_176211_4_);
++        return !this.field_150181_a.get() ? 0 : p_176211_1_.func_185911_a(p_176211_2_, p_176211_3_, p_176211_4_);
+     }
  
      public int func_180656_a(IBlockState p_180656_1_, IBlockAccess p_180656_2_, BlockPos p_180656_3_, EnumFacing p_180656_4_)
      {
+-        if (!this.field_150181_a)
 +        // [CM] Redstone ore redirects dust
 +        if (CarpetSettings.redstoneOreRedirectsDust)
-+        {
+         {
 +            RedstoneOreRedirectHelper redstoneOre = new RedstoneOreRedirectHelper(this);
 +            return redstoneOre.getWeakPowerCM(p_180656_1_, p_180656_2_, p_180656_3_, p_180656_4_);
 +        }
-         if (!this.field_150181_a)
-         {
++        if (!this.field_150181_a.get())
++        {
              return 0;
-@@ -361,6 +394,8 @@
+         }
          else
          {
              int i = ((Integer)p_180656_1_.func_177229_b(field_176351_O)).intValue();
@@ -230,7 +248,7 @@
  
              if (i == 0)
              {
-@@ -398,7 +433,8 @@
+@@ -398,7 +435,8 @@
          }
      }
  
@@ -240,7 +258,7 @@
      {
          BlockPos blockpos = p_176339_2_.func_177972_a(p_176339_3_);
          IBlockState iblockstate = p_176339_1_.func_180495_p(blockpos);
-@@ -435,6 +471,12 @@
+@@ -435,6 +473,12 @@
  
      protected static boolean func_176343_a(IBlockState p_176343_0_, @Nullable EnumFacing p_176343_1_)
      {
@@ -253,3 +271,12 @@
          Block block = p_176343_0_.func_177230_c();
  
          if (block == Blocks.field_150488_af)
+@@ -458,7 +502,7 @@
+ 
+     public boolean func_149744_f(IBlockState p_149744_1_)
+     {
+-        return this.field_150181_a;
++        return this.field_150181_a.get();
+     }
+ 
+     public ItemStack func_185473_a(World p_185473_1_, BlockPos p_185473_2_, IBlockState p_185473_3_)

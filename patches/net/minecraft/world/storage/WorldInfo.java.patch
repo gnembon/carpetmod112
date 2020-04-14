@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/WorldInfo.java
++++ ../src-work/minecraft/net/minecraft/world/storage/WorldInfo.java
+@@ -780,7 +780,7 @@
+         return nbttagcompound == null ? new NBTTagCompound() : nbttagcompound;
+     }
+ 
+-    public void func_186345_a(DimensionType p_186345_1_, NBTTagCompound p_186345_2_)
++    synchronized public void func_186345_a(DimensionType p_186345_1_, NBTTagCompound p_186345_2_)
+     {
+         this.field_186348_N.put(p_186345_1_, p_186345_2_);
+     }

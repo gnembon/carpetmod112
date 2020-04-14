@@ -1,5 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/Item.java
 +++ ../src-work/minecraft/net/minecraft/item/Item.java
+@@ -73,7 +73,7 @@
+     protected static final UUID field_111210_e = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+     protected static final UUID field_185050_h = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
+     private CreativeTabs field_77701_a;
+-    protected static Random field_77697_d = new Random();
++    protected static Random field_77697_d = new Random(); //TODO might multithread this
+     protected int field_77777_bU = 64;
+     private int field_77699_b;
+     protected boolean field_77789_bW;
 @@ -991,4 +991,9 @@
              }
          }

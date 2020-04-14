@@ -17,3 +17,20 @@
                  {
                      if (this.field_70146_Z.nextFloat() < 0.05F && this.field_70170_p.func_82736_K().func_82766_b("doMobSpawning"))
                      {
+@@ -133,13 +134,13 @@
+     }
+ 
+     @Nullable
+-    public Entity func_184204_a(int p_184204_1_)
++    public void startTeleporting(int dimensionIn)
+     {
+-        if (this.field_70192_c.field_71093_bK != p_184204_1_)
++        if (this.field_70192_c.field_71093_bK != dimensionIn)
+         {
+             this.field_70192_c = null;
+         }
+ 
+-        return super.func_184204_a(p_184204_1_);
++        super.startTeleporting(dimensionIn);
+     }
+ }

@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFalling.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFalling.java
+@@ -11,7 +11,7 @@
+ 
+ public class BlockFalling extends Block
+ {
+-    public static boolean field_149832_M;
++    public static ThreadLocal<Boolean> field_149832_M = ThreadLocal.withInitial(()->false);
+ 
+     public BlockFalling()
+     {
+@@ -48,7 +48,7 @@
+         {
+             int i = 32;
+ 
+-            if (!field_149832_M && p_176503_1_.func_175707_a(p_176503_2_.func_177982_a(-32, -32, -32), p_176503_2_.func_177982_a(32, 32, 32)))
++            if (!field_149832_M.get() && p_176503_1_.func_175707_a(p_176503_2_.func_177982_a(-32, -32, -32), p_176503_2_.func_177982_a(32, 32, 32)))
+             {
+                 if (!p_176503_1_.field_72995_K)
+                 {

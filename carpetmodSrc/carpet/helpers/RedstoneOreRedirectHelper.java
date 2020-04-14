@@ -50,7 +50,7 @@ public class RedstoneOreRedirectHelper
     public int getWeakPowerCM(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
         IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side.getOpposite()));
-        if (!wire.canProvidePower)
+        if (!wire.canProvidePower.get())
         {
             return 0;
         }

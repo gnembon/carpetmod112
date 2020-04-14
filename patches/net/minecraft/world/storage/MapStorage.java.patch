@@ -1,0 +1,38 @@
+--- ../src-base/minecraft/net/minecraft/world/storage/MapStorage.java
++++ ../src-work/minecraft/net/minecraft/world/storage/MapStorage.java
+@@ -18,7 +18,7 @@
+ public class MapStorage
+ {
+     private final ISaveHandler field_75751_a;
+-    protected Map<String, WorldSavedData> field_75749_b = Maps.<String, WorldSavedData>newHashMap();
++    private Map<String, WorldSavedData> field_75749_b = Maps.<String, WorldSavedData>newHashMap();
+     private final List<WorldSavedData> field_75750_c = Lists.<WorldSavedData>newArrayList();
+     private final Map<String, Short> field_75748_d = Maps.<String, Short>newHashMap();
+ 
+@@ -29,7 +29,7 @@
+     }
+ 
+     @Nullable
+-    public WorldSavedData func_75742_a(Class <? extends WorldSavedData > p_75742_1_, String p_75742_2_)
++    public synchronized WorldSavedData func_75742_a(Class<? extends WorldSavedData> p_75742_1_, String p_75742_2_)
+     {
+         WorldSavedData worldsaveddata = this.field_75749_b.get(p_75742_2_);
+ 
+@@ -78,7 +78,7 @@
+         }
+     }
+ 
+-    public void func_75745_a(String p_75745_1_, WorldSavedData p_75745_2_)
++    public synchronized void func_75745_a(String p_75745_1_, WorldSavedData p_75745_2_)
+     {
+         if (this.field_75749_b.containsKey(p_75745_1_))
+         {
+@@ -165,7 +165,7 @@
+         }
+     }
+ 
+-    public int func_75743_a(String p_75743_1_)
++    public synchronized int func_75743_a(String p_75743_1_)
+     {
+         Short oshort = this.field_75748_d.get(p_75743_1_);
+ 

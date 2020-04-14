@@ -21,6 +21,24 @@
      private Biome[] field_185981_C;
      double[] field_185986_e;
      double[] field_185987_f;
+@@ -358,7 +363,7 @@
+ 
+     public void func_185931_b(int p_185931_1_, int p_185931_2_)
+     {
+-        BlockFalling.field_149832_M = true;
++        BlockFalling.field_149832_M.set(true);// = true;
+         int i = p_185931_1_ * 16;
+         int j = p_185931_2_ * 16;
+         BlockPos blockpos = new BlockPos(i, 0, j);
+@@ -457,7 +462,7 @@
+             }
+         }
+ 
+-        BlockFalling.field_149832_M = false;
++        BlockFalling.field_149832_M.set(false);// = false;
+     }
+ 
+     public boolean func_185933_a(Chunk p_185933_1_, int p_185933_2_, int p_185933_3_)
 @@ -487,6 +492,11 @@
              {
                  return this.field_185980_B.func_175799_b();

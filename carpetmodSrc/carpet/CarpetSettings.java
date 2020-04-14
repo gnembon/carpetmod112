@@ -141,9 +141,9 @@ public class CarpetSettings
 
     private static boolean validateInstantFallingFlag(boolean value) {
         if (value) {
-            BlockFalling.fallInstantly = true;
+            BlockFalling.fallInstantly.set(true);
         }else {
-            BlockFalling.fallInstantly = false;
+            BlockFalling.fallInstantly.set(false);
         }
         return true;
     }

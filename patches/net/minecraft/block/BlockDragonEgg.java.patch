@@ -13,6 +13,15 @@
  public class BlockDragonEgg extends Block
  {
      protected static final AxisAlignedBB field_185660_a = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 1.0D, 0.9375D);
+@@ -50,7 +56,7 @@
+         {
+             int i = 32;
+ 
+-            if (!BlockFalling.field_149832_M && p_180683_1_.func_175707_a(p_180683_2_.func_177982_a(-32, -32, -32), p_180683_2_.func_177982_a(32, 32, 32)))
++            if (!BlockFalling.field_149832_M.get() && p_180683_1_.func_175707_a(p_180683_2_.func_177982_a(-32, -32, -32), p_180683_2_.func_177982_a(32, 32, 32)))
+             {
+                 p_180683_1_.func_72838_d(new EntityFallingBlock(p_180683_1_, (double)((float)p_180683_2_.func_177958_n() + 0.5F), (double)p_180683_2_.func_177956_o(), (double)((float)p_180683_2_.func_177952_p() + 0.5F), this.func_176223_P()));
+             }
 @@ -74,10 +80,48 @@
  
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFurnace.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFurnace.java
-@@ -24,6 +24,8 @@
+@@ -24,11 +24,13 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  
@@ -9,6 +9,12 @@
  public class BlockFurnace extends BlockContainer
  {
      public static final PropertyDirection field_176447_a = BlockHorizontal.field_185512_D;
+     private final boolean field_149932_b;
+-    private static boolean field_149934_M;
++    private static ThreadLocal<Boolean> field_149934_M = ThreadLocal.withInitial(()->false);
+ 
+     protected BlockFurnace(boolean p_i45407_1_)
+     {
 @@ -44,6 +46,8 @@
  
      public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
@@ -17,4 +23,31 @@
 +    	if(CarpetSettings.accurateBlockPlacement) { return; }
          this.func_176445_e(p_176213_1_, p_176213_2_, p_176213_3_);
      }
+ 
+@@ -102,7 +106,7 @@
+     {
+         IBlockState iblockstate = p_176446_1_.func_180495_p(p_176446_2_);
+         TileEntity tileentity = p_176446_1_.func_175625_s(p_176446_2_);
+-        field_149934_M = true;
++        field_149934_M.set(true);// = true;
+ 
+         if (p_176446_0_)
+         {
+@@ -115,7 +119,7 @@
+             p_176446_1_.func_180501_a(p_176446_2_, Blocks.field_150460_al.func_176223_P().func_177226_a(field_176447_a, iblockstate.func_177229_b(field_176447_a)), 3);
+         }
+ 
+-        field_149934_M = false;
++        field_149934_M.set(true);// = true;
+ 
+         if (tileentity != null)
+         {
+@@ -151,7 +155,7 @@
+ 
+     public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
+     {
+-        if (!field_149934_M)
++        if (!field_149934_M.get())
+         {
+             TileEntity tileentity = p_180663_1_.func_175625_s(p_180663_2_);
  

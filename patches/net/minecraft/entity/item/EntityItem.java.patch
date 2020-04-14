@@ -26,7 +26,11 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.datafix.DataFixer;
  import net.minecraft.util.datafix.FixTypes;
-@@ -25,6 +31,8 @@
+@@ -22,9 +28,12 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.text.translation.I18n;
+ import net.minecraft.world.World;
++import net.minecraft.world.WorldServer;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -35,7 +39,7 @@
  public class EntityItem extends Entity
  {
      private static final Logger field_145803_d = LogManager.getLogger();
-@@ -35,6 +43,9 @@
+@@ -35,6 +44,9 @@
      private String field_145801_f;
      private String field_145802_g;
      public float field_70290_d;
@@ -45,7 +49,7 @@
  
      public EntityItem(World p_i1709_1_, double p_i1709_2_, double p_i1709_4_, double p_i1709_6_)
      {
-@@ -47,6 +58,12 @@
+@@ -47,6 +59,12 @@
          this.field_70159_w = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
          this.field_70181_x = 0.20000000298023224D;
          this.field_70179_y = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
@@ -58,7 +62,7 @@
      }
  
      public EntityItem(World p_i1710_1_, double p_i1710_2_, double p_i1710_4_, double p_i1710_6_, ItemStack p_i1710_8_)
-@@ -165,8 +182,20 @@
+@@ -165,8 +183,20 @@
                  }
              }
  
@@ -79,7 +83,7 @@
                  this.func_70106_y();
              }
          }
-@@ -221,8 +250,23 @@
+@@ -221,8 +251,23 @@
                      }
                      else if (itemstack1.func_190916_E() + itemstack.func_190916_E() > itemstack1.func_77976_d())
                      {
@@ -103,7 +107,7 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -256,6 +300,8 @@
+@@ -256,6 +301,8 @@
  
      public boolean func_70072_I()
      {
@@ -112,7 +116,7 @@
          if (this.field_70170_p.func_72918_a(this.func_174813_aQ(), Material.field_151586_h, this))
          {
              if (!this.field_70171_ac && !this.field_70148_d)
-@@ -269,7 +315,8 @@
+@@ -269,7 +316,8 @@
          {
              this.field_70171_ac = false;
          }
@@ -122,7 +126,7 @@
          return this.field_70171_ac;
      }
  
-@@ -295,6 +342,15 @@
+@@ -295,6 +343,15 @@
  
              if (this.field_70291_e <= 0)
              {
@@ -138,7 +142,7 @@
                  this.func_70106_y();
              }
  
-@@ -366,6 +422,10 @@
+@@ -366,6 +423,10 @@
              Item item = itemstack.func_77973_b();
              int i = itemstack.func_190916_E();
  
@@ -149,7 +153,7 @@
              if (this.field_145804_b == 0 && (this.field_145802_g == null || 6000 - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && p_70100_1_.field_71071_by.func_70441_a(itemstack))
              {
                  p_70100_1_.func_71001_a(this, i);
-@@ -376,8 +436,13 @@
+@@ -376,8 +437,13 @@
                      itemstack.func_190920_e(i);
                  }
  
@@ -164,7 +168,19 @@
          }
      }
  
-@@ -470,4 +535,9 @@
+@@ -392,9 +458,9 @@
+     }
+ 
+     @Nullable
+-    public Entity func_184204_a(int p_184204_1_)
++    public Entity finishTeleporting(WorldServer worldServer)
+     {
+-        Entity entity = super.func_184204_a(p_184204_1_);
++        Entity entity = super.finishTeleporting(worldServer);
+ 
+         if (!this.field_70170_p.field_72995_K && entity instanceof EntityItem)
+         {
+@@ -470,4 +536,9 @@
          this.func_174871_r();
          this.field_70292_b = 5999;
      }

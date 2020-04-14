@@ -11,6 +11,24 @@
  public class ChunkGeneratorHell implements IChunkGenerator
  {
      protected static final IBlockState field_185940_a = Blocks.field_150350_a.func_176223_P();
+@@ -357,7 +361,7 @@
+ 
+     public void func_185931_b(int p_185931_1_, int p_185931_2_)
+     {
+-        BlockFalling.field_149832_M = true;
++        BlockFalling.field_149832_M.set(true);
+         int i = p_185931_1_ * 16;
+         int j = p_185931_2_ * 16;
+         BlockPos blockpos = new BlockPos(i, 0, j);
+@@ -413,7 +417,7 @@
+         }
+ 
+         biome.func_180624_a(this.field_185952_n, this.field_185954_p, new BlockPos(i, 0, j));
+-        BlockFalling.field_149832_M = false;
++        BlockFalling.field_149832_M.set(false);
+     }
+ 
+     public boolean func_185933_a(Chunk p_185933_1_, int p_185933_2_, int p_185933_3_)
 @@ -455,4 +459,12 @@
      {
          this.field_73172_c.func_186125_a(this.field_185952_n, p_180514_2_, p_180514_3_, (ChunkPrimer)null);

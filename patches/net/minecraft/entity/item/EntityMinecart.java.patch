@@ -21,6 +21,15 @@
      public EntityMinecart(World p_i1712_1_)
      {
          super(p_i1712_1_);
+@@ -236,7 +243,7 @@
+                             j = -1;
+                         }
+ 
+-                        this.func_184204_a(j);
++                        this.startTeleporting(j);
+                     }
+ 
+                     this.field_71087_bX = false;
 @@ -474,7 +481,10 @@
          this.field_70179_y = d5 * d2 / d3;
          Entity entity = this.func_184188_bt().isEmpty() ? null : (Entity)this.func_184188_bt().get(0);
