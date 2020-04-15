@@ -62,15 +62,15 @@ public class CommandGMS extends CommandCarpetBase
 
     public static void setPlayerToSurvival(MinecraftServer server, EntityPlayerMP entityplayer) {
         GameType gametype = server.getGameType();
-        if(entityplayer.interactionManager.getGameType() != GameType.SURVIVAL) {
-            if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
+//        if(entityplayer.interactionManager.getGameType() != GameType.SURVIVAL) {
+            if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
                 LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
                         Messenger.s(null, "s1: " + entityplayer.world.loadedEntityList.contains(entityplayer))
                 });
             }
             if (entityplayer instanceof EntityPlayerMP) {
                 if(entityplayer.moveToStoredCameraData()){
-                    if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
+                    if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
                         LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
                                 Messenger.s(null, "s7: " + entityplayer.world.loadedEntityList.contains(entityplayer))
                         });
@@ -79,19 +79,19 @@ public class CommandGMS extends CommandCarpetBase
                 }
             }
             entityplayer.fallDistance = 0;
-            if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
+            if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
                 LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
                         Messenger.s(null, "s5: " + entityplayer.world.loadedEntityList.contains(entityplayer))
                 });
             }
             entityplayer.setGameType(gametype);
             if(!entityplayer.hadNightvision()) entityplayer.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
-            if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
+            if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
                 LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
                         Messenger.s(null, "s6: " + entityplayer.world.loadedEntityList.contains(entityplayer))
                 });
             }
-        }
+//        }
     }
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)

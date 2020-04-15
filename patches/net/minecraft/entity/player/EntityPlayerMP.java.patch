@@ -314,7 +314,7 @@
 +                field_71093_bK = storedDim;
 +                field_71135_a.func_147359_a(new SPacketRespawn(field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), this.field_71134_c.func_73081_b()));
 +                this.field_71133_b.func_184103_al().func_187243_f(this);
-+                if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
++                if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
 +                    LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
 +                            Messenger.s(null, "s2: " + field_70170_p.field_72996_f.contains(this))
 +                    });
@@ -329,7 +329,7 @@
 +                    worldserver2.func_72838_d(this);
 +                    worldserver2.func_72866_a(this, false);
 +                }
-+                if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
++                if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
 +                    LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
 +                            Messenger.s(null, "s3: " + field_70170_p.field_72996_f.contains(this))
 +                    });
@@ -340,7 +340,7 @@
 +                field_71134_c.func_73080_a(worldserver2);
 +                this.field_71133_b.func_184103_al().func_72354_b(this, worldserver2);
 +                this.field_71133_b.func_184103_al().func_72385_f(this);
-+                if(LoggerRegistry.__damageDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
++                if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
 +                    LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
 +                            Messenger.s(null, "s4: " + field_70170_p.field_72996_f.contains(this))
 +                    });

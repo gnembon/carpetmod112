@@ -71,7 +71,7 @@ public class LoggerRegistry
 
         registerDebugger("recipes", new Logger(server, "recipes", null, null, LogHandler.CHAT));
         registerDebugger("damageDebug", new Logger(server, "damageDebug", null, null, LogHandler.CHAT));
-        registerDebugger("invisDebug", new Logger(server, "damageDebug", null, null, LogHandler.CHAT));
+        registerDebugger("invisDebug", new Logger(server, "invisDebug", null, null, LogHandler.CHAT));
     }
 
     private static File getSaveFile(MinecraftServer server) { return server.getActiveAnvilConverter().getFile(server.getFolderName(), "loggerData.json"); }
