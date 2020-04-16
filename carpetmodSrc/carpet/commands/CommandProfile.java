@@ -30,12 +30,15 @@ public class CommandProfile extends CommandCarpetBase
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandProfile", sender)) return;
-        if (args.length > 0 && "entities".equalsIgnoreCase(args[0]))
+        if (args.length > 1 && "entities".equalsIgnoreCase(args[0]))
         {
             CarpetProfiler.prepare_entity_report(100);
         }
-        else
+        else if(args.length > 2)
         {
+            String d = args[2];
+            if(args[1] == "end") d = "the_end";
+            if(args[1] == "nether") d = "the_nether";
             CarpetProfiler.prepare_tick_report(100);
         }
 
@@ -48,7 +51,7 @@ public class CommandProfile extends CommandCarpetBase
         }
         if (args.length == 1)
         {
-            return getListOfStringsMatchingLastWord(args, "entities");
+            return getListOfStringsMatchingLastWord(args, "entities", "overworld", "nether", "end");
         }
         return Collections.<String>emptyList();
     }

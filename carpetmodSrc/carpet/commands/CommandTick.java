@@ -127,26 +127,7 @@ public class CommandTick extends CommandCarpetBase
             }
             return;
         }
-        else if ("health".equalsIgnoreCase(args[0]))
-        {
-            int step = 100;
-            if (args.length > 1)
-            {
-                step = parseInt(args[1], 20, 72000);
-            }
-            CarpetProfiler.prepare_tick_report(step);
-            return;
-        }
-        else if ("entities".equalsIgnoreCase(args[0]))
-        {
-            int step = 100;
-            if (args.length > 1)
-            {
-                step = parseInt(args[1], 20, 72000);
-            }
-            CarpetProfiler.prepare_entity_report(step);
-            return;
-        }
+
         throw new WrongUsageException(getUsage(sender), new Object[0]);
     }
 

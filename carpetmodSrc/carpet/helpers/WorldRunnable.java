@@ -13,6 +13,8 @@ public class WorldRunnable implements Runnable{
     public final WorldServer worldserver;
     private final boolean ignoreAllowNether;
     private final Phaser phaser;
+    private final long[] tickTimeArray = new long[100];
+    private int tickCounter = 0;
 
     public WorldRunnable(WorldServer worldServer, Phaser phaser){
         this.phaser = phaser;
@@ -27,7 +29,7 @@ public class WorldRunnable implements Runnable{
 
             phaser.arriveAndAwaitAdvance(); //Start of the tick barrier
 
-            long time = minecraftServer.getCurrentTimeMillis();
+//            long time = minecraftServer.getCurrentTimeMillis();
             long i = System.nanoTime();
 
             if (this.ignoreAllowNether || minecraftServer.getAllowNether())
@@ -73,14 +75,15 @@ public class WorldRunnable implements Runnable{
 
             //this.theProfiler.endSection();
 
-
-            time = MinecraftServer.getCurrentTimeMillis() - time;
+            tickCounter++;
+            this.tickTimeArray[this.tickCounter % 100] = System.nanoTime() - i;
+//            time = MinecraftServer.getCurrentTimeMillis() - time;
             //We don't want to count waiting for other Threads as tick time
 
             phaser.arriveAndAwaitAdvance(); //Teleport barrier
 
 
-            long time1 = MinecraftServer.getCurrentTimeMillis();
+//            long time1 = MinecraftServer.getCurrentTimeMillis();
 
             try
             {
@@ -92,7 +95,7 @@ public class WorldRunnable implements Runnable{
                 worldserver.addWorldInfoToCrashReport(crashreport1);
                 throw new ReportedException(crashreport1);
             }
-            time1 = MinecraftServer.getCurrentTimeMillis() - time1;
+//            time1 = MinecraftServer.getCurrentTimeMillis() - time1;
 
 //            minecraftServer.logInfo(worldserver.provider.getDimensionType().getName() + " tick finished in ms: " + (String.valueOf(time + time1)));
 //
@@ -100,5 +103,9 @@ public class WorldRunnable implements Runnable{
 
         }
         minecraftServer.logInfo("Thread ended as server is shutting down");
+    }
+
+    public long[] getTickTimeArray() {
+        return tickTimeArray;
     }
 }

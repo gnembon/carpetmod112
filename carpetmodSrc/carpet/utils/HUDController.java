@@ -81,9 +81,19 @@ public class HUDController
         double MSPT = MathHelper.average(server.tickTimeArray) * 1.0E-6D;
         double TPS = 1000.0D / Math.max((TickSpeed.time_warp_start_time != 0)?0.0:TickSpeed.mspt, MSPT);
         String color = Messenger.heatmap_color(MSPT,TickSpeed.mspt);
+
+        double MSPTO = MathHelper.average(server.getWorldRunnables(0).getTickTimeArray()) * 1.0E-6D;
+        double MSPTN = MathHelper.average(server.getWorldRunnables(1).getTickTimeArray()) * 1.0E-6D;
+        double MSPTE = MathHelper.average(server.getWorldRunnables(2).getTickTimeArray()) * 1.0E-6D;
+
         ITextComponent[] message = new ITextComponent[]{Messenger.m(null,
                 "g TPS: ", String.format(Locale.US, "%s %.1f",color, TPS),
-                "g  MSPT: ", String.format(Locale.US,"%s %.1f", color, MSPT))};
+                "g  MSPT (M/O/N/E): ", String.format(Locale.US,"%s %.1f", color, MSPT),
+                "g /", String.format(Locale.US,"%s %.1f", color, MSPTO),
+                "g /", String.format(Locale.US,"%s %.1f", color, MSPTN),
+                "g /", String.format(Locale.US,"%s %.1f", color, MSPTE)
+
+        )};
         LoggerRegistry.getLogger("tps").log(() -> message, "MSPT", MSPT, "TPS", TPS);
     }
     

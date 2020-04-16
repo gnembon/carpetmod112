@@ -224,11 +224,11 @@
 +                    }
                      this.field_71296_Q = true;
                  }
-+                waitForWorldThreadsToTerminate();
++//                waitForWorldThreadsToTerminate();
              }
              else
              {
-@@ -543,6 +622,19 @@
+@@ -543,6 +622,20 @@
          }
      }
  
@@ -238,6 +238,7 @@
 +                try {
 +                    worldThread.join();
 +                }catch(InterruptedException e) {
++                    System.out.println(e);
 +                    continue;
 +                }
 +                break;
@@ -248,7 +249,7 @@
      public void func_184107_a(ServerStatusResponse p_184107_1_)
      {
          File file1 = this.func_71209_f("server-icon.png");
-@@ -594,6 +686,12 @@
+@@ -594,6 +687,12 @@
          long i = System.nanoTime();
          ++this.field_71315_w;
  
@@ -261,7 +262,7 @@
          if (this.field_71295_T)
          {
              this.field_71295_T = false;
-@@ -622,10 +720,16 @@
+@@ -622,10 +721,16 @@
  
          if (this.field_71315_w % 900 == 0)
          {
@@ -278,7 +279,7 @@
          }
  
          this.field_71304_b.func_76320_a("tallying");
-@@ -645,6 +749,20 @@
+@@ -645,6 +750,20 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -299,7 +300,7 @@
      }
  
      public void func_71190_q()
-@@ -661,63 +779,93 @@
+@@ -661,63 +780,93 @@
  
          this.field_71304_b.func_76318_c("levels");
  
@@ -417,7 +418,7 @@
          this.field_71304_b.func_76318_c("commandFunctions");
          this.func_193030_aL().func_73660_a();
          this.field_71304_b.func_76318_c("tickables");
-@@ -728,6 +876,8 @@
+@@ -728,6 +877,8 @@
          }
  
          this.field_71304_b.func_76319_b();
@@ -426,7 +427,7 @@
      }
  
      public boolean func_71255_r()
-@@ -939,7 +1089,7 @@
+@@ -939,7 +1090,7 @@
  
      public String getServerModName()
      {
@@ -435,7 +436,7 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -1478,6 +1628,19 @@
+@@ -1478,6 +1629,19 @@
          return Thread.currentThread() == this.field_175590_aa;
      }
  
@@ -455,3 +456,12 @@
      public int func_175577_aI()
      {
          return 256;
+@@ -1523,4 +1687,8 @@
+             this.func_152344_a(this::func_193031_aM);
+         }
+     }
++
++    public WorldRunnable getWorldRunnables(int i){
++        return worldRunnables[i];
++    }
+ }

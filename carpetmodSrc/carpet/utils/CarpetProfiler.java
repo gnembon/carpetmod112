@@ -20,7 +20,7 @@ public class CarpetProfiler
     private static long current_section_start = 0;
     private static long current_tick_start = 0;
 
-    public static void prepare_tick_report(int ticks)
+    public synchronized static void prepare_tick_report(int ticks)
     {
         //maybe add so it only spams the sending player, but honestly - all may want to see it
         time_repo.clear();
@@ -53,10 +53,9 @@ public class CarpetProfiler
         current_tick_start = 0L;
         current_section_start = 0L;
         current_section = null;
-
     }
 
-    public static void start_section(String dimension, String name)
+    public synchronized static void start_section(String dimension, String name)
     {
         if (tick_health_requested == 0L || test_type != 1)
         {
@@ -79,7 +78,7 @@ public class CarpetProfiler
         current_section_start = System.nanoTime();
     }
 
-    public static void start_entity_section(String dimension, Entity e)
+    public synchronized static void start_entity_section(String dimension, Entity e)
     {
         if (tick_health_requested == 0L || test_type != 2)
         {
@@ -97,7 +96,7 @@ public class CarpetProfiler
         current_section_start = System.nanoTime();
     }
 
-    public static void start_tileentity_section(String dimension, TileEntity e)
+    public synchronized static void start_tileentity_section(String dimension, TileEntity e)
     {
         if (tick_health_requested == 0L || test_type != 2)
         {
@@ -115,7 +114,7 @@ public class CarpetProfiler
         current_section_start = System.nanoTime();
     }
 
-    public static void end_current_section()
+    public synchronized static void end_current_section()
     {
         if (tick_health_requested == 0L || test_type != 1)
         {
@@ -137,7 +136,7 @@ public class CarpetProfiler
         current_section_start = 0;
     }
 
-    public static void end_current_entity_section()
+    public synchronized static void end_current_entity_section()
     {
         if (tick_health_requested == 0L || test_type != 2)
         {
@@ -162,12 +161,12 @@ public class CarpetProfiler
         current_section_start = 0;
     }
 
-    public static void start_tick_profiling()
+    public synchronized static void start_tick_profiling()
     {
         current_tick_start = System.nanoTime();
     }
 
-    public static void end_tick_profiling(MinecraftServer server)
+    public synchronized static void end_tick_profiling(MinecraftServer server)
     {
         if (current_tick_start == 0L)
         {
@@ -182,7 +181,7 @@ public class CarpetProfiler
         }
     }
 
-    public static void finalize_tick_report(MinecraftServer server)
+    public synchronized static void finalize_tick_report(MinecraftServer server)
     {
         if (test_type == 1)
         {
@@ -195,7 +194,7 @@ public class CarpetProfiler
         cleanup_tick_report();
     }
 
-    public static void cleanup_tick_report()
+    public synchronized static void cleanup_tick_report()
     {
         time_repo.clear();
         time_repo.put("tick",0L);
@@ -269,7 +268,7 @@ public class CarpetProfiler
         Messenger.print_server_message(server, String.format("Rest: %.3fms",divider*rest));
     }
 
-    public static void finalize_tick_report_for_entities(MinecraftServer server)
+    public synchronized static void finalize_tick_report_for_entities(MinecraftServer server)
     {
         //print stats
         long total_tick_time = time_repo.get("tick");
@@ -326,6 +325,5 @@ public class CarpetProfiler
         current_tick_start = 0L;
         current_section_start = 0L;
         current_section = null;
-
     }
 }
