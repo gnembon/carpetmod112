@@ -572,7 +572,7 @@
 +            //TODO worldserver.updateEntityWithOptionalForce(this, false); //is this changing anything ever?
 +            //It does not seem to be doing anything important, or even make sense at all (checking position not NaN, removing/adding to chunk)
 +
-+            Entity entity = EntityList.func_191304_a(this.getClass(), worldServer); //MCP renaming??: newEntity : func_191304_a ???
++            Entity entity = EntityList.func_191304_a(this.getClass(), worldServer); //MCP renaming??: newEntity : newEntity ???
 +
 +            if (entity != null) {
 +                entity.func_180432_n(this);

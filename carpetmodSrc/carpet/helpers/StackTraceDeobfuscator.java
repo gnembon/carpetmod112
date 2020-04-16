@@ -280,7 +280,7 @@ public class StackTraceDeobfuscator {
         return Arrays.stream(elems).map(StackTraceElement::toString).collect(Collectors.joining("\n"));
     }
 
-    public StackTraceElement[] deobfuscate() {
+    public synchronized StackTraceElement[] deobfuscate() {
         if (srgUrl == null) {
             throw new IllegalStateException("No mappings url has been set");
         }
