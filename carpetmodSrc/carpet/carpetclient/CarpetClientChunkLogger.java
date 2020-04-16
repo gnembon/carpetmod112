@@ -66,20 +66,20 @@ public class CarpetClientChunkLogger {
         }
     }
 
-    public static void resetToOldReason() {
+    public synchronized static void resetToOldReason() {
         reason = oldReason;
     }
 
-    public static void setReason(String r) {
+    public synchronized static void setReason(String r) {
         oldReason = reason;
         reason = r;
     }
 
-    public static void resetReason() {
+    public synchronized static void resetReason() {
         reason = null;
     }
 
-    public CarpetClientChunkLogger() {
+    public  CarpetClientChunkLogger() {
         if (stackTraces == null) {
             stackTraces = new StackTraces();
         }
@@ -95,7 +95,7 @@ public class CarpetClientChunkLogger {
      * main logging function
      * logs a change in a chunk including a stacktrace if required by the client
      */
-    public void log(World w, int x, int z, Event e) {
+    public synchronized void log(World w, int x, int z, Event e) {
         int stacktraceid = stackTraces.internStackTrace();
         int reasonId = stackTraces.internReason();
         log(x, z, getWorldIndex(w), e, stacktraceid, reasonId);
@@ -104,7 +104,7 @@ public class CarpetClientChunkLogger {
     /*
      * called at the end of a gametick to send all events to the registered clients
      */
-    public void sendAll() {
+    public synchronized void sendAll() {
         clients.sendUpdates();
         this.eventsThisGametick.clear();
     }
@@ -113,7 +113,7 @@ public class CarpetClientChunkLogger {
      * removes all players and disables the logging
      */
 
-    public void disable() {
+    public synchronized void disable() {
         enabled = false;
         clients.kickAllPlayers();
         this.eventsThisGametick.clear();
@@ -122,14 +122,14 @@ public class CarpetClientChunkLogger {
     /*
      * called when registering a new player
      */
-    public void registerPlayer(EntityPlayerMP sender, PacketBuffer data) {
+    public synchronized void registerPlayer(EntityPlayerMP sender, PacketBuffer data) {
         clients.registerPlayer(sender, data);
     }
 
     /*
      * unregisters a single player
      */
-    public void unregisterPlayer(EntityPlayerMP player) {
+    public synchronized void unregisterPlayer(EntityPlayerMP player) {
         clients.unregisterPlayer(player);
     }
 
@@ -232,7 +232,7 @@ public class CarpetClientChunkLogger {
             return this.internString(obfuscated, deobfuscated);
         }
 
-        public int internReason() {
+        public synchronized int internReason() {
             return this.internString(reason);
         }
 
