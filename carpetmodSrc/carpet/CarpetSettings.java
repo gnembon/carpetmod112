@@ -44,7 +44,7 @@ public class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v20_04_13";
+    public static final String carpetVersion = "v20_04_22";
     public static final String minecraftVersion = "1.12.2";
     public static final String mcpMappings = "39-1.12";
 
@@ -458,6 +458,9 @@ public class CarpetSettings
 
     @Rule(desc = "Optimizes tile entity removal from the world.", category = OPTIMIZATIONS)
     public static boolean optimizedTileEntityRemoval;
+
+    @Rule(desc = "Optimizes falling entity movement when using cannons.", category = OPTIMIZATIONS)
+    public static boolean fallingMovementOptimization;
 
     @Rule(desc = "Optimizes TNT movement when using cannons.", category = OPTIMIZATIONS)
     public static boolean TNTmovementOptimization = false;
