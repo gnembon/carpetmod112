@@ -7,9 +7,12 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityTrackerEntry;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.WorldServer;
 
 import java.util.Collections;
@@ -46,12 +49,32 @@ public class CommandDebugCarpet extends CommandCarpetBase {
                 sender.sendMessage(Messenger.s(sender, e.toString()));
             }
         }
+        if("tileEntitys1".equalsIgnoreCase(args[0])) {
+            for(TileEntity e : sender.getEntityWorld().loadedTileEntityList){
+                sender.sendMessage(Messenger.s(sender, e.toString() + " " + e.getPos()));
+            }
+        }
+        if("tileEntitys2".equalsIgnoreCase(args[0])) {
+            for(TileEntity e : sender.getEntityWorld().tickableTileEntities){
+                sender.sendMessage(Messenger.s(sender, e.toString() + " " + e.getPos()));
+            }
+        }
+        if("playerEntities".equalsIgnoreCase(args[0])) {
+            for(EntityPlayer e : sender.getEntityWorld().playerEntities){
+                sender.sendMessage(Messenger.s(sender, e.toString()));
+            }
+        }
+        if("pendingTickListEntriesTreeSet".equalsIgnoreCase(args[0])) {
+            for(NextTickListEntry e : ((WorldServer)sender.getEntityWorld()).pendingTickListEntriesTreeSet){
+                sender.sendMessage(Messenger.s(sender, e.toString()));
+            }
+        }
     }
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
         if(args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "tracker", "entitys", "trackedToMe");
+            return getListOfStringsMatchingLastWord(args, "tracker", "entitys", "trackedToMe", "tileEntitys1", "tileEntitys2", "playerEntities", "pendingTickListEntriesTreeSet");
         }
         return Collections.<String>emptyList();
     }
