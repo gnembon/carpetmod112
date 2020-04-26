@@ -162,4 +162,13 @@ public class PubSubMessenger implements PluginChannelHandler {
         }
         throw new IllegalArgumentException("Unknown packet id " + id + " for channel " + CHANNEL_NAME);
     }
+
+    @Override
+    public void unregister(String channel, EntityPlayerMP player) {
+        if (!subscriptions.containsKey(player)) return;
+        for (Map.Entry<PubSubNode, PubSubSubscriber> subscription : subscriptions.get(player).entrySet()) {
+            subscription.getKey().unsubscribe(subscription.getValue());
+        }
+        subscriptions.remove(player);
+    }
 }

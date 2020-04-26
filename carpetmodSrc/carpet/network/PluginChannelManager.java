@@ -95,13 +95,8 @@ public class PluginChannelManager {
     }
 
     public void onPlayerDisconnected(EntityPlayerMP player) {
-        for (String channel : tracker.getChannels(player)) {
-            PluginChannelHandler handler = channelHandlers.get(channel);
-            if (handler == null) {
-                LOG.warn("Player was registered to channel '%s' without a handler", channel);
-                continue;
-            }
-            handler.unregister(channel, player);
+        for (Map.Entry<String, PluginChannelHandler> handler : channelHandlers.entrySet()) {
+            handler.getValue().unregister(handler.getKey(), player);
         }
         tracker.unregisterAll(player);
     }
