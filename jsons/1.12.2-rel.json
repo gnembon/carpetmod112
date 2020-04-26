@@ -15,6 +15,16 @@
 		{
 			"name": "com.sk89q.lib:jlibnoise:1.0.0",
 			"url": "https://maven.sk89q.com/repo"
+		},
+		{
+			"name": "net.minecraft:launchwrapper:1.12"
+		},
+		{
+			"name": "org.spongepowered:mixin:0.8-SNAPSHOT",
+			"url": "https://repo.spongepowered.org/maven"
+		},
+		{
+			"name": "org.ow2.asm:asm-debug-all:5.2"
 		}
 	]
 }

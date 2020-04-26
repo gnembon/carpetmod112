@@ -14,6 +14,7 @@ buildscript
 		maven {url 'https://masa.dy.fi/maven/'}
 		maven {url 'https://files.minecraftforge.net/maven'}
 		maven {url 'https://plugins.gradle.org/m2/'}
+		maven {url "https://repo.spongepowered.org/maven"}
 	}
 	dependencies
 	{
@@ -21,6 +22,7 @@ buildscript
 		classpath 'de.undercouch:gradle-download-task:3.4.3'
 		classpath 'commons-io:commons-io:2.6'
 		classpath "gradle.plugin.com.dorongold.plugins:task-tree:1.3" // For debug purposes
+		classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
 	}
 }
 apply plugin: 'java'
@@ -114,8 +116,19 @@ processJson
 	releaseJson = "jsons/${minecraft.version}-rel.json"
 }
 
+sourceSets.main.resources {
+	file("jsons/${project.name}.mixins.json")
+}
+sourceSets.main.ext.refMap = "${project.name}-refmap.json"
 
 // ===== TOP-LEVEL TASKS =====
+
+compileJava {
+	options.compilerArgs += [
+		'-AreobfSrgFile=' + patcher_plugin.delayedFile(Constants.SRG_MCP_TO_NOTCH)
+	]
+	println options.compilerArgs
+}
 
 /**
  * setup[Project] is used after you pull from the remote repository
@@ -348,6 +361,7 @@ task('copyCodeToSrc', type: Sync) {
 	dependsOn tasks.getByName('extract' + capitalizedName + 'Sources')
 	includeEmptyDirs = false
 }
+
 task(copyResources, type: Sync) {
 	from "projects/${capitalizedName}/src/main/resources"
 	into 'resources/'

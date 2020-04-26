@@ -19,3 +19,5 @@ gradle.ext.useJavadocs = true
 
 // Whether to use the origial astyle formatting. false is recommended, set to true for compatibility with MCP.
 gradle.ext.useAstyle = false
+
+gradle.ext.buildCache = buildCache

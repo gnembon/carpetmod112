@@ -48,3 +48,4 @@ whitelist.json
 /carpet/
 /buildSrc/out/
 /run/
+/.mixin.out/
