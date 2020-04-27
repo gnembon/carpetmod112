@@ -41,7 +41,7 @@ public class CommandPlayer extends CommandCarpetBase
      */
     public String getUsage(ICommandSender sender)
     {
-        return "player <spawn|kill|stop|drop|swapHands|mount|dismount> <player_name>  OR /player <use|attack|jump> <player_name> <once|continuous|interval.. ticks>";
+        return "player <spawn|kill|stop|drop|swapHands|mount|dismount> <player_name>  OR /player <use|attack|jump> <player_name> <once|continuous|hold|interval.. ticks>";
     }
 
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
@@ -87,6 +87,8 @@ public class CommandPlayer extends CommandCarpetBase
                     player.actionPack.useOnce();
                 if (option.equalsIgnoreCase("continuous"))
                     player.actionPack.setUseForever();
+                if (option.equalsIgnoreCase("hold"))
+		    player.actionPack.holdUse();
                 if (option.equalsIgnoreCase("interval") && interval > 1)
                     player.actionPack.setUse(interval, 0);
             }
@@ -94,7 +96,7 @@ public class CommandPlayer extends CommandCarpetBase
             {
                 if (option.equalsIgnoreCase("once"))
                     player.actionPack.attackOnce();
-                if (option.equalsIgnoreCase("continuous"))
+                if (option.equalsIgnoreCase("continuous") || option.equalsIgnoreCase("hold"))
                     player.actionPack.setAttackForever();
                 if (option.equalsIgnoreCase("interval") && interval > 1)
                     player.actionPack.setAttack(interval, 0);
@@ -103,7 +105,7 @@ public class CommandPlayer extends CommandCarpetBase
             {
                 if (option.equalsIgnoreCase("once"))
                     player.actionPack.jumpOnce();
-                if (option.equalsIgnoreCase("continuous"))
+                if (option.equalsIgnoreCase("continuous") || option.equalsIgnoreCase("hold"))
                     player.actionPack.setJumpForever();
                 if (option.equalsIgnoreCase("interval") && interval > 1)
                     player.actionPack.setJump(interval, 0);
@@ -315,7 +317,7 @@ public class CommandPlayer extends CommandCarpetBase
         if (args.length == 3 && (args[1].matches("^(?:use|attack|jump)$")))
         {
             //currently for all, needs to be restricted for Fake plaeyrs
-            return getListOfStringsMatchingLastWord(args, "once","continuous","interval");
+            return getListOfStringsMatchingLastWord(args, "once","continuous", "hold", "interval");
         }
         if (args.length == 4 && (args[1].equalsIgnoreCase("interval")))
         {
