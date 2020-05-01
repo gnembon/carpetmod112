@@ -179,6 +179,6 @@ public class TickSpeed
     }
 
     public static double getTPS() {
-        return 1000.0D / Math.max((time_warp_start_time != 0) ? 0.0 : TickSpeed.mspt, getMSPT());
+        return 1000.0D / Math.max((time_warp_start_time != 0) ? 0.0 : TickSpeed.mspt, mspt);
     }
 }

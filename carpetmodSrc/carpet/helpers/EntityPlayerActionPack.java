@@ -40,7 +40,7 @@ public class EntityPlayerActionPack
     private int attackCooldown;
 
     private boolean doesUse;
-    private boolean holdingUse;
+    private boolean useForever;
     private int useInterval;
     private int useCooldown;
 
@@ -70,7 +70,7 @@ public class EntityPlayerActionPack
         attackCooldown = other.attackCooldown;
 
         doesUse = other.doesUse;
-	holdingUse = other.holdingUse;
+	useForever = other.useForever;
         useInterval = other.useInterval;
         useCooldown = other.useCooldown;
 
@@ -110,7 +110,7 @@ public class EntityPlayerActionPack
             return this;
         }
         this.doesUse = true;
-	this.holdingUse = false;
+	this.useForever = false;
         this.useInterval = interval;
         this.useCooldown = interval+offset;
         return this;
@@ -118,18 +118,10 @@ public class EntityPlayerActionPack
     public EntityPlayerActionPack setUseForever()
     {
         this.doesUse = true;
-	this.holdingUse = false;
-        this.useInterval = 1;
-        this.useCooldown = 1;
+	this.useForever = true;
+        this.useInterval = 4;
+        this.useCooldown = 4;
         return this;
-    }
-    public EntityPlayerActionPack holdUse()
-    {
-	this.doesUse = true;
-	this.holdingUse = true;
-	this.useInterval = 4;
-	this.useCooldown = 4;
-	return this;
     }
     public EntityPlayerActionPack setAttackForever()
     {
@@ -237,7 +229,7 @@ public class EntityPlayerActionPack
     public EntityPlayerActionPack stop()
     {
         this.doesUse = false;
-	this.holdingUse = false;
+	this.useForever = false;
         this.doesAttack = false;
         this.doesJump = false;
         resetBlockRemoving();
@@ -310,7 +302,7 @@ public class EntityPlayerActionPack
         if (doesUse && (--useCooldown)==0)
         {
             used  = useOnce();
-	    if (holdingUse && !used)
+	    if (useForever && !used)
 	    {
 		useCooldown = 1;
 	    }
