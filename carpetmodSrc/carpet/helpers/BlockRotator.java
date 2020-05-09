@@ -124,6 +124,16 @@ public class BlockRotator
             return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
                     .withProperty(BlockFenceGate.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2));
         }
+        else if (block instanceof BlockChest)
+        {
+            return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
+                    .withProperty(BlockFenceGate.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2));
+        }
+        else if (block instanceof BlockEnderChest)
+        {
+            return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
+                    .withProperty(BlockFenceGate.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2));
+        }
         else if (block instanceof BlockDoor)
         {
             return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
