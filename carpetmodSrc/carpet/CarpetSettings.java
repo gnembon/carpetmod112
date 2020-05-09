@@ -730,6 +730,9 @@ public class CarpetSettings
 
     // ===== FEATURES ===== //
 
+    @Rule(desc = "Elytras can be traded by Leatherworker villagers.", category = FEATURE)
+    public static boolean elytraTradable = false;
+
     @Rule(desc = "Players drop there skulls when blown up by charged creepers.", category = FEATURE)
     public static boolean playerSkullsByChargedCreeper = false;
 
