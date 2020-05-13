@@ -117,7 +117,7 @@ public class BlockRotator
         {
             return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
                     .withProperty(BlockFenceGate.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2))
-                    .withProperty(BlockFenceGate.POWERED, Boolean.valueOf(hitX > 10));
+                    .withProperty(BlockFenceGate.OPEN, Boolean.valueOf(hitX > 10));
         }
         else if (block instanceof BlockPumpkin)
         {
