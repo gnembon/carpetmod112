@@ -136,6 +136,9 @@ public class CarpetSettings
 
     // ===== CREATIVE TOOLS ===== //
 
+    @Rule(desc = "Makes update carpet public for all users.", category = CREATIVE)
+    public static boolean updateCarpetAll;
+
     @Rule(desc = "Sets the instant falling flag to true. The boolean used in world population that can be exploited turning true making falling blocks fall instantly.", category = CREATIVE, validator = "validateInstantFallingFlag")
     public static boolean instantFallingFlag = false;
 
