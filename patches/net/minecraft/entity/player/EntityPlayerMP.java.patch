@@ -316,7 +316,7 @@
 +                this.field_71133_b.func_184103_al().func_187243_f(this);
 +                if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
 +                    LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
-+                            Messenger.s(null, "s2: " + field_70170_p.field_72996_f.contains(this))
++                            Messenger.s(null, "s2: " + worldserver1.field_72996_f.contains(this) + " " + worldserver2.field_72996_f.contains(this))
 +                    });
 +                }
 +                worldserver1.func_72900_e(this);
@@ -331,7 +331,7 @@
 +                }
 +                if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
 +                    LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
-+                            Messenger.s(null, "s3: " + field_70170_p.field_72996_f.contains(this))
++                            Messenger.s(null, "s3: " + worldserver1.field_72996_f.contains(this) + " " + worldserver2.field_72996_f.contains(this) + " " + func_70089_S())
 +                    });
 +                }
 +                func_70029_a(worldserver2);
@@ -342,7 +342,7 @@
 +                this.field_71133_b.func_184103_al().func_72385_f(this);
 +                if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
 +                    LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
-+                            Messenger.s(null, "s4: " + field_70170_p.field_72996_f.contains(this))
++                            Messenger.s(null, "s4: " + worldserver1.field_72996_f.contains(this) + " " + worldserver2.field_72996_f.contains(this))
 +                    });
 +                }
 +                return true;
