@@ -245,7 +245,7 @@
      public boolean func_184812_l_()
      {
          return this.field_71134_c.func_73081_b() == GameType.CREATIVE;
-@@ -1439,4 +1488,113 @@
+@@ -1439,4 +1488,115 @@
      {
          return this.field_193110_cw;
      }
@@ -320,6 +320,8 @@
 +                    });
 +                }
 +                worldserver1.func_72900_e(this);
++                worldserver1.func_72964_e(field_70176_ah, field_70164_aj).func_76608_a(this, field_70162_ai);
++
 +                field_70128_L = false;
 +
 +                if (func_70089_S())
