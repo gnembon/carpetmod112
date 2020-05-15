@@ -222,10 +222,17 @@
      }
  
      public void func_70634_a(double p_70634_1_, double p_70634_3_, double p_70634_5_)
-@@ -1221,8 +1263,10 @@
+@@ -1216,13 +1258,17 @@
+ 
+         if (p_71033_1_ == GameType.SPECTATOR)
+         {
++            if(CarpetSettings.spectatorsDontLoadChunks) ((WorldServer)field_70170_p).func_184164_w().func_72695_c(this);
+             this.func_192030_dh();
+             this.func_184210_p();
          }
          else
          {
++            if(CarpetSettings.spectatorsDontLoadChunks) ((WorldServer)field_70170_p).func_184164_w().func_72683_a(this);
 +            disableSpectatePlayers = false; // Rule to prevent /c camera mode to spectate other players, disable after exiting spectator mode CARPET-XCOM
              this.func_175399_e(this);
          }
@@ -233,7 +240,7 @@
  
          this.func_71016_p();
          this.func_175136_bO();
-@@ -1233,6 +1277,11 @@
+@@ -1233,6 +1279,11 @@
          return this.field_71134_c.func_73081_b() == GameType.SPECTATOR;
      }
  
@@ -245,7 +252,7 @@
      public boolean func_184812_l_()
      {
          return this.field_71134_c.func_73081_b() == GameType.CREATIVE;
-@@ -1439,4 +1488,113 @@
+@@ -1439,4 +1490,113 @@
      {
          return this.field_193110_cw;
      }
