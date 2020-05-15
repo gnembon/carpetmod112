@@ -41,7 +41,7 @@
                  }
              }
              else if (this.field_73134_o.contains(p_73117_1_))
-@@ -470,9 +490,20 @@
+@@ -470,14 +490,27 @@
  
      public boolean func_180233_c(EntityPlayerMP p_180233_1_)
      {
@@ -61,5 +61,12 @@
 -        int i = Math.min(this.field_73130_b, this.field_187262_f);
 +        int i = Math.min(r, this.field_187262_f);
          return d0 >= (double)(-i) && d0 <= (double)i && d1 >= (double)(-i) && d1 <= (double)i && this.field_73132_a.func_174827_a(p_180233_1_);
+     }
+ 
+     private boolean func_73121_d(EntityPlayerMP p_73121_1_)
+     {
++        // Return true to allow spectators in unloaded chunks to see entitys in nearby chunks. CARPET-XCOM
++        if(CarpetSettings.spectatorsDontLoadChunks && p_73121_1_.func_175149_v()) return true;
+         return p_73121_1_.func_71121_q().func_184164_w().func_72694_a(p_73121_1_, this.field_73132_a.field_70176_ah, this.field_73132_a.field_70164_aj);
      }
  
