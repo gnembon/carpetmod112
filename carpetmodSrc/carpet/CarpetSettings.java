@@ -134,6 +134,9 @@ public class CarpetSettings
     @Rule(desc = "Restricts the use of /c in survival mode.", category = COMMANDS)
     public static boolean cameraModeSurvivalRestrictions;
 
+    @Rule(desc = "Reduces the permition level to kick players for everyone.", category = COMMANDS)
+    public static boolean publicKick;
+
     // ===== CREATIVE TOOLS ===== //
 
     @Rule(desc = "Makes update carpet public for all users.", category = CREATIVE)

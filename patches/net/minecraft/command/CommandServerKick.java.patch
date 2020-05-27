@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/command/CommandServerKick.java
++++ ../src-work/minecraft/net/minecraft/command/CommandServerKick.java
+@@ -3,6 +3,8 @@
+ import java.util.Collections;
+ import java.util.List;
+ import javax.annotation.Nullable;
++
++import carpet.CarpetSettings;
+ import net.minecraft.entity.player.EntityPlayerMP;
+ import net.minecraft.server.MinecraftServer;
+ import net.minecraft.util.math.BlockPos;
+@@ -11,6 +13,11 @@
+ 
+ public class CommandServerKick extends CommandBase
+ {
++    @Override
++    public boolean func_184882_a(MinecraftServer server, ICommandSender sender) {
++        return CarpetSettings.publicKick;
++    }
++
+     public String func_71517_b()
+     {
+         return "kick";
