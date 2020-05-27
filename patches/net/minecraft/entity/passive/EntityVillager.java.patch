@@ -171,7 +171,7 @@
  
 +        // Added way to trade elytras from leather worker villagers CARPET-XCOM
 +        if(CarpetSettings.elytraTradable && func_70946_n() == 4 && i == 1 && j == 3){
-+            new EntityVillager.ListEnchantedItemForEmeralds(Items.field_185160_cR, new EntityVillager.PriceInfo(32, 64)).func_190888_a(this, this.field_70963_i, this.field_70146_Z);
++            new EntityVillager.ItemAndEmeraldsToItem(Items.field_151116_aA, new EntityVillager.PriceInfo(15, 64), Items.field_151166_bC, new EntityVillager.PriceInfo(20, 64), Items.field_185160_cR).func_190888_a(this, this.field_70963_i, this.field_70146_Z);
 +        }
 +
          if (i >= 0 && i < aentityvillager$itradelist.length)
@@ -228,7 +228,7 @@
      static class EmeraldForItems implements EntityVillager.ITradeList
          {
              public Item field_179405_a;
-@@ -1140,4 +1231,10 @@
+@@ -1140,4 +1231,37 @@
                  }
              }
          }
@@ -237,5 +237,32 @@
 +    public void addToFirstList(MerchantRecipe merchantrecipe){
 +        if(!CarpetSettings.villagerAutoTrader) return;
 +        autotraderAI.addToFirstList(field_70963_i, merchantrecipe, sortedTradeList);
++    }
++
++    static class ItemAndEmeraldsToItem implements EntityVillager.ITradeList
++    {
++        public ItemStack buyingItemStack;
++        public EntityVillager.PriceInfo buyingPriceInfo;
++        public ItemStack sellingItemstack;
++        public EntityVillager.PriceInfo sellingPriceInfo;
++
++        public ItemStack buyingItemStack2;
++        public EntityVillager.PriceInfo buyingPriceInfo2;
++
++        public ItemAndEmeraldsToItem(Item p_i45813_1_, EntityVillager.PriceInfo p_i45813_2_, Item p_i45813_3_, EntityVillager.PriceInfo p_i45813_4_, Item sell)
++        {
++            this.buyingItemStack = new ItemStack(p_i45813_1_);
++            this.buyingPriceInfo = p_i45813_2_;
++            this.buyingItemStack2 = new ItemStack(p_i45813_3_);
++            this.buyingPriceInfo2 = p_i45813_4_;
++            this.sellingItemstack = new ItemStack(sell);
++        }
++
++        public void func_190888_a(IMerchant merchant, MerchantRecipeList recipeList, Random random)
++        {
++            int i = this.buyingPriceInfo.func_179412_a(random);
++            int j = this.buyingPriceInfo2.func_179412_a(random);
++            recipeList.add(new MerchantRecipe(new ItemStack(this.buyingItemStack.func_77973_b(), i, this.buyingItemStack.func_77960_j()), new ItemStack(this.buyingItemStack2.func_77973_b(), i, this.buyingItemStack2.func_77960_j()), sellingItemstack));
++        }
 +    }
  }
