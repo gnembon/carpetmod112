@@ -443,6 +443,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Fixes the pearl bugs removing them when players relog, similar fix to mc1.15.", category = FIX)
+    public static boolean fixedPearlBugs;
+
     @Rule(desc = "Saves the block event on server shutdown and loads at server startup.", category = FIX, validator = "validateBlockEventSerializer")
     public static boolean blockEventSerializer;
     private static boolean validateBlockEventSerializer(boolean value) {
