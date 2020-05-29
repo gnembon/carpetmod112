@@ -262,7 +262,7 @@
 +        {
 +            int i = this.buyingPriceInfo.func_179412_a(random);
 +            int j = this.buyingPriceInfo2.func_179412_a(random);
-+            recipeList.add(new MerchantRecipe(new ItemStack(this.buyingItemStack.func_77973_b(), i, this.buyingItemStack.func_77960_j()), new ItemStack(this.buyingItemStack2.func_77973_b(), i, this.buyingItemStack2.func_77960_j()), sellingItemstack));
++            recipeList.add(new MerchantRecipe(new ItemStack(this.buyingItemStack.func_77973_b(), i, this.buyingItemStack.func_77960_j()), new ItemStack(this.buyingItemStack2.func_77973_b(), j, this.buyingItemStack2.func_77960_j()), sellingItemstack));
 +        }
 +    }
  }
