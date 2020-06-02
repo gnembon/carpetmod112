@@ -90,7 +90,7 @@ public class CarpetSettings
     @Rule(desc = "Enables /unload command to inspect chunk unloading order", category = COMMANDS)
     public static boolean commandUnload = true;
 
-    @Rule(desc = "Enables /c and /s commands to quickly switch between camera and survival modes", category = COMMANDS, extra = {
+    @Rule(desc = "Enables /c and /s commands to quickly switch between spectator and server modes", category = COMMANDS, extra = {
             "/c and /s commands are available to all players regardless of their permission levels"
     })
     public static boolean commandCameramode = true;

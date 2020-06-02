@@ -63,13 +63,13 @@ public class CommandGMS extends CommandCarpetBase
     public static void setPlayerToSurvival(MinecraftServer server, EntityPlayerMP entityplayer) {
         GameType gametype = server.getGameType();
         if(entityplayer.interactionManager.getGameType() != GameType.SURVIVAL) {
-            if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
+            if(LoggerRegistry.__invisDebug) { // Added debugger for the complex bug turning players invisible. CARPET-XCOM
                 LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
                         Messenger.s(null, "s1: " + entityplayer.world.loadedEntityList.contains(entityplayer))
                 });
             }
             if (entityplayer instanceof EntityPlayerMP) {
-                if(entityplayer.moveToStoredCameraData()){
+                if(entityplayer.moveToStoredCameraData()) {
                     if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
                         LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
                                 Messenger.s(null, "s7: " + entityplayer.world.loadedEntityList.contains(entityplayer))
@@ -84,7 +84,11 @@ public class CommandGMS extends CommandCarpetBase
                         Messenger.s(null, "s5: " + entityplayer.world.loadedEntityList.contains(entityplayer))
                 });
             }
-            entityplayer.setGameType(gametype);
+            if(gametype != GameType.SPECTATOR) {
+                entityplayer.setGameType(gametype);
+            } else {
+                entityplayer.setGameType(GameType.SURVIVAL);
+            }
             if(!entityplayer.hadNightvision()) entityplayer.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
             if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
                 LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
