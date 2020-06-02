@@ -79,7 +79,15 @@
              entityplayermp1.field_71135_a.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.duplicate_login", new Object[0]));
          }
  
-@@ -496,6 +510,7 @@
+@@ -474,6 +488,7 @@
+         p_72368_1_.func_71121_q().func_73039_n().func_72787_a(p_72368_1_);
+         p_72368_1_.func_71121_q().func_73039_n().func_72790_b(p_72368_1_);
+         p_72368_1_.func_71121_q().func_184164_w().func_72695_c(p_72368_1_);
++        if(CarpetSettings.playersTurningInvisibleFix) p_72368_1_.func_71121_q().func_72964_e(p_72368_1_.field_70176_ah, p_72368_1_.field_70164_aj).func_76608_a(p_72368_1_, p_72368_1_.field_70162_ai);
+         this.field_72404_b.remove(p_72368_1_);
+         this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK).func_72973_f(p_72368_1_);
+         BlockPos blockpos = p_72368_1_.func_180470_cg();
+@@ -496,6 +511,7 @@
          entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
          entityplayermp.func_174817_o(p_72368_1_);
          entityplayermp.func_184819_a(p_72368_1_.func_184591_cq());
@@ -87,12 +95,12 @@
  
          for (String s : p_72368_1_.func_184216_O())
          {
-@@ -560,7 +575,11 @@
+@@ -560,7 +576,11 @@
          WorldServer worldserver1 = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
          p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, p_187242_1_.field_70170_p.func_175659_aa(), p_187242_1_.field_70170_p.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
          this.func_187243_f(p_187242_1_);
 -        worldserver.func_72973_f(p_187242_1_);
-+        if(!CarpetSettings.portalTurningPlayersInvisibleFix) {
++        if(!CarpetSettings.playersTurningInvisibleFix) {
 +            worldserver.func_72973_f(p_187242_1_);
 +        }else{
 +            worldserver.func_72900_e(p_187242_1_);
@@ -100,12 +108,12 @@
          p_187242_1_.field_70128_L = false;
          this.func_82448_a(p_187242_1_, i, worldserver, worldserver1);
          this.func_72375_a(p_187242_1_, worldserver);
-@@ -630,6 +649,12 @@
+@@ -630,6 +650,12 @@
              }
          }
  
 +        // Players players pulling disapear act when using portals. Fix for MC-92916 CARPET-XCOM
-+        if (CarpetSettings.portalTurningPlayersInvisibleFix && p_82448_1_.field_70175_ag && p_82448_3_.func_175680_a(p_82448_1_.field_70176_ah, p_82448_1_.field_70164_aj, true)) {
++        if (CarpetSettings.playersTurningInvisibleFix && p_82448_1_.field_70175_ag && p_82448_3_.func_175680_a(p_82448_1_.field_70176_ah, p_82448_1_.field_70164_aj, true)) {
 +            if (p_82448_1_.field_70175_ag && p_82448_3_.func_175680_a(p_82448_1_.field_70176_ah, p_82448_1_.field_70164_aj, true)) {
 +                p_82448_3_.func_72964_e(p_82448_1_.field_70176_ah, p_82448_1_.field_70164_aj).func_76608_a(p_82448_1_, p_82448_1_.field_70162_ai);
 +            }
@@ -113,7 +121,7 @@
          p_82448_3_.field_72984_F.func_76319_b();
  
          if (p_82448_2_ != 1)
-@@ -1097,4 +1122,26 @@
+@@ -1097,4 +1123,26 @@
              playeradvancements.func_193766_b();
          }
      }

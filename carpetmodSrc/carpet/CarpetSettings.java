@@ -706,8 +706,8 @@ public class CarpetSettings
     @Rule(desc = "Fixes entity tracker not rendering entitys such as players in minecarts or boats.", category = FIX)
     public static boolean entityTrackerFix;
 
-    @Rule(desc = "Players go invisible after using portals.", category = FIX)
-    public static boolean portalTurningPlayersInvisibleFix;
+    @Rule(desc = "Players go invisible when dying or using portals.", category = FIX)
+    public static boolean playersTurningInvisibleFix;
 
     @Rule(desc = "Fixes updates suppression causing server crashes.", category = FIX)
     public static boolean updateSuppressionCrashFix;
