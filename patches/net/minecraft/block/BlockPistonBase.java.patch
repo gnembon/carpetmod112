@@ -257,15 +257,15 @@
 +                }
 +                // Movable Tile entity fix CARPET-2No2Name
 +                if(CarpetSettings.autocrafter && iblockstate2 instanceof BlockWorkbench){
-+                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(iblockstate2, p_176319_3_, p_176319_4_, false);
++                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false);
 +                    ((TileEntityPiston)tilePiston).setCarriedTileEntity(list1_TileEntities.get(l));
 +                    p_176319_1_.func_175690_a(blockpos3, tilePiston);
-+                }else if(CarpetSettings.movableTileEntities){
-+                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(iblockstate2, p_176319_3_, p_176319_4_, false);
++                }else if(CarpetSettings.movableTileEntities && isPushableTileEntityBlock(iblockstate2.func_177230_c())){
++                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false);
 +                    ((TileEntityPiston)tilePiston).setCarriedTileEntity(list1_TileEntities.get(l));
-+                    if(isPushableTileEntityBlock(iblockstate2.func_177230_c())) p_176319_1_.func_175690_a(blockpos3, tilePiston);
++                    p_176319_1_.func_175690_a(blockpos3, tilePiston);
 +                }else{
-+                    p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(iblockstate2, p_176319_3_, p_176319_4_, false));
++                    p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false));
 +                }
 +
                  --k;
