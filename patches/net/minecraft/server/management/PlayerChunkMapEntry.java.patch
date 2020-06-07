@@ -56,7 +56,7 @@
              if (this.field_187283_c.isEmpty())
              {
                  this.field_187289_i = this.field_187282_b.func_72688_a().func_82737_E();
-@@ -65,6 +81,9 @@
+@@ -65,13 +81,17 @@
                  this.func_187278_c(p_187276_1_);
              }
          }
@@ -66,7 +66,16 @@
      }
  
      public void func_187277_b(EntityPlayerMP p_187277_1_)
-@@ -80,9 +99,20 @@
+     {
+         if (this.field_187283_c.contains(p_187277_1_))
+         {
+-            if (this.field_187290_j)
++            // Return false to prevent client unloading the chunks when attempting to use spectate entitys near unloaded chunks. CARPET-XCOM
++            if (this.field_187290_j && (!CarpetSettings.spectatorsDontLoadChunks || !p_187277_1_.func_175149_v()))
+             {
+                 p_187277_1_.field_71135_a.func_147359_a(new SPacketUnloadChunk(this.field_187284_d.field_77276_a, this.field_187284_d.field_77275_b));
+             }
+@@ -80,9 +100,20 @@
  
              if (this.field_187283_c.isEmpty())
              {
@@ -87,7 +96,7 @@
      }
  
      public boolean func_187268_a(boolean p_187268_1_)
-@@ -95,7 +125,10 @@
+@@ -95,7 +126,10 @@
          {
              if (p_187268_1_)
              {
@@ -98,7 +107,7 @@
              }
              else
              {
-@@ -248,12 +281,28 @@
+@@ -248,12 +282,28 @@
      {
          if (p_187273_1_ != null)
          {

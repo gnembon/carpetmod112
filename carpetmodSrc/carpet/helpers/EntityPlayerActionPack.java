@@ -90,6 +90,39 @@ public class EntityPlayerActionPack
         strafing = other.strafing;
     }
 
+    public String toString() {
+        return (doesAttack ? "t" : "f") + ":" +
+                attackInterval + ":" +
+                attackCooldown + ":" +
+                (doesUse ? "t" : "f") + ":" +
+                useInterval + ":" +
+                useCooldown + ":" +
+                (doesJump ? "t" : "f") + ":" +
+                jumpInterval + ":" +
+                jumpCooldown + ":" +
+                (sneaking ? "t" : "f") + ":" +
+                (sprinting ? "t" : "f") + ":" +
+                forward + ":" +
+                strafing;
+    }
+
+    public void fromString(String s){
+        String[] list = s.split(":");
+        doesAttack = list[0].equals("t");
+        attackInterval = Integer.valueOf(list[1]);
+        attackCooldown = Integer.valueOf(list[2]);
+        doesUse = list[3].equals("t");
+        useInterval = Integer.valueOf(list[4]);
+        useCooldown = Integer.valueOf(list[5]);
+        doesJump = list[6].equals("t");
+        jumpInterval = Integer.valueOf(list[7]);
+        jumpCooldown = Integer.valueOf(list[8]);
+        sneaking = list[9].equals("t");
+        sprinting = list[10].equals("t");
+        forward = Float.valueOf(list[11]);
+        strafing = Float.valueOf(list[12]);
+    }
+
     public EntityPlayerActionPack setAttack(int interval, int offset)
     {
         if (interval < 1)

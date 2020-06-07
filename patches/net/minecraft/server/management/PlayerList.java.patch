@@ -134,7 +134,7 @@
 +        }
 +        for (EntityPlayerMP p : field_72404_b) {
 +            if(p instanceof EntityPlayerMPFake){
-+                list.add(p.func_70005_c_());
++                list.add(EntityPlayerMPFake.getInfo(p));
 +            }
 +        }
 +        CarpetServer.writeConf(field_72400_f, list);

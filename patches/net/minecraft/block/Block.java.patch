@@ -97,7 +97,7 @@
 +            if(CarpetSettings.carefulBreak && PlayerInteractionManager.playerMinedBlock != null && PlayerInteractionManager.playerMinedBlock.func_70093_af()){
 +                entityitem.func_70100_b_(PlayerInteractionManager.playerMinedBlock);
 +                if(entityitem.field_70128_L){
-+                    PlayerInteractionManager.playerMinedBlock.field_71135_a.func_147359_a(new SPacketSoundEffect(SoundEvents.field_187638_cR, SoundCategory.BLOCKS, p_180635_1_.func_177958_n(), p_180635_1_.func_177956_o(), p_180635_1_.func_177952_p(), 1.0F, (CarpetServer.rand.nextFloat() - CarpetServer.rand.nextFloat()) * 1.4F + 2.0F));
++                    PlayerInteractionManager.playerMinedBlock.field_71135_a.func_147359_a(new SPacketSoundEffect(SoundEvents.field_187638_cR, SoundCategory.PLAYERS, p_180635_1_.func_177958_n(), p_180635_1_.func_177956_o(), p_180635_1_.func_177952_p(), 0.2F, (CarpetServer.rand.nextFloat() - CarpetServer.rand.nextFloat()) * 1.4F + 2.0F));
 +                    return;
 +                }
 +            }

@@ -44,7 +44,7 @@ public class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v20_04_27";
+    public static final String carpetVersion = "v20_05_29";
     public static final String minecraftVersion = "1.12.2";
     public static final String mcpMappings = "39-1.12";
 
@@ -134,7 +134,13 @@ public class CarpetSettings
     @Rule(desc = "Restricts the use of /c in survival mode.", category = COMMANDS)
     public static boolean cameraModeSurvivalRestrictions;
 
+    @Rule(desc = "Reduces the permition level to kick players for everyone.", category = COMMANDS)
+    public static boolean publicKick;
+
     // ===== CREATIVE TOOLS ===== //
+
+    @Rule(desc = "Makes update carpet public for all users.", category = CREATIVE)
+    public static boolean updateCarpetAll;
 
     @Rule(desc = "Sets the instant falling flag to true. The boolean used in world population that can be exploited turning true making falling blocks fall instantly.", category = CREATIVE, validator = "validateInstantFallingFlag")
     public static boolean instantFallingFlag = false;
@@ -437,6 +443,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Fixes the pearl bugs removing them when players relog, similar fix to mc1.15.", category = FIX)
+    public static boolean fixedPearlBugs;
+
     @Rule(desc = "Saves the block event on server shutdown and loads at server startup.", category = FIX, validator = "validateBlockEventSerializer")
     public static boolean blockEventSerializer;
     private static boolean validateBlockEventSerializer(boolean value) {
@@ -729,6 +738,9 @@ public class CarpetSettings
     public static boolean playerChunkLoadingFix = false;
 
     // ===== FEATURES ===== //
+
+    @Rule(desc = "Elytras can be traded by Leatherworker villagers.", category = FEATURE)
+    public static boolean elytraTradable = false;
 
     @Rule(desc = "Players drop there skulls when blown up by charged creepers.", category = FEATURE)
     public static boolean playerSkullsByChargedCreeper = false;

@@ -197,7 +197,7 @@
              }
  
              List<BlockPos> list2 = blockpistonstructurehelper.func_177252_d();
-@@ -358,15 +456,65 @@
+@@ -358,15 +456,70 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }
@@ -256,17 +256,22 @@
 +                    p_176319_1_.func_180501_a(blockpos3, Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_), 4);
 +                }
 +                // Movable Tile entity fix CARPET-2No2Name
-+                if(CarpetSettings.movableTileEntities || CarpetSettings.autocrafter){
-+                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false);
++                if(CarpetSettings.autocrafter && iblockstate2 instanceof BlockWorkbench){
++                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(iblockstate2, p_176319_3_, p_176319_4_, false);
 +                    ((TileEntityPiston)tilePiston).setCarriedTileEntity(list1_TileEntities.get(l));
 +                    p_176319_1_.func_175690_a(blockpos3, tilePiston);
++                }else if(CarpetSettings.movableTileEntities){
++                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(iblockstate2, p_176319_3_, p_176319_4_, false);
++                    ((TileEntityPiston)tilePiston).setCarriedTileEntity(list1_TileEntities.get(l));
++                    if(isPushableTileEntityBlock(iblockstate2.func_177230_c())) p_176319_1_.func_175690_a(blockpos3, tilePiston);
 +                }else{
-+                    p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false));
++                    p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(iblockstate2, p_176319_3_, p_176319_4_, false));
 +                }
++
                  --k;
                  aiblockstate[k] = iblockstate2;
              }
-@@ -397,6 +545,8 @@
+@@ -397,6 +550,8 @@
                  p_176319_1_.func_175685_c(blockpos2, Blocks.field_150332_K, false);
              }
  
@@ -275,7 +280,7 @@
              return true;
          }
      }
-@@ -439,4 +589,9 @@
+@@ -439,4 +594,9 @@
          p_193383_2_ = this.func_176221_a(p_193383_2_, p_193383_1_, p_193383_3_);
          return p_193383_2_.func_177229_b(field_176387_N) != p_193383_4_.func_176734_d() && ((Boolean)p_193383_2_.func_177229_b(field_176320_b)).booleanValue() ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
      }

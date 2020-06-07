@@ -29,7 +29,7 @@
      }
  
      public boolean func_152621_a(int p_152621_1_, int p_152621_2_)
-@@ -232,20 +242,21 @@
+@@ -232,20 +242,22 @@
          return (PlayerChunkMapEntry)this.field_72700_c.get(func_187307_d(p_187301_1_, p_187301_2_));
      }
  
@@ -43,8 +43,10 @@
          if (playerchunkmapentry == null)
          {
 -            playerchunkmapentry = new PlayerChunkMapEntry(this, p_187302_1_, p_187302_2_);
+-            this.field_72700_c.put(i, playerchunkmapentry);
 +            playerchunkmapentry = new PlayerChunkMapEntry(this, chunkX, chunkZ, player);
-             this.field_72700_c.put(i, playerchunkmapentry);
++            // Added a way to remove spectators loading chunks. CARPET-XCOM
++            if(!CarpetSettings.spectatorsDontLoadChunks || !player.func_175149_v()) this.field_72700_c.put(i, playerchunkmapentry);
              this.field_111193_e.add(playerchunkmapentry);
  
              if (playerchunkmapentry.func_187266_f() == null)
@@ -55,7 +57,7 @@
              }
  
              if (!playerchunkmapentry.func_187272_b())
-@@ -271,8 +282,16 @@
+@@ -271,8 +283,16 @@
  
      public void func_72683_a(EntityPlayerMP p_72683_1_)
      {
@@ -74,7 +76,7 @@
          p_72683_1_.field_71131_d = p_72683_1_.field_70165_t;
          p_72683_1_.field_71132_e = p_72683_1_.field_70161_v;
  
-@@ -280,7 +299,7 @@
+@@ -280,7 +300,7 @@
          {
              for (int l = j - this.field_72698_e; l <= j + this.field_72698_e; ++l)
              {
@@ -83,7 +85,7 @@
              }
          }
  
-@@ -290,8 +309,16 @@
+@@ -290,8 +310,16 @@
  
      public void func_72695_c(EntityPlayerMP p_72695_1_)
      {
@@ -102,7 +104,7 @@
  
          for (int k = i - this.field_72698_e; k <= i + this.field_72698_e; ++k)
          {
-@@ -327,16 +354,32 @@
+@@ -327,16 +355,32 @@
  
      public void func_72685_d(EntityPlayerMP p_72685_1_)
      {
@@ -139,7 +141,7 @@
              int i1 = this.field_72698_e;
              int j1 = i - k;
              int k1 = j - l;
-@@ -349,7 +392,7 @@
+@@ -349,7 +393,7 @@
                      {
                          if (!this.func_72684_a(l1, i2, k, l, i1))
                          {
@@ -148,7 +150,7 @@
                          }
  
                          if (!this.func_72684_a(l1 - j1, i2 - k1, i, j, i1))
-@@ -396,7 +439,7 @@
+@@ -396,7 +440,7 @@
                      {
                          for (int k1 = k - p_152622_1_; k1 <= k + p_152622_1_; ++k1)
                          {
@@ -157,7 +159,7 @@
  
                              if (!playerchunkmapentry.func_187275_d(entityplayermp))
                              {
-@@ -413,7 +456,7 @@
+@@ -413,7 +457,7 @@
                          {
                              if (!this.func_72684_a(l, i1, j, k, p_152622_1_))
                              {
@@ -166,7 +168,7 @@
                              }
                          }
                      }
-@@ -460,7 +503,28 @@
+@@ -460,7 +504,28 @@
  
          if (chunk != null)
          {

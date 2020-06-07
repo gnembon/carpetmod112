@@ -65,7 +65,7 @@ public class CommandPlayer extends CommandCarpetBase
                 }
             }
         }
-        if (player == null && !action.equalsIgnoreCase("spawn"))
+        if (player == null && !action.equalsIgnoreCase("spawn") && !action.equalsIgnoreCase("respawn"))
         {
             throw new WrongUsageException("player doesn't exist");
         }
@@ -281,6 +281,31 @@ public class CommandPlayer extends CommandCarpetBase
                 return;
             }
         }
+        if ("despawn".equalsIgnoreCase(action))
+        {
+            if (!(player instanceof EntityPlayerMPFake))
+            {
+                throw new WrongUsageException("this is a bot only command");
+            }
+            ((EntityPlayerMPFake)player).despawn();
+            return;
+        }
+        if ("respawn".equalsIgnoreCase(action))
+        {
+            if (player != null)
+            {
+                throw new WrongUsageException("player "+playerName+" already exists");
+            }
+            if (playerName.length() < 3 || playerName.length() > 16)
+            {
+                throw new WrongUsageException("player names can only be 3 to 16 chars long");
+            }
+            if (isWhitelistedPlayer(server, playerName) && !sender.canUseCommand(2, "gamemode")) {
+                throw new CommandException("You are not allowed to spawn a whitelisted player");
+            }
+            EntityPlayerMPFake.create(playerName, server);
+            return;
+        }
         throw new WrongUsageException("unknown action: "+action);
     }
 
@@ -310,7 +335,7 @@ public class CommandPlayer extends CommandCarpetBase
             return getListOfStringsMatchingLastWord(args,
                     "spawn","kill","attack","use","jump","stop","shadow",
                     "swapHands","drop","mount","dismount",
-                    "move","sneak","sprint","look");
+                    "move","sneak","sprint","look", "despawn", "respawn");
         }
         if (args.length == 3 && (args[1].matches("^(?:use|attack|jump)$")))
         {

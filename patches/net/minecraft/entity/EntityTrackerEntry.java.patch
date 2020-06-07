@@ -10,7 +10,26 @@
  public class EntityTrackerEntry
  {
      private static final Logger field_151262_p = LogManager.getLogger();
-@@ -457,6 +460,11 @@
+@@ -360,6 +363,18 @@
+ 
+     public void func_73118_a(EntityPlayerMP p_73118_1_)
+     {
++        if(carpet.logging.LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
++            StackTraceElement[] trace = new Throwable().getStackTrace();
++            String s = "";
++            for(StackTraceElement e : trace){
++                s += e.toString();
++                s += "\n";
++            }
++            final String ss = s;
++            carpet.logging.LoggerRegistry.getLogger("invisDebug").log(()-> new net.minecraft.util.text.ITextComponent[]{
++                    carpet.utils.Messenger.s(null, "r1: " + p_73118_1_ + " " + ss)
++            });
++        }
+         if (this.field_73134_o.contains(p_73118_1_))
+         {
+             this.field_73132_a.func_184203_c(p_73118_1_);
+@@ -457,6 +472,11 @@
  
                      this.field_73132_a.func_184178_b(p_73117_1_);
                      p_73117_1_.func_184848_d(this.field_73132_a);
@@ -22,7 +41,7 @@
                  }
              }
              else if (this.field_73134_o.contains(p_73117_1_))
-@@ -470,9 +478,20 @@
+@@ -470,14 +490,27 @@
  
      public boolean func_180233_c(EntityPlayerMP p_180233_1_)
      {
@@ -42,5 +61,12 @@
 -        int i = Math.min(this.field_73130_b, this.field_187262_f);
 +        int i = Math.min(r, this.field_187262_f);
          return d0 >= (double)(-i) && d0 <= (double)i && d1 >= (double)(-i) && d1 <= (double)i && this.field_73132_a.func_174827_a(p_180233_1_);
+     }
+ 
+     private boolean func_73121_d(EntityPlayerMP p_73121_1_)
+     {
++        // Return true to allow spectators in unloaded chunks to see entitys in nearby chunks. CARPET-XCOM
++        if(CarpetSettings.spectatorsDontLoadChunks && p_73121_1_.func_175149_v()) return true;
+         return p_73121_1_.func_71121_q().func_184164_w().func_72694_a(p_73121_1_, this.field_73132_a.field_70176_ah, this.field_73132_a.field_70164_aj);
      }
  

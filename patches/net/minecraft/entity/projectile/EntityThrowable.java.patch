@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
-@@ -21,6 +21,9 @@
+@@ -3,6 +3,8 @@
+ import java.util.List;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
++
++import carpet.CarpetSettings;
+ import net.minecraft.block.Block;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -21,6 +23,9 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
@@ -10,7 +19,7 @@
  public abstract class EntityThrowable extends Entity implements IProjectile
  {
      private int field_145788_c;
-@@ -36,6 +39,8 @@
+@@ -36,6 +41,8 @@
      public Entity field_184539_c;
      private int field_184540_av;
  
@@ -19,7 +28,7 @@
      public EntityThrowable(World p_i1776_1_)
      {
          super(p_i1776_1_);
-@@ -43,6 +48,11 @@
+@@ -43,6 +50,11 @@
          this.field_145786_d = -1;
          this.field_145787_e = -1;
          this.func_70105_a(0.25F, 0.25F);
@@ -31,7 +40,7 @@
      }
  
      public EntityThrowable(World p_i1778_1_, double p_i1778_2_, double p_i1778_4_, double p_i1778_6_)
-@@ -268,9 +278,24 @@
+@@ -268,9 +280,24 @@
              this.field_70181_x -= (double)f2;
          }
  
@@ -56,3 +65,32 @@
      protected float func_70185_h()
      {
          return 0.03F;
+@@ -331,6 +358,10 @@
+     @Nullable
+     public EntityLivingBase func_85052_h()
+     {
++        // Fixes pearls disappearing when players relog similar to 1.15 CARPET-XCOM
++        if(CarpetSettings.fixedPearlBugs && pearlCheck()){
++            field_70192_c = null;
++        }
+         if (this.field_70192_c == null && this.field_85053_h != null && !this.field_85053_h.isEmpty())
+         {
+             this.field_70192_c = this.field_70170_p.func_72924_a(this.field_85053_h);
+@@ -355,4 +386,17 @@
+ 
+         return this.field_70192_c;
+     }
++
++    // Fixes pearls disappearing when players relog similar to 1.15 CARPET-XCOM
++    private boolean pearlCheck(){
++        if(field_85053_h == null){
++            if(field_70192_c == null) return false;
++            field_85053_h = this.field_70192_c.func_70005_c_();
++        }
++        Entity entity = null;
++        try {
++            entity = ((WorldServer) this.field_70170_p).func_175733_a(UUID.fromString(this.field_85053_h));
++        }catch(Exception e){return true;}
++        return !field_70170_p.field_73010_i.contains(entity);
++    }
+ }

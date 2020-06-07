@@ -250,7 +250,45 @@
          }
      }
  
-@@ -1126,6 +1241,9 @@
+@@ -1076,6 +1191,18 @@
+ 
+     public void func_72900_e(Entity p_72900_1_)
+     {
++        if(LoggerRegistry.__invisDebug && p_72900_1_ instanceof EntityPlayerMP){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
++            StackTraceElement[] trace = new Throwable().getStackTrace();
++            String s = "";
++            for(StackTraceElement e : trace){
++                s += e.toString();
++                s += "\n";
++            }
++            final String ss = s;
++            LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
++                    Messenger.s(null, "r1: " + p_72900_1_ + " " + ss)
++            });
++        }
+         if (p_72900_1_.func_184207_aI())
+         {
+             p_72900_1_.func_184226_ay();
+@@ -1098,6 +1225,18 @@
+ 
+     public void func_72973_f(Entity p_72973_1_)
+     {
++        if(LoggerRegistry.__invisDebug && p_72973_1_ instanceof EntityPlayerMP){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
++            StackTraceElement[] trace = new Throwable().getStackTrace();
++            String s = "";
++            for(StackTraceElement e : trace){
++                s += e.toString();
++                s += "\n";
++            }
++            final String ss = s;
++            LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
++                    Messenger.s(null, "r1: " + p_72973_1_ + " " + ss)
++            });
++        }
+         p_72973_1_.func_184174_b(false);
+         p_72973_1_.func_70106_y();
+ 
+@@ -1126,6 +1265,9 @@
  
      private boolean func_191504_a(@Nullable Entity p_191504_1_, AxisAlignedBB p_191504_2_, boolean p_191504_3_, @Nullable List<AxisAlignedBB> p_191504_4_)
      {
@@ -260,7 +298,7 @@
          int i = MathHelper.func_76128_c(p_191504_2_.field_72340_a) - 1;
          int j = MathHelper.func_76143_f(p_191504_2_.field_72336_d) + 1;
          int k = MathHelper.func_76128_c(p_191504_2_.field_72338_b) - 1;
-@@ -1370,6 +1488,8 @@
+@@ -1370,6 +1512,8 @@
                  this.field_73007_j.remove(i--);
              }
          }
@@ -269,7 +307,7 @@
  
          this.field_72984_F.func_76318_c("remove");
          this.field_72996_f.removeAll(this.field_72997_g);
-@@ -1398,6 +1518,7 @@
+@@ -1398,6 +1542,7 @@
          for (int i1 = 0; i1 < this.field_72996_f.size(); ++i1)
          {
              Entity entity2 = this.field_72996_f.get(i1);
@@ -277,7 +315,7 @@
              Entity entity3 = entity2.func_184187_bx();
  
              if (entity3 != null)
-@@ -1416,7 +1537,10 @@
+@@ -1416,7 +1561,10 @@
              {
                  try
                  {
@@ -289,7 +327,7 @@
                  }
                  catch (Throwable throwable1)
                  {
-@@ -1437,22 +1561,36 @@
+@@ -1437,22 +1585,36 @@
  
                  if (entity2.field_70175_ag && this.func_175680_a(l1, i2, true))
                  {
@@ -328,7 +366,7 @@
              this.field_147483_b.clear();
          }
  
-@@ -1462,6 +1600,7 @@
+@@ -1462,6 +1624,7 @@
          while (iterator.hasNext())
          {
              TileEntity tileentity = iterator.next();
@@ -336,7 +374,7 @@
  
              if (!tileentity.func_145837_r() && tileentity.func_145830_o())
              {
-@@ -1471,12 +1610,14 @@
+@@ -1471,12 +1634,14 @@
                  {
                      try
                      {
@@ -357,7 +395,7 @@
                      }
                      catch (Throwable throwable)
                      {
-@@ -1498,6 +1639,7 @@
+@@ -1498,6 +1663,7 @@
                      this.func_175726_f(tileentity.func_174877_v()).func_177425_e(tileentity.func_174877_v());
                  }
              }
@@ -365,7 +403,7 @@
          }
  
          this.field_147481_N = false;
-@@ -1528,6 +1670,7 @@
+@@ -1528,6 +1694,7 @@
  
              this.field_147484_a.clear();
          }
@@ -373,7 +411,7 @@
  
          this.field_72984_F.func_76319_b();
          this.field_72984_F.func_76319_b();
-@@ -1648,7 +1791,8 @@
+@@ -1648,7 +1815,8 @@
                  this.func_72964_e(p_72866_1_.field_70176_ah, p_72866_1_.field_70164_aj).func_76608_a(p_72866_1_, p_72866_1_.field_70162_ai);
              }
  
@@ -383,7 +421,7 @@
              {
                  p_72866_1_.field_70175_ag = false;
              }
-@@ -1670,7 +1814,11 @@
+@@ -1670,7 +1838,11 @@
                  }
                  else
                  {
@@ -396,7 +434,7 @@
                  }
              }
          }
-@@ -1689,7 +1837,7 @@
+@@ -1689,7 +1861,7 @@
          {
              Entity entity4 = list.get(j2);
  
@@ -405,7 +443,7 @@
              {
                  return false;
              }
-@@ -2153,6 +2301,16 @@
+@@ -2153,6 +2325,16 @@
                          {
                              this.field_72986_A.func_76090_f(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -422,7 +460,7 @@
                      }
                      else
                      {
-@@ -2177,6 +2335,16 @@
+@@ -2177,6 +2359,16 @@
                          {
                              this.field_72986_A.func_76080_g(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -439,7 +477,7 @@
                      }
                      else
                      {
-@@ -2387,6 +2555,11 @@
+@@ -2387,6 +2579,11 @@
  
      public boolean func_180500_c(EnumSkyBlock p_180500_1_, BlockPos p_180500_2_)
      {
@@ -451,7 +489,7 @@
          if (!this.func_175648_a(p_180500_2_, 17, false))
          {
              return false;
-@@ -2699,7 +2872,8 @@
+@@ -2699,7 +2896,8 @@
          IBlockState iblockstate1 = this.func_180495_p(p_190527_2_);
          AxisAlignedBB axisalignedbb = p_190527_3_ ? null : p_190527_1_.func_176223_P().func_185890_d(this, p_190527_2_);
  
@@ -461,7 +499,7 @@
          {
              return false;
          }
-@@ -3267,30 +3441,41 @@
+@@ -3267,30 +3465,41 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
@@ -518,7 +556,7 @@
      }
  
      public DifficultyInstance func_175649_E(BlockPos p_175649_1_)
-@@ -3361,4 +3546,128 @@
+@@ -3361,4 +3570,128 @@
      {
          return null;
      }

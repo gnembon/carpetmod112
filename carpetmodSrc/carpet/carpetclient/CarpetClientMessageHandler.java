@@ -27,6 +27,8 @@ public class CarpetClientMessageHandler {
     public static final int RANDOMTICK_DISPLAY = 7;
     public static final int CUSTOM_RECIPES = 8;
 
+    private static final int NET_VERSION = 1;
+
     public static void handler(EntityPlayerMP sender, PacketBuffer data) {
         int type = data.readInt();
 
@@ -69,6 +71,7 @@ public class CarpetClientMessageHandler {
 
         chunkData.setString("carpetVersion", CarpetSettings.carpetVersion);
         chunkData.setFloat("tickrate", TickSpeed.tickrate);
+        chunkData.setInteger("netVersion", NET_VERSION);
         NBTTagList listNBT = new NBTTagList();
         for (String rule : list) {
             String current = CarpetSettings.get(rule);

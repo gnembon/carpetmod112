@@ -107,6 +107,40 @@ public class BlockRotator
                     .withProperty(BlockStairs.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2))
                     .withProperty(BlockStairs.HALF, ( hitX > 10)?BlockStairs.EnumHalf.TOP : BlockStairs.EnumHalf.BOTTOM);
         }
+        else if (block instanceof BlockStairs)
+        {
+            return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
+                    .withProperty(BlockStairs.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2))
+                    .withProperty(BlockStairs.HALF, ( hitX > 10)?BlockStairs.EnumHalf.TOP : BlockStairs.EnumHalf.BOTTOM);
+        }
+        else if (block instanceof BlockFenceGate)
+        {
+            return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
+                    .withProperty(BlockFenceGate.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2))
+                    .withProperty(BlockFenceGate.OPEN, Boolean.valueOf(hitX > 10));
+        }
+        else if (block instanceof BlockPumpkin)
+        {
+            return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
+                    .withProperty(BlockFenceGate.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2));
+        }
+        else if (block instanceof BlockChest)
+        {
+            return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
+                    .withProperty(BlockFenceGate.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2));
+        }
+        else if (block instanceof BlockEnderChest)
+        {
+            return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
+                    .withProperty(BlockFenceGate.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2));
+        }
+        else if (block instanceof BlockDoor)
+        {
+            return block.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
+                    .withProperty(BlockDoor.FACING, EnumFacing.byIndex((((int)hitX) % 10) - 2))
+                    .withProperty(BlockDoor.HINGE, hitX % 100 < 10 ? BlockDoor.EnumHingePosition.LEFT : BlockDoor.EnumHingePosition.RIGHT)
+                    .withProperty(BlockDoor.OPEN, Boolean.valueOf(hitX > 100));
+        }
         return null;
     }
 
