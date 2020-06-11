@@ -226,7 +226,7 @@
 +                NBTTagList nbttaglist4 = p_70020_1_.func_150295_c("AABBcarpet", 6);
 +                if(nbttaglist4 != null && nbttaglist4.func_74745_c() == 6) {
 +                    AxisAlignedBB aabb = new AxisAlignedBB(nbttaglist4.func_150309_d(0), nbttaglist4.func_150309_d(1), nbttaglist4.func_150309_d(2), nbttaglist4.func_150309_d(3), nbttaglist4.func_150309_d(4), nbttaglist4.func_150309_d(5));
-+                    if (aabb != null) {
++                    if (aabb != null && !(aabb.field_72340_a == 0 && aabb.field_72338_b == 0 && aabb.field_72339_c == 0 && aabb.field_72336_d == 0 && aabb.field_72337_e == 0 && aabb.field_72334_f == 0)) {
 +                        this.func_174826_a(aabb);
 +                    }
 +                }
