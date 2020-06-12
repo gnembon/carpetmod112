@@ -739,6 +739,9 @@ public class CarpetSettings
 
     // ===== FEATURES ===== //
 
+    @Rule(desc = "Chorus fruit can be shot with an arrow to have it pop as an item as in the future minecraft versions.", category = FEATURE)
+    public static boolean chorusFruitShootable;
+
     @Rule(desc = "Elytras can be traded by Leatherworker villagers.", category = FEATURE)
     public static boolean elytraTradable = false;
 
