@@ -175,14 +175,12 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     }
 
     private void logout() {
-        Thread.dumpStack();
         this.dismountRidingEntity();
         getServer().getPlayerList().playerLoggedOut(this);
         removePlayerFromTeams(this);
     }
 
     public void despawn() {
-        Thread.dumpStack();
         getServer().getPlayerList().playerLoggedOut(this);
         removePlayerFromTeams(this);
     }
