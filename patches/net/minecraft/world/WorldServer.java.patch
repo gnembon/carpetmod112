@@ -402,7 +402,7 @@
                  }
              }
          }
-@@ -1033,6 +1189,10 @@
+@@ -1033,9 +1189,15 @@
                  }
                  else
                  {
@@ -413,7 +413,12 @@
                      if (!(p_184165_1_ instanceof EntityPlayer))
                      {
                          field_147491_a.warn("Keeping entity {} that already exists with UUID {}", EntityList.func_191301_a(entity), uuid.toString());
-@@ -1055,6 +1215,7 @@
++                        if (CarpetSettings.sendDuplicateEntitiesToClients)
++                            field_73062_L.func_72786_a(p_184165_1_); // vanilla handles the un-tracking properly
+                         return false;
+                     }
+ 
+@@ -1055,6 +1217,7 @@
          this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
          this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
          Entity[] aentity = p_72923_1_.func_70021_al();
@@ -421,7 +426,7 @@
  
          if (aentity != null)
          {
-@@ -1139,6 +1300,7 @@
+@@ -1139,6 +1302,7 @@
          }
  
          this.field_147490_S[this.field_147489_T].add(blockeventdata);
@@ -429,7 +434,7 @@
      }
  
      private void func_147488_Z()
-@@ -1150,14 +1312,19 @@
+@@ -1150,14 +1314,19 @@
  
              for (BlockEventData blockeventdata : this.field_147490_S[i])
              {
@@ -449,7 +454,7 @@
      }
  
      private boolean func_147485_a(BlockEventData p_147485_1_)
-@@ -1299,4 +1466,19 @@
+@@ -1299,4 +1468,19 @@
              {
              }
          }

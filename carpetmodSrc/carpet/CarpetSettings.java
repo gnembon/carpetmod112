@@ -737,6 +737,9 @@ public class CarpetSettings
     @Rule(desc = "Fixes player position truncation causing chunks to load with one block offset to chunk boarders in negative coordinates.", category = FIX)
     public static boolean playerChunkLoadingFix = false;
 
+    @Rule(desc = "Sends invisible duplicate UUID entities to clients", category = FIX)
+    public static boolean sendDuplicateEntitiesToClients = false;
+
     // ===== FEATURES ===== //
 
     @Rule(desc = "Chorus fruit can be shot with an arrow to have it pop as an item as in the future minecraft versions.", category = FEATURE)
