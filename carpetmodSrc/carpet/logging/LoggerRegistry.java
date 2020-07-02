@@ -4,7 +4,6 @@ import carpet.CarpetSettings;
 import com.google.common.base.Charsets;
 import com.google.gson.*;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -12,11 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class LoggerRegistry
 {
@@ -172,7 +168,7 @@ public class LoggerRegistry
     /**
      * Sets a log as a default log with the specified option and handler
      */
-    public static boolean setDefault(MinecraftServer server, String logName, String option, LogHandler handler) {
+    public static void setDefault(MinecraftServer server, String logName, String option, LogHandler handler) {
         if (handler != null) {
             defaultSubscriptions.put(logName, new LoggerOptions(logName, option, handler.getName(), handler.getExtraArgs()));
         } else {
@@ -185,13 +181,12 @@ public class LoggerRegistry
             if (!hasSubscriptions(player.getName()))
                 subscribePlayer(player.getName(), logName, option, handler);
         }
-        return true;
     }
 
     /**
      * Removes a log fro mthe list of default logs
      */
-    public static boolean removeDefault(MinecraftServer server, String logName) {
+    public static void removeDefault(MinecraftServer server, String logName) {
         if (defaultSubscriptions.containsKey(logName)) {
             defaultSubscriptions.remove(logName);
             writeConf(server);
@@ -201,9 +196,7 @@ public class LoggerRegistry
                 if (!hasSubscriptions(player.getName()))
                     unsubscribePlayer(player.getName(), logName);
             }
-            return true;
         }
-        return false;
     }
 
     /**
@@ -221,7 +214,7 @@ public class LoggerRegistry
     /**
      * Subscribes the player with name playerName to the log with name logName.
      */
-    public static boolean subscribePlayer(MinecraftServer server, String playerName, String logName, String option, LogHandler handler)
+    public static void subscribePlayer(MinecraftServer server, String playerName, String logName, String option, LogHandler handler)
     {
         if (!hasSubscriptions(playerName)) {
             playerSubscriptions.put(playerName, new HashMap<>(defaultSubscriptions));
@@ -237,15 +230,13 @@ public class LoggerRegistry
 
             subscribePlayer(playerName, logName, option, handler);
             writeConf(server);
-            return true;
         }
-        return false;
     }
 
     /**
      * Unsubscribes the player with name playerName from the log with name logName.
      */
-    public static boolean unsubscribePlayer(MinecraftServer server, String playerName, String logName)
+    public static void unsubscribePlayer(MinecraftServer server, String playerName, String logName)
     {
         if (!hasSubscriptions(playerName)) {
             playerSubscriptions.put(playerName, new HashMap<>(defaultSubscriptions));
@@ -256,9 +247,7 @@ public class LoggerRegistry
             subs.remove(logName);
             unsubscribePlayer(playerName, logName);
             writeConf(server);
-            return true;
         }
-        return false;
     }
 
     /**
@@ -355,14 +344,14 @@ public class LoggerRegistry
     {
         String playerName = player.getName();
 
-        for (String logName : LoggerRegistry.getLoggerNames(0)) {
+        for (String logName : getLoggerNames(0)) {
             unsubscribePlayer(playerName, logName);
         }
     }
 
     // ===== PRIVATE FUNCTIONS TO PREVENT CODE DUPLICATION ===== //
     private static void subscribePlayer(String playerName, String logName, String option, LogHandler handler) {
-        carpet.logging.Logger log = LoggerRegistry.getLogger(logName);
+        carpet.logging.Logger log = getLogger(logName);
         if(log == null) return;
 
         if (option == null)
@@ -372,6 +361,6 @@ public class LoggerRegistry
     }
 
     private static void unsubscribePlayer(String playerName, String logName) {
-        LoggerRegistry.getLogger(logName).removePlayer(playerName);
+        getLogger(logName).removePlayer(playerName);
     }
 }
