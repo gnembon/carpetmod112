@@ -27,9 +27,7 @@ import carpet.worldedit.WorldEditBridge;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.apache.logging.log4j.LogManager;
@@ -146,11 +144,7 @@ public class CarpetSettings
     public static boolean instantFallingFlag = false;
 
     private static boolean validateInstantFallingFlag(boolean value) {
-        if (value) {
-            BlockFalling.fallInstantly = true;
-        }else {
-            BlockFalling.fallInstantly = false;
-        }
+        BlockFalling.fallInstantly = value;
         return true;
     }
 
@@ -1311,7 +1305,7 @@ public class CarpetSettings
             File settings_file = server.getActiveAnvilConverter().getFile(server.getFolderName(), "carpet.conf");
             BufferedReader b = new BufferedReader(new FileReader(settings_file));
             String line = "";
-            Map<String,String> result = new HashMap<String, String>();
+            Map<String,String> result = new HashMap<>();
             while ((line = b.readLine()) != null)
             {
                 line = line.replaceAll("\\r|\\n", "");
@@ -1335,12 +1329,12 @@ public class CarpetSettings
         }
         catch(FileNotFoundException e)
         {
-            return new HashMap<String, String>();
+            return new HashMap<>();
         }
         catch (IOException e)
         {
             e.printStackTrace();
-            return new HashMap<String, String>();
+            return new HashMap<>();
         }
 
     }
@@ -1393,7 +1387,7 @@ public class CarpetSettings
 
     public static String[] findStartupOverrides(MinecraftServer server)
     {
-        ArrayList<String> res = new ArrayList<String>();
+        ArrayList<String> res = new ArrayList<>();
         if (locked) return res.toArray(new String[0]);
         Map <String,String> defaults = readConf(server);
         for (String rule: rules.keySet().stream().sorted().collect(Collectors.toList()))
