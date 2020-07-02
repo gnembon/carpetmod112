@@ -57,25 +57,25 @@ public class EntityInfo
 		{
 			return null;
 		} // func_190916_E()
-		String stackname = item.getCount()>1?String.format("%dx%s",item.getCount(), item.getDisplayName()):item.getDisplayName();
+		StringBuilder stackname = new StringBuilder(item.getCount() > 1 ? String.format("%dx%s", item.getCount(), item.getDisplayName()) : item.getDisplayName());
 		if (item.isItemDamaged())
 		{
-			stackname += String.format(" %d/%d", item.getMaxDamage()-item.getItemDamage(), item.getMaxDamage());
+			stackname.append(String.format(" %d/%d", item.getMaxDamage() - item.getItemDamage(), item.getMaxDamage()));
 		}
 		if (item.isItemEnchanted())
 		{
-			stackname += " ( ";
+			stackname.append(" ( ");
 			Map<Enchantment, Integer> enchants = EnchantmentHelper.getEnchantments(item);
 			for (Enchantment e: enchants.keySet())
 			{
 				int level = enchants.get(e);
 				String enstring = e.getTranslatedName(level);
-				stackname += enstring;
-				stackname += " ";
+				stackname.append(enstring);
+				stackname.append(" ");
 			}
-			stackname += ")";
+			stackname.append(")");
 		}
-		return stackname;
+		return stackname.toString();
 	}
 
     public static String entity_short_string(Entity e)
@@ -113,7 +113,7 @@ public class EntityInfo
 
     public static List<String> entityInfo(Entity e, World ws)
     {
-        List<String> lst = new ArrayList<String>();
+        List<String> lst = new ArrayList<>();
 		World world = e.getEntityWorld();
         lst.add(entity_short_string(e));
         if (e.isRiding()) { lst.add(String.format(" - Rides: %s", e.getRidingEntity().getDisplayName().getUnformattedText())); }
@@ -214,15 +214,15 @@ public class EntityInfo
 			{
 				lst.add(String.format(" - Off hand: %s", display_item(offhand)));
 			}
-			String armour = "";
+			StringBuilder armour = new StringBuilder();
 			for (ItemStack armourpiece: elb.getArmorInventoryList())
 			{
 				if (!(armourpiece.isEmpty()))
 				{
-					armour += String.format("\n   * %s", display_item(armourpiece));
+					armour.append(String.format("\n   * %s", display_item(armourpiece)));
 				}
 			}
-			if (!("".equals(armour)))
+			if (!("".equals(armour.toString())))
 			{
 				lst.add(String.format(" - Armour:%s", armour));
 			}
@@ -282,16 +282,16 @@ public class EntityInfo
 							EntityVillager ev = (EntityVillager) e;
 
 							InventoryBasic vinv = ev.getVillagerInventory();
-							String inventory_content = "";
+							StringBuilder inventory_content = new StringBuilder();
 							for (int i = 0; i < vinv.getSizeInventory(); ++i)
 							{
 								ItemStack vstack = vinv.getStackInSlot(i);
 								if (!vstack.isEmpty())
 								{
-									inventory_content += String.format("\n   * %d: %s", i, display_item(vstack));
+									inventory_content.append(String.format("\n   * %d: %s", i, display_item(vstack)));
 								}
 							}
-							if (!("".equals(inventory_content)))
+							if (!("".equals(inventory_content.toString())))
 							{
 								lst.add(String.format(" - Inventory:%s", inventory_content));
 							}
