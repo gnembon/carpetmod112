@@ -12,13 +12,13 @@ import java.util.stream.Collectors;
 
 public class CarpetProfiler
 {
-    private static final HashMap<String, Long> time_repo = new HashMap<String, Long>();
-    public static int tick_health_requested = 0;
-    private static int tick_health_elapsed = 0;
-    private static int test_type = 0; //1 for ticks, 2 for entities;
-    private static String current_section = null;
-    private static long current_section_start = 0;
-    private static long current_tick_start = 0;
+    private static final HashMap<String, Long> time_repo = new HashMap<>();
+    public static int tick_health_requested;
+    private static int tick_health_elapsed;
+    private static int test_type; //1 for ticks, 2 for entities;
+    private static String current_section;
+    private static long current_section_start;
+    private static long current_tick_start;
 
     public static void prepare_tick_report(int ticks)
     {
