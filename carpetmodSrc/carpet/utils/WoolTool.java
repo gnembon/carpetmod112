@@ -1,25 +1,19 @@
 package carpet.utils;
 
-import net.minecraft.block.Block;
+import carpet.CarpetSettings;
+import carpet.helpers.HopperCounter;
 import net.minecraft.block.BlockColored;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
-import carpet.CarpetSettings;
-import carpet.helpers.HopperCounter;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
-
-import java.util.List;
 
 public class WoolTool
 {
-    public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.<EnumDyeColor>create("color", EnumDyeColor.class);
+    public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.create("color", EnumDyeColor.class);
 
     public static void carpetPlacedAction(EnumDyeColor color, EntityPlayer placer, BlockPos pos, World worldIn)
     {
@@ -66,7 +60,7 @@ public class WoolTool
                     EnumDyeColor under = getWoolColorAtPosition(worldIn, pos.down());
                     if (under == null) return;
                     HopperCounter.COUNTERS.get(under.getName()).reset(worldIn.getMinecraftServer());
-                    Messenger.s(placer, String.format("%s counter reset",under.toString() ));
+                    Messenger.s(placer, String.format("%s counter reset", under));
                 }
 			    break;
         }
