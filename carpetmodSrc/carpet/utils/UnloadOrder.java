@@ -31,7 +31,7 @@ import org.apache.commons.io.output.NullOutputStream;
 public class UnloadOrder
 {
     public static final LongSet droppedChunksSet_new = new LongOpenHashSet();
-    public static void queueUnload113(WorldServer world, ChunkProviderServer chunkproviderserver, Chunk chunkIn)
+    public static void queueUnload113(WorldServer world, Chunk chunkIn)
     {
         if (world.provider.canDropChunk(chunkIn.x, chunkIn.z))
         {
@@ -59,9 +59,9 @@ public class UnloadOrder
                     chunkproviderserver.queueUnload(chunk);
                 }
             }
-            return UnloadOrder.tick_reportive_no_action(server, pos, verbose);
+            return tick_reportive_no_action(server, pos, verbose);
         }
-        List<String> rep = new ArrayList<String>();
+        List<String> rep = new ArrayList<>();
         rep.add("Saving is disabled on the server");
         return rep;
     }
@@ -83,13 +83,12 @@ public class UnloadOrder
             {
                 if (chunk != null && !pcm.contains(chunk.x, chunk.z))
                 {
-                    queueUnload113(server, chunkproviderserver, chunk);
+                    queueUnload113(server, chunk);
                 }
             }
-            List <String> rep = UnloadOrder.tick_reportive_no_action_113(server, pos, verbose);
-            return rep;
+            return tick_reportive_no_action_113(server, pos, verbose);
         }
-        List<String> rep = new ArrayList<String>();
+        List<String> rep = new ArrayList<>();
         rep.add("Saving is disabled on the server");
         return rep;
     }
@@ -113,10 +112,7 @@ public class UnloadOrder
                 return 2;
             return table.length;
         }
-        catch (NoSuchFieldException e)
-        {
-            e.printStackTrace();
-        } catch (IllegalAccessException e)
+        catch (NoSuchFieldException | IllegalAccessException e)
         {
             e.printStackTrace();
         }
@@ -128,13 +124,9 @@ public class UnloadOrder
         {
             Field field = droppedChunksSet_new.getClass().getDeclaredField("n");
             field.setAccessible(true);
-            int n = field.getInt(droppedChunksSet_new);
-            return n;
+            return field.getInt(droppedChunksSet_new);
         }
-        catch (NoSuchFieldException e)
-        {
-            e.printStackTrace();
-        } catch (IllegalAccessException e)
+        catch (NoSuchFieldException | IllegalAccessException e)
         {
             e.printStackTrace();
         }
@@ -175,10 +167,10 @@ public class UnloadOrder
         }
         ChunkPos chpos1 = new ChunkPos(pos);
         ChunkPos chpos2 = new ChunkPos(pos1);
-        int minx = (chpos1.x < chpos2.x) ? chpos1.x : chpos2.x;
-        int maxx = (chpos1.x > chpos2.x) ? chpos1.x : chpos2.x;
-        int minz = (chpos1.z < chpos2.z) ? chpos1.z : chpos2.z;
-        int maxz = (chpos1.z > chpos2.z) ? chpos1.z : chpos2.z;
+        int minx = Math.min(chpos1.x, chpos2.x);
+        int maxx = Math.max(chpos1.x, chpos2.x);
+        int minz = Math.min(chpos1.z, chpos2.z);
+        int maxz = Math.max(chpos1.z, chpos2.z);
         HashMap<Integer,Integer> stat = new HashMap<>();
         int total = 0;
         for (int chposx = minx; chposx <= maxx; chposx++)
@@ -186,7 +178,7 @@ public class UnloadOrder
             for (int chposz = minz; chposz <= maxz; chposz++)
             {
                 int o1 = getChunkOrder(new ChunkPos(chposx, chposz),size);
-                int count = stat.containsKey(o1) ? stat.get(o1) : 0;
+                int count = stat.getOrDefault(o1, 0);
                 stat.put(o1, count + 1);
                 total ++;
             }
@@ -215,10 +207,10 @@ public class UnloadOrder
         }
         ChunkPos chpos1 = new ChunkPos(pos);
         ChunkPos chpos2 = new ChunkPos(pos1);
-        int minx = (chpos1.x < chpos2.x) ? chpos1.x : chpos2.x;
-        int maxx = (chpos1.x > chpos2.x) ? chpos1.x : chpos2.x;
-        int minz = (chpos1.z < chpos2.z) ? chpos1.z : chpos2.z;
-        int maxz = (chpos1.z > chpos2.z) ? chpos1.z : chpos2.z;
+        int minx = Math.min(chpos1.x, chpos2.x);
+        int maxx = Math.max(chpos1.x, chpos2.x);
+        int minz = Math.min(chpos1.z, chpos2.z);
+        int maxz = Math.max(chpos1.z, chpos2.z);
         HashMap<Integer,Integer> stat = new HashMap<>();
         int total = 0;
         for (int chposx = minx; chposx <= maxx; chposx++)
@@ -226,7 +218,7 @@ public class UnloadOrder
             for (int chposz = minz; chposz <= maxz; chposz++)
             {
                 int o1 = (int)get_chunk_order_113(new ChunkPos(chposx, chposz),size);
-                int count = stat.containsKey(o1) ? stat.get(o1) : 0;
+                int count = stat.getOrDefault(o1, 0);
                 stat.put(o1, count + 1);
                 total ++;
             }
@@ -260,10 +252,10 @@ public class UnloadOrder
         }
         ChunkPos chpos1 = new ChunkPos(pos);
         ChunkPos chpos2 = new ChunkPos(pos1);
-        int minx = (chpos1.x < chpos2.x) ? chpos1.x : chpos2.x;
-        int maxx = (chpos1.x > chpos2.x) ? chpos1.x : chpos2.x;
-        int minz = (chpos1.z < chpos2.z) ? chpos1.z : chpos2.z;
-        int maxz = (chpos1.z > chpos2.z) ? chpos1.z : chpos2.z;
+        int minx = Math.min(chpos1.x, chpos2.x);
+        int maxx = Math.max(chpos1.x, chpos2.x);
+        int minz = Math.min(chpos1.z, chpos2.z);
+        int maxz = Math.max(chpos1.z, chpos2.z);
         int lenx = maxx-minx+1;
         int lenz = maxz-minz+1;
         HashMap<Integer,Integer> stat = new HashMap<>();
@@ -273,21 +265,21 @@ public class UnloadOrder
             for (int chposz = minz; chposz <= maxz; chposz++)
             {
                 int o1 = (int)get_chunk_order_113(new ChunkPos(chposx, chposz),size);
-                int count = stat.containsKey(o1) ? stat.get(o1) : 0;
+                int count = stat.getOrDefault(o1, 0);
                 stat.put(o1, count + 1);
                 total ++;
             }
         }
         rep.add("Counts of chunks with specific unload order out of "+size+" ("+total+" total chunks to protect)");
         SortedSet<Integer> keys = new TreeSet<>(stat.keySet());
-        String chunklist = "";
+        StringBuilder chunklist = new StringBuilder();
         int order_to_protect = 1;
         for (int key : keys)
         {
-            chunklist += String.format("%d:%d ",key,stat.get(key));
+            chunklist.append(String.format("%d:%d ", key, stat.get(key)));
             order_to_protect = key;
         }
-        rep.add(chunklist);
+        rep.add(chunklist.toString());
 
         int best_config_chunks = Integer.MAX_VALUE;
         int best_config_minx = 0;
@@ -362,7 +354,7 @@ public class UnloadOrder
                 index+1,
                 chunk.x, chunk.z,
                 chunk.x * 16+7, chunk.z*16+7,
-                UnloadOrder.getChunkOrder(new ChunkPos(chunk.x, chunk.z), size),
+                getChunkOrder(new ChunkPos(chunk.x, chunk.z), size),
                 size
         );
     }
@@ -375,7 +367,7 @@ public class UnloadOrder
                 index+1,
                 chunk.x, chunk.z,
                 chunk.x * 16+7, chunk.z*16+7,
-                UnloadOrder.get_chunk_order_113(new ChunkPos(chunk.x, chunk.z), size),
+                get_chunk_order_113(new ChunkPos(chunk.x, chunk.z), size),
                 size
         );
     }
@@ -391,7 +383,7 @@ public class UnloadOrder
             test_chunk_xpos = pos.getX() >> 4;
             test_chunk_zpos = pos.getZ() >> 4;
         }
-        int current_size = UnloadOrder.getCurrentHashSize(world);
+        int current_size = getCurrentHashSize(world);
         if (!world.disableLevelSaving)
         {
             if (!provider.droppedChunks.isEmpty())
@@ -400,7 +392,7 @@ public class UnloadOrder
                 List<Long> chunks_ids_order = new ArrayList<>();
                 int selected_chunk = -1;
                 int iti = 0;
-                int i = 0;
+                int i;
                 for (i = 0; iterator.hasNext(); iterator.remove())
                 {
                     Long olong = iterator.next();
@@ -505,8 +497,8 @@ public class UnloadOrder
                 Map<Long,Integer> chunk_to_len = new HashMap<>();
                 int selected_chunk = -1;
                 int iti = 0;
-                int i = 0;
-                int current_size = UnloadOrder.getCurrentHashSize_113();
+                int i;
+                int current_size = getCurrentHashSize_113();
                 for (i = 0; iterator.hasNext(); iterator.remove())
                 {
 
@@ -519,7 +511,7 @@ public class UnloadOrder
                         if ( pos != null && chunk.x == test_chunk_xpos && chunk.z == test_chunk_zpos) selected_chunk = i;
                         chunks_ids_order.add(olong);
                         chunk_to_len.put(olong, current_size);
-                        current_size = UnloadOrder.getCurrentHashSize_113();
+                        current_size = getCurrentHashSize_113();
                         ++i;
                     }
                     ++iti;
