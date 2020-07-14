@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemPotion.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemPotion.java
-@@ -20,6 +20,8 @@
+@@ -1,5 +1,7 @@
+ package net.minecraft.item;
+ 
++import carpet.CarpetServer;
++import carpet.CarpetSettings;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -20,6 +22,8 @@
  
  public class ItemPotion extends Item
  {
@@ -9,7 +17,7 @@
      public ItemPotion()
      {
          this.func_77625_d(1);
-@@ -50,7 +52,10 @@
+@@ -50,7 +54,10 @@
                  }
                  else
                  {
@@ -20,3 +28,12 @@
                  }
              }
          }
+@@ -78,6 +85,8 @@
+ 
+     public int func_77626_a(ItemStack p_77626_1_)
+     {
++        // Makes potions instantly drinkable.
++        if(CarpetSettings.instantDrinkPotion) return 1;
+         return 32;
+     }
+ 

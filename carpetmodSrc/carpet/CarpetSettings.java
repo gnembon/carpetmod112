@@ -742,6 +742,9 @@ public class CarpetSettings
 
     // ===== FEATURES ===== //
 
+    @Rule(desc = "Make potions instant drinkable.", category = FEATURE)
+    public static boolean instantDrinkPotion;
+
     @Rule(desc = "Chorus fruit can be shot with an arrow to have it pop as an item as in the future minecraft versions.", category = FEATURE)
     public static boolean chorusFruitShootable;
 
