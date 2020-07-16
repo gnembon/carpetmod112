@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/world/Teleporter.java
 +++ ../src-work/minecraft/net/minecraft/world/Teleporter.java
-@@ -1,25 +1,34 @@
+@@ -1,25 +1,35 @@
  package net.minecraft.world;
  
 +import carpet.CarpetSettings;
 +import carpet.logging.LoggerRegistry;
++import carpet.utils.portalsearcher.*;
 +import carpet.logging.logHelpers.PortalCaching;
  import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
  import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -36,7 +37,7 @@
  
      public Teleporter(WorldServer p_i1963_1_)
      {
-@@ -74,6 +83,7 @@
+@@ -74,6 +84,7 @@
          int j = MathHelper.func_76128_c(p_180620_1_.field_70165_t);
          int k = MathHelper.func_76128_c(p_180620_1_.field_70161_v);
          boolean flag = true;
@@ -44,7 +45,7 @@
          BlockPos blockpos = BlockPos.field_177992_a;
          long l = ChunkPos.func_77272_a(j, k);
  
-@@ -85,8 +95,20 @@
+@@ -85,10 +96,30 @@
              teleporter$portalposition.field_85087_d = this.field_85192_a.func_82737_E();
              flag = false;
          }
@@ -65,8 +66,25 @@
 +        {
              BlockPos blockpos3 = new BlockPos(p_180620_1_);
  
++            // begin portalSuperCache
++            if (CarpetSettings.portalSuperCache) {
++                PortalSearcherAbstract searcher = new PortalSearcherSuperCache(this.field_85192_a);
++                PortalSearchResult result = searcher.search(blockpos3);
++                blockpos = result.getResult();
++                d0 = result.getDistanceSq();
++            } else {
++            // end portalSuperCache
              for (int i1 = -128; i1 <= 128; ++i1)
-@@ -123,8 +145,15 @@
+             {
+                 BlockPos blockpos2;
+@@ -117,14 +148,22 @@
+                     }
+                 }
+             }
++            }
+         }
+ 
+         if (d0 >= 0.0D)
          {
              if (flag)
              {
@@ -83,7 +101,7 @@
  
              double d5 = (double)blockpos.func_177958_n() + 0.5D;
              double d7 = (double)blockpos.func_177952_p() + 0.5D;
-@@ -137,14 +166,35 @@
+@@ -137,14 +176,35 @@
              {
                  ++d2;
              }
@@ -122,7 +140,7 @@
              }
  
              float f = 0.0F;
-@@ -182,6 +232,13 @@
+@@ -182,6 +242,13 @@
              if (p_180620_1_ instanceof EntityPlayerMP)
              {
                  ((EntityPlayerMP)p_180620_1_).field_71135_a.func_147364_a(d5, d6, d7, p_180620_1_.field_70177_z, p_180620_1_.field_70125_A);
@@ -136,7 +154,7 @@
              }
              else
              {
-@@ -395,6 +452,12 @@
+@@ -395,6 +462,12 @@
                  }
              }
          }
@@ -149,7 +167,7 @@
  
          return true;
      }
-@@ -405,27 +468,60 @@
+@@ -405,27 +478,65 @@
          {
              long i = p_85189_1_ - 300L;
              ObjectIterator<Teleporter.PortalPosition> objectiterator = this.field_85191_c.values().iterator();
@@ -178,6 +196,11 @@
 +                PortalCaching.portalCachingCleared(field_85192_a, field_85191_c.size(), uncachings);
 +            }
 +            /* carpet mod end */
++            // begin portalSuperCache
++            if (!CarpetSettings.portalSuperCache) {
++                (this.field_85192_a.field_73011_w.func_186058_p().func_186068_a() == -1 ? SuperCacheHandler.getHandlerNether() : SuperCacheHandler.getHandlerOverworld()).clear();
++            }
++            // end portalSuperCache
          }
      }
 +    

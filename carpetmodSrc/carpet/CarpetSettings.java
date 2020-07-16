@@ -929,6 +929,13 @@ public class CarpetSettings
     @Rule(desc = "Allows bedrock to drop as bedrock item if broken, similar to 1.8 and lower versions.", category = EXPERIMENTAL)
     public static boolean bedrockDropsAsItem;
 
+    @Rule(
+            desc = "improve the search algorithm for nether portal",
+            extra = "try super cache please",
+            category = {EXPERIMENTAL, OPTIMIZATIONS}
+    )
+    public static boolean portalSuperCache = false;
+
     // ===== API ===== //
 
     /**
