@@ -42,7 +42,7 @@
 +                    }
 +                    else
 +                    {
-+                        InstantComparators.onNoTileEntity(p_176398_1_, p_176398_2_);
++                        InstantComparators.onNoTileEntity(p_176398_2_);
 +                    }
 +                }
              }
@@ -76,7 +76,7 @@
 +                // than an instant comparator
 +                if (comparator.func_145996_a() != comparator.scheduledOutputSignal[index] && comparator.func_145996_a() != 0)
 +                {
-+                    InstantComparators.onInstantComparator(p_180650_1_, p_180650_2_, comparator.buggy[index]);
++                    InstantComparators.onInstantComparator(p_180650_2_, comparator.buggy[index]);
 +                }
 +            }
 +        }

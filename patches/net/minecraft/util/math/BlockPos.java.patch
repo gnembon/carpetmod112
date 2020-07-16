@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/util/math/BlockPos.java
++++ ../src-work/minecraft/net/minecraft/util/math/BlockPos.java
+@@ -16,14 +16,14 @@
+ {
+     private static final Logger field_185335_c = LogManager.getLogger();
+     public static final BlockPos field_177992_a = new BlockPos(0, 0, 0);
+-    private static final int field_177990_b = 1 + MathHelper.func_151239_c(MathHelper.func_151236_b(30000000));
+-    private static final int field_177991_c = field_177990_b;
+-    private static final int field_177989_d = 64 - field_177990_b - field_177991_c;
+-    private static final int field_177987_f = 0 + field_177991_c;
+-    private static final int field_177988_g = field_177987_f + field_177989_d;
+-    private static final long field_177994_h = (1L << field_177990_b) - 1L;
+-    private static final long field_177995_i = (1L << field_177989_d) - 1L;
+-    private static final long field_177993_j = (1L << field_177991_c) - 1L;
++    private static final int field_177990_b = 26;
++    private static final int field_177991_c = 26;
++    private static final int field_177989_d = 12;
++    private static final int field_177987_f = 26;
++    private static final int field_177988_g = 38;
++    private static final long field_177994_h = 67108863L;
++    private static final long field_177995_i = 4095L;
++    private static final long field_177993_j = 67108863L;
+ 
+     public BlockPos(int p_i46030_1_, int p_i46030_2_, int p_i46030_3_)
+     {
+@@ -163,7 +163,7 @@
+ 
+     public long func_177986_g()
+     {
+-        return ((long)this.func_177958_n() & field_177994_h) << field_177988_g | ((long)this.func_177956_o() & field_177995_i) << field_177987_f | ((long)this.func_177952_p() & field_177993_j) << 0;
++        return ((long)this.func_177958_n() & field_177994_h) << field_177988_g | ((long)this.func_177956_o() & field_177995_i) << field_177987_f | ((long) this.func_177952_p() & field_177993_j);
+     }
+ 
+     public static BlockPos func_177969_a(long p_177969_0_)

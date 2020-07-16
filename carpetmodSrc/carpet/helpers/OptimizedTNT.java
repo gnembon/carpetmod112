@@ -1,19 +1,8 @@
 package carpet.helpers;
 //Author: xcom & masa
 
-import java.math.RoundingMode;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import carpet.logging.LoggerRegistry;
+import carpet.CarpetSettings;
 import carpet.utils.Messenger;
-import net.minecraft.entity.item.EntityMinecartTNT;
-import net.minecraft.util.text.ITextComponent;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -23,9 +12,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentProtection;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityMinecartTNT;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.player.EntityPlayer;
-import carpet.CarpetSettings;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.DamageSource;
@@ -38,6 +27,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OptimizedTNT
 {
@@ -45,16 +41,16 @@ public class OptimizedTNT
     private static Vec3d vec3dmem;
     private static long tickmem;
     // For disabling the explosion particles and sound
-    public static int explosionSound = 0;
+    public static int explosionSound;
 
-    private static Object2DoubleOpenHashMap<Pair<Vec3d, AxisAlignedBB>> densityCache = new Object2DoubleOpenHashMap<>();
-    private static MutablePair<Vec3d, AxisAlignedBB> pairMutable = new MutablePair<>();
-    private static Object2ObjectOpenHashMap<BlockPos, IBlockState> stateCache = new Object2ObjectOpenHashMap<>();
-    private static BlockPos.MutableBlockPos posMutable = new BlockPos.MutableBlockPos(0, 0, 0);
-    private static ObjectOpenHashSet<BlockPos> affectedBlockPositionsSet = new ObjectOpenHashSet<>();
+    private static final Object2DoubleOpenHashMap<Pair<Vec3d, AxisAlignedBB>> densityCache = new Object2DoubleOpenHashMap<>();
+    private static final MutablePair<Vec3d, AxisAlignedBB> pairMutable = new MutablePair<>();
+    private static final Object2ObjectOpenHashMap<BlockPos, IBlockState> stateCache = new Object2ObjectOpenHashMap<>();
+    private static final BlockPos.MutableBlockPos posMutable = new BlockPos.MutableBlockPos(0, 0, 0);
+    private static final ObjectOpenHashSet<BlockPos> affectedBlockPositionsSet = new ObjectOpenHashSet<>();
     private static boolean firstRay;
     private static boolean rayCalcDone;
-    private static ArrayList<Float> chances = new ArrayList<>();
+    private static final ArrayList<Float> chances = new ArrayList<>();
     private static BlockPos blastChanceLocation;
     private static boolean minecartTNT;
 
@@ -280,7 +276,7 @@ public class OptimizedTNT
                         double d6 = e.y;
                         double d8 = e.z;
 
-                        for (float f1 = 0.3F; f > 0.0F; f -= 0.22500001F) {
+                        for (; f > 0.0F; f -= 0.22500001F) {
                             BlockPos blockpos = new BlockPos(d4, d6, d8);
                             IBlockState iblockstate = e.world.getBlockState(blockpos);
 
@@ -314,7 +310,7 @@ public class OptimizedTNT
 
     private static void getAffectedPositionsOnPlaneX(Explosion e, int x, int yStart, int yEnd, int zStart, int zEnd)
     {
-        if (rayCalcDone == false)
+        if (!rayCalcDone)
         {
             final double xRel = (double) x / 15.0D * 2.0D - 1.0D;
 
@@ -337,7 +333,7 @@ public class OptimizedTNT
 
     private static void getAffectedPositionsOnPlaneY(Explosion e, int y, int xStart, int xEnd, int zStart, int zEnd)
     {
-        if (rayCalcDone == false)
+        if (!rayCalcDone)
         {
             final double yRel = (double) y / 15.0D * 2.0D - 1.0D;
 
@@ -360,7 +356,7 @@ public class OptimizedTNT
 
     private static void getAffectedPositionsOnPlaneZ(Explosion e, int z, int xStart, int xEnd, int yStart, int yEnd)
     {
-        if (rayCalcDone == false)
+        if (!rayCalcDone)
         {
             final double zRel = (double) z / 15.0D * 2.0D - 1.0D;
 
@@ -394,7 +390,7 @@ public class OptimizedTNT
         double posY = e.y;
         double posZ = e.z;
 
-        for (float f1 = 0.3F; size > 0.0F; size -= 0.22500001F)
+        for (; size > 0.0F; size -= 0.22500001F)
         {
             posMutable.setPos(posX, posY, posZ);
 
@@ -469,7 +465,7 @@ public class OptimizedTNT
                         double d8 = e.z;
                         boolean found = false;
 
-                        for (float f1 = 0.3F; f > 0.0F; f -= 0.22500001F) {
+                        for (; f > 0.0F; f -= 0.22500001F) {
                             BlockPos blockpos = new BlockPos(d4, d6, d8);
                             IBlockState iblockstate = e.world.getBlockState(blockpos);
 

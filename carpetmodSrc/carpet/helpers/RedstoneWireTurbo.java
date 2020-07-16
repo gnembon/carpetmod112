@@ -1,21 +1,17 @@
 package carpet.helpers;
 //Author: theosib
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
-
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.concurrent.ThreadLocalRandom;
-import javax.annotation.Nullable;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class RedstoneWireTurbo
 {
@@ -193,11 +189,8 @@ public class RedstoneWireTurbo
     private static final int East = 1;
     private static final int South = 2;
     private static final int West = 3;
- 
-    // Names for debug print statements
-    private static final char dirname[] = {'N', 'E', 'S', 'W'};
- 
-    /* 
+
+    /*
      * These lookup tables completely remap neighbor positions into a left-to-right
      * ordering, based on the cardinal direction that is determined to be forward.  
      * See below for more explanation.
@@ -271,7 +264,7 @@ public class RedstoneWireTurbo
      * neighbors that will receive updates.
      */
     private static class UpdateNode {
-        public static enum Type {
+        public enum Type {
             UNKNOWN, REDSTONE, OTHER
         }
          
@@ -350,7 +343,7 @@ public class RedstoneWireTurbo
      * rx is the forward direction along the West/East axis
      * rz is the forward direction along the North/South axis
      */
-    static private int computeHeading(final int rx, final int rz) {
+    private static int computeHeading(final int rx, final int rz) {
         // rx and rz can only take on values -1, 0, and 1, so we can
         // compute a code number that allows us to use a single switch
         // to determine the heading.
@@ -562,10 +555,7 @@ public class RedstoneWireTurbo
         }
  
         final BlockPos pos = upd1.self;
-        final int x = pos.getX();
-        final int y = pos.getY();
-        final int z = pos.getZ();
- 
+
         // Make sure there are enough layers in the list
         //while (updateLayers.size() <= layer+2) updateLayers.add(new ArrayList<UpdateNode>());
  
@@ -613,7 +603,7 @@ public class RedstoneWireTurbo
     // currently being processed visible at the object level.
      
     // The current layer being processed by the breadth-first search
-    private int currentWalkLayer = 0;
+    private int currentWalkLayer;
  
     private void shiftQueue() {
         final List<UpdateNode> t = updateQueue0;
@@ -837,9 +827,9 @@ public class RedstoneWireTurbo
     private IBlockState calculateCurrentChanges(final World worldIn, final UpdateNode upd)
     {
         IBlockState state = upd.currentState;
-        final int i = ((Integer)state.getValue(BlockRedstoneWire.POWER)).intValue();
+        final int i = state.getValue(BlockRedstoneWire.POWER);
         int j = 0;
-        j = this.getMaxCurrentStrength(upd, j);
+        getMaxCurrentStrength(upd, j);
         int l = 0;
  
         wire.canProvidePower = false;
@@ -877,18 +867,18 @@ public class RedstoneWireTurbo
                 // Get the max redstone power level of each of the cardinal
                 // neighbors
                 UpdateNode neighbor = upd.neighbor_nodes[n];
-                l = this.getMaxCurrentStrength(neighbor, l);
+                l = getMaxCurrentStrength(neighbor, l);
  
                 // Also check the positions above and below the cardinal
                 // neighbors
                 boolean neighbor_is_cube = neighbor.currentState.isNormalCube();
                 if (!neighbor_is_cube) {
                     UpdateNode neighbor_down = upd.neighbor_nodes[rs_neighbors_dn[m]];
-                    l = this.getMaxCurrentStrength(neighbor_down, l);
+                    l = getMaxCurrentStrength(neighbor_down, l);
                 } else
                 if (!center_up_is_cube) {
                     UpdateNode neighbor_up = upd.neighbor_nodes[rs_neighbors_up[m]];
-                    l = this.getMaxCurrentStrength(neighbor_up, l);
+                    l = getMaxCurrentStrength(neighbor_up, l);
                 }
             }
         }
@@ -907,7 +897,7 @@ public class RedstoneWireTurbo
             // and set it in the world.  
             // Possible optimization:  Don't commit state changes to the world until they
             // need to be known by some nearby non-redstone-wire block.
-            state = state.withProperty(BlockRedstoneWire.POWER, Integer.valueOf(j));
+            state = state.withProperty(BlockRedstoneWire.POWER, j);
             worldIn.setBlockState(upd.self, state, 2);
         }
  
@@ -920,7 +910,7 @@ public class RedstoneWireTurbo
      */
     private static int getMaxCurrentStrength(final UpdateNode upd, final int strength) {   
         if (upd.type != UpdateNode.Type.REDSTONE) return strength;
-        final int i = ((Integer)upd.currentState.getValue(BlockRedstoneWire.POWER)).intValue();
-        return i > strength ? i : strength;
+        final int i = upd.currentState.getValue(BlockRedstoneWire.POWER);
+        return Math.max(i, strength);
     }
 }

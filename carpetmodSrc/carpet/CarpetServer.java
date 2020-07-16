@@ -151,12 +151,7 @@ public class CarpetServer // static for now - easier to handle all around the co
             }
             b.close();
             CarpetSettings.removeFakePlayerSkins = temp;
-        }
-        catch(FileNotFoundException e)
-        {
-            System.out.println(e);
-        }
-        catch (IOException e)
+        } catch(IOException e)
         {
             System.out.println(e);
         }

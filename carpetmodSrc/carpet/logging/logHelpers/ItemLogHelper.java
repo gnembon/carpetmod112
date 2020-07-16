@@ -35,11 +35,11 @@ public class ItemLogHelper {
     {
         if (!doLog) return;
         sentLogs = 0;
-        sendUpdateLogs(true, type);
+        sendUpdateLogs(type);
         doLog = false;
     }
 
-    private void sendUpdateLogs(boolean finished, String type) {
+    private void sendUpdateLogs(String type) {
         logger.logNoCommand( (option) -> {
             List<ITextComponent> comp = new ArrayList<>();
             switch (option)
