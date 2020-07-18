@@ -171,7 +171,7 @@
          this.field_147369_b.func_71123_m();
 +        // Fix exploit related to camera mode and logging out CARPET-XCOM
 +        if(CarpetSettings.cameraModeRestoreLocation && field_147369_b.getGamemodeCamera()){
-+            setPlayerToSurvival(field_147367_d,field_147369_b);
++            setPlayerToSurvival(field_147367_d,field_147369_b,true);
 +        }
 +
          this.field_147367_d.func_184103_al().func_72367_e(this.field_147369_b);
