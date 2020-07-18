@@ -742,6 +742,9 @@ public class CarpetSettings
 
     // ===== FEATURES ===== //
 
+    @Rule(desc = "Removes the dimension loading where after 300 gameticks all entitys freeze without players.", category = FEATURE)
+    public static boolean dimensionLoading;
+
     @Rule(desc = "Make potions instant drinkable.", category = FEATURE)
     public static boolean instantDrinkPotion;
 
