@@ -49,6 +49,7 @@ public class LoggerRegistry
     public static boolean __recipes;
     public static boolean __damageDebug;
     public static boolean __invisDebug;
+    public static boolean __carefulBreak;
 
     public static void initLoggers(MinecraftServer server)
     {
@@ -72,6 +73,8 @@ public class LoggerRegistry
         registerDebugger("recipes", new Logger(server, "recipes", null, null, LogHandler.CHAT));
         registerDebugger("damageDebug", new Logger(server, "damageDebug", null, null, LogHandler.CHAT));
         registerDebugger("invisDebug", new Logger(server, "invisDebug", null, null, LogHandler.CHAT));
+
+        registerGeneric("carefulBreak", new Logger(server, "carefulBreak", null, null, LogHandler.CHAT));
     }
 
     private static File getSaveFile(MinecraftServer server) { return server.getActiveAnvilConverter().getFile(server.getFolderName(), "loggerData.json"); }
@@ -167,7 +170,7 @@ public class LoggerRegistry
     /**
      * Gets the set of logger names.
      */
-    public static String[] getLoggerNames(int debugger) { return loggerRegistry.entrySet().stream().filter(s -> s.getValue().debuggerFilter(debugger)).map(Map.Entry::getKey).toArray(String[]::new);}
+    public static String[] getLoggerNames(int filter) { return loggerRegistry.entrySet().stream().filter(s -> s.getValue().debuggerFilter(filter)).map(Map.Entry::getKey).toArray(String[]::new);}
 
     /**
      * Sets a log as a default log with the specified option and handler
@@ -336,6 +339,13 @@ public class LoggerRegistry
      */
     private static void registerDebugger(String recipes, Logger recipes1) {
         registerLogger(recipes, recipes1.asDebugger());
+    }
+
+    /**
+     * Used to register generic subscriptions.
+     */
+    private static void registerGeneric(String recipes, Logger recipes1) {
+        registerLogger(recipes, recipes1.asGeneric());
     }
 
     public static void playerConnected(EntityPlayer player)

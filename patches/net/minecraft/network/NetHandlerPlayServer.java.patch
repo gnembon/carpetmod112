@@ -214,7 +214,7 @@
                      this.field_147369_b.field_71137_h = true;
                      this.field_147369_b.field_71070_bA.func_75142_b();
                      this.field_147369_b.func_71113_k();
-@@ -1355,7 +1407,29 @@
+@@ -1355,7 +1407,27 @@
          PacketThreadUtil.func_180031_a(p_147349_1_, this, this.field_147369_b.func_71121_q());
          String s = p_147349_1_.func_149559_c();
  
@@ -227,7 +227,6 @@
 +            BlockPos pos = payload.func_179259_c();
 +            EnumFacing facing = EnumFacing.func_82600_a(payload.readUnsignedByte());
 +            PlayerInteractionManager.activateInstantMine = payload.readBoolean();
-+            PlayerInteractionManager.activateCarefulBreak = payload.readBoolean();
 +
 +            if(start) {
 +                if (!this.field_147367_d.func_175579_a(field_147369_b.field_70170_p, pos, this.field_147369_b) && field_147369_b.field_70170_p.func_175723_af().func_177746_a(pos)) {
@@ -239,13 +238,12 @@
 +                this.field_147369_b.field_71134_c.func_180785_a(pos);
 +            }
 +            PlayerInteractionManager.activateInstantMine = true;
-+            PlayerInteractionManager.activateCarefulBreak = false;
 +        }
 +        else if ("MC|BEdit".equals(s))
          {
              PacketBuffer packetbuffer = p_147349_1_.func_180760_b();
  
-@@ -1666,13 +1740,14 @@
+@@ -1666,13 +1738,14 @@
                      String s8 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
                      tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
@@ -266,7 +264,7 @@
                      tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
                      String s2 = packetbuffer5.func_150789_c(32);
                      tileentitystructure.func_184411_a(Mirror.valueOf(s2));
-@@ -1709,6 +1784,17 @@
+@@ -1709,6 +1782,17 @@
                          }
                          else
                          {
@@ -284,7 +282,7 @@
                              this.field_147369_b.func_146105_b(new TextComponentTranslation("structure_block.load_prepare", new Object[] {s4}), false);
                          }
                      }
-@@ -1750,5 +1836,9 @@
+@@ -1750,5 +1834,9 @@
                  field_147370_c.error("Couldn't pick item", (Throwable)exception);
              }
          }

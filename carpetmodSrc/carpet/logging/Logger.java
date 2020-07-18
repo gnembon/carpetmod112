@@ -31,6 +31,7 @@ public class Logger
     private Map<String, LogHandler> handlers;
     // Added boolean to create a sublist of loggers as a debugger list and use this boolean to distingwish the two.
     private boolean debugger = false;
+    private boolean generic = false;
 
     public Logger(MinecraftServer server, String logName, String def, String [] options, LogHandler defaultHandler)
     {
@@ -109,8 +110,13 @@ public class Logger
         return this;
     }
 
+    public Logger asGeneric() {
+        generic = true;
+        return this;
+    }
+
     public boolean debuggerFilter(int compareDebugger) {
-        return 0 == compareDebugger || debugger && 1 == compareDebugger || !debugger && 2 == compareDebugger;
+        return 0 == compareDebugger || !debugger && !generic && 1 == compareDebugger || debugger && 2 == compareDebugger || generic && 3 == compareDebugger;
     }
 
     /**
@@ -176,6 +182,19 @@ public class Logger
                 sendPlayerMessage(en.getKey(), player, cannedMessages, commandParams);
             }
         }
+    }
+
+    public boolean subscribed(EntityPlayerMP player)
+    {
+        for (Map.Entry<String,String> en : subscribedPlayers.entrySet())
+        {
+            EntityPlayerMP p = playerFromName(en.getKey());
+            if (p != null && player.equals(p))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void sendPlayerMessage(String playerName, EntityPlayerMP player, ITextComponent[] messages, Object[] commandParams)

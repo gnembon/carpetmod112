@@ -59,7 +59,7 @@ public class CommandLog extends CommandCarpetBase {
             {
                 subs = new HashMap<>();
             }
-            List<String> all_logs = Arrays.asList(LoggerRegistry.getLoggerNames(this instanceof CommandDebuglogger ? 1 : 2));
+            List<String> all_logs = Arrays.asList(LoggerRegistry.getLoggerNames(classType()));
             Collections.sort(all_logs);
             Messenger.m(player, "w _____________________");
             Messenger.m(player, "w Available logging options:");
@@ -133,7 +133,7 @@ public class CommandLog extends CommandCarpetBase {
             }
             Map<String, LoggerOptions> subs = LoggerRegistry.getDefaultSubscriptions();
 
-            List<String> all_logs = Arrays.asList(LoggerRegistry.getLoggerNames(this instanceof CommandDebuglogger ? 1 : 2));
+            List<String> all_logs = Arrays.asList(LoggerRegistry.getLoggerNames(classType()));
             Collections.sort(all_logs);
 
             Messenger.m(player, "w _____________________");
@@ -291,7 +291,7 @@ public class CommandLog extends CommandCarpetBase {
         }
         if (args.length == 1)
         {
-            Set<String> options = new HashSet<String>(Arrays.asList(LoggerRegistry.getLoggerNames(this instanceof CommandDebuglogger ? 1 : 2)));
+            Set<String> options = new HashSet<String>(Arrays.asList(LoggerRegistry.getLoggerNames(classType())));
             options.add("clear");
             options.add("defaults");
             options.add("setDefault");
@@ -308,7 +308,7 @@ public class CommandLog extends CommandCarpetBase {
 
             if ("setDefault".equalsIgnoreCase(args[0]) || "removeDefault".equalsIgnoreCase(args[0]))
             {
-                Set<String> options = new HashSet<String>(Arrays.asList(LoggerRegistry.getLoggerNames(this instanceof CommandDebuglogger ? 1 : 2)));
+                Set<String> options = new HashSet<String>(Arrays.asList(LoggerRegistry.getLoggerNames(classType())));
                 return getListOfStringsMatchingLastWord(args, options);
             }
 
@@ -350,5 +350,11 @@ public class CommandLog extends CommandCarpetBase {
         }
 
         return Collections.<String>emptyList();
+    }
+
+    private int classType(){
+        if(this instanceof CommandDebuglogger) return 2;
+        if(this instanceof CommandSubscribe) return 3;
+        return 1;
     }
 }
