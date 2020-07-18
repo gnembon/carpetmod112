@@ -56,11 +56,11 @@ public class CommandGMS extends CommandCarpetBase
         else
         {
             EntityPlayerMP entityplayer = getCommandSenderAsPlayer(sender);
-            setPlayerToSurvival(server, entityplayer);
+            setPlayerToSurvival(server, entityplayer,false);
         }
     }
 
-    public static void setPlayerToSurvival(MinecraftServer server, EntityPlayerMP entityplayer) {
+    public static void setPlayerToSurvival(MinecraftServer server, EntityPlayerMP entityplayer, boolean alwaysPutPlayerInSurvival) {
         GameType gametype = server.getGameType();
         if(entityplayer.interactionManager.getGameType() != GameType.SURVIVAL) {
             if(LoggerRegistry.__invisDebug) { // Added debugger for the complex bug turning players invisible. CARPET-XCOM
@@ -69,7 +69,7 @@ public class CommandGMS extends CommandCarpetBase
                 });
             }
             if (entityplayer instanceof EntityPlayerMP) {
-                if(entityplayer.moveToStoredCameraData()) {
+                if(entityplayer.moveToStoredCameraData() &&  !alwaysPutPlayerInSurvival) {
                     if(LoggerRegistry.__invisDebug){ // Added debugger for the complex bug turning players invisible. CARPET-XCOM
                         LoggerRegistry.getLogger("invisDebug").log(()-> new ITextComponent[]{
                                 Messenger.s(null, "s7: " + entityplayer.world.loadedEntityList.contains(entityplayer))
