@@ -1,0 +1,12 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityPotion.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityPotion.java
+@@ -197,7 +197,9 @@
+ 
+                                 if (i > 20)
+                                 {
++                                    PotionEffect.itemPotion = true;
+                                     entitylivingbase.func_70690_d(new PotionEffect(potion, i, potioneffect.func_76458_c(), potioneffect.func_82720_e(), potioneffect.func_188418_e()));
++                                    PotionEffect.itemPotion = false;
+                                 }
+                             }
+                         }

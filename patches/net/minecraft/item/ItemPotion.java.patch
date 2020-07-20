@@ -1,22 +1,38 @@
 --- ../src-base/minecraft/net/minecraft/item/ItemPotion.java
 +++ ../src-work/minecraft/net/minecraft/item/ItemPotion.java
-@@ -20,6 +20,8 @@
+@@ -1,5 +1,7 @@
+ package net.minecraft.item;
+ 
++import carpet.CarpetServer;
++import carpet.CarpetSettings;
+ import net.minecraft.advancements.CriteriaTriggers;
+ import net.minecraft.creativetab.CreativeTabs;
+ import net.minecraft.entity.EntityLivingBase;
+@@ -20,6 +22,7 @@
  
  public class ItemPotion extends Item
  {
-+    public static boolean itemPotion;
 +
      public ItemPotion()
      {
          this.func_77625_d(1);
-@@ -50,7 +52,10 @@
+@@ -50,7 +53,10 @@
                  }
                  else
                  {
 +                    // Use this boolean to check if the player gets a potions from drinking it instead of splashing CARPET-XCOM
-+                    itemPotion = true;
++                    PotionEffect.itemPotion = true;
                      p_77654_3_.func_70690_d(new PotionEffect(potioneffect));
-+                    itemPotion = false;
++                    PotionEffect.itemPotion = false;
                  }
              }
          }
+@@ -78,6 +84,8 @@
+ 
+     public int func_77626_a(ItemStack p_77626_1_)
+     {
++        // Makes potions instantly drinkable.
++        if(CarpetSettings.instantDrinkPotion) return 1;
+         return 32;
+     }
+ 

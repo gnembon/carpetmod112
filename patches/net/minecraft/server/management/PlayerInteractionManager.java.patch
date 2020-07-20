@@ -19,17 +19,16 @@
  public class PlayerInteractionManager
  {
      public World field_73092_a;
-@@ -39,6 +44,9 @@
+@@ -39,6 +44,8 @@
      private BlockPos field_180241_i = BlockPos.field_177992_a;
      private int field_73093_n;
      private int field_73094_o = -1;
 +    public static EntityPlayerMP playerMinedBlock;
-+    public static boolean activateCarefulBreak = false;
 +    public static boolean activateInstantMine = true;
  
      public PlayerInteractionManager(World p_i1524_1_)
      {
-@@ -137,6 +145,12 @@
+@@ -137,6 +144,12 @@
  
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
@@ -42,7 +41,7 @@
          if (this.func_73083_d())
          {
              if (!this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_))
-@@ -191,6 +205,11 @@
+@@ -191,6 +204,11 @@
                  this.field_73088_d = true;
                  this.field_180240_f = p_180784_1_;
                  int i = (int)(f * 10.0F);
@@ -54,7 +53,7 @@
                  this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), p_180784_1_, i);
                  this.field_73094_o = i;
              }
-@@ -235,8 +254,10 @@
+@@ -235,8 +253,10 @@
      {
          IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180235_1_);
          iblockstate.func_177230_c().func_176208_a(this.field_73092_a, p_180235_1_, iblockstate, this.field_73090_b);
@@ -66,7 +65,7 @@
          if (flag)
          {
              iblockstate.func_177230_c().func_176206_d(this.field_73092_a, p_180235_1_, iblockstate);
-@@ -288,7 +309,15 @@
+@@ -288,7 +308,15 @@
                  }
  
                  this.field_73092_a.func_180498_a(this.field_73090_b, 2001, p_180237_1_, Block.func_176210_f(iblockstate));
@@ -76,18 +75,18 @@
 +                if(CarpetSettings.duplicationFixUpdateSuppression) {
 +                    flag1 = field_73092_a.isRemovableBlock(p_180237_1_);
 +                } else {
-+                    if(activateCarefulBreak) playerMinedBlock = field_73090_b;
++                    playerMinedBlock = field_73090_b;
 +                    flag1 = this.func_180235_c(p_180237_1_);
 +                    playerMinedBlock = null;
 +                }
  
                  if (this.func_73083_d())
                  {
-@@ -307,10 +336,19 @@
+@@ -307,10 +335,19 @@
  
                      if (flag1 && flag)
                      {
-+                        if(activateCarefulBreak) playerMinedBlock = field_73090_b;
++                        playerMinedBlock = field_73090_b;
                          iblockstate.func_177230_c().func_180657_a(this.field_73092_a, this.field_73090_b, p_180237_1_, iblockstate, tileentity, itemstack2);
 +                        playerMinedBlock = null;
                      }
@@ -95,7 +94,7 @@
  
 +                // Update suppression duplication fix removing the block post inventory updates with exception to flowing water as ice can turn into flowing water CARPET-XCOM
 +                if(CarpetSettings.duplicationFixUpdateSuppression && field_73092_a.func_180495_p(p_180237_1_) != Blocks.field_150358_i.func_176223_P()) {
-+                    if(activateCarefulBreak) playerMinedBlock = field_73090_b;
++                    playerMinedBlock = field_73090_b;
 +                    this.func_180235_c(p_180237_1_);
 +                    playerMinedBlock = null;
 +                }
@@ -103,7 +102,7 @@
                  return flag1;
              }
          }
-@@ -402,10 +440,22 @@
+@@ -402,10 +439,22 @@
          }
          else
          {

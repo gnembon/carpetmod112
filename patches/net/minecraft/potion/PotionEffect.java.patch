@@ -18,17 +18,18 @@
  public class PotionEffect implements Comparable<PotionEffect>
  {
      private static final Logger field_180155_a = LogManager.getLogger();
-@@ -16,6 +22,9 @@
+@@ -16,6 +22,10 @@
      private boolean field_82724_e;
      private boolean field_188421_h;
  
 +    // CM
 +    public PotionEffect previous;
++    public static boolean itemPotion;
 +
      public PotionEffect(Potion p_i46811_1_)
      {
          this(p_i46811_1_, 0, 0);
-@@ -49,28 +58,58 @@
+@@ -49,28 +59,58 @@
          this.field_188421_h = p_i1577_1_.field_188421_h;
      }
  
@@ -45,7 +46,7 @@
 +        if (other == this) {
 +            return this;
 +        }
-+        if (CarpetSettings.effectsFix && !ItemPotion.itemPotion && !this.field_82724_e && other.field_76461_c >= this.field_76461_c && other.field_76460_b < this.field_76460_b) {
++        if (CarpetSettings.effectsFix && !itemPotion && !this.field_82724_e && other.field_76461_c >= this.field_76461_c && other.field_76460_b < this.field_76460_b) {
 +            boolean stack = true;
 +            for (PotionEffect e = other; e != null; e = e.previous) {
 +                if (e == this) {
@@ -71,7 +72,7 @@
          }
 -        else if (p_76452_1_.field_76461_c == this.field_76461_c && this.field_76460_b < p_76452_1_.field_76460_b)
 +        // Combines the potion durations of identical potions when a player drinks the potions. CARPET-XCOM
-+        else if(CarpetSettings.combinePotionDuration > 0 && ItemPotion.itemPotion && other.field_76461_c == this.field_76461_c){
++        else if(CarpetSettings.combinePotionDuration > 0 && itemPotion && other.field_76461_c == this.field_76461_c){
 +            if(this.field_76460_b < 0) this.field_76460_b = 0;
 +            this.field_76460_b += other.field_76460_b;
 +            // Cap the duration to the carpet rule amount. Also make sure its more then the amount being added.

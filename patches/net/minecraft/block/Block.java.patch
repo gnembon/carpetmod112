@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/block/Block.java
 +++ ../src-work/minecraft/net/minecraft/block/Block.java
-@@ -1,11 +1,15 @@
+@@ -1,11 +1,16 @@
  package net.minecraft.block;
  
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
++import carpet.logging.LoggerRegistry;
  import com.google.common.collect.Sets;
  import com.google.common.collect.UnmodifiableIterator;
  import java.util.List;
@@ -16,7 +17,7 @@
  import net.minecraft.block.material.EnumPushReaction;
  import net.minecraft.block.material.MapColor;
  import net.minecraft.block.material.Material;
-@@ -23,20 +27,16 @@
+@@ -23,20 +28,16 @@
  import net.minecraft.init.Blocks;
  import net.minecraft.init.Enchantments;
  import net.minecraft.init.Items;
@@ -41,7 +42,7 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
-@@ -48,6 +48,10 @@
+@@ -48,6 +49,10 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -52,7 +53,7 @@
  public class Block
  {
      private static final ResourceLocation field_176230_a = new ResourceLocation("air");
-@@ -74,7 +78,7 @@
+@@ -74,7 +79,7 @@
      public float field_149765_K;
      protected final BlockStateContainer field_176227_L;
      private IBlockState field_176228_M;
@@ -61,7 +62,7 @@
  
      public static int func_149682_b(Block p_149682_0_)
      {
-@@ -236,7 +240,7 @@
+@@ -236,7 +241,7 @@
          return this;
      }
  
@@ -70,7 +71,7 @@
      {
          this.field_149786_r = p_149713_1_;
          return this;
-@@ -328,7 +332,7 @@
+@@ -328,7 +333,7 @@
          return this.field_149782_v;
      }
  
@@ -79,7 +80,7 @@
      {
          this.field_149789_z = p_149675_1_;
          return this;
-@@ -400,7 +404,10 @@
+@@ -400,7 +405,10 @@
  
      public void func_180645_a(World p_180645_1_, BlockPos p_180645_2_, IBlockState p_180645_3_, Random p_180645_4_)
      {
@@ -90,11 +91,11 @@
      }
  
      public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
-@@ -489,8 +496,17 @@
+@@ -489,8 +497,17 @@
              double d1 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
              double d2 = (double)(p_180635_0_.field_73012_v.nextFloat() * 0.5F) + 0.25D;
              EntityItem entityitem = new EntityItem(p_180635_0_, (double)p_180635_1_.func_177958_n() + d0, (double)p_180635_1_.func_177956_o() + d1, (double)p_180635_1_.func_177952_p() + d2, p_180635_2_);
-+            if(CarpetSettings.carefulBreak && PlayerInteractionManager.playerMinedBlock != null && PlayerInteractionManager.playerMinedBlock.func_70093_af()){
++            if(CarpetSettings.carefulBreak && PlayerInteractionManager.playerMinedBlock != null && PlayerInteractionManager.playerMinedBlock.func_70093_af() && LoggerRegistry.getLogger("carefulBreak").subscribed(PlayerInteractionManager.playerMinedBlock)){
 +                entityitem.func_70100_b_(PlayerInteractionManager.playerMinedBlock);
 +                if(entityitem.field_70128_L){
 +                    PlayerInteractionManager.playerMinedBlock.field_71135_a.func_147359_a(new SPacketSoundEffect(SoundEvents.field_187638_cR, SoundCategory.PLAYERS, p_180635_1_.func_177958_n(), p_180635_1_.func_177956_o(), p_180635_1_.func_177952_p(), 0.2F, (CarpetServer.rand.nextFloat() - CarpetServer.rand.nextFloat()) * 1.4F + 2.0F));
@@ -108,7 +109,7 @@
          }
      }
  
-@@ -594,7 +610,10 @@
+@@ -594,7 +611,10 @@
  
      public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_)
      {
@@ -120,7 +121,7 @@
          p_180657_2_.func_71020_j(0.005F);
  
          if (this.func_149700_E() && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_180657_6_) > 0)
-@@ -849,7 +868,8 @@
+@@ -849,7 +869,8 @@
          func_176219_a(32, "deadbush", (new BlockDeadBush()).func_149711_c(0.0F).func_149672_a(SoundType.field_185850_c).func_149663_c("deadbush"));
          func_176219_a(33, "piston", (new BlockPistonBase(false)).func_149663_c("pistonBase"));
          func_176219_a(34, "piston_head", (new BlockPistonExtension()).func_149663_c("pistonBase"));

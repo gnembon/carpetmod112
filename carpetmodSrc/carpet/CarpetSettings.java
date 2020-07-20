@@ -44,7 +44,7 @@ public class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v20_06_11";
+    public static final String carpetVersion = "v20_07_18";
     public static final String minecraftVersion = "1.12.2";
     public static final String mcpMappings = "39-1.12";
 
@@ -740,7 +740,16 @@ public class CarpetSettings
     @Rule(desc = "Fixes player position truncation causing chunks to load with one block offset to chunk boarders in negative coordinates.", category = FIX)
     public static boolean playerChunkLoadingFix = false;
 
+    @Rule(desc = "Sends invisible duplicate UUID entities to clients", category = FIX)
+    public static boolean sendDuplicateEntitiesToClients = false;
+
     // ===== FEATURES ===== //
+
+    @Rule(desc = "Removes the dimension loading where after 300 gameticks all entitys freeze without players.", category = FEATURE)
+    public static boolean dimensionLoading;
+
+    @Rule(desc = "Make potions instant drinkable.", category = FEATURE)
+    public static boolean instantDrinkPotion;
 
     @Rule(desc = "Chorus fruit can be shot with an arrow to have it pop as an item as in the future minecraft versions.", category = FEATURE)
     public static boolean chorusFruitShootable;
