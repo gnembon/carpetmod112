@@ -134,6 +134,9 @@ public class CarpetSettings
     @Rule(desc = "Restricts the use of /c in survival mode.", category = COMMANDS)
     public static boolean cameraModeSurvivalRestrictions;
 
+    @Rule(desc = "Enables /lagspike for manually induced lag spikes", category = COMMANDS)
+    public static boolean commandLagspike;
+
     @Rule(desc = "Reduces the permition level to kick players for everyone.", category = COMMANDS)
     public static boolean publicKick;
 

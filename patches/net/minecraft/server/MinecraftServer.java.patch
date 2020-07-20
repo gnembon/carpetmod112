@@ -9,13 +9,14 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Queues;
  import com.google.common.util.concurrent.Futures;
-@@ -86,6 +89,14 @@
+@@ -86,6 +89,15 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
 +import carpet.carpetclient.CarpetClientChunkLogger;
++import carpet.helpers.LagSpikeHelper;
 +import carpet.helpers.TickSpeed;
 +import carpet.utils.CarpetProfiler;
 +import carpet.utils.PistonFixes;
@@ -24,7 +25,7 @@
  public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
  {
      private static final Logger field_147145_h = LogManager.getLogger();
-@@ -144,6 +155,7 @@
+@@ -144,6 +156,7 @@
  
      public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
      {
@@ -32,7 +33,7 @@
          this.field_110456_c = p_i47054_2_;
          this.field_152364_T = p_i47054_4_;
          this.field_147143_S = p_i47054_5_;
-@@ -273,7 +285,9 @@
+@@ -273,7 +286,9 @@
  
          this.field_71318_t.func_72364_a(this.field_71305_c);
          this.func_147139_a(this.func_147135_j());
@@ -42,7 +43,7 @@
      }
  
      protected void func_71222_d()
-@@ -285,25 +299,32 @@
+@@ -285,25 +300,32 @@
          int i1 = 0;
          this.func_71192_d("menu.generatingTerrain");
          int j1 = 0;
@@ -90,7 +91,7 @@
              }
          }
  
-@@ -341,7 +362,7 @@
+@@ -341,7 +363,7 @@
  
      public abstract boolean func_183002_r();
  
@@ -99,7 +100,7 @@
      {
          this.field_71302_d = p_71216_1_;
          this.field_71303_e = p_71216_2_;
-@@ -375,6 +396,7 @@
+@@ -375,6 +397,7 @@
                  }
              }
          }
@@ -107,7 +108,7 @@
      }
  
      protected void func_71260_j()
-@@ -389,6 +411,8 @@
+@@ -389,6 +412,8 @@
          if (this.field_71318_t != null)
          {
              field_147145_h.info("Saving players");
@@ -116,7 +117,7 @@
              this.field_71318_t.func_72389_g();
              this.field_71318_t.func_72392_r();
          }
-@@ -450,18 +474,33 @@
+@@ -450,18 +475,33 @@
              {
                  this.field_175591_ab = func_130071_aq();
                  long i = 0L;
@@ -152,7 +153,7 @@
                          j = 2000L;
                          this.field_71299_R = this.field_175591_ab;
                      }
-@@ -474,6 +513,7 @@
+@@ -474,6 +514,7 @@
  
                      i += j;
                      this.field_175591_ab = k;
@@ -160,7 +161,7 @@
  
                      if (this.field_71305_c[0].func_73056_e())
                      {
-@@ -482,14 +522,33 @@
+@@ -482,14 +523,33 @@
                      }
                      else
                      {
@@ -197,7 +198,7 @@
                      this.field_71296_Q = true;
                  }
              }
-@@ -594,6 +653,12 @@
+@@ -594,6 +654,12 @@
          long i = System.nanoTime();
          ++this.field_71315_w;
  
@@ -210,8 +211,11 @@
          if (this.field_71295_T)
          {
              this.field_71295_T = false;
-@@ -622,10 +687,16 @@
+@@ -620,13 +686,21 @@
+             this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
+         }
  
++        LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.AUTOSAVE, LagSpikeHelper.PrePostSubPhase.PRE);
          if (this.field_71315_w % 900 == 0)
          {
 +            CarpetProfiler.start_section(null, "Autosave");
@@ -225,9 +229,11 @@
              this.field_71304_b.func_76319_b();
 +            CarpetProfiler.end_current_section();
          }
++        LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.AUTOSAVE, LagSpikeHelper.PrePostSubPhase.POST);
  
          this.field_71304_b.func_76320_a("tallying");
-@@ -645,6 +716,20 @@
+         this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
+@@ -645,12 +719,30 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -236,6 +242,8 @@
 +        if(CarpetClientChunkLogger.logger.enabled) {
 +            CarpetClientChunkLogger.logger.sendAll();
 +        }
++
++        LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.TICK, LagSpikeHelper.PrePostSubPhase.POST);
 +
 +        if (CarpetProfiler.tick_health_requested != 0L)
 +        {
@@ -248,7 +256,31 @@
      }
  
      public void func_71190_q()
-@@ -686,22 +771,38 @@
+     {
++        LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.TICK, LagSpikeHelper.PrePostSubPhase.PRE);
+         this.field_71304_b.func_76320_a("jobs");
+ 
++        LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.PLAYER, LagSpikeHelper.PrePostSubPhase.PRE);
+         synchronized (this.field_175589_i)
+         {
+             while (!this.field_175589_i.isEmpty())
+@@ -658,6 +750,7 @@
+                 Util.func_181617_a(this.field_175589_i.poll(), field_147145_h);
+             }
+         }
++        LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.PLAYER, LagSpikeHelper.PrePostSubPhase.POST);
+ 
+         this.field_71304_b.func_76318_c("levels");
+ 
+@@ -672,6 +765,7 @@
+                 {
+                     return worldserver.func_72912_H().func_76065_j();
+                 });
++                LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.DIMENSION, LagSpikeHelper.PrePostSubPhase.PRE);
+ 
+                 if (this.field_71315_w % 20 == 0)
+                 {
+@@ -686,27 +780,44 @@
                  {
                      worldserver.func_72835_b();
                  }
@@ -289,7 +321,13 @@
                  }
  
                  this.field_71304_b.func_76319_b();
-@@ -714,10 +815,12 @@
+                 this.field_71304_b.func_76320_a("tracker");
+                 worldserver.func_73039_n().func_72788_a();
++                LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.DIMENSION, LagSpikeHelper.PrePostSubPhase.POST);
+                 this.field_71304_b.func_76319_b();
+                 this.field_71304_b.func_76319_b();
+             }
+@@ -714,10 +825,12 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  
@@ -302,7 +340,7 @@
          this.field_71304_b.func_76318_c("commandFunctions");
          this.func_193030_aL().func_73660_a();
          this.field_71304_b.func_76318_c("tickables");
-@@ -728,6 +831,8 @@
+@@ -728,6 +841,8 @@
          }
  
          this.field_71304_b.func_76319_b();
@@ -311,7 +349,7 @@
      }
  
      public boolean func_71255_r()
-@@ -939,7 +1044,7 @@
+@@ -939,7 +1054,7 @@
  
      public String getServerModName()
      {

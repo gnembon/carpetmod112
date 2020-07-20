@@ -24,11 +24,12 @@
  import net.minecraft.village.VillageCollection;
  import net.minecraft.village.VillageSiege;
  import net.minecraft.world.biome.Biome;
-@@ -80,14 +82,22 @@
+@@ -80,14 +82,23 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import carpet.CarpetSettings;
++import carpet.helpers.LagSpikeHelper;
 +import carpet.helpers.RandomTickOptimization;
 +import carpet.helpers.TickSpeed;
 +import carpet.logging.LoggerRegistry;
@@ -50,7 +51,7 @@
      private final Map<UUID, Entity> field_175741_N = Maps.<UUID, Entity>newHashMap();
      public boolean field_73058_d;
      private boolean field_73068_P;
-@@ -99,6 +109,13 @@
+@@ -99,6 +110,13 @@
      private int field_147489_T;
      private final List<NextTickListEntry> field_94579_S = Lists.<NextTickListEntry>newArrayList();
  
@@ -64,7 +65,7 @@
      public WorldServer(MinecraftServer p_i45921_1_, ISaveHandler p_i45921_2_, WorldInfo p_i45921_3_, int p_i45921_4_, Profiler p_i45921_5_)
      {
          super(p_i45921_2_, p_i45921_3_, DimensionType.func_186069_a(p_i45921_4_).func_186070_d(), p_i45921_5_, false);
-@@ -159,11 +176,24 @@
+@@ -159,11 +177,24 @@
              this.func_175723_af().func_177750_a(this.field_72986_A.func_176137_E());
          }
  
@@ -89,7 +90,7 @@
          super.func_72835_b();
  
          if (this.func_72912_H().func_76093_s() && this.func_175659_aa() != EnumDifficulty.HARD)
-@@ -184,12 +214,19 @@
+@@ -184,15 +215,26 @@
              this.func_73053_d();
          }
  
@@ -100,16 +101,23 @@
          this.field_72984_F.func_76320_a("mobSpawner");
 +        CarpetProfiler.start_section(world_name, "spawning");
  
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.MOB_SPAWNING, LagSpikeHelper.PrePostSubPhase.PRE);
          if (this.func_82736_K().func_82766_b("doMobSpawning") && this.field_72986_A.func_76067_t() != WorldType.field_180272_g)
          {
              this.field_175742_R.func_77192_a(this, this.field_72985_G, this.field_72992_H, this.field_72986_A.func_82573_f() % 400L == 0L);
          }
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.MOB_SPAWNING, LagSpikeHelper.PrePostSubPhase.POST);
 +        CarpetProfiler.end_current_section();
 +        }//end indent
  
          this.field_72984_F.func_76318_c("chunkSource");
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.CHUNK_UNLOADING, LagSpikeHelper.PrePostSubPhase.PRE);
          this.field_73020_y.func_73156_b();
-@@ -200,26 +237,66 @@
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.CHUNK_UNLOADING, LagSpikeHelper.PrePostSubPhase.POST);
+         int j = this.func_72967_a(1.0F);
+ 
+         if (j != this.func_175657_ab())
+@@ -200,26 +242,76 @@
              this.func_175692_b(j);
          }
  
@@ -126,8 +134,10 @@
 -        this.func_72955_a(false);
 +
 +        CarpetProfiler.start_section(world_name, "blocks");
-+        
++
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.TILE_TICK, LagSpikeHelper.PrePostSubPhase.PRE);
 +		this.func_72955_a(false);
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.TILE_TICK, LagSpikeHelper.PrePostSubPhase.POST);
 +
 +		if(LoggerRegistry.__rng){
 +            LoggerRegistry.getLogger("rng").log(()-> new ITextComponent[]{
@@ -143,16 +153,22 @@
 +		}
 +		CarpetProfiler.start_section(world_name, "blocks");
          this.field_72984_F.func_76318_c("tickBlocks");
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.RANDOM_TICK, LagSpikeHelper.PrePostSubPhase.PRE);
          this.func_147456_g();
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.RANDOM_TICK, LagSpikeHelper.PrePostSubPhase.POST);
 +        CarpetProfiler.end_current_section();
          this.field_72984_F.func_76318_c("chunkMap");
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.PLAYER_CHUNK_MAP, LagSpikeHelper.PrePostSubPhase.PRE);
          this.field_73063_M.func_72693_b();
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.PLAYER_CHUNK_MAP, LagSpikeHelper.PrePostSubPhase.POST);
 +
 +        if (TickSpeed.process_entities)
 +        { // CM indent
          this.field_72984_F.func_76318_c("village");
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.VILLAGE, LagSpikeHelper.PrePostSubPhase.PRE);
          this.field_72982_D.func_75544_a();
          this.field_175740_d.func_75528_a();
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.VILLAGE, LagSpikeHelper.PrePostSubPhase.POST);
          this.field_72984_F.func_76318_c("portalForcer");
          this.field_85177_Q.func_85189_a(this.func_82737_E());
 +		}
@@ -165,7 +181,9 @@
 +        }
          this.field_72984_F.func_76319_b();
 +
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.BLOCK_EVENT, LagSpikeHelper.PrePostSubPhase.PRE);
          this.func_147488_Z();
++        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.BLOCK_EVENT, LagSpikeHelper.PrePostSubPhase.POST);
 +
 +        if(LoggerRegistry.__rng){
 +            LoggerRegistry.getLogger("rng").log(()-> new ITextComponent[]{
@@ -178,7 +196,7 @@
      }
  
      @Nullable
-@@ -255,8 +332,15 @@
+@@ -255,8 +347,15 @@
                      ++j;
                  }
              }
@@ -196,7 +214,7 @@
          }
      }
  
-@@ -287,6 +371,28 @@
+@@ -287,6 +386,28 @@
      {
          if (this.field_73068_P && !this.field_72995_K)
          {
@@ -225,7 +243,7 @@
              for (EntityPlayer entityplayer : this.field_73010_i)
              {
                  if (!entityplayer.func_175149_v() && !entityplayer.func_71026_bH())
-@@ -303,7 +409,7 @@
+@@ -303,7 +424,7 @@
          }
      }
  
@@ -234,7 +252,7 @@
      {
          return this.func_72863_F().func_73149_a(p_175680_1_, p_175680_2_);
      }
-@@ -344,6 +450,7 @@
+@@ -344,6 +465,7 @@
              boolean flag = this.func_72896_J();
              boolean flag1 = this.func_72911_I();
              this.field_72984_F.func_76320_a("pollingChunks");
@@ -242,7 +260,7 @@
  
              for (Iterator<Chunk> iterator = this.field_73063_M.func_187300_b(); iterator.hasNext(); this.field_72984_F.func_76319_b())
              {
-@@ -355,9 +462,14 @@
+@@ -355,9 +477,14 @@
                  chunk.func_76594_o();
                  this.field_72984_F.func_76318_c("tickChunk");
                  chunk.func_150804_b(false);
@@ -258,7 +276,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int l = this.field_73005_l >> 2;
-@@ -385,7 +497,7 @@
+@@ -385,7 +512,7 @@
  
                  this.field_72984_F.func_76318_c("iceandsnow");
  
@@ -267,7 +285,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int j2 = this.field_73005_l >> 2;
-@@ -443,7 +555,7 @@
+@@ -443,7 +570,7 @@
          }
      }
  
@@ -276,7 +294,7 @@
      {
          BlockPos blockpos = this.func_175725_q(p_175736_1_);
          AxisAlignedBB axisalignedbb = (new AxisAlignedBB(blockpos, new BlockPos(blockpos.func_177958_n(), this.func_72800_K(), blockpos.func_177952_p()))).func_186662_g(3.0D);
-@@ -472,13 +584,25 @@
+@@ -472,13 +599,25 @@
  
      public boolean func_175691_a(BlockPos p_175691_1_, Block p_175691_2_)
      {
@@ -304,7 +322,7 @@
          return this.field_73064_N.contains(nextticklistentry);
      }
  
-@@ -503,15 +627,22 @@
+@@ -503,15 +642,22 @@
                      {
                          iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
                      }
@@ -329,7 +347,7 @@
  
          if (this.func_175667_e(p_175654_1_))
          {
-@@ -531,7 +662,13 @@
+@@ -531,7 +677,13 @@
  
      public void func_180497_b(BlockPos p_180497_1_, Block p_180497_2_, int p_180497_3_, int p_180497_4_)
      {
@@ -344,7 +362,7 @@
          nextticklistentry.func_82753_a(p_180497_4_);
          Material material = p_180497_2_.func_176223_P().func_185904_a();
  
-@@ -644,9 +781,18 @@
+@@ -644,9 +796,18 @@
              }
              else
              {
@@ -365,7 +383,7 @@
                  }
  
                  this.field_72984_F.func_76320_a("cleaning");
-@@ -677,6 +823,8 @@
+@@ -677,6 +838,8 @@
  
                      if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0), nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0)))
                      {
@@ -374,7 +392,7 @@
                          IBlockState iblockstate = this.func_180495_p(nextticklistentry1.field_180282_a);
  
                          if (iblockstate.func_185904_a() != Material.field_151579_a && Block.func_149680_a(iblockstate.func_177230_c(), nextticklistentry1.func_151351_a()))
-@@ -699,6 +847,7 @@
+@@ -699,6 +862,7 @@
                          this.func_175684_a(nextticklistentry1.field_180282_a, nextticklistentry1.func_151351_a(), 0);
                      }
                  }
@@ -382,7 +400,7 @@
  
                  this.field_72984_F.func_76319_b();
                  this.field_94579_S.clear();
-@@ -950,11 +1099,18 @@
+@@ -950,11 +1114,18 @@
  
              chunkproviderserver.func_186027_a(p_73044_1_);
  
@@ -402,7 +420,7 @@
                  }
              }
          }
-@@ -1033,6 +1189,10 @@
+@@ -1033,6 +1204,10 @@
                  }
                  else
                  {
@@ -413,7 +431,7 @@
                      if (!(p_184165_1_ instanceof EntityPlayer))
                      {
                          field_147491_a.warn("Keeping entity {} that already exists with UUID {}", EntityList.func_191301_a(entity), uuid.toString());
-@@ -1055,6 +1215,7 @@
+@@ -1055,6 +1230,7 @@
          this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
          this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
          Entity[] aentity = p_72923_1_.func_70021_al();
@@ -421,7 +439,7 @@
  
          if (aentity != null)
          {
-@@ -1139,6 +1300,7 @@
+@@ -1139,6 +1315,7 @@
          }
  
          this.field_147490_S[this.field_147489_T].add(blockeventdata);
@@ -429,7 +447,7 @@
      }
  
      private void func_147488_Z()
-@@ -1150,14 +1312,19 @@
+@@ -1150,14 +1327,19 @@
  
              for (BlockEventData blockeventdata : this.field_147490_S[i])
              {
@@ -449,7 +467,7 @@
      }
  
      private boolean func_147485_a(BlockEventData p_147485_1_)
-@@ -1299,4 +1466,19 @@
+@@ -1299,4 +1481,19 @@
              {
              }
          }
