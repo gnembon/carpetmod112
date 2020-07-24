@@ -129,21 +129,33 @@
      }
  
      public void func_71127_g()
-@@ -503,6 +517,22 @@
+@@ -503,6 +517,34 @@
              this.field_71071_by.func_70436_m();
          }
  
 +        // Allows players to drop there skulls when blown up by charged creeper CARPET-XCOM
-+        if(CarpetSettings.playerSkullsByChargedCreeper) {
-+            EntityCreeper entitycreeper = (EntityCreeper) p_70645_1_.func_76346_g();
-+            if (entitycreeper.func_70830_n() && entitycreeper.func_70650_aV()) {
-+                entitycreeper.func_175493_co();
-+                try {
-+                    ItemStack playerskull = new ItemStack(Items.field_151144_bL, 1, 3);
-+                    playerskull.func_77982_d(JsonToNBT.func_180713_a(String.format("{SkullOwner:\"%s\"}", func_70005_c_().toLowerCase())));
-+                    this.func_70099_a(playerskull, 0.0F);
-+                } catch (NBTException e) {
-+                    e.printStackTrace();
++        if (CarpetSettings.playerSkullsByChargedCreeper)
++        {
++            Entity entity = p_70645_1_.func_76346_g();
++            
++            if (entity instanceof EntityCreeper)
++            {
++                EntityCreeper entitycreeper = (EntityCreeper) entity;
++                
++                if (entitycreeper.func_70830_n() && entitycreeper.func_70650_aV())
++                {
++                    entitycreeper.func_175493_co();
++                    
++                    try
++                    {
++                        ItemStack playerskull = new ItemStack(Items.field_151144_bL, 1, 3);
++                        playerskull.func_77982_d(JsonToNBT.func_180713_a(String.format("{SkullOwner:\"%s\"}", func_70005_c_().toLowerCase())));
++                        this.func_70099_a(playerskull, 0.0F);
++                    }
++                    catch (NBTException e)
++                    {
++                        e.printStackTrace();
++                    }
 +                }
 +            }
 +        }
@@ -152,7 +164,7 @@
          for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreCriteria.field_96642_c))
          {
              Score score = this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective);
-@@ -605,6 +635,7 @@
+@@ -605,6 +647,7 @@
  
              if (!flag && this.field_147101_bU > 0 && p_70097_1_ != DamageSource.field_76380_i)
              {
@@ -160,7 +172,7 @@
                  return false;
              }
              else
-@@ -615,6 +646,7 @@
+@@ -615,6 +658,7 @@
  
                      if (entity instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entity))
                      {
@@ -168,7 +180,7 @@
                          return false;
                      }
  
-@@ -624,6 +656,7 @@
+@@ -624,6 +668,7 @@
  
                          if (entityarrow.field_70250_c instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entityarrow.field_70250_c))
                          {
@@ -176,7 +188,7 @@
                              return false;
                          }
                      }
-@@ -704,6 +737,8 @@
+@@ -704,6 +749,8 @@
          if (p_147097_1_ != null)
          {
              SPacketUpdateTileEntity spacketupdatetileentity = p_147097_1_.func_189518_D_();
@@ -185,7 +197,7 @@
  
              if (spacketupdatetileentity != null)
              {
-@@ -1027,6 +1062,8 @@
+@@ -1027,6 +1074,8 @@
  
      public void func_71064_a(StatBase p_71064_1_, int p_71064_2_)
      {
@@ -194,7 +206,7 @@
          if (p_71064_1_ != null)
          {
              this.field_147103_bO.func_150871_b(this, p_71064_1_, p_71064_2_);
-@@ -1035,6 +1072,10 @@
+@@ -1035,6 +1084,10 @@
              {
                  this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective).func_96649_a(p_71064_2_);
              }
@@ -205,7 +217,7 @@
          }
      }
  
-@@ -1169,7 +1210,7 @@
+@@ -1169,7 +1222,7 @@
  
      protected void func_70688_c(PotionEffect p_70688_1_)
      {
@@ -214,7 +226,7 @@
          this.field_71135_a.func_147359_a(new SPacketRemoveEntityEffect(this.func_145782_y(), p_70688_1_.func_188419_a()));
  
          if (p_70688_1_.func_188419_a() == MobEffects.field_188424_y)
-@@ -1178,6 +1219,7 @@
+@@ -1178,6 +1231,7 @@
          }
  
          CriteriaTriggers.field_193139_z.func_193153_a(this);
@@ -222,7 +234,7 @@
      }
  
      public void func_70634_a(double p_70634_1_, double p_70634_3_, double p_70634_5_)
-@@ -1216,13 +1258,17 @@
+@@ -1216,13 +1270,17 @@
  
          if (p_71033_1_ == GameType.SPECTATOR)
          {
@@ -240,7 +252,7 @@
  
          this.func_71016_p();
          this.func_175136_bO();
-@@ -1233,6 +1279,11 @@
+@@ -1233,6 +1291,11 @@
          return this.field_71134_c.func_73081_b() == GameType.SPECTATOR;
      }
  
@@ -252,7 +264,7 @@
      public boolean func_184812_l_()
      {
          return this.field_71134_c.func_73081_b() == GameType.CREATIVE;
-@@ -1439,4 +1490,113 @@
+@@ -1439,4 +1502,113 @@
      {
          return this.field_193110_cw;
      }
