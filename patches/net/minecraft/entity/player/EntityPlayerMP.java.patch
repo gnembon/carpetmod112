@@ -1,47 +1,23 @@
 --- ../src-base/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
 +++ ../src-work/minecraft/net/minecraft/entity/player/EntityPlayerMP.java
-@@ -1,12 +1,26 @@
+@@ -1,5 +1,8 @@
  package net.minecraft.entity.player;
  
--import com.google.common.collect.Lists;
--import com.mojang.authlib.GameProfile;
--import io.netty.buffer.Unpooled;
- import java.util.Collection;
- import java.util.Iterator;
- import java.util.List;
-+
- import javax.annotation.Nullable;
-+
-+import org.apache.logging.log4j.LogManager;
-+import org.apache.logging.log4j.Logger;
-+
-+import com.google.common.collect.Lists;
-+import com.mojang.authlib.GameProfile;
-+
-+import carpet.CarpetSettings;
-+import carpet.helpers.EntityPlayerActionPack;
-+import carpet.helpers.IPlayerSensitiveTileEntity;
-+import carpet.helpers.StatSubItem;
 +import carpet.logging.LoggerRegistry;
-+import carpet.logging.logHelpers.DamageReporter;
 +import carpet.patches.EntityPlayerMPFake;
 +import carpet.utils.Messenger;
-+import io.netty.buffer.Unpooled;
- import net.minecraft.advancements.CriteriaTriggers;
- import net.minecraft.advancements.PlayerAdvancements;
- import net.minecraft.block.Block;
-@@ -21,7 +35,10 @@
+ import com.google.common.collect.Lists;
+ import com.mojang.authlib.GameProfile;
+ import io.netty.buffer.Unpooled;
+@@ -21,6 +24,7 @@
  import net.minecraft.entity.EntityList;
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.entity.IMerchant;
-+import net.minecraft.entity.item.EntityMinecart;
 +import net.minecraft.entity.monster.EntityCreeper;
  import net.minecraft.entity.passive.AbstractHorse;
-+import net.minecraft.entity.passive.EntityLlama;
  import net.minecraft.entity.projectile.EntityArrow;
  import net.minecraft.init.Items;
- import net.minecraft.init.MobEffects;
-@@ -38,6 +55,8 @@
+@@ -38,35 +42,14 @@
  import net.minecraft.item.ItemStack;
  import net.minecraft.item.crafting.CraftingManager;
  import net.minecraft.item.crafting.IRecipe;
@@ -50,24 +26,53 @@
  import net.minecraft.nbt.NBTTagCompound;
  import net.minecraft.network.NetHandlerPlayServer;
  import net.minecraft.network.Packet;
-@@ -58,6 +77,7 @@
- import net.minecraft.network.play.server.SPacketPlayerAbilities;
- import net.minecraft.network.play.server.SPacketRemoveEntityEffect;
- import net.minecraft.network.play.server.SPacketResourcePackSend;
-+import net.minecraft.network.play.server.SPacketRespawn;
- import net.minecraft.network.play.server.SPacketSetExperience;
- import net.minecraft.network.play.server.SPacketSetSlot;
- import net.minecraft.network.play.server.SPacketSignEditorOpen;
-@@ -111,8 +131,6 @@
- import net.minecraft.world.ILockableContainer;
- import net.minecraft.world.WorldServer;
- import net.minecraft.world.storage.loot.ILootContainer;
--import org.apache.logging.log4j.LogManager;
--import org.apache.logging.log4j.Logger;
+ import net.minecraft.network.PacketBuffer;
+ import net.minecraft.network.play.client.CPacketClientSettings;
+-import net.minecraft.network.play.server.SPacketAnimation;
+-import net.minecraft.network.play.server.SPacketCamera;
+-import net.minecraft.network.play.server.SPacketChangeGameState;
+-import net.minecraft.network.play.server.SPacketChat;
+-import net.minecraft.network.play.server.SPacketCloseWindow;
+-import net.minecraft.network.play.server.SPacketCombatEvent;
+-import net.minecraft.network.play.server.SPacketCustomPayload;
+-import net.minecraft.network.play.server.SPacketDestroyEntities;
+-import net.minecraft.network.play.server.SPacketEffect;
+-import net.minecraft.network.play.server.SPacketEntityEffect;
+-import net.minecraft.network.play.server.SPacketEntityStatus;
+-import net.minecraft.network.play.server.SPacketOpenWindow;
+-import net.minecraft.network.play.server.SPacketPlayerAbilities;
+-import net.minecraft.network.play.server.SPacketRemoveEntityEffect;
+-import net.minecraft.network.play.server.SPacketResourcePackSend;
+-import net.minecraft.network.play.server.SPacketSetExperience;
+-import net.minecraft.network.play.server.SPacketSetSlot;
+-import net.minecraft.network.play.server.SPacketSignEditorOpen;
+-import net.minecraft.network.play.server.SPacketSoundEffect;
+-import net.minecraft.network.play.server.SPacketUpdateHealth;
+-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+-import net.minecraft.network.play.server.SPacketUseBed;
+-import net.minecraft.network.play.server.SPacketWindowItems;
+-import net.minecraft.network.play.server.SPacketWindowProperty;
++import net.minecraft.network.play.server.*;
+ import net.minecraft.potion.PotionEffect;
+ import net.minecraft.scoreboard.IScoreCriteria;
+ import net.minecraft.scoreboard.Score;
+@@ -114,6 +97,15 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
  
++import net.minecraft.entity.item.EntityMinecart;
++import net.minecraft.entity.passive.EntityLlama;
++
++import carpet.CarpetSettings;
++import carpet.helpers.EntityPlayerActionPack;
++import carpet.helpers.StatSubItem;
++import carpet.helpers.IPlayerSensitiveTileEntity;
++import carpet.logging.logHelpers.DamageReporter;
++
  public class EntityPlayerMP extends EntityPlayer implements IContainerListener
  {
-@@ -153,6 +171,12 @@
+     private static final Logger field_147102_bM = LogManager.getLogger();
+@@ -153,6 +145,12 @@
      public int field_71138_i;
      public boolean field_71136_j;
  
@@ -80,7 +85,7 @@
      public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_)
      {
          super(p_i45285_2_, p_i45285_3_);
-@@ -188,6 +212,9 @@
+@@ -188,6 +186,9 @@
          {
              this.func_70107_b(this.field_70165_t, this.field_70163_u + 1.0D, this.field_70161_v);
          }
@@ -90,7 +95,7 @@
      }
  
      public void func_70037_a(NBTTagCompound p_70037_1_)
-@@ -313,6 +340,9 @@
+@@ -313,6 +314,9 @@
  
      public void func_70071_h_()
      {
@@ -100,7 +105,7 @@
          this.field_71134_c.func_73075_a();
          --this.field_147101_bU;
  
-@@ -365,6 +395,13 @@
+@@ -365,6 +369,13 @@
              }
          }
  
@@ -114,7 +119,7 @@
          CriteriaTriggers.field_193135_v.func_193182_a(this);
  
          if (this.field_193107_ct != null)
-@@ -373,6 +410,9 @@
+@@ -373,6 +384,9 @@
          }
  
          this.field_192042_bX.func_192741_b(this);
@@ -124,7 +129,7 @@
      }
  
      public void func_71127_g()
-@@ -503,6 +543,34 @@
+@@ -503,6 +517,34 @@
              this.field_71071_by.func_70436_m();
          }
  
@@ -133,7 +138,7 @@
 +        {
 +            Entity entity = p_70645_1_.func_76346_g();
 +            
-+            if (entity != null && entity.getClass().getSimpleName().equals("EntityCreeper"))
++            if (entity instanceof EntityCreeper)
 +            {
 +                EntityCreeper entitycreeper = (EntityCreeper) entity;
 +                
@@ -159,7 +164,7 @@
          for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreCriteria.field_96642_c))
          {
              Score score = this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective);
-@@ -605,6 +673,7 @@
+@@ -605,6 +647,7 @@
  
              if (!flag && this.field_147101_bU > 0 && p_70097_1_ != DamageSource.field_76380_i)
              {
@@ -167,7 +172,7 @@
                  return false;
              }
              else
-@@ -615,6 +684,7 @@
+@@ -615,6 +658,7 @@
  
                      if (entity instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entity))
                      {
@@ -175,7 +180,7 @@
                          return false;
                      }
  
-@@ -624,6 +694,7 @@
+@@ -624,6 +668,7 @@
  
                          if (entityarrow.field_70250_c instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entityarrow.field_70250_c))
                          {
@@ -183,7 +188,7 @@
                              return false;
                          }
                      }
-@@ -704,6 +775,8 @@
+@@ -704,6 +749,8 @@
          if (p_147097_1_ != null)
          {
              SPacketUpdateTileEntity spacketupdatetileentity = p_147097_1_.func_189518_D_();
@@ -192,7 +197,7 @@
  
              if (spacketupdatetileentity != null)
              {
-@@ -1027,6 +1100,8 @@
+@@ -1027,6 +1074,8 @@
  
      public void func_71064_a(StatBase p_71064_1_, int p_71064_2_)
      {
@@ -201,7 +206,7 @@
          if (p_71064_1_ != null)
          {
              this.field_147103_bO.func_150871_b(this, p_71064_1_, p_71064_2_);
-@@ -1035,6 +1110,10 @@
+@@ -1035,6 +1084,10 @@
              {
                  this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective).func_96649_a(p_71064_2_);
              }
@@ -212,7 +217,7 @@
          }
      }
  
-@@ -1169,7 +1248,7 @@
+@@ -1169,7 +1222,7 @@
  
      protected void func_70688_c(PotionEffect p_70688_1_)
      {
@@ -221,7 +226,7 @@
          this.field_71135_a.func_147359_a(new SPacketRemoveEntityEffect(this.func_145782_y(), p_70688_1_.func_188419_a()));
  
          if (p_70688_1_.func_188419_a() == MobEffects.field_188424_y)
-@@ -1178,6 +1257,7 @@
+@@ -1178,6 +1231,7 @@
          }
  
          CriteriaTriggers.field_193139_z.func_193153_a(this);
@@ -229,7 +234,7 @@
      }
  
      public void func_70634_a(double p_70634_1_, double p_70634_3_, double p_70634_5_)
-@@ -1216,13 +1296,17 @@
+@@ -1216,13 +1270,17 @@
  
          if (p_71033_1_ == GameType.SPECTATOR)
          {
@@ -247,7 +252,7 @@
  
          this.func_71016_p();
          this.func_175136_bO();
-@@ -1233,6 +1317,11 @@
+@@ -1233,6 +1291,11 @@
          return this.field_71134_c.func_73081_b() == GameType.SPECTATOR;
      }
  
@@ -259,7 +264,7 @@
      public boolean func_184812_l_()
      {
          return this.field_71134_c.func_73081_b() == GameType.CREATIVE;
-@@ -1439,4 +1528,113 @@
+@@ -1439,4 +1502,113 @@
      {
          return this.field_193110_cw;
      }
