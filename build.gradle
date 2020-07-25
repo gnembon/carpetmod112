@@ -116,19 +116,9 @@ processJson
 	releaseJson = "jsons/${minecraft.version}-rel.json"
 }
 
-sourceSets.main.resources {
-	file("jsons/${project.name}.mixins.json")
-}
 sourceSets.main.ext.refMap = "${project.name}-refmap.json"
 
 // ===== TOP-LEVEL TASKS =====
-
-compileJava {
-	options.compilerArgs += [
-		'-AreobfSrgFile=' + patcher_plugin.delayedFile(Constants.SRG_MCP_TO_NOTCH)
-	]
-	println options.compilerArgs
-}
 
 /**
  * setup[Project] is used after you pull from the remote repository
@@ -152,6 +142,20 @@ gradle.taskGraph.whenReady
 { graph ->
 	if (graph.hasTask(':copyCodeToSrc'))
 		warnOverwrite()
+}
+
+project.afterEvaluate {
+	def task = tasks.getByName("genGradleProjects")
+	def res = task.getClass().getSuperclass().getDeclaredField("resource")
+	def replacement = """compileJava {
+        if (project.name == '""" + capitalizedName + """') {
+            options.compilerArgs += [
+                '-AoutRefMapFile=""" + sourceSets.main.ext.refMap + """',
+                '-AreobfSrgFile=""" + patcher_plugin.delayedFile(Constants.SRG_MCP_TO_NOTCH) + """'
+            ]
+        }"""
+	res.setAccessible(true)
+	res.set(task, ((String) res.get(task)).replace("compileJava {", replacement))
 }
 
 void warnOverwrite()
@@ -354,13 +358,25 @@ task(copyMcFromSrc, type: Sync) {
 	includeEmptyDirs = false
 	dependsOn extractCleanSources
 }
-task('copyCodeToSrc', type: Sync) {
+task copyCodeToSrc(type: Sync) {
 	from project.name + 'Src/'
 	from "projects/${capitalizedName}/src/main/java"
 	into 'src/'
 	dependsOn tasks.getByName('extract' + capitalizedName + 'Sources')
 	includeEmptyDirs = false
 }
+
+task copyMixinJsonToSrc(type: Sync) {
+	from "jsons/${project.name}.mixins.json"
+	into 'resources/'
+}
+copyCodeToSrc.dependsOn copyMixinJsonToSrc
+
+task copyMixinJsonFromSrc(type: Sync) {
+	from "resources/${project.name}.mixins.json"
+	into 'jsons/'
+}
+genPatches.dependsOn copyMixinJsonFromSrc
 
 task(copyResources, type: Sync) {
 	from "projects/${capitalizedName}/src/main/resources"

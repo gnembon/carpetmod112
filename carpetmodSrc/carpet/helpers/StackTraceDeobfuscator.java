@@ -312,7 +312,7 @@ public class StackTraceDeobfuscator {
             methodDesc = null;
         }
         if (methodDesc == null) {
-            System.err.println("Failed to get method desc for " + className + "/" + methodName + "@" + elem.getLineNumber());
+            // System.err.println("Failed to get method desc for " + className + "/" + methodName + "@" + elem.getLineNumber());
             return elem;
         }
 

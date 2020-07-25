@@ -3,7 +3,18 @@
   "package": "carpet.mixin",
   "compatibilityLevel": "JAVA_8",
   "mixins": [
-    "core.MinecraftServerMixin"
+    "accessors.MinecraftServerAccessor",
+    "chunkLogger.MinecraftServerMixin",
+    "core.DedicatedServerMixin",
+    "core.MinecraftServerMixin",
+    "disableSpawnChunks.MinecraftServerMixin",
+    "pistonFixes.MinecraftServerMixin",
+    "profiler.MinecraftServerMixin",
+    "pushLimit.BlockPistonStructureHelperMixin",
+    "tickingAreas.MinecraftServerMixin",
+    "updateSuppressionCrashFix.MinecraftServerMixin",
+    "waypoints.CommandTPMixin",
+    "worldEdit.CommandKillMixin"
   ],
   "injectors": {
     "defaultRequire": 1

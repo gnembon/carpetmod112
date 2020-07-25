@@ -68,6 +68,11 @@ public abstract class MinecraftServerMixin {
         CarpetServer.onLoadAllWorlds((MinecraftServer) (Object) this);
     }
 
+    @Inject(method = "saveAllWorlds", at = @At("RETURN"))
+    private void onWorldsSaved(boolean isSilent, CallbackInfo ci) {
+        CarpetServer.onWorldsSaved((MinecraftServer) (Object) this);
+    }
+
     @Inject(method = "main", at = @At("HEAD"), remap = false)
     private static void onMain(String[] args, CallbackInfo ci) {
         System.out.println(Arrays.toString(args));

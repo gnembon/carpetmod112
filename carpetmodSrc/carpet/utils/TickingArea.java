@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import carpet.mixin.accessors.MinecraftServerAccessor;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -219,7 +220,7 @@ public abstract class TickingArea
                     if (time - lastTime > 1000)
                     {
                         if (log)
-                            server.outputPercentRemaining("[CM]: Preparing spawn area", count * 100 / chunksToLoad.size());
+                            ((MinecraftServerAccessor) server).invokeOutputPercentRemaining("[CM]: Preparing spawn area", count * 100 / chunksToLoad.size());
                         lastTime = time;
                     }
                     

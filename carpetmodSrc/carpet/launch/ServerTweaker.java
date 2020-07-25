@@ -13,7 +13,7 @@ public class ServerTweaker implements ITweaker {
     @Override
     public void injectIntoClassLoader(LaunchClassLoader classLoader) {
         MixinBootstrap.init();
-        Mixins.addConfiguration("jsons/carpetmod.mixins.json");
+        Mixins.addConfiguration("carpetmod.mixins.json");
     }
 
     @Override
