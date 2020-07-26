@@ -9,17 +9,7 @@
  public class EntityItemFrame extends EntityHanging
  {
      private static final DataParameter<ItemStack> field_184525_c = EntityDataManager.<ItemStack>func_187226_a(EntityItemFrame.class, DataSerializers.field_187196_f);
-@@ -40,6 +42,9 @@
-         this.func_174859_a(p_i45852_3_);
-     }
- 
-+    //CM
-+    public String cm_name() { return "Item Frame"; }
-+
-     protected void func_70088_a()
-     {
-         this.func_184212_Q().func_187214_a(field_184525_c, ItemStack.field_190927_a);
-@@ -97,7 +102,8 @@
+@@ -97,7 +99,8 @@
  
      public void func_146065_b(@Nullable Entity p_146065_1_, boolean p_146065_2_)
      {

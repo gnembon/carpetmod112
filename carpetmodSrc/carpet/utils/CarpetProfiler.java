@@ -2,6 +2,7 @@ package carpet.utils;
 
 import carpet.CarpetSettings;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 
@@ -82,7 +83,7 @@ public class CarpetProfiler
         {
             end_current_section();
         }
-        current_section = dimension+"."+e.cm_name();
+        current_section = dimension + "." + EntityList.getKey(e);
         current_section_start = System.nanoTime();
     }
 

@@ -9,17 +9,7 @@
  public abstract class EntityMob extends EntityCreature implements IMob
  {
      public EntityMob(World p_i1738_1_)
-@@ -32,6 +34,9 @@
-         return SoundCategory.HOSTILE;
-     }
- 
-+    //CM
-+    public String cm_name() { return "Mob"; }
-+
-     public void func_70636_d()
-     {
-         this.func_82168_bl();
-@@ -90,10 +95,16 @@
+@@ -90,10 +92,16 @@
          float f = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
          int i = 0;
  

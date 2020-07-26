@@ -28,16 +28,6 @@
      protected boolean field_70178_ae;
      protected EntityDataManager field_70180_af;
      protected static final DataParameter<Byte> field_184240_ax = EntityDataManager.<Byte>func_187226_a(Entity.class, DataSerializers.field_187191_a);
-@@ -168,6 +174,9 @@
-     private final double[] field_191505_aI;
-     private long field_191506_aJ;
- 
-+        //CM
-+    public String cm_name() { return "Other Entity"; }
-+
-     public Entity(World p_i1582_1_)
-     {
-         this.field_145783_c = field_70152_a++;
 @@ -278,6 +287,14 @@
      {
          if (p_70105_1_ != this.field_70130_N || p_70105_2_ != this.field_70131_O)
@@ -176,14 +166,14 @@
 @@ -1619,6 +1684,11 @@
                  p_189511_1_.func_74782_a("Tags", nbttaglist);
              }
- 
+
 +            // Save hitbox of entity to prevent clipping into walls. CARPET-XCOM
 +            if(CarpetSettings.reloadSuffocationFix) {
 +                p_189511_1_.func_74782_a("AABBcarpet", this.func_70087_a(func_174813_aQ().field_72336_d, func_174813_aQ().field_72337_e, func_174813_aQ().field_72334_f, func_174813_aQ().field_72340_a, func_174813_aQ().field_72338_b, func_174813_aQ().field_72339_c));
 +            }
 +
              this.func_70014_b(p_189511_1_);
- 
+
              if (this.func_184207_aI())
 @@ -1663,19 +1733,19 @@
              this.field_70181_x = nbttaglist2.func_150309_d(1);
