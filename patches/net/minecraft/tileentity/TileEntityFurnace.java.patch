@@ -12,17 +12,7 @@
  {
      private static final int[] field_145962_k = new int[] {0};
      private static final int[] field_145959_l = new int[] {2, 1};
-@@ -41,6 +44,9 @@
-     private int field_174905_l;
-     private String field_145958_o;
- 
-+
-+    //CM
-+    public String cm_name() { return "Furnace"; }
-     public int func_70302_i_()
-     {
-         return this.field_145957_n.size();
-@@ -157,6 +163,10 @@
+@@ -157,6 +160,10 @@
  
      public void func_73660_a()
      {
@@ -33,7 +23,7 @@
          boolean flag = this.func_145950_i();
          boolean flag1 = false;
  
-@@ -221,6 +231,10 @@
+@@ -221,6 +228,10 @@
                  flag1 = true;
                  BlockFurnace.func_176446_a(this.func_145950_i(), this.field_145850_b, this.field_174879_c);
              }
@@ -44,7 +34,7 @@
          }
  
          if (flag1)
-@@ -521,4 +535,14 @@
+@@ -521,4 +532,14 @@
      {
          this.field_145957_n.clear();
      }

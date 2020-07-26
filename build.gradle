@@ -366,13 +366,13 @@ task copyCodeToSrc(type: Sync) {
 	includeEmptyDirs = false
 }
 
-task copyMixinJsonToSrc(type: Sync) {
+task copyMixinJsonToSrc(type: Copy) {
 	from "jsons/${project.name}.mixins.json"
 	into 'resources/'
 }
 copyCodeToSrc.dependsOn copyMixinJsonToSrc
 
-task copyMixinJsonFromSrc(type: Sync) {
+task copyMixinJsonFromSrc(type: Copy) {
 	from "resources/${project.name}.mixins.json"
 	into 'jsons/'
 }

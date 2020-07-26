@@ -6,6 +6,7 @@
 +import carpet.CarpetSettings;
 +import carpet.logging.LoggerRegistry;
 +import carpet.utils.Messenger;
++import carpet.utils.extensions.ExtendedItemStack;
  import it.unimi.dsi.fastutil.ints.IntArrayList;
  import it.unimi.dsi.fastutil.ints.IntList;
  import it.unimi.dsi.fastutil.ints.IntListIterator;
@@ -28,7 +29,7 @@
 +import net.minecraft.util.text.ITextComponent;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
- 
+
 @@ -35,6 +41,18 @@
  
      public void func_194327_a(EntityPlayerMP p_194327_1_, @Nullable IRecipe p_194327_2_, boolean p_194327_3_)
@@ -92,7 +93,7 @@
 +            }
 +        }
 +
-+        dupeItem.forceStackSize(size);
++        ((ExtendedItemStack) (Object) dupeItem).forceStackSize(size);
 +        field_194335_f.func_174888_l();
 +        player.clearDupeItem();
 +    }

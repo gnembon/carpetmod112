@@ -1,14 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/village/Village.java
 +++ ../src-work/minecraft/net/minecraft/village/Village.java
-@@ -368,6 +368,7 @@
-                 flag = true;
-                 villagedoorinfo.func_179853_a(true);
-                 iterator.remove();
-+                VillageCollection.updateMarkers = true;
-             }
-         }
- 
-@@ -379,7 +380,7 @@
+@@ -379,7 +379,7 @@
  
      private boolean func_179860_f(BlockPos p_179860_1_)
      {

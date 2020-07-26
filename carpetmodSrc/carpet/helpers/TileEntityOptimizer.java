@@ -19,7 +19,7 @@ public class TileEntityOptimizer
     // All optimized tile entities must implement this interface so that the world object knows it should wake them up.
     // A tile entity that implements this interface should set a sleeping flag if it becomes unused.
     // This sleeping flag should causes it to skip all or part of its update() method and be reset by wakeUp().
-    public interface ILazyTileEntity extends ITickable
+    public interface ILazyTileEntity
     {
         /**
          * CARPET-optimizedTileEntities: Wakes up the tile entity so it updates again. Called upon receiving a comparator update in

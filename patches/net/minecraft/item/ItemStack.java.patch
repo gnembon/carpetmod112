@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
 @@ -1,5 +1,7 @@
  package net.minecraft.item;
- 
+
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
  import com.google.common.collect.HashMultimap;
@@ -11,69 +11,17 @@
 @@ -41,6 +43,8 @@
  import net.minecraft.util.text.translation.I18n;
  import net.minecraft.world.World;
- 
+
 +import carpet.helpers.StatHelper;
 +
  public final class ItemStack
  {
      public static final ItemStack field_190927_a = new ItemStack((Item)null);
-@@ -169,7 +173,8 @@
- 
-         if (enumactionresult == EnumActionResult.SUCCESS)
-         {
--            p_179546_1_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
-+            // CM add meta
-+            p_179546_1_.func_71029_a(StatHelper.getObjectUseStats(this.field_151002_e, this.field_77991_e));
-         }
- 
-         return enumactionresult;
 @@ -207,6 +212,8 @@
- 
+
      public int func_77976_d()
      {
 +        // Allows players to stack empty shulkerboxes in there inventorys CARPET-XCOM
 +        if(CarpetSettings.stackableShulkersPlayerInventory && CarpetServer.playerInventoryStacking && !func_77942_o() && this.func_77973_b() instanceof ItemShulkerBox) return 64;
          return this.func_77973_b().func_77639_j();
      }
- 
-@@ -334,7 +341,8 @@
- 
-         if (flag)
-         {
--            p_77961_2_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
-+            // CM add meta
-+            p_77961_2_.func_71029_a(StatHelper.getObjectUseStats(this.field_151002_e, this.field_77991_e));
-         }
-     }
- 
-@@ -344,7 +352,8 @@
- 
-         if (flag)
-         {
--            p_179548_4_.func_71029_a(StatList.func_188057_b(this.field_151002_e));
-+            // CM add meta
-+            p_179548_4_.func_71029_a(StatHelper.getObjectUseStats(this.field_151002_e, this.field_77991_e));
-         }
-     }
- 
-@@ -496,7 +505,8 @@
- 
-     public void func_77980_a(World p_77980_1_, EntityPlayer p_77980_2_, int p_77980_3_)
-     {
--        p_77980_2_.func_71064_a(StatList.func_188060_a(this.field_151002_e), p_77980_3_);
-+        // CM add meta
-+        p_77980_2_.func_71064_a(StatHelper.getCraftStats(this.field_151002_e, this.field_77991_e), p_77980_3_);
-         this.func_77973_b().func_77622_d(this, p_77980_1_, p_77980_2_);
-     }
- 
-@@ -881,4 +891,10 @@
-     {
-         this.func_190917_f(-p_190918_1_);
-     }
-+
-+    // Check for ground stacking CARPET-XCOM
-+	public boolean isGroundStackable() {
-+		return this.func_77973_b().itemGroundStacking(func_77942_o());
-+	}
-+	public void forceStackSize(int size){this.field_77994_a = size;}
- }
