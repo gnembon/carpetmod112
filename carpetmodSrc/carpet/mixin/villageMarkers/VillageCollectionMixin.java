@@ -1,6 +1,7 @@
 package carpet.mixin.villageMarkers;
 
 import carpet.carpetclient.CarpetClientMarkers;
+import carpet.utils.extensions.ExtendedVillageCollection;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.village.VillageCollection;
 import net.minecraft.world.World;
@@ -11,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(VillageCollection.class)
-public class VillageCollectionMixin {
+public class VillageCollectionMixin implements ExtendedVillageCollection {
     @Shadow private World world;
     private boolean updateMarkers;
 
@@ -35,6 +36,11 @@ public class VillageCollectionMixin {
 
     @Inject(method = "readFromNBT", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", remap = false))
     private void updateOnDeserialize(NBTTagCompound nbt, CallbackInfo ci) {
+        updateMarkers = true;
+    }
+
+    @Override
+    public void markVillageMarkersDirty() {
         updateMarkers = true;
     }
 }

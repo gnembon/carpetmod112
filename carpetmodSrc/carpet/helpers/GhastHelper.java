@@ -22,15 +22,17 @@ public class GhastHelper
      */
     public static class GhastEntityAIFindEntityNearestPlayer extends EntityAIFindEntityNearestPlayer
     {
+        private EntityLiving entity;
         public GhastEntityAIFindEntityNearestPlayer(EntityLiving entityLivingIn)
         {
             super(entityLivingIn);
+            this.entity = entityLivingIn;
         }
 
         @Override
         public boolean shouldExecute()
         {
-            if (CarpetSettings.rideableGhasts && this.entityLiving.hasCustomName())
+            if (CarpetSettings.rideableGhasts && entity.hasCustomName())
             {
                 return false;
             }
@@ -40,7 +42,7 @@ public class GhastHelper
         @Override
         public boolean shouldContinueExecuting()
         {
-            if (CarpetSettings.rideableGhasts && this.entityLiving.hasCustomName())
+            if (CarpetSettings.rideableGhasts && entity.hasCustomName())
             {
                 return false;
             }

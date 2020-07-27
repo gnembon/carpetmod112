@@ -23,6 +23,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 
 import java.util.*;
+import java.util.function.Supplier;
 
 public class CarpetClientChunkLogger {
     public static CarpetClientChunkLogger logger = new CarpetClientChunkLogger();
@@ -74,6 +75,16 @@ public class CarpetClientChunkLogger {
     public static void setReason(String r) {
         oldReason = reason;
         reason = r;
+    }
+
+    public static void setReason(ChunkLoadingReason reason) {
+        if (!logger.enabled) return;
+        setReason(reason.getDescription());
+    }
+
+    public static void setReason(Supplier<ChunkLoadingReason> reason) {
+        if (!logger.enabled) return;
+        setReason(reason.get().getDescription());
     }
 
     public static void resetReason() {
