@@ -36,7 +36,7 @@
      public EntityFallingBlock(World p_i1706_1_)
      {
          super(p_i1706_1_);
-@@ -61,12 +80,18 @@
+@@ -61,6 +80,10 @@
          this.field_70167_r = p_i45848_4_;
          this.field_70166_s = p_i45848_6_;
          this.func_184530_a(new BlockPos(this));
@@ -47,15 +47,7 @@
      }
  
      public boolean func_70075_an()
-     {
-         return false;
-     }
-+    //CM
-+    public String cm_name() { return "Falling Block"; }
- 
-     public void func_184530_a(BlockPos p_184530_1_)
-     {
-@@ -90,6 +115,11 @@
+@@ -90,6 +113,11 @@
  
      public void func_70071_h_()
      {
@@ -67,7 +59,7 @@
          Block block = this.field_175132_d.func_177230_c();
  
          if (this.field_175132_d.func_185904_a() == Material.field_151579_a)
-@@ -122,8 +152,44 @@
+@@ -122,8 +150,44 @@
                  this.field_70181_x -= 0.03999999910593033D;
              }
  
@@ -113,7 +105,7 @@
              if (!this.field_70170_p.field_72995_K)
              {
                  BlockPos blockpos1 = new BlockPos(this);
-@@ -168,6 +234,24 @@
+@@ -168,6 +232,24 @@
                      this.field_70179_y *= 0.699999988079071D;
                      this.field_70181_x *= -0.5D;
  
@@ -138,7 +130,7 @@
                      if (iblockstate.func_177230_c() != Blocks.field_180384_M)
                      {
                          this.func_70106_y();
-@@ -356,4 +440,12 @@
+@@ -356,4 +438,12 @@
      {
          return true;
      }

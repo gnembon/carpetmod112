@@ -2,26 +2,18 @@
 +++ ../src-work/minecraft/net/minecraft/item/ItemStack.java
 @@ -1,5 +1,7 @@
  package net.minecraft.item;
-
+ 
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
  import com.google.common.collect.HashMultimap;
  import com.google.common.collect.Multimap;
  import java.text.DecimalFormat;
-@@ -41,6 +43,8 @@
- import net.minecraft.util.text.translation.I18n;
- import net.minecraft.world.World;
-
-+import carpet.helpers.StatHelper;
-+
- public final class ItemStack
- {
-     public static final ItemStack field_190927_a = new ItemStack((Item)null);
-@@ -207,6 +212,8 @@
-
+@@ -207,6 +209,8 @@
+ 
      public int func_77976_d()
      {
 +        // Allows players to stack empty shulkerboxes in there inventorys CARPET-XCOM
 +        if(CarpetSettings.stackableShulkersPlayerInventory && CarpetServer.playerInventoryStacking && !func_77942_o() && this.func_77973_b() instanceof ItemShulkerBox) return 64;
          return this.func_77973_b().func_77639_j();
      }
+ 

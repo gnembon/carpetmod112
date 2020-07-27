@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/util/ServerRecipeBookHelper.java
 +++ ../src-work/minecraft/net/minecraft/util/ServerRecipeBookHelper.java
-@@ -1,5 +1,8 @@
+@@ -1,5 +1,9 @@
  package net.minecraft.util;
  
 +import carpet.CarpetSettings;
@@ -10,7 +10,7 @@
  import it.unimi.dsi.fastutil.ints.IntArrayList;
  import it.unimi.dsi.fastutil.ints.IntList;
  import it.unimi.dsi.fastutil.ints.IntListIterator;
-@@ -7,6 +10,7 @@
+@@ -7,6 +11,7 @@
  import java.util.List;
  import javax.annotation.Nullable;
  import net.minecraft.client.util.RecipeItemHelper;
@@ -18,7 +18,7 @@
  import net.minecraft.entity.player.EntityPlayerMP;
  import net.minecraft.entity.player.InventoryPlayer;
  import net.minecraft.inventory.Container;
-@@ -16,9 +20,11 @@
+@@ -16,9 +21,11 @@
  import net.minecraft.inventory.InventoryCrafting;
  import net.minecraft.inventory.Slot;
  import net.minecraft.item.ItemStack;
@@ -29,8 +29,8 @@
 +import net.minecraft.util.text.ITextComponent;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
-
-@@ -35,6 +41,18 @@
+ 
+@@ -35,6 +42,18 @@
  
      public void func_194327_a(EntityPlayerMP p_194327_1_, @Nullable IRecipe p_194327_2_, boolean p_194327_3_)
      {
@@ -49,7 +49,7 @@
          if (p_194327_2_ != null && p_194327_1_.func_192037_E().func_193830_f(p_194327_2_))
          {
              this.field_194332_c = p_194327_1_;
-@@ -48,7 +66,8 @@
+@@ -48,7 +67,8 @@
              if (container instanceof ContainerWorkbench)
              {
                  this.field_194335_f = ((ContainerWorkbench)container).field_75160_f;
@@ -59,7 +59,7 @@
              }
              else if (container instanceof ContainerPlayer)
              {
-@@ -67,6 +86,8 @@
+@@ -67,6 +87,8 @@
                      if (this.field_194331_b.func_194116_a(p_194327_2_, (IntList)null))
                      {
                          this.func_194329_b();
@@ -68,7 +68,7 @@
                      }
                      else
                      {
-@@ -304,4 +325,29 @@
+@@ -304,4 +326,29 @@
  
          return true;
      }

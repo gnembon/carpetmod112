@@ -2,7 +2,7 @@
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityDispenser.java
 @@ -1,8 +1,13 @@
  package net.minecraft.tileentity;
-
+ 
  import java.util.Random;
 +
 +import carpet.CarpetSettings;
@@ -14,10 +14,10 @@
  import net.minecraft.inventory.Container;
  import net.minecraft.inventory.ContainerDispenser;
  import net.minecraft.inventory.ItemStackHelper;
-@@ -126,8 +134,26 @@
+@@ -126,8 +131,26 @@
          return new ContainerDispenser(p_174876_1_, this);
      }
-
+ 
 -    protected NonNullList<ItemStack> func_190576_q()
 +    public NonNullList<ItemStack> func_190576_q()
      {

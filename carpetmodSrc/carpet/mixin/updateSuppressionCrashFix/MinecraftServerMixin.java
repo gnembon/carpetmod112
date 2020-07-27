@@ -2,6 +2,7 @@ package carpet.mixin.updateSuppressionCrashFix;
 
 import carpet.CarpetSettings;
 import carpet.helpers.ThrowableSuppression;
+import carpet.utils.Messenger;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.WorldServer;
@@ -21,8 +22,12 @@ public class MinecraftServerMixin {
             worldServer.tick();
         } catch (ReportedException e) {
             if (!(e.getCrashReport().getCrashCause() instanceof ThrowableSuppression)) throw e;
-        } catch (ThrowableSuppression ignored) {}
+            logUpdateSuppression("world tick");
+        } catch (ThrowableSuppression ignored) {
+            logUpdateSuppression("world tick");
+        }
     }
+
     @Redirect(method = "updateTimeLightAndEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;updateEntities()V"))
     private void fixUpdateSuppressionCrashTickEntities(WorldServer worldServer) {
         if (!CarpetSettings.updateSuppressionCrashFix) {
@@ -33,6 +38,13 @@ public class MinecraftServerMixin {
             worldServer.updateEntities();
         } catch (ReportedException e) {
             if (!(e.getCrashReport().getCrashCause() instanceof ThrowableSuppression)) throw e;
-        } catch (ThrowableSuppression ignored) {}
+            logUpdateSuppression("update entities");
+        } catch (ThrowableSuppression ignored) {
+            logUpdateSuppression("update entities");
+        }
+    }
+
+    private void logUpdateSuppression(String phase) {
+        Messenger.print_server_message((MinecraftServer) (Object) this, "You just caused a server crash in " + phase + ".");
     }
 }
