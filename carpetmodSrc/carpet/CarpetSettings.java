@@ -745,6 +745,9 @@ public class CarpetSettings
 
     // ===== FEATURES ===== //
 
+    @Rule(desc = "Enables skyblock on 1.12, all blocks but end portal frames will be removed in newly generated chunks.", category = FEATURE, extra = "WARNING! Don't turn on if not planning to play skyblock.")
+    public static boolean skyblock;
+
     @Rule(desc = "Removes the dimension loading where after 300 gameticks all entitys freeze without players.", category = FEATURE)
     public static boolean dimensionLoading;
 
