@@ -458,7 +458,7 @@
      }
  
      public void func_76623_d()
-@@ -964,15 +1033,43 @@
+@@ -964,13 +1033,40 @@
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
              {
@@ -487,23 +487,20 @@
 +            	CarpetClientChunkLogger.logger.log(this.field_76637_e,this.field_76635_g,this.field_76647_h,CarpetClientChunkLogger.Event.POPULATING);
 +                carpet.carpetclient.CarpetClientChunkLogger.resetReason();
 +            }
-+    		
-             p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
-             this.func_76630_e();
-         }
 +
-+        // Skyblock in carpet 12
-+        if(CarpetSettings.skyblock) {
-+            for(int i = 0; i < 4; i++) {
-+                if(field_76637_e.func_190526_b(field_76635_g + i % 2, field_76647_h + i / 2)) {
-+                    field_76637_e.func_72964_e(field_76635_g + i % 2, field_76647_h + i / 2).removeAllBlocks();
+             p_186034_1_.func_185931_b(this.field_76635_g, this.field_76647_h);
++            // Skyblock in carpet 12
++            if(CarpetSettings.skyblock) {
++                for(int i = 0; i < 4; i++) {
++                    if(field_76637_e.func_190526_b(field_76635_g + i % 2, field_76647_h + i / 2)) {
++                        field_76637_e.func_72964_e(field_76635_g + i % 2, field_76647_h + i / 2).removeAllBlocks();
++                    }
 +                }
 +            }
-+        }
+             this.func_76630_e();
+         }
      }
- 
-     public BlockPos func_177440_h(BlockPos p_177440_1_)
-@@ -1018,10 +1115,13 @@
+@@ -1018,10 +1114,13 @@
  
          this.field_150815_m = true;
  
@@ -521,7 +518,7 @@
  
          while (!this.field_177447_w.isEmpty())
          {
-@@ -1389,4 +1489,69 @@
+@@ -1389,4 +1488,67 @@
          QUEUED,
          CHECK;
      }
@@ -559,13 +556,11 @@
 +                {
 +                    int i1 = l >> 4;
 +                    try {
-+                        if(this.field_76652_q[i1] != null && this.field_76652_q[i1].func_177485_a(j, l & 15, k).func_177230_c() == Blocks.field_150378_br) System.out.println("portal ------------------------");
 +                        if(this.field_76652_q[i1] != null && this.field_76652_q[i1].func_177485_a(j, l & 15, k).func_177230_c() != Blocks.field_150378_br){
 +                            this.field_76652_q[i1].func_177484_a(j, l & 15, k, air);
-+                            this.field_76652_q[i1].func_76657_c(j, l & 15, k, 15);
++                            if(this.field_76652_q[i1].func_76671_l() != null) this.field_76652_q[i1].func_76657_c(j, l & 15, k, 15);
 +                        }
 +                    }catch(Exception e){
-+                        System.out.println(e);
 +                    }
 +                }
 +            }
