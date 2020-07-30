@@ -58,11 +58,6 @@ public abstract class MinecraftServerMixin {
 
     @Shadow private String motd;
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void onInit(File anvilFileIn, Proxy proxyIn, DataFixer dataFixerIn, YggdrasilAuthenticationService authServiceIn, MinecraftSessionService sessionServiceIn, GameProfileRepository profileRepoIn, PlayerProfileCache profileCacheIn, CallbackInfo ci) {
-        CarpetServer.init((MinecraftServer) (Object) this);
-    }
-
     @Inject(method = "loadAllWorlds", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;initialWorldChunkLoad()V"))
     private void onLoadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, String generatorOptions, CallbackInfo ci) {
         CarpetServer.onLoadAllWorlds((MinecraftServer) (Object) this);

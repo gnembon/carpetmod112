@@ -368,12 +368,14 @@ task copyCodeToSrc(type: Sync) {
 
 task copyMixinJsonToSrc(type: Copy) {
 	from "jsons/${project.name}.mixins.json"
+	from "jsons/META-INF"
 	into 'resources/'
 }
 copyCodeToSrc.dependsOn copyMixinJsonToSrc
 
 task copyMixinJsonFromSrc(type: Copy) {
 	from "resources/${project.name}.mixins.json"
+	from "resources/META-INF"
 	into 'jsons/'
 }
 genPatches.dependsOn copyMixinJsonFromSrc

@@ -2,9 +2,11 @@ package narcolepticfrog.rsmm.server;
 
 import carpet.CarpetServer;
 import carpet.network.PluginChannelHandler;
+import narcolepticfrog.rsmm.MeterCommand;
 import narcolepticfrog.rsmm.events.*;
 import narcolepticfrog.rsmm.network.RSMMCPacket;
 import narcolepticfrog.rsmm.network.RSMMSPacket;
+import net.minecraft.command.ServerCommandManager;
 import net.minecraft.entity.player.EntityPlayerMP;
 import carpet.CarpetSettings;
 import net.minecraft.network.PacketBuffer;
@@ -261,5 +263,9 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
                 ServerPacketEventDispatcher.dispatchCustomPayload(player, packet.getChannelName(), packet.getBufferData());
             }
         };
+    }
+
+    public void registerCommands(ServerCommandManager mgr) {
+        mgr.registerCommand(new MeterCommand(this));
     }
 }
