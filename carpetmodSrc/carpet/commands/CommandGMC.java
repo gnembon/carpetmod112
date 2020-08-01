@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -38,7 +39,7 @@ public class CommandGMC extends CommandCarpetBase
      */
     public String getUsage(ICommandSender sender)
     {
-        return "commands.gamemode.usage";
+        return "/c OR /c [player]";
     }
 
     /**
@@ -51,11 +52,12 @@ public class CommandGMC extends CommandCarpetBase
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException, NumberInvalidException
     {
         if (!command_enabled("commandCameramode", sender)) return;
-        if (args.length > 0)
+        
+        if (args.length > 1)
         {
             throw new WrongUsageException(getUsage(sender), new Object[0]);
         }
-        else
+        else if (args.length == 0)
         {
             if (!CarpetSettings.commandCameramode)
             {
@@ -82,11 +84,42 @@ public class CommandGMC extends CommandCarpetBase
             }
             entityplayer.setGamemodeCamera();
         }
+        else if (args.length == 1)
+        {
+            if (!CarpetSettings.commandCameramode)
+            {
+                notifyCommandListener(sender, this, "Quick gamemode switching is disabled");
+            }
+            Entity entity = getEntity(server, sender, args[0]);
+            if (entity instanceof EntityPlayerMP)
+            {
+                EntityPlayerMP entityplayer = server.getPlayerList().getPlayerByUsername(args[0]);
+                if(entityplayer.isSpectator()) return;
+                if(CarpetSettings.cameraModeSurvivalRestrictions && entityplayer.isSurvival()) {
+                    List<EntityMob> hostiles = sender.getEntityWorld().getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB(entityplayer.posX - 8.0D, entityplayer.posY - 5.0D, entityplayer.posZ - 8.0D, entityplayer.posX + 8.0D, entityplayer.posY + 5.0D, entityplayer.posZ + 8.0D), new EntityPlayer.SleepEnemyPredicate(entityplayer));
+                    PotionEffect fireresist = entityplayer.getActivePotionEffect(Potion.getPotionFromResourceLocation("fire_resistance"));
+                    if(!entityplayer.onGround || entityplayer.isElytraFlying() || (entityplayer.getFire() > 0 && (fireresist == null || fireresist.getDuration() < entityplayer.getFire())) || entityplayer.getAir() != 300 || !hostiles.isEmpty()){
+                        notifyCommandListener(sender, this, "Restricted use to: on ground, not in water, not on fire, not flying/falling, not near hostile mobs.");
+                        return;
+                    }
+                }
+                Potion nightvision = Potion.getPotionFromResourceLocation("night_vision");
+                boolean hasNightvision = entityplayer.getActivePotionEffect(nightvision) != null;
+                entityplayer.storeCameraData(hasNightvision);
+                GameType gametype = GameType.parseGameTypeWithDefault("spectator", GameType.NOT_SET);
+                entityplayer.setGameType(gametype);
+                if(!hasNightvision) {
+                    PotionEffect potioneffect = new PotionEffect(nightvision, 999999, 0, false, false);
+                    entityplayer.addPotionEffect(potioneffect);
+                }
+                entityplayer.setGamemodeCamera();
+            }
+        }
     }
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
     {
-        return Collections.<String>emptyList();
+        return args.length == 1 ? getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames()) : Collections.emptyList();
     }
 
 }

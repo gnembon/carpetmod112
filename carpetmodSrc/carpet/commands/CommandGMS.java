@@ -6,6 +6,7 @@ import javax.annotation.Nullable;
 
 import carpet.logging.LoggerRegistry;
 import carpet.utils.Messenger;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -36,7 +37,7 @@ public class CommandGMS extends CommandCarpetBase
      */
     public String getUsage(ICommandSender sender)
     {
-        return "commands.gamemode.usage";
+        return "/s OR /s [player]";
     }
 
     /**
@@ -49,14 +50,25 @@ public class CommandGMS extends CommandCarpetBase
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException, NumberInvalidException
     {
         if (!command_enabled("commandCameramode", sender)) return;
-        if (args.length > 0)
+        
+        if (args.length > 1)
         {
             throw new WrongUsageException(getUsage(sender), new Object[0]);
         }
-        else
+        else if (args.length == 0)
         {
             EntityPlayerMP entityplayer = getCommandSenderAsPlayer(sender);
-            setPlayerToSurvival(server, entityplayer,false);
+            setPlayerToSurvival(server, entityplayer, false);
+        }
+        else if (args.length == 1)
+        {
+            Entity entity = getEntity(server, sender, args[0]);
+            
+            if (entity instanceof EntityPlayerMP)
+            {
+                EntityPlayerMP entityplayer = server.getPlayerList().getPlayerByUsername(args[0]);
+                setPlayerToSurvival(server, entityplayer, false);
+            }
         }
     }
 
@@ -100,7 +112,7 @@ public class CommandGMS extends CommandCarpetBase
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
     {
-        return Collections.<String>emptyList();
+        return args.length == 1 ? getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames()) : Collections.emptyList();
     }
 
 
