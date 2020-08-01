@@ -276,16 +276,22 @@ public class CommandRNG extends CommandCarpetBase {
                 sender.sendMessage(new TextComponentString("Current ChunkGeneratorEnd seed: " + seed));
             }
         } else if ("setEndChunkSeed".equalsIgnoreCase(args[0])) {
-            if (args.length != 2) {
-                throw new WrongUsageException("/rng setEndChunkSeed <seed>");
+            if (args.length == 2 || (args.length == 3 && "once".equalsIgnoreCase(args[2]))) {
+                ChunkProviderServer chunkProvider = server.getWorld(1).getChunkProvider();
+                ChunkGeneratorEnd chunkGeneratorEnd = ((ChunkGeneratorEnd) chunkProvider.chunkGenerator);
+                long seed = parseLong(args[1]);
+                chunkGeneratorEnd.randomSeedUsed = false;
+                chunkGeneratorEnd.lastRandomSeed = seed;
+                if (args.length == 2) {
+                    CarpetSettings.endChunkSeed = seed;
+                    sender.sendMessage(new TextComponentString("Set the ChunkGeneratorEnd seed to: " + CarpetSettings.endChunkSeed));
+                } else if (args.length == 3) {
+                    chunkGeneratorEnd.setEndChunkSeed(seed);
+                    sender.sendMessage(new TextComponentString("Set the ChunkGeneratorEnd seed once to: " + chunkGeneratorEnd.lastRandomSeed));
+                }
+            } else {
+                throw new WrongUsageException("/rng setEndChunkSeed <seed> [once]");
             }
-            ChunkProviderServer chunkProvider = server.getWorld(1).getChunkProvider();
-            ChunkGeneratorEnd chunkGeneratorEnd = ((ChunkGeneratorEnd) chunkProvider.chunkGenerator);
-            long seed = parseLong(args[1]);
-            chunkGeneratorEnd.randomSeedUsed = false;
-            chunkGeneratorEnd.lastRandomSeed = seed;
-            CarpetSettings.endChunkSeed = seed;
-            sender.sendMessage(new TextComponentString("Set the ChunkGeneratorEnd seed to: " + CarpetSettings.endChunkSeed));
         }
     }
 
@@ -318,6 +324,9 @@ public class CommandRNG extends CommandCarpetBase {
             }
             if ("setLCG".equalsIgnoreCase(args[0])) {
                 return getListOfStringsMatchingLastWord(args, "OVERWORLD", "NETHER", "THE_END");
+            }
+            if ("setEndChunkSeed".equalsIgnoreCase(args[0]) && args.length == 3) {
+                return getListOfStringsMatchingLastWord(args, "once");
             }
         }
 

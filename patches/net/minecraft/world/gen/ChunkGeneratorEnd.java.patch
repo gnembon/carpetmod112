@@ -52,15 +52,21 @@
              if (f < -20.0F && this.field_73220_k.nextInt(14) == 0)
              {
                  this.field_185975_r.func_180709_b(this.field_73230_p, this.field_73220_k, blockpos.func_177982_a(this.field_73220_k.nextInt(16) + 8, 55 + this.field_73220_k.nextInt(16), this.field_73220_k.nextInt(16) + 8));
-@@ -395,6 +410,7 @@
+@@ -395,8 +410,13 @@
          }
  
          BlockFalling.field_149832_M = false;
 +        this.randomSeedUsed = true;
      }
  
++    public void setEndChunkSeed(long seed) {
++        this.field_73220_k.setSeed(seed);
++    }
++
      public boolean func_185933_a(Chunk p_185933_1_, int p_185933_2_, int p_185933_3_)
-@@ -404,6 +420,13 @@
+     {
+         return false;
+@@ -404,6 +424,13 @@
  
      public List<Biome.SpawnListEntry> func_177458_a(EnumCreatureType p_177458_1_, BlockPos p_177458_2_)
      {
@@ -74,7 +80,7 @@
          return this.field_73230_p.func_180494_b(p_177458_2_).func_76747_a(p_177458_1_);
      }
  
-@@ -420,5 +443,14 @@
+@@ -420,5 +447,14 @@
  
      public void func_180514_a(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_)
      {
