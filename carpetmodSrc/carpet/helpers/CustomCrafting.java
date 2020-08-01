@@ -38,7 +38,7 @@ public class CustomCrafting {
         Gson gson = (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
         File carpetDirectory = new File(CARPET_DIRECTORY_RECIPES);
         if (!carpetDirectory.exists()) {
-            carpetDirectory.mkdir();
+            carpetDirectory.mkdirs();
         }
 
         Path path = Paths.get(CARPET_DIRECTORY_RECIPES);
