@@ -67,7 +67,7 @@ public class CommandRNG extends CommandCarpetBase {
      */
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (!command_enabled("commandRNG", sender)) return;
-        if (args.length <=0) return;
+        if (args.length <=0) throw new WrongUsageException(getUsage(sender));
         if ("seed".equalsIgnoreCase(args[0])) {
             try {
                 World world = sender.getEntityWorld();
