@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import carpet.mixin.accessors.WeightedRandomItemAccessor;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -459,7 +460,7 @@ public class SpawnReporter
                     
                     String creature_name = EntityList.getEntityString(entityliving);
                     String pack_size = String.format("%d", entityliving.getMaxSpawnedInChunk());//String.format("%d-%d", animal.minGroupCount, animal.maxGroupCount);
-                    int weight = animal.getWeight();
+                    int weight = ((WeightedRandomItemAccessor) animal).getWeight();
                     if (canspawn)
                     {
                         String c = (fits_true && will_spawn>0)?"e":"gi";

@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import carpet.mixin.accessors.IngredientAccessor;
 import com.google.common.collect.Lists;
 
 import net.minecraft.entity.ai.EntityAIBase;
@@ -1095,7 +1096,7 @@ public class EntityAICrafter extends EntityAIBase {
 		NonNullList<Ingredient> list = recipe.getIngredients();
 
 		for (Ingredient ig : list) {
-			ItemStack[] stack = ig.getMatchingStacks();
+			ItemStack[] stack = ((IngredientAccessor) ig).getMatchingStacks();
 			if (stack.length > 0) {
 				ItemStack is = stack[0];
 				ItemStack is2 = itemIsInMap(map, is);
@@ -1141,7 +1142,7 @@ public class EntityAICrafter extends EntityAIBase {
 		int itemCount = 0;
 		NonNullList<Ingredient> list = currentTaskRecipe().getIngredients();
 		for (Ingredient ig : list) {
-			for (ItemStack is : ig.getMatchingStacks()) {
+			for (ItemStack is : ((IngredientAccessor) ig).getMatchingStacks()) {
 				if (is.getItem() == item) {
 					itemCount++;
 				}
@@ -1519,7 +1520,7 @@ public class EntityAICrafter extends EntityAIBase {
 	private boolean craftingItemForPickup(Item item, IRecipe irecipe) {
 		NonNullList<Ingredient> list = irecipe.getIngredients();
 		for (Ingredient ig : list) {
-			for (ItemStack is : ig.getMatchingStacks()) {
+			for (ItemStack is : ((IngredientAccessor) ig).getMatchingStacks()) {
 				if (is.getItem() == item) {
 					return true;
 				}

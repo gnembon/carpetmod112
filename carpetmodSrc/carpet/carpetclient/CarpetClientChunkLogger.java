@@ -10,13 +10,16 @@ package carpet.carpetclient;
 import carpet.CarpetSettings;
 import carpet.helpers.StackTraceDeobfuscator;
 import carpet.utils.LRUCache;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerChunkMap;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
@@ -89,6 +92,25 @@ public class CarpetClientChunkLogger {
 
     public static void resetReason() {
         reason = null;
+    }
+
+    public static IBlockState getBlockState(IBlockAccess world, BlockPos pos, String reason) {
+        setReason(reason);
+        IBlockState state = world.getBlockState(pos);
+        resetToOldReason();
+        return state;
+    }
+    public static IBlockState getBlockState(IBlockAccess world, BlockPos pos, ChunkLoadingReason reason) {
+        setReason(reason);
+        IBlockState state = world.getBlockState(pos);
+        resetToOldReason();
+        return state;
+    }
+    public static IBlockState getBlockState(IBlockAccess world, BlockPos pos, Supplier<ChunkLoadingReason> reason) {
+        setReason(reason);
+        IBlockState state = world.getBlockState(pos);
+        resetToOldReason();
+        return state;
     }
 
     /*

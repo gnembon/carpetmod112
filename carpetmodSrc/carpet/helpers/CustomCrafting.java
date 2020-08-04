@@ -1,6 +1,7 @@
 package carpet.helpers;
 
 import carpet.carpetclient.CarpetClientServer;
+import carpet.mixin.accessors.CraftingManagerAccessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -13,6 +14,8 @@ import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,6 +29,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 public class CustomCrafting {
+    private static final Logger LOGGER = LogManager.getLogger();
     private static final String CARPET_DIRECTORY_RECIPES = "carpet/recipes";
     private static ArrayList<Pair<String, JsonObject>> recipeList = new ArrayList<>();
     private static HashSet<IRecipe> recipes = new HashSet<IRecipe>();
@@ -54,26 +58,22 @@ public class CustomCrafting {
                 BufferedReader bufferedreader = null;
 
                 try {
-                    boolean flag;
-
                     try {
                         bufferedreader = Files.newBufferedReader(path1);
-                        JsonObject json = (JsonObject) JsonUtils.fromJson(gson, bufferedreader, JsonObject.class);
+                        JsonObject json = JsonUtils.fromJson(gson, bufferedreader, JsonObject.class);
                         recipeList.add(Pair.of(s, json));
-                        IRecipe ir = CraftingManager.parseRecipeJson(json);
+                        IRecipe ir = CraftingManagerAccessor.invokeParseRecipeJson(json);
                         recipes.add(ir);
                         CraftingManager.register(s, ir);
                     } catch (JsonParseException jsonparseexception) {
-                        CraftingManager.LOGGER.error("Parsing error loading recipe " + resourcelocation, (Throwable) jsonparseexception);
-                        flag = false;
-                        return flag;
+                        LOGGER.error("Parsing error loading recipe " + resourcelocation, jsonparseexception);
+                        return false;
                     } catch (IOException ioexception) {
-                        CraftingManager.LOGGER.error("Couldn't read recipe " + resourcelocation + " from " + path1, (Throwable) ioexception);
-                        flag = false;
-                        return flag;
+                        LOGGER.error("Couldn't read recipe " + resourcelocation + " from " + path1, ioexception);
+                        return false;
                     }
                 } finally {
-                    IOUtils.closeQuietly((Reader) bufferedreader);
+                    IOUtils.closeQuietly(bufferedreader);
                 }
             }
         }

@@ -1,5 +1,7 @@
 package carpet.utils;
 
+import carpet.mixin.accessors.EntitySlimeAccessor;
+import carpet.mixin.accessors.EntityZombieVillagerAccessor;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -319,16 +321,17 @@ public class EntityInfo
 						if (e instanceof EntityZombieVillager)
 						{
 							EntityZombieVillager ezv = (EntityZombieVillager) e;
-							if (ezv.conversionTime > 0)
+							int conversionTime = ((EntityZombieVillagerAccessor) ezv).getConversionTime();
+							if (conversionTime > 0)
 							{
-								lst.add(String.format(" - Convert to villager in: %s",makeTime(ezv.conversionTime)));
+								lst.add(String.format(" - Convert to villager in: %s", makeTime(conversionTime)));
 							}
 						}
 					}
 				}
 				if (e instanceof EntitySlime)
 				{
-					lst.add(String.format(" - Base attack: %.1f",((EntitySlime)e).getPublicAttackStrength()));
+					lst.add(String.format(" - Base attack: %.1f", (float)((EntitySlimeAccessor)e).invokeGetAttackStrength()));
 				}
 			}
         }

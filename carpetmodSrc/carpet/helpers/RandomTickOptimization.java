@@ -2,6 +2,7 @@ package carpet.helpers;
 
 import carpet.CarpetServer;
 import carpet.CarpetSettings;
+import carpet.mixin.accessors.BlockAccessor;
 import net.minecraft.block.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -37,17 +38,17 @@ public class RandomTickOptimization {
     }
 
     public static void setUselessRandomTicks(boolean on) {
-        USELESS_RANDOMTICKS.forEach(b -> b.setTickRandomly(on));
+        USELESS_RANDOMTICKS.forEach(b -> ((BlockAccessor) b).invokeSetTickRandomly(on));
     }
 
     public static void setLiquidRandomTicks(boolean on) {
         needsWorldGenFix = !on;
-        Blocks.FLOWING_WATER.setTickRandomly(on);
-        Blocks.FLOWING_LAVA.setTickRandomly(on);
+        ((BlockAccessor) Blocks.FLOWING_WATER).invokeSetTickRandomly(on);
+        ((BlockAccessor) Blocks.FLOWING_LAVA).invokeSetTickRandomly(on);
     }
 
     public static void setSpongeRandomTicks(boolean on) {
-        Blocks.SPONGE.setTickRandomly(on);
+        ((BlockAccessor) Blocks.SPONGE).invokeSetTickRandomly(on);
     }
 
     public static void recalculateAllChunks() {

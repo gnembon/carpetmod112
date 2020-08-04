@@ -446,15 +446,7 @@
                          return false;
                      }
  
-@@ -1055,6 +1233,7 @@
-         this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
-         this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
-         Entity[] aentity = p_72923_1_.func_70021_al();
-+        p_72923_1_.postLoad();
- 
-         if (aentity != null)
-         {
-@@ -1139,6 +1318,7 @@
+@@ -1139,6 +1317,7 @@
          }
  
          this.field_147490_S[this.field_147489_T].add(blockeventdata);
@@ -462,7 +454,7 @@
      }
  
      private void func_147488_Z()
-@@ -1150,14 +1330,19 @@
+@@ -1150,14 +1329,19 @@
  
              for (BlockEventData blockeventdata : this.field_147490_S[i])
              {
@@ -482,7 +474,7 @@
      }
  
      private boolean func_147485_a(BlockEventData p_147485_1_)
-@@ -1299,4 +1484,19 @@
+@@ -1299,4 +1483,19 @@
              {
              }
          }

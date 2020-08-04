@@ -21,6 +21,7 @@ import carpet.carpetclient.CarpetClientChunkLogger;
 import carpet.carpetclient.CarpetClientRuleChanger;
 import carpet.helpers.RandomTickOptimization;
 import carpet.helpers.ScoreboardDelta;
+import carpet.mixin.accessors.BlockAccessor;
 import carpet.patches.BlockWool;
 import carpet.utils.TickingArea;
 import carpet.worldedit.WorldEditBridge;
@@ -303,9 +304,9 @@ public class CarpetSettings
     public static boolean flyingMachineTransparent = false;
     private static boolean validateFlyingMachineTransparent(boolean value) {
         int newOpacity = value ? 0 : 255;
-        Blocks.OBSERVER.setLightOpacity(newOpacity);
-        Blocks.REDSTONE_BLOCK.setLightOpacity(newOpacity);
-        Blocks.TNT.setLightOpacity(newOpacity);
+        ((BlockAccessor) Blocks.OBSERVER).invokeSetLightOpacity(newOpacity);
+        ((BlockAccessor) Blocks.REDSTONE_BLOCK).invokeSetLightOpacity(newOpacity);
+        ((BlockAccessor) Blocks.TNT).invokeSetLightOpacity(newOpacity);
         return true;
     }
 
@@ -841,12 +842,8 @@ public class CarpetSettings
     @Rule(desc = "Only husks spawn in desert temples", category = {EXPERIMENTAL, FEATURE})
     public static boolean huskSpawningInTemples = false;
 
-    @Rule(desc = "Shulkers will respawn in end cities", category = {FEATURE, EXPERIMENTAL}, validator = "validateShulkerSpawningInEndCities")
+    @Rule(desc = "Shulkers will respawn in end cities", category = {FEATURE, EXPERIMENTAL})
     public static boolean shulkerSpawningInEndCities = false;
-    private static boolean validateShulkerSpawningInEndCities(boolean value) {
-        net.minecraft.world.gen.structure.MapGenEndCity.shulkerSpawning(value);
-        return true;
-    }
 
     @Rule(desc = "Guardians turn into Elder Guardian when struck by lightning", category = {EXPERIMENTAL, FEATURE})
     public static boolean renewableElderGuardians = false;

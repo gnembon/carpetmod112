@@ -2,6 +2,7 @@ package carpet.carpetclient;
 
 import java.util.ArrayList;
 
+import carpet.utils.extensions.BoundingBoxProvider;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -48,7 +49,7 @@ public class CarpetClientMarkers {
     public static void updateClientBoundingBoxMarkers(EntityPlayerMP sender, PacketBuffer data) {
         MinecraftServer ms = sender.world.getMinecraftServer();
         WorldServer ws = ms.getWorld(sender.dimension);
-        NBTTagList list = ws.getChunkProvider().getBoundingBoxes(sender);
+        NBTTagList list = ((BoundingBoxProvider) ws.getChunkProvider()).getBoundingBoxes(sender);
         NBTTagCompound nbttagcompound = new NBTTagCompound();
 
         nbttagcompound.setTag("Boxes", list);

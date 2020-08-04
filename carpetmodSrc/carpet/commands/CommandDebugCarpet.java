@@ -2,6 +2,7 @@ package carpet.commands;
 
 import javax.annotation.Nullable;
 
+import carpet.mixin.accessors.EntityTrackerAccessor;
 import carpet.utils.Messenger;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -33,12 +34,12 @@ public class CommandDebugCarpet extends CommandCarpetBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if("tracker".equalsIgnoreCase(args[0])) {
-            for(EntityTrackerEntry e : ((WorldServer)sender.getEntityWorld()).getEntityTracker().getEntries()){
+            for(EntityTrackerEntry e : ((EntityTrackerAccessor) ((WorldServer) sender.getEntityWorld()).getEntityTracker()).getEntries()){
                 sender.sendMessage(Messenger.s(sender, e.getTrackedEntity().toString()));
             }
         }
         if("trackedToMe".equalsIgnoreCase(args[0])) {
-            for(EntityTrackerEntry e : ((WorldServer)sender.getEntityWorld()).getEntityTracker().getEntries()){
+            for(EntityTrackerEntry e : ((EntityTrackerAccessor) ((WorldServer) sender.getEntityWorld()).getEntityTracker()).getEntries()){
                 if(e.isVisibleTo((EntityPlayerMP) sender)){
                     sender.sendMessage(Messenger.s(sender, e.getTrackedEntity().toString()));
                 }

@@ -16,4 +16,9 @@ public class NetworkManagerFake extends NetworkManager
     public void checkDisconnected()
     {
     }
+
+    @Override
+    public boolean isChannelOpen() {
+        return true;
+    }
 }

@@ -1,10 +1,9 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -27,15 +27,26 @@
+@@ -27,15 +27,25 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
-+import net.minecraft.nbt.NBTTagList;
 +import carpet.CarpetSettings;
 +import carpet.carpetclient.CarpetClientChunkLogger;
 +import carpet.utils.TickingArea;
@@ -31,7 +30,7 @@
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
          this.field_73251_h = p_i46838_1_;
-@@ -50,8 +61,18 @@
+@@ -50,8 +60,18 @@
  
      public void func_189549_a(Chunk p_189549_1_)
      {
@@ -51,7 +50,7 @@
              this.field_73248_b.add(Long.valueOf(ChunkPos.func_77272_a(p_189549_1_.field_76635_g, p_189549_1_.field_76647_h)));
              p_189549_1_.field_189550_d = true;
          }
-@@ -59,6 +80,7 @@
+@@ -59,6 +79,7 @@
  
      public void func_73240_a()
      {
@@ -59,7 +58,7 @@
          ObjectIterator objectiterator = this.field_73244_f.values().iterator();
  
          while (objectiterator.hasNext())
-@@ -76,6 +98,11 @@
+@@ -76,6 +97,11 @@
  
          if (chunk != null)
          {
@@ -71,7 +70,7 @@
              chunk.field_189550_d = false;
          }
  
-@@ -93,9 +120,17 @@
+@@ -93,9 +119,17 @@
  
              if (chunk != null)
              {
@@ -89,7 +88,7 @@
              }
          }
  
-@@ -113,6 +148,11 @@
+@@ -113,6 +147,11 @@
              try
              {
                  chunk = this.field_186029_c.func_185932_a(p_186025_1_, p_186025_2_);
@@ -101,7 +100,7 @@
              }
              catch (Throwable throwable)
              {
-@@ -123,7 +163,7 @@
+@@ -123,7 +162,7 @@
                  crashreportcategory.func_71507_a("Generator", this.field_186029_c);
                  throw new ReportedException(crashreport);
              }
@@ -110,7 +109,7 @@
              this.field_73244_f.put(i, chunk);
              chunk.func_76631_c();
              chunk.func_186030_a(this, this.field_186029_c);
-@@ -185,6 +225,8 @@
+@@ -185,6 +224,8 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
@@ -119,7 +118,7 @@
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -222,8 +264,12 @@
+@@ -222,8 +263,12 @@
      {
          if (!this.field_73251_h.field_73058_d)
          {
@@ -133,7 +132,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -231,16 +277,47 @@
+@@ -231,16 +276,47 @@
                      Long olong = iterator.next();
                      Chunk chunk = (Chunk)this.field_73244_f.get(olong);
  
@@ -182,7 +181,7 @@
  
              this.field_73247_e.func_75817_a();
          }
-@@ -283,9 +360,17 @@
+@@ -283,6 +359,11 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
      }
@@ -194,9 +193,3 @@
  
      public boolean func_191062_e(int p_191062_1_, int p_191062_2_)
      {
-         return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_191062_1_, p_191062_2_)) || this.field_73247_e.func_191063_a(p_191062_1_, p_191062_2_);
-     }
-+
-+    // Retrieval method to get the bounding boxes CARPET-XCOM
-+    public NBTTagList getBoundingBoxes(Entity entity) { return this.field_186029_c.getBoundingBoxes(entity); }
- }

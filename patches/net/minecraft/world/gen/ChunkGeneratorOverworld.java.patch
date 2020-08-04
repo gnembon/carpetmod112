@@ -1,18 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorOverworld.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorOverworld.java
-@@ -26,6 +26,11 @@
+@@ -26,6 +26,8 @@
  import net.minecraft.world.gen.structure.StructureOceanMonument;
  import net.minecraft.world.gen.structure.WoodlandMansion;
  
-+import net.minecraft.entity.Entity;
 +import carpet.CarpetSettings;
-+import carpet.carpetclient.CarpetClientMarkers;
-+import net.minecraft.nbt.NBTTagList;
 +
  public class ChunkGeneratorOverworld implements IChunkGenerator
  {
      protected static final IBlockState field_185982_a = Blocks.field_150348_b.func_176223_P();
-@@ -52,7 +57,7 @@
+@@ -52,7 +54,7 @@
      private final MapGenScatteredFeature field_186007_z = new MapGenScatteredFeature();
      private final MapGenBase field_185979_A = new MapGenRavine();
      private final StructureOceanMonument field_185980_B = new StructureOceanMonument();
@@ -21,7 +18,7 @@
      private Biome[] field_185981_C;
      double[] field_185986_e;
      double[] field_185987_f;
-@@ -487,6 +492,11 @@
+@@ -487,6 +489,11 @@
              {
                  return this.field_185980_B.func_175799_b();
              }
@@ -33,21 +30,3 @@
          }
  
          return biome.func_76747_a(p_177458_1_);
-@@ -592,4 +602,17 @@
-             }
-         }
-     }
-+
-+    // Retrieval method to get the bounding boxes CARPET-XCOM
-+    public NBTTagList getBoundingBoxes(Entity entity)
-+    {
-+        NBTTagList nbttaglist = new NBTTagList();
-+        nbttaglist.func_74742_a(field_186007_z.getBoundingBoxes(entity, CarpetClientMarkers.TEMPLE));
-+        nbttaglist.func_74742_a(field_186005_x.getBoundingBoxes(entity, CarpetClientMarkers.VILLAGE));
-+        nbttaglist.func_74742_a(field_186004_w.getBoundingBoxes(entity, CarpetClientMarkers.STRONGHOLD));
-+        nbttaglist.func_74742_a(field_186006_y.getBoundingBoxes(entity, CarpetClientMarkers.MINESHAFT));
-+        nbttaglist.func_74742_a(field_185980_B.getBoundingBoxes(entity, CarpetClientMarkers.MONUMENT));
-+        nbttaglist.func_74742_a(field_191060_C.getBoundingBoxes(entity, CarpetClientMarkers.MANSION));
-+        return nbttaglist;
-+    }
- }

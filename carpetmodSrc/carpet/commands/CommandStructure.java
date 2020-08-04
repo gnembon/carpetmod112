@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import carpet.mixin.accessors.TemplateManagerAccessor;
 import org.apache.logging.log4j.LogManager;
 
 import net.minecraft.command.CommandException;
@@ -239,7 +240,7 @@ public class CommandStructure extends CommandCarpetBase
     {
         List<String> templates = new ArrayList<>();
         
-        Path baseFolder = Paths.get(manager.baseFolder);
+        Path baseFolder = Paths.get(((TemplateManagerAccessor) manager).getBaseFolder());
         try
         {
             if (Files.exists(baseFolder))

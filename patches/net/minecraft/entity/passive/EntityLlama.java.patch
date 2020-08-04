@@ -20,23 +20,3 @@
              {
                  flag = true;
                  this.func_146082_f(p_190678_1_);
-@@ -492,6 +496,19 @@
-         }
-     }
- 
-+    /*
-+     * Breeding items for llamas: CARPET-XCOM
-+     */
-+    @Override
-+    protected boolean isValidBreedingItem(ItemStack itemstack){
-+    	Item item = itemstack.func_77973_b();
-+
-+    	if(item == Items.field_151015_O) return false;
-+    	else if(item == Item.func_150898_a(Blocks.field_150407_cf)) return false;
-+
-+    	return true;
-+    }
-+
-     public boolean func_190684_dE()
-     {
-         return false;
