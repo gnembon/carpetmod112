@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/world/end/DragonFightManager.java
++++ ../src-work/minecraft/net/minecraft/world/end/DragonFightManager.java
+@@ -48,6 +48,8 @@
+ import org.apache.logging.log4j.LogManager;
+ import org.apache.logging.log4j.Logger;
+ 
++import carpet.CarpetSettings;
++
+ public class DragonFightManager
+ {
+     private static final Logger field_186107_a = LogManager.getLogger();
+@@ -437,6 +439,8 @@
+             }
+         }
+ 
++        // Fix for the end portal somehow spawning at y = -2 when spawning the first time in skyblock CARPET-XCOM
++        if(CarpetSettings.skyblock && field_186121_o.func_177956_o() <= 0) field_186121_o = new BlockPos(field_186121_o.func_177958_n(), 63, field_186121_o.func_177952_p());
+         worldgenendpodium.func_180709_b(this.field_186110_d, new Random(), this.field_186121_o);
+     }
+ 
