@@ -6,6 +6,7 @@ package carpet.helpers;
 
 import javax.annotation.Nullable;
 
+import carpet.utils.extensions.NewLightChunk;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagShort;
@@ -76,10 +77,10 @@ public class LightingHooks
 
     public static void initChunkLighting(final World world, final Chunk chunk)
     {
-        if (chunk.isLightPopulated() || chunk.pendingNeighborLightInits != 0)
+        if (chunk.isLightPopulated() || ((NewLightChunk) chunk).getPendingNeighborLightInits() != 0)
             return;
 
-        chunk.pendingNeighborLightInits = 15;
+        ((NewLightChunk) chunk).setPendingNeighborLightInits(15);
 
         chunk.markDirty();
 
@@ -142,12 +143,12 @@ public class LightingHooks
     {
         final int flag = 1 << nDir.getHorizontalIndex();
 
-        if ((chunk.pendingNeighborLightInits & flag) == 0)
+        if ((((NewLightChunk) chunk).getPendingNeighborLightInits() & flag) == 0)
             return;
 
-        chunk.pendingNeighborLightInits ^= flag;
+        ((NewLightChunk) chunk).setPendingNeighborLightInits(((NewLightChunk) chunk).getPendingNeighborLightInits() ^ flag);
 
-        if (chunk.pendingNeighborLightInits == 0)
+        if (((NewLightChunk) chunk).getPendingNeighborLightInits() == 0)
             chunk.setLightPopulated(true);
 
         chunk.markDirty();
@@ -186,7 +187,7 @@ public class LightingHooks
                 // Restore a value <= initial height
                 for (; yMin > 0; --yMin)
                 {
-                    if (chunk.getCachedLightFor(EnumSkyBlock.SKY, pos.setPos(xBase + x - xOffset, yMin - 1, zBase + z - zOffset)) < EnumSkyBlock.SKY.defaultLightValue)
+                    if (((NewLightChunk) chunk).getCachedLightFor(EnumSkyBlock.SKY, pos.setPos(xBase + x - xOffset, yMin - 1, zBase + z - zOffset)) < EnumSkyBlock.SKY.defaultLightValue)
                         break;
                 }
 
@@ -367,8 +368,8 @@ public class LightingHooks
 
     public static void flagChunkBoundaryForUpdate(final Chunk chunk, final short sectionMask, final EnumSkyBlock lightType, final EnumFacing dir, final AxisDirection axisDirection, final EnumBoundaryFacing boundaryFacing)
     {
-        initNeighborLightChecks(chunk);
-        chunk.neighborLightChecks[getFlagIndex(lightType, dir, axisDirection, boundaryFacing)] |= sectionMask;
+        initNeighborLightChecks((NewLightChunk) chunk);
+        ((NewLightChunk) chunk).getNeighborLightChecks()[getFlagIndex(lightType, dir, axisDirection, boundaryFacing)] |= sectionMask;
         chunk.markDirty();
     }
 
@@ -423,30 +424,30 @@ public class LightingHooks
 
     private static void mergeFlags(final EnumSkyBlock lightType, final Chunk inChunk, final Chunk outChunk, final EnumFacing dir, final AxisDirection axisDir)
     {
-        if (outChunk.neighborLightChecks == null)
+        if (((NewLightChunk) outChunk).getNeighborLightChecks() == null)
         {
             return;
         }
 
-        initNeighborLightChecks(inChunk);
+        initNeighborLightChecks(((NewLightChunk) inChunk));
 
         final int inIndex = getFlagIndex(lightType, dir, axisDir, EnumBoundaryFacing.IN);
         final int outIndex = getFlagIndex(lightType, dir.getOpposite(), axisDir, EnumBoundaryFacing.OUT);
 
-        inChunk.neighborLightChecks[inIndex] |= outChunk.neighborLightChecks[outIndex];
+        ((NewLightChunk) inChunk).getNeighborLightChecks()[inIndex] |= ((NewLightChunk) outChunk).getNeighborLightChecks()[outIndex];
         //no need to call Chunk.setModified() since checks are not deleted from outChunk
     }
 
     private static void scheduleRelightChecksForBoundary(final World world, final Chunk chunk, Chunk nChunk, Chunk sChunk, final EnumSkyBlock lightType, final int xOffset, final int zOffset, final AxisDirection axisDir)
     {
-        if (chunk.neighborLightChecks == null)
+        if (((NewLightChunk) chunk).getNeighborLightChecks() == null)
         {
             return;
         }
 
         final int flagIndex = getFlagIndex(lightType, xOffset, zOffset, axisDir, EnumBoundaryFacing.IN); //OUT checks from neighbor are already merged
 
-        final int flags = chunk.neighborLightChecks[flagIndex];
+        final int flags = ((NewLightChunk) chunk).getNeighborLightChecks()[flagIndex];
 
         if (flags == 0)
         {
@@ -475,11 +476,11 @@ public class LightingHooks
 
         final int reverseIndex = getFlagIndex(lightType, -xOffset, -zOffset, axisDir, EnumBoundaryFacing.OUT);
 
-        chunk.neighborLightChecks[flagIndex] = 0;
+        ((NewLightChunk) chunk).getNeighborLightChecks()[flagIndex] = 0;
 
-        if (nChunk.neighborLightChecks != null)
+        if (((NewLightChunk) nChunk).getNeighborLightChecks() != null)
         {
-            nChunk.neighborLightChecks[reverseIndex] = 0; //Clear only now that it's clear that the checks are processed
+            ((NewLightChunk) nChunk).getNeighborLightChecks()[reverseIndex] = 0; //Clear only now that it's clear that the checks are processed
         }
 
         chunk.markDirty();
@@ -517,11 +518,11 @@ public class LightingHooks
         }
     }
 
-    public static void initNeighborLightChecks(final Chunk chunk)
+    public static void initNeighborLightChecks(final NewLightChunk chunk)
     {
-        if (chunk.neighborLightChecks == null)
+        if (chunk.getNeighborLightChecks() == null)
         {
-            chunk.neighborLightChecks = new short[FLAG_COUNT];
+            chunk.setNeighborLightChecks(new short[FLAG_COUNT]);
         }
     }
 
@@ -529,7 +530,7 @@ public class LightingHooks
 
     private static void writeNeighborLightChecksToNBT(final Chunk chunk, final NBTTagCompound nbt)
     {
-        if (chunk.neighborLightChecks == null)
+        if (((NewLightChunk) chunk).getNeighborLightChecks() == null)
         {
             return;
         }
@@ -537,7 +538,7 @@ public class LightingHooks
         boolean empty = true;
         final NBTTagList list = new NBTTagList();
 
-        for (final short flags : chunk.neighborLightChecks)
+        for (final short flags : ((NewLightChunk) chunk).getNeighborLightChecks())
         {
             list.appendTag(new NBTTagShort(flags));
 
@@ -561,11 +562,11 @@ public class LightingHooks
 
             if (list.tagCount() == FLAG_COUNT)
             {
-                initNeighborLightChecks(chunk);
+                initNeighborLightChecks((NewLightChunk) chunk);
 
                 for (int i = 0; i < FLAG_COUNT; ++i)
                 {
-                    chunk.neighborLightChecks[i] = ((NBTTagShort) list.get(i)).getShort();
+                    ((NewLightChunk) chunk).getNeighborLightChecks()[i] = ((NBTTagShort) list.get(i)).getShort();
                 }
             }
             else

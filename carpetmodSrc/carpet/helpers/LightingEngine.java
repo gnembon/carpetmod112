@@ -4,6 +4,7 @@ package carpet.helpers;
  * Copyright PhiPro
  */
 
+import carpet.utils.extensions.NewLightChunk;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.EnumFacing;
@@ -426,7 +427,7 @@ public class LightingEngine {
     }
 
     private int posToCachedLight(final MutableBlockPos pos, final Chunk chunk) {
-        return ((Chunk) chunk).getCachedLightFor(this.lightType, pos);
+        return ((NewLightChunk) chunk).getCachedLightFor(this.lightType, pos);
     }
 
     private int curToCachedLight() {

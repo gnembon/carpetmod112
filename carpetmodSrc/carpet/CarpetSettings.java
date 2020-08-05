@@ -22,6 +22,7 @@ import carpet.carpetclient.CarpetClientRuleChanger;
 import carpet.helpers.RandomTickOptimization;
 import carpet.helpers.ScoreboardDelta;
 import carpet.mixin.accessors.BlockAccessor;
+import carpet.mixin.accessors.WorldAccessor;
 import carpet.patches.BlockWool;
 import carpet.utils.TickingArea;
 import carpet.worldedit.WorldEditBridge;
@@ -33,6 +34,7 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldServerMulti;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,8 +42,10 @@ import net.minecraft.server.MinecraftServer;
 
 import static carpet.CarpetSettings.RuleCategory.*;
 
-public class CarpetSettings
+public final class CarpetSettings
 {
+    private CarpetSettings() {}
+
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
@@ -161,16 +165,9 @@ public class CarpetSettings
     @Rule(desc = "Sets the instant scheduled updates instantly to true. The boolean used in world population that can be exploited turning true making all repeaters, comperators, observers and similar components update instantly.", category = CREATIVE, validator = "validateInstantScheduling")
     public static boolean instantScheduling = false;
     private static boolean validateInstantScheduling(boolean value) {
-        if (value) {
-            for (int dim = 0; dim < 3; dim++) {
-                WorldServer world = CarpetServer.minecraft_server.worlds[dim];
-                world.scheduledUpdatesAreImmediate = true;
-            }
-        }else {
-            for (int dim = 0; dim < 3; dim++) {
-                WorldServer world = CarpetServer.minecraft_server.worlds[dim];
-                world.scheduledUpdatesAreImmediate = false;
-            }
+        for (int dim = 0; dim < 3; dim++) {
+            WorldServer world = CarpetServer.minecraft_server.worlds[dim];
+            ((WorldAccessor) world).setScheduledUpdatesAreImmediate(value);
         }
         return true;
     }

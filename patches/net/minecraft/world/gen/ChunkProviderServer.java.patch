@@ -1,6 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -27,15 +27,25 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.world.gen;
+ 
++import carpet.utils.extensions.NewLightWorld;
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Sets;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+@@ -20,6 +21,7 @@
+ import net.minecraft.world.MinecraftException;
+ import net.minecraft.world.World;
+ import net.minecraft.world.WorldServer;
++import net.minecraft.world.WorldServerMulti;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.chunk.Chunk;
+ import net.minecraft.world.chunk.IChunkProvider;
+@@ -27,15 +29,25 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -30,7 +45,7 @@
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
          this.field_73251_h = p_i46838_1_;
-@@ -50,8 +60,18 @@
+@@ -50,8 +62,18 @@
  
      public void func_189549_a(Chunk p_189549_1_)
      {
@@ -50,7 +65,7 @@
              this.field_73248_b.add(Long.valueOf(ChunkPos.func_77272_a(p_189549_1_.field_76635_g, p_189549_1_.field_76647_h)));
              p_189549_1_.field_189550_d = true;
          }
-@@ -59,6 +79,7 @@
+@@ -59,6 +81,7 @@
  
      public void func_73240_a()
      {
@@ -58,7 +73,7 @@
          ObjectIterator objectiterator = this.field_73244_f.values().iterator();
  
          while (objectiterator.hasNext())
-@@ -76,6 +97,11 @@
+@@ -76,6 +99,11 @@
  
          if (chunk != null)
          {
@@ -70,7 +85,7 @@
              chunk.field_189550_d = false;
          }
  
-@@ -93,9 +119,17 @@
+@@ -93,9 +121,17 @@
  
              if (chunk != null)
              {
@@ -88,7 +103,7 @@
              }
          }
  
-@@ -113,6 +147,11 @@
+@@ -113,6 +149,11 @@
              try
              {
                  chunk = this.field_186029_c.func_185932_a(p_186025_1_, p_186025_2_);
@@ -100,7 +115,7 @@
              }
              catch (Throwable throwable)
              {
-@@ -123,7 +162,7 @@
+@@ -123,7 +164,7 @@
                  crashreportcategory.func_71507_a("Generator", this.field_186029_c);
                  throw new ReportedException(crashreport);
              }
@@ -109,16 +124,16 @@
              this.field_73244_f.put(i, chunk);
              chunk.func_76631_c();
              chunk.func_186030_a(this, this.field_186029_c);
-@@ -185,6 +224,8 @@
+@@ -185,6 +226,8 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
 +        // NewLight PHIPRO-CARPET
-+        if (CarpetSettings.newLight) this.field_73251_h.lightingEngine.procLightUpdates();
++        if (CarpetSettings.newLight) ((NewLightWorld) this.field_73251_h).getLightingEngine().procLightUpdates();
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -222,8 +263,12 @@
+@@ -222,8 +265,12 @@
      {
          if (!this.field_73251_h.field_73058_d)
          {
@@ -128,11 +143,11 @@
 +                if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
 +                    carpet.carpetclient.CarpetClientChunkLogger.setReason("Unloading chunk and writing to disk");
 +                // NewLight PHIPRO-CARPET
-+                if (CarpetSettings.newLight) this.field_73251_h.lightingEngine.procLightUpdates();
++                if (CarpetSettings.newLight) ((NewLightWorld) this.field_73251_h).getLightingEngine().procLightUpdates();
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -231,16 +276,47 @@
+@@ -231,16 +278,47 @@
                      Long olong = iterator.next();
                      Chunk chunk = (Chunk)this.field_73244_f.get(olong);
  
@@ -181,7 +196,7 @@
  
              this.field_73247_e.func_75817_a();
          }
-@@ -283,6 +359,11 @@
+@@ -283,6 +361,11 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
      }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import carpet.mixin.accessors.WorldAccessor;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -43,7 +44,7 @@ public class CollisionBoxesOptimizations
             {
                 for (int cz = chunkStartZ; cz <= chunkEndZ; cz++)
                 {
-                    if (world.isChunkLoaded(cx, cz, false))
+                    if (((WorldAccessor) world).invokeIsChunkLoaded(cx, cz, false))
                     {
                         Chunk chunk = world.getChunk(cx, cz);
                         final int xMin = Math.max(cx << 4, startX);

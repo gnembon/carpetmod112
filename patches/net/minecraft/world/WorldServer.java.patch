@@ -117,7 +117,7 @@
          int j = this.func_72967_a(1.0F);
  
          if (j != this.func_175657_ab())
-@@ -200,26 +242,76 @@
+@@ -200,26 +242,68 @@
              this.func_175692_b(j);
          }
  
@@ -162,8 +162,7 @@
          this.field_73063_M.func_72693_b();
 +        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.PLAYER_CHUNK_MAP, LagSpikeHelper.PrePostSubPhase.POST);
 +
-+        if (TickSpeed.process_entities)
-+        { // CM indent
++        if (TickSpeed.process_entities) { // CM indent
          this.field_72984_F.func_76318_c("village");
 +        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.VILLAGE, LagSpikeHelper.PrePostSubPhase.PRE);
          this.field_72982_D.func_75544_a();
@@ -171,13 +170,6 @@
 +        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.VILLAGE, LagSpikeHelper.PrePostSubPhase.POST);
          this.field_72984_F.func_76318_c("portalForcer");
          this.field_85177_Q.func_85189_a(this.func_82737_E());
-+		}
-+		
-+		// NewLight PHIPRO-CARPET
-+		if (CarpetSettings.newLight)
-+        {
-+            this.field_72984_F.func_76318_c("lighting");
-+            this.lightingEngine.procLightUpdates();
 +        }
          this.field_72984_F.func_76319_b();
 +
@@ -196,7 +188,7 @@
      }
  
      @Nullable
-@@ -255,8 +347,15 @@
+@@ -255,8 +339,15 @@
                      ++j;
                  }
              }
@@ -214,7 +206,7 @@
          }
      }
  
-@@ -287,6 +386,28 @@
+@@ -287,6 +378,28 @@
      {
          if (this.field_73068_P && !this.field_72995_K)
          {
@@ -243,7 +235,7 @@
              for (EntityPlayer entityplayer : this.field_73010_i)
              {
                  if (!entityplayer.func_175149_v() && !entityplayer.func_71026_bH())
-@@ -303,7 +424,7 @@
+@@ -303,7 +416,7 @@
          }
      }
  
@@ -252,7 +244,7 @@
      {
          return this.func_72863_F().func_73149_a(p_175680_1_, p_175680_2_);
      }
-@@ -344,6 +465,7 @@
+@@ -344,6 +457,7 @@
              boolean flag = this.func_72896_J();
              boolean flag1 = this.func_72911_I();
              this.field_72984_F.func_76320_a("pollingChunks");
@@ -260,7 +252,7 @@
  
              for (Iterator<Chunk> iterator = this.field_73063_M.func_187300_b(); iterator.hasNext(); this.field_72984_F.func_76319_b())
              {
-@@ -355,9 +477,14 @@
+@@ -355,9 +469,14 @@
                  chunk.func_76594_o();
                  this.field_72984_F.func_76318_c("tickChunk");
                  chunk.func_150804_b(false);
@@ -276,7 +268,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int l = this.field_73005_l >> 2;
-@@ -385,7 +512,7 @@
+@@ -385,7 +504,7 @@
  
                  this.field_72984_F.func_76318_c("iceandsnow");
  
@@ -285,7 +277,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int j2 = this.field_73005_l >> 2;
-@@ -443,7 +570,7 @@
+@@ -443,7 +562,7 @@
          }
      }
  
@@ -294,7 +286,7 @@
      {
          BlockPos blockpos = this.func_175725_q(p_175736_1_);
          AxisAlignedBB axisalignedbb = (new AxisAlignedBB(blockpos, new BlockPos(blockpos.func_177958_n(), this.func_72800_K(), blockpos.func_177952_p()))).func_186662_g(3.0D);
-@@ -472,13 +599,25 @@
+@@ -472,13 +591,25 @@
  
      public boolean func_175691_a(BlockPos p_175691_1_, Block p_175691_2_)
      {
@@ -322,7 +314,7 @@
          return this.field_73064_N.contains(nextticklistentry);
      }
  
-@@ -503,15 +642,22 @@
+@@ -503,15 +634,22 @@
                      {
                          iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
                      }
@@ -347,7 +339,7 @@
  
          if (this.func_175667_e(p_175654_1_))
          {
-@@ -531,7 +677,13 @@
+@@ -531,7 +669,13 @@
  
      public void func_180497_b(BlockPos p_180497_1_, Block p_180497_2_, int p_180497_3_, int p_180497_4_)
      {
@@ -362,7 +354,7 @@
          nextticklistentry.func_82753_a(p_180497_4_);
          Material material = p_180497_2_.func_176223_P().func_185904_a();
  
-@@ -549,7 +701,8 @@
+@@ -549,7 +693,8 @@
  
      public void func_72939_s()
      {
@@ -372,7 +364,7 @@
          {
              if (this.field_80004_Q++ >= 300)
              {
-@@ -644,9 +797,18 @@
+@@ -644,9 +789,18 @@
              }
              else
              {
@@ -393,7 +385,7 @@
                  }
  
                  this.field_72984_F.func_76320_a("cleaning");
-@@ -677,6 +839,8 @@
+@@ -677,6 +831,8 @@
  
                      if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0), nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0)))
                      {
@@ -402,7 +394,7 @@
                          IBlockState iblockstate = this.func_180495_p(nextticklistentry1.field_180282_a);
  
                          if (iblockstate.func_185904_a() != Material.field_151579_a && Block.func_149680_a(iblockstate.func_177230_c(), nextticklistentry1.func_151351_a()))
-@@ -699,6 +863,7 @@
+@@ -699,6 +855,7 @@
                          this.func_175684_a(nextticklistentry1.field_180282_a, nextticklistentry1.func_151351_a(), 0);
                      }
                  }
@@ -410,7 +402,7 @@
  
                  this.field_72984_F.func_76319_b();
                  this.field_94579_S.clear();
-@@ -950,11 +1115,18 @@
+@@ -950,11 +1107,18 @@
  
              chunkproviderserver.func_186027_a(p_73044_1_);
  
@@ -430,7 +422,7 @@
                  }
              }
          }
-@@ -1033,9 +1205,15 @@
+@@ -1033,9 +1197,15 @@
                  }
                  else
                  {
@@ -446,7 +438,7 @@
                          return false;
                      }
  
-@@ -1139,6 +1317,7 @@
+@@ -1139,6 +1309,7 @@
          }
  
          this.field_147490_S[this.field_147489_T].add(blockeventdata);
@@ -454,7 +446,7 @@
      }
  
      private void func_147488_Z()
-@@ -1150,14 +1329,19 @@
+@@ -1150,14 +1321,19 @@
  
              for (BlockEventData blockeventdata : this.field_147490_S[i])
              {
@@ -474,7 +466,7 @@
      }
  
      private boolean func_147485_a(BlockEventData p_147485_1_)
-@@ -1299,4 +1483,19 @@
+@@ -1299,4 +1475,19 @@
              {
              }
          }

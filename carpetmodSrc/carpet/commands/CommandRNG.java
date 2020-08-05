@@ -5,6 +5,7 @@ import java.util.*;
 
 import javax.annotation.Nullable;
 
+import carpet.mixin.accessors.WorldAccessor;
 import carpet.utils.Messenger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -249,14 +250,15 @@ public class CommandRNG extends CommandCarpetBase {
         } else if ("getLCG".equalsIgnoreCase(args[0])) {
             ArrayList<Object> strings = new ArrayList<>();
             for (World world : server.worlds) {
-                Messenger.m(sender, "w " + world.provider.getDimensionType().toString() + ": ", "c " + world.updateLCG, "^w Dimention LCG at beginning of game loop : " + world.updateLCG, "?/rng setLCG " + world.provider.getDimensionType().toString() + " " + world.updateLCG);
+                int seed = ((WorldAccessor) world).getUpdateLCG();
+                Messenger.m(sender, "w " + world.provider.getDimensionType().toString() + ": ", "c " + seed, "^w Dimension LCG at beginning of game loop : " + seed, "?/rng setLCG " + world.provider.getDimensionType().toString() + " " + seed);
             }
         } else if ("setLCG".equalsIgnoreCase(args[0])) {
             if (args.length == 3) {
                 for (World world : server.worlds) {
                     if (world.provider.getDimensionType().toString().equals(args[1])) {
                         try {
-                            world.updateLCG = Integer.parseInt(args[2]);
+                            ((WorldAccessor) world).setUpdateLCG(Integer.parseInt(args[2]));
                             notifyCommandListener(sender, this, world.provider.getDimensionType() + " LCG changed to " + args[2]);
                         } catch (Exception e) {
                         }

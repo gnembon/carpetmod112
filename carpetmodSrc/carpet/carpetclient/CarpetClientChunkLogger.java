@@ -25,6 +25,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -44,13 +45,23 @@ public class CarpetClientChunkLogger {
         NONE,
         UNLOADING,
         LOADING,
-        PLAYER_ENTERS,
-        PLAYER_LEAVES,
+        PLAYER_ENTERS("Player added to chunk"),
+        PLAYER_LEAVES("Player removed from chunk"),
         QUEUE_UNLOAD,
         CANCEL_UNLOAD,
         GENERATING,
-        POPULATING,
-        GENERATING_STRUCTURES;
+        POPULATING("Populating chunk"),
+        GENERATING_STRUCTURES("Generating structure");
+
+        public final @Nullable String reason;
+
+        Event() {
+            this.reason = null;
+        }
+
+        Event(@Nullable String reason) {
+            this.reason = reason;
+        }
     }
 
     private static class ChunkLog {
@@ -118,7 +129,8 @@ public class CarpetClientChunkLogger {
      * logs a change in a chunk including a stacktrace if required by the client
      */
     public void log(World w, int x, int z, Event e) {
-        log(x, z, getWorldIndex(w), e, stackTraces.internStackTrace(), stackTraces.internReason());
+        if (!enabled) return;
+        log(x, z, getWorldIndex(w), e, stackTraces.internStackTrace(), e.reason != null ? stackTraces.internString(e.reason) : stackTraces.internReason());
     }
 
     /*

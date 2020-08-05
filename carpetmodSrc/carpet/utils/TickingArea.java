@@ -19,6 +19,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import carpet.mixin.accessors.MinecraftServerAccessor;
+import carpet.utils.extensions.WorldWithTickingAreas;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,20 +42,20 @@ public abstract class TickingArea
     
     public static boolean isTickingChunk(World world, int chunkX, int chunkZ)
     {
-        return world.tickingChunks.contains(ChunkPos.asLong(chunkX, chunkZ));
+        return ((WorldWithTickingAreas) world).getTickingChunks().contains(ChunkPos.asLong(chunkX, chunkZ));
     }
     
     public static List<TickingArea> getTickingAreas(World world)
     {
-        return Collections.unmodifiableList(world.tickingAreas);
+        return Collections.unmodifiableList(((WorldWithTickingAreas) world).getTickingAreas());
     }
     
     public static void addTickingArea(World world, TickingArea area)
     {
-        world.tickingAreas.add(area);
+        ((WorldWithTickingAreas) world).getTickingAreas().add(area);
         for (ChunkPos pos : area.listIncludedChunks(world))
         {
-            world.tickingChunks.add(ChunkPos.asLong(pos.x, pos.z));
+            ((WorldWithTickingAreas) world).getTickingChunks().add(ChunkPos.asLong(pos.x, pos.z));
         }
     }
     
@@ -71,7 +72,7 @@ public abstract class TickingArea
     private static boolean removeTickingAreaIf(World world, Predicate<TickingArea> predicate)
     {
         boolean anyRemoved = false;
-        Iterator<TickingArea> itr = world.tickingAreas.iterator();
+        Iterator<TickingArea> itr = ((WorldWithTickingAreas) world).getTickingAreas().iterator();
         while (itr.hasNext())
         {
             TickingArea area = itr.next();
@@ -81,9 +82,9 @@ public abstract class TickingArea
                 anyRemoved = true;
                 for (ChunkPos chunk : area.listIncludedChunks(world))
                 {
-                    if (world.tickingAreas.stream().noneMatch(a -> a.contains(world, chunk.x, chunk.z)))
+                    if (((WorldWithTickingAreas) world).getTickingAreas().stream().noneMatch(a -> a.contains(world, chunk.x, chunk.z)))
                     {
-                        world.tickingChunks.remove(ChunkPos.asLong(chunk.x, chunk.z));
+                        ((WorldWithTickingAreas) world).getTickingChunks().remove(ChunkPos.asLong(chunk.x, chunk.z));
                     }
                 }
             }
@@ -93,13 +94,13 @@ public abstract class TickingArea
     
     public static void removeAllTickingAreas(World world)
     {
-        world.tickingAreas.clear();
-        world.tickingChunks.clear();
+        ((WorldWithTickingAreas) world).getTickingAreas().clear();
+        ((WorldWithTickingAreas) world).getTickingChunks().clear();
     }
     
     public static boolean hasTickingArea(World world)
     {
-        return !world.tickingAreas.isEmpty();
+        return !((WorldWithTickingAreas) world).getTickingAreas().isEmpty();
     }
     
     // CONFIG
@@ -177,7 +178,7 @@ public abstract class TickingArea
             
             try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(configFile))))
             {
-                for (TickingArea area : world.tickingAreas)
+                for (TickingArea area : ((WorldWithTickingAreas) world).getTickingAreas())
                 {
                     String val = String.join(" ", Arrays.stream(area.writeToConfig()).filter(arg -> arg != null).toArray(String[]::new));
                     writer.println(val);
