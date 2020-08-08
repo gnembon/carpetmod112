@@ -1,6 +1,19 @@
 package carpet.helpers;
 
+import carpet.launch.MixinServiceCarpetMod;
+import carpet.utils.LRUCache;
+import org.apache.commons.lang3.tuple.Pair;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.*;
+import org.spongepowered.asm.mixin.transformer.meta.MixinMerged;
+import org.spongepowered.asm.service.mojang.MixinServiceLaunchWrapper;
+import org.spongepowered.asm.util.Annotations;
+
+import javax.annotation.Nullable;
 import java.io.*;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -25,13 +38,12 @@ public class StackTraceDeobfuscator {
     private String srgUrl;
     private String namesUrl;
     private StackTraceElement[] stackTrace;
-    private ClassLoader classLoader = StackTraceDeobfuscator.class.getClassLoader();
 
-    private Map<String, String> classMappings, methodMappings, methodDescCache, methodNames;
+    private final LRUCache<StackTraceElement, StackTraceElement> deobfCache = new LRUCache<>(1024);
+    private Map<String, String> classMappings, methodMappings, methodNames;
 
     private static final Map<String, Map<String, String>> classMappingsCache = new HashMap<>(),
             methodMappingsCache = new HashMap<>(),
-            methodDescCaches = new HashMap<>(),
             methodNamesCache = new HashMap<>();
     private static final Set<String> srgUrlsLoaded = new HashSet<>(), namesUrlsLoaded = new HashSet<>();
     private static final Object SRG_SYNC_LOCK = new Object();
@@ -92,11 +104,6 @@ public class StackTraceDeobfuscator {
         return withStackTrace(Arrays.copyOfRange(stackTrace, firstIndex, stackTrace.length));
     }
 
-    public StackTraceDeobfuscator withClassLoader(ClassLoader classLoader) {
-        this.classLoader = classLoader;
-        return this;
-    }
-
     // IMPLEMENTATION
 
     private void ensureSrgLoaded() {
@@ -137,11 +144,9 @@ public class StackTraceDeobfuscator {
             if (!loadingSrg) {
                 classMappingsCache.put(srgUrl, new HashMap<>());
                 methodMappingsCache.put(srgUrl, new HashMap<>());
-                methodDescCaches.put(srgUrl, new HashMap<>());
             }
             classMappings = classMappingsCache.get(srgUrl);
             methodMappings = methodMappingsCache.get(srgUrl);
-            methodDescCache = methodDescCaches.get(srgUrl);
         }
 
 
@@ -298,130 +303,115 @@ public class StackTraceDeobfuscator {
     }
 
     private StackTraceElement deobfuscate(StackTraceElement elem) {
-        String className = elem.getClassName().replace('.', '/');
-
-        ensureSrgLoaded();
-        if (!classMappings.containsKey(className))
-            return elem;
-
-        String methodName = elem.getMethodName();
-        String methodDesc;
-        try {
-            methodDesc = getMethodDesc(elem);
-        } catch (IOException e) {
-            methodDesc = null;
-        }
-        if (methodDesc == null) {
-            // System.err.println("Failed to get method desc for " + className + "/" + methodName + "@" + elem.getLineNumber());
-            return elem;
-        }
-
-        String key = className + "/" + methodName + methodDesc;
-        ensureNamesLoaded();
-        if (methodMappings.containsKey(key)) {
-            methodName = methodMappings.get(key);
-            if (methodNames != null && methodNames.containsKey(methodName))
-                methodName = methodNames.get(methodName);
-        }
-        className = classMappings.get(className);
-        className = className.replace('/', '.');
-
-        return new StackTraceElement(className, methodName, createFileName(className, elem.getFileName()), elem.getLineNumber());
+        return deobfCache.computeIfAbsent(elem, e -> {
+            StackTraceElement deobf = computeDeobfuscatedElement(e);
+            System.out.println(deobf);
+            return deobf;
+        });
     }
 
-    private String getMethodDesc(StackTraceElement elem) throws IOException {
+    private StackTraceElement computeDeobfuscatedElement(StackTraceElement elem) {
         String className = elem.getClassName().replace('.', '/');
+        ensureSrgLoaded();
+        // if (!classMappings.containsKey(className)) return elem;
         String methodName = elem.getMethodName();
-        int lineNumber = elem.getLineNumber();
-        if (methodDescCache.containsKey(className + "/" + methodName + "@" + lineNumber)) {
-            return methodDescCache.get(className + "/" + methodName + "@" + lineNumber);
-        }
-
-        // Java Class File Format:
-        // https://docs.oracle.com/javase/specs/jvms/se7/html/jvms-4.html
-
-        InputStream is = classLoader.getResourceAsStream(className + ".class");
-        if (is == null)
-            return null;
-        DataInputStream dataIn = new DataInputStream(is);
-        skip(dataIn, 8); // header
-
-        // constant pool
-        Map<Integer, String> stringConstants = new HashMap<>();
-        int cpCount = dataIn.readUnsignedShort();
-        int[] constSizes = {-1, -1, -1, 4, 4, 8, 8, 2, 2, 4, 4, 4, 4, -1, -1, 3, 2, -1, 4};
-        for (int cpIndex = 1; cpIndex < cpCount; cpIndex++) {
-            int tag = dataIn.readUnsignedByte();
-            if (tag == 1) { // CONSTANT_Utf8
-                stringConstants.put(cpIndex, dataIn.readUTF());
-                //System.out.println(cpIndex + " -> " + stringConstants.get(cpIndex));
-            } else {
-                if (tag == 5 || tag == 6) { // CONSTANT_Long or CONSTANT_Double
-                    cpIndex++;
-                }
-                skip(dataIn, constSizes[tag]);
-            }
-        }
-
-        skip(dataIn, 6); // more boring information
-
-        // Need to know interface count to know how much to skip over
-        int interfaceCount = dataIn.readUnsignedShort();
-        skip(dataIn, interfaceCount * 2);
-
-        // Skip over the fields
-        int fieldCount = dataIn.readUnsignedShort();
-        for (int i = 0; i < fieldCount; i++) {
-            skip(dataIn, 6);
-            int attrCount = dataIn.readUnsignedShort();
-            for (int j = 0; j < attrCount; j++) {
-                skip(dataIn, 2);
-                long length = Integer.toUnsignedLong(dataIn.readInt());
-                skip(dataIn, length);
-            }
-        }
-
-        // Methods, now we're talking
-        int methodCount = dataIn.readUnsignedShort();
-        for (int i = 0; i < methodCount; i++) {
-            skip(dataIn, 2); // access
-            String name = stringConstants.get(dataIn.readUnsignedShort());
-            String desc = stringConstants.get(dataIn.readUnsignedShort());
-            int attrCount = dataIn.readUnsignedShort();
-            for (int j = 0; j < attrCount; j++) {
-                String attrName = stringConstants.get(dataIn.readUnsignedShort());
-                long length = Integer.toUnsignedLong(dataIn.readInt());
-                if (name.equals(methodName) && attrName.equals("Code")) {
-                    skip(dataIn, 4); // max stack + locals
-                    long codeLength = Integer.toUnsignedLong(dataIn.readInt());
-                    skip(dataIn, codeLength);
-                    int exceptionTableLength = dataIn.readUnsignedShort();
-                    skip(dataIn, exceptionTableLength * 8);
-                    int codeAttrCount = dataIn.readUnsignedShort();
-                    for (int k = 0; k < codeAttrCount; k++) {
-                        String codeAttrName = stringConstants.get(dataIn.readUnsignedShort());
-                        long codeAttrLength = Integer.toUnsignedLong(dataIn.readInt());
-                        if (codeAttrName.equals("LineNumberTable")) {
-                            int lineNumberTableLength = dataIn.readUnsignedShort();
-                            for (int l = 0; l < lineNumberTableLength; l++) {
-                                skip(dataIn, 2); // start_pc
-                                int lineNo = dataIn.readUnsignedShort();
-                                if (lineNo == lineNumber) {
-                                    methodDescCache.put(className + "/" + methodName + "@" + lineNumber, desc);
-                                    return desc;
-                                }
-                            }
-                        } else {
-                            skip(dataIn, codeAttrLength);
+        String fileName = elem.getFileName();
+        int line = elem.getLineNumber();
+        try {
+            ClassNode classNode = MixinServiceCarpetMod.getClass(elem.getClassName(), true);
+            if (classNode != null) {
+                MethodNode method = findMethod(classNode.methods, methodName, line);
+                if (method != null) {
+                    Pair<ClassNode, MethodNode> mixinMethod = findMatchingMixin(method);
+                    if (mixinMethod != null) {
+                        // This method was merged from a mixin
+                        classNode = mixinMethod.getLeft();
+                        className = classNode.name;
+                        // reset file name so it gets generated from the class name
+                        fileName = null;
+                        int origFirstLine = getFirstLine(method);
+                        method = mixinMethod.getRight();
+                        methodName = method.name;
+                        int mixinFirstLine = getFirstLine(method);
+                        // Mixin translates the line numbers, but relative to each other they are still correct
+                        if (origFirstLine > 0 && mixinFirstLine > 0) {
+                            line -= origFirstLine - mixinFirstLine;
                         }
+                    } else {
+                        // Not a mixin, try to remap method & class
+                        String key = className + "/" + methodName + method.desc;
+                        ensureNamesLoaded();
+                        if (methodMappings.containsKey(key)) {
+                            methodName = methodMappings.get(key);
+                            if (methodNames != null && methodNames.containsKey(methodName))
+                                methodName = methodNames.get(methodName);
+                        }
+                        className = classMappings.getOrDefault(className, className);
                     }
-                } else {
-                    skip(dataIn, length);
+                    className = className.replace('/', '.');
+                    fileName = createFileName(className, fileName);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new StackTraceElement(className, methodName, fileName, line);
+    }
+
+    @Nullable
+    private static MethodNode findMethod(List<MethodNode> methods, String methodName, int line) {
+        Set<MethodNode> methodsWithMatchingName = methods.stream()
+                .filter(m -> methodName.equals(m.name))
+                .collect(Collectors.toSet());
+        if (methodsWithMatchingName.size() == 1) {
+            return methodsWithMatchingName.iterator().next();
+        }
+        for (MethodNode method : methodsWithMatchingName) {
+            if (containsLine(method, line)) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    private static int getFirstLine(MethodNode method) {
+        for (Iterator<AbstractInsnNode> iter = method.instructions.iterator(); iter.hasNext();) {
+            AbstractInsnNode insn = iter.next();
+            if (insn instanceof LineNumberNode) {
+                return ((LineNumberNode) insn).line;
+            }
+        }
+        return -1;
+    }
+
+    private Pair<ClassNode, MethodNode> findMatchingMixin(MethodNode method) {
+        if (method.visibleAnnotations == null) return null;
+        AnnotationNode merged = Annotations.getVisible(method, MixinMerged.class);
+        if (merged == null) return null;
+        String mixinClassName = Annotations.getValue(merged, "mixin");
+        String methodName = method.name.substring(method.name.lastIndexOf('$') + 1);
+        try {
+            ClassNode mixinClass = MixinServiceCarpetMod.getClass(mixinClassName, false);
+            if (mixinClass == null) return null;
+            for (MethodNode mixinMethod : mixinClass.methods) {
+                if (mixinMethod.name.equals(methodName) && mixinMethod.desc.equals(method.desc)) {
+                    return Pair.of(mixinClass, mixinMethod);
+                }
+            }
+        } catch (IOException ignored) {}
+        return null;
+    }
+
+    private static boolean containsLine(MethodNode method, int line) {
+        for (Iterator<AbstractInsnNode> iter = method.instructions.iterator(); iter.hasNext();) {
+            AbstractInsnNode insn = iter.next();
+            if (insn instanceof LineNumberNode) {
+                if (((LineNumberNode) insn).line == line) {
+                    return true;
                 }
             }
         }
-
-        return null;
+        return false;
     }
 
     private static void skip(DataInputStream dataIn, long n) throws IOException {
