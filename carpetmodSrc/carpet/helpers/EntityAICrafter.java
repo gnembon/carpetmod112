@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import carpet.mixin.accessors.EntityVillagerAccessor;
 import carpet.mixin.accessors.IngredientAccessor;
 import com.google.common.collect.Lists;
 
@@ -63,23 +64,22 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
 public class EntityAICrafter extends EntityAIBase {
-
-	private EntityVillager villager;
+	private final EntityVillager villager;
 	private int currentTask;
 	private int craftingCooldown;
 
-	private int[] tasks = new int[3];
+	private final int[] tasks = new int[3];
 	private final int tier2Unlock = 1200 * 8;
 	private final int tier3Unlock = 1200 * 64;
-	private IRecipe[] taskList = new IRecipe[3];
+	private final IRecipe[] taskList = new IRecipe[3];
 
 	private final int foodSlot = 7;
-	private int[] food = new int[3];
+	private final int[] food = new int[3];
 	private int foodSize;
 	private float foodSpeed;
-	private static Item[] foods = { Items.BREAD, Items.POTATO, Items.CARROT, Items.BEETROOT };
+	private static final Item[] foods = { Items.BREAD, Items.POTATO, Items.CARROT, Items.BEETROOT };
 
-	private Random randy = new Random();
+	private final Random randy = new Random();
 	private int cooldown;
 	private int batchSize;
 	private int foodCooldown;
@@ -96,7 +96,7 @@ public class EntityAICrafter extends EntityAIBase {
 	
 	private boolean inishilized = false;
 
-	private static String[] recipeList = { "yellow_wool", // 0
+	private static final String[] recipeList = { "yellow_wool", // 0
 			"yellow_stained_hardened_clay", // 1
 			"yellow_stained_glass_pane", // 2
 			"yellow_stained_glass", // 3
@@ -530,7 +530,7 @@ public class EntityAICrafter extends EntityAIBase {
 			"acacia_boat" // 431
 	};
 
-	private static String[] tier1 = { "blaze_powder", // 401
+	private static final String[] tier1 = { "blaze_powder", // 401
 			"bucket", // 369
 			"fire_charge", // 303
 			"glowstone", // 295
@@ -566,7 +566,7 @@ public class EntityAICrafter extends EntityAIBase {
 			"mossy_cobblestone", // 162
 	};
 
-	private static String[] tier2 = { "dark_prismarine", // 331
+	private static final String[] tier2 = { "dark_prismarine", // 331
 			"fence", // 306
 			"fence_gate", // 305
 			"furnace", // 299
@@ -607,7 +607,7 @@ public class EntityAICrafter extends EntityAIBase {
 			"iron_door", // 249
 	};
 
-	private static String[] tier3 = { "beacon", // 419
+	private static final String[] tier3 = { "beacon", // 419
 			"brewing_stand", // 382
 			"chest", // 365
 			"detector_rail", // 329
@@ -810,10 +810,11 @@ public class EntityAICrafter extends EntityAIBase {
 			} else {
 				craftingCanHappen = false;
 			}
-		} else if (craftingCooldown > 0) {
+		} else {
 			if (eatFood()) {
-				if (villager.wealth < 12000000) {
-					villager.wealth++;
+				EntityVillagerAccessor acc = (EntityVillagerAccessor) villager;
+				if (acc.getWealth() < 12000000) {
+					acc.setWealth(acc.getWealth() + 1);
 				}
 				craftingCooldown--;
 				encodeVillager();
@@ -829,7 +830,7 @@ public class EntityAICrafter extends EntityAIBase {
 		if (craftingTablePosition != null && researchCraftingTable > 0) {
 			researchCraftingTable--;
 			villager.getLookHelper().setLookPosition((double) craftingTablePosition.getX() + 0.5D,
-					(double) (craftingTablePosition.getY() + 1.5), (double) craftingTablePosition.getZ() + 0.5D, 10.0F,
+					craftingTablePosition.getY() + 1.5, (double) craftingTablePosition.getZ() + 0.5D, 10.0F,
 					(float) villager.getVerticalFaceSpeed());
 		} else if (researchCraftingTable <= 0) {
 			researchCraftingTable = 100;
@@ -860,23 +861,24 @@ public class EntityAICrafter extends EntityAIBase {
 	 */
 	private void setName() {
 		String s = null;
-		if (villager.wealth == 12000000) {
+		EntityVillagerAccessor acc = (EntityVillagerAccessor) villager;
+		if (acc.getWealth() == 12000000) {
 			s = "Grandmaster";
-		} else if (villager.wealth > 8000000) {
+		} else if (acc.getWealth() > 8000000) {
 			s = "Meister";
-		} else if (villager.wealth > 4000000) {
+		} else if (acc.getWealth() > 4000000) {
 			s = "Craftsman";
-		} else if (villager.wealth > 2000000) {
+		} else if (acc.getWealth() > 2000000) {
 			s = "Journeyman";
-		} else if (villager.wealth > 1000000) {
+		} else if (acc.getWealth() > 1000000) {
 			s = "Apprentice";
-		} else if (villager.wealth > 500000) {
+		} else if (acc.getWealth() > 500000) {
 			s = "Novice";
-		} else if (villager.wealth > tier3Unlock) {
+		} else if (acc.getWealth() > tier3Unlock) {
 			s = "Casual";
-		} else if (villager.wealth > tier2Unlock) {
+		} else if (acc.getWealth() > tier2Unlock) {
 			s = "Nooblet";
-		} else if (villager.wealth > 1000) {
+		} else if (acc.getWealth() > 1000) {
 			s = "Nitwit";
 		}
 
@@ -910,13 +912,13 @@ public class EntityAICrafter extends EntityAIBase {
 	 * of the villager.
 	 */
 	private void calcCooldown() {
-		int welt = villager.wealth;
+		int welt = ((EntityVillagerAccessor) villager).getWealth();
 		if (welt < 0) {
 			welt = 1;
 		}
 		float foodSpeed = foodPreference();
 		cooldown = (int) ((107 / Math.pow(10, 0.0000001692d * welt) + 19) * foodSpeed);
-		batchSize = (int) (welt / 1713000) + 1;
+		batchSize = (welt / 1713000) + 1;
 	}
 
 	/**
@@ -964,10 +966,6 @@ public class EntityAICrafter extends EntityAIBase {
 		boolean crafted = false;
 
 		Map<ItemStack, Integer> map = genCraftingMap(currentTaskRecipe());
-
-		if (map == null) {
-			return false;
-		}
 
 		for (int batch = 0; batch < batchSize; batch++) {
 			Map<ItemStack, Integer> crafting = findRelativeInventoryItemsForCrafting(map, villagerInventory);
@@ -1050,8 +1048,8 @@ public class EntityAICrafter extends EntityAIBase {
 	 */
 	private Map<ItemStack, Integer> findRelativeInventoryItemsForCrafting(Map<ItemStack, Integer> list,
 			InventoryBasic villagerInventory) {
-		Map<ItemStack, Integer> crafting = new HashMap<ItemStack, Integer>();
-		Map<ItemStack, Integer> map = new HashMap<ItemStack, Integer>(list);
+		Map<ItemStack, Integer> crafting = new HashMap<>();
+		Map<ItemStack, Integer> map = new HashMap<>(list);
 
 		for (int i = 0; i < villagerInventory.getSizeInventory() - 1; ++i) {
 			for (Map.Entry<ItemStack, Integer> entry : map.entrySet()) {
@@ -1066,10 +1064,6 @@ public class EntityAICrafter extends EntityAIBase {
 					crafting.put(itemstack, reduce);
 
 					map.put(entry.getKey(), remains);
-
-					if (remains <= 0) {
-						continue;
-					}
 				}
 			}
 		}
@@ -1092,7 +1086,7 @@ public class EntityAICrafter extends EntityAIBase {
 	 * @return the list of items for the recipe and the amount per item.
 	 */
 	private Map<ItemStack, Integer> genCraftingMap(IRecipe recipe) {
-		Map<ItemStack, Integer> map = new HashMap<ItemStack, Integer>();
+		Map<ItemStack, Integer> map = new HashMap<>();
 		NonNullList<Ingredient> list = recipe.getIngredients();
 
 		for (Ingredient ig : list) {
@@ -1170,7 +1164,7 @@ public class EntityAICrafter extends EntityAIBase {
 			double d0 = craftingTablePosition.getX() + 0.5D - villager.posX;
 			double d1 = craftingTablePosition.getY() + 1.5D - (villager.posY + (double) villager.getEyeHeight());
 			double d2 = craftingTablePosition.getZ() + 0.5D - villager.posZ;
-			double d3 = (double) MathHelper.sqrt(d0 * d0 + d2 * d2);
+			double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
 			f1 = (float) (MathHelper.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
 			f2 = (float) (-(MathHelper.atan2(d1, d3) * (180D / Math.PI)));
 		}
@@ -1179,9 +1173,9 @@ public class EntityAICrafter extends EntityAIBase {
 		EntityItem entityitem = new EntityItem(villager.world, villager.posX, d0, villager.posZ, itemstack);
 		float f = 0.3F;
 
-		entityitem.motionX = (double) (-MathHelper.sin(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f);
-		entityitem.motionZ = (double) (MathHelper.cos(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f);
-		entityitem.motionY = (double) (-MathHelper.sin(f2 * 0.017453292F) * 0.3F + 0.1F);
+		entityitem.motionX = -MathHelper.sin(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f;
+		entityitem.motionZ = MathHelper.cos(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f;
+		entityitem.motionY = -MathHelper.sin(f2 * 0.017453292F) * 0.3F + 0.1F;
 		entityitem.setDefaultPickupDelay();
 		villager.world.spawnEntity(entityitem);
 	}
@@ -1262,9 +1256,7 @@ public class EntityAICrafter extends EntityAIBase {
 	private void checkJobSwitch(Item item) {
 		int unlocked = getUnlockedLevel();
 
-		if (unlocked <= 1) {
-			return;
-		} else {
+		if (unlocked > 1) {
 			int newJob = randy.nextInt() % unlocked;
 			while (currentTask == newJob || newJob < 0) {
 				newJob = randy.nextInt() % unlocked;
@@ -1297,16 +1289,13 @@ public class EntityAICrafter extends EntityAIBase {
 	 *         unlocked based on the crafting experience.
 	 */
 	private int getUnlockedLevel() {
-		int tier = 0;
-		if (villager.wealth < tier2Unlock) {
-			tier = 1;
-		} else if (villager.wealth < tier3Unlock) {
-			tier = 2;
-		} else {
-			tier = 3;
+		int wealth = ((EntityVillagerAccessor) villager).getWealth();
+		if (wealth < tier2Unlock) {
+			return 1;
+		} else if (wealth < tier3Unlock) {
+			return 2;
 		}
-
-		return tier;
+		return 3;
 	}
 
 	/**
@@ -1416,7 +1405,7 @@ public class EntityAICrafter extends EntityAIBase {
 	 */
 	private ItemStack addRecipeItem(ItemStack stack, InventoryBasic villagerInventory) {
 		ItemStack groundItem = stack.copy();
-		ItemStack inventoryItem = null;
+		ItemStack inventoryItem;
 		int emptySlot = -1;
 		boolean planks = plankCheck(groundItem);
 
@@ -1589,27 +1578,25 @@ public class EntityAICrafter extends EntityAIBase {
 	private void readoutDebugInfoOnMe() {
 		InventoryBasic villagerInventory = villager.getVillagerInventory();
 		StringBuilder sb = new StringBuilder();
-		try{
+		try {
 			calcCooldown();
 			sb.append("Crafter info:\n");
 			sb.append("Craftings:\n");
 			for (int i = 0; i < taskList.length; ++i) {
 				IRecipe ir = taskList[i];
-				sb.append("tier " + (i + 1) + ": " + ir.getRecipeOutput().getDisplayName() + "\n");
+				sb.append("tier ").append(i + 1).append(": ").append(ir.getRecipeOutput().getDisplayName()).append("\n");
 			}
-			sb.append("Current Task: " + currentTaskRecipe().getRecipeOutput().getDisplayName() + "\n");
-			sb.append("Crafting Cooldown(ticks)/Batch Size: " + cooldown + "/" + batchSize + "\n");
-			sb.append("Food consumption per craft: " + food[2] + "\n");
-			sb.append("Food preference: " + foods[food[0]].getItemStackDisplayName(new ItemStack(foods[food[0]]))
-					+ "\nFood dislike: " + foods[food[1]].getItemStackDisplayName(new ItemStack(foods[food[1]])) + "\n");
-			sb.append("Crafting experience: " + villager.wealth + "\n");
+			sb.append("Current Task: ").append(currentTaskRecipe().getRecipeOutput().getDisplayName()).append("\n");
+			sb.append("Crafting Cooldown(ticks)/Batch Size: ").append(cooldown).append("/").append(batchSize).append("\n");
+			sb.append("Food consumption per craft: ").append(food[2]).append("\n");
+			sb.append("Food preference: ").append(foods[food[0]].getItemStackDisplayName(new ItemStack(foods[food[0]]))).append("\nFood dislike: ").append(foods[food[1]].getItemStackDisplayName(new ItemStack(foods[food[1]]))).append("\n");
+			sb.append("Crafting experience: ").append(((EntityVillagerAccessor) villager).getWealth()).append("\n");
 	
 			sb.append("Inventory: \n");
 			for (int j = 0; j < villagerInventory.getSizeInventory(); ++j) {
-				sb.append("Slot: " + (j + 1) + ": " + villagerInventory.getStackInSlot(j).getDisplayName() + " : "
-						+ villagerInventory.getStackInSlot(j).getCount() + "\n");
+				sb.append("Slot: ").append(j + 1).append(": ").append(villagerInventory.getStackInSlot(j).getDisplayName()).append(" : ").append(villagerInventory.getStackInSlot(j).getCount()).append("\n");
 			}
-		}catch(Exception e){}
+		} catch(Exception ignored) {}
 		
 		Messenger.print_server_message(villager.getServer(), sb.toString());
 	}

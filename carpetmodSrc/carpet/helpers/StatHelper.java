@@ -1,5 +1,6 @@
 package carpet.helpers;
 
+import carpet.mixin.accessors.StatCraftingAccessor;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -18,6 +19,7 @@ import net.minecraft.stats.StatCrafting;
 import net.minecraft.stats.StatisticsManager;
 import net.minecraft.stats.StatisticsManagerServer;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -27,6 +29,8 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class StatHelper {
     private static final Logger LOGGER = LogManager.getLogger();
@@ -124,80 +128,46 @@ public class StatHelper {
         return OBJECTS_DROPPED_META_STATS.get((id << 4) | (meta & 0xf));
     }
 
-    public static void addCraftStats(Item item, StatCrafting baseStat) {
+    private interface StatStorage {
+        void store(int stateId, StatBase stat);
+    }
+
+    private static void registerSubStats(StatCrafting baseStat, StatStorage storage, Function<ITextComponent, TextComponentTranslation> textFun) {
+        Item item = ((StatCraftingAccessor) baseStat).getItem();
         int id = Item.getIdFromItem(item);
         if (item.getHasSubtypes()) {
             for (int meta = 0; meta < 16; meta++) {
                 int stateId = (id << 4) | meta;
                 ItemStack stackWithMeta = new ItemStack(item, 1, meta);
-                ITextComponent text = new TextComponentTranslation("stat.craftItem", stackWithMeta.getTextComponent());
+                ITextComponent text = textFun.apply(stackWithMeta.getTextComponent());
                 StatSubItem statWithMeta = (StatSubItem) new StatSubItem(baseStat, meta, text).registerStat();
-                CRAFT_META_STATS.put(stateId, statWithMeta);
+                storage.store(stateId, statWithMeta);
             }
         } else {
             for (int meta = 0; meta < 16; meta++) {
                 int stateId = (id << 4) | meta;
-                CRAFT_META_STATS.put(stateId, baseStat);
+                storage.store(stateId, baseStat);
             }
         }
     }
 
-    public static void addMineStats(Block block, StatCrafting baseStat) {
-        Item item = Item.getItemFromBlock(block);
-        int id = Item.getIdFromItem(item);
-        if (item.getHasSubtypes()) {
-            for (int meta = 0; meta < 16; meta++) {
-                int stateId = (id << 4) | meta;
-                ItemStack stackWithMeta = new ItemStack(block, 1, meta);
-                ITextComponent text = new TextComponentTranslation("stat.mineBlock", stackWithMeta.getTextComponent());
-                StatSubItem statWithMeta = (StatSubItem) new StatSubItem(baseStat, meta, text).registerStat();
-                BLOCK_STATE_STATS[stateId] = statWithMeta;
-            }
-        } else {
-            for (int meta = 0; meta < 16; meta++) {
-                int stateId = (id << 4) | meta;
-                BLOCK_STATE_STATS[stateId] = baseStat;
-            }
-        }
+    public static void addCraftStats(StatCrafting baseStat) {
+        registerSubStats(baseStat, CRAFT_META_STATS::put, text -> new TextComponentTranslation("stat.craftItem", text));
     }
 
-    public static void addUseStats(Item item, StatCrafting baseStat) {
-        int id = Item.getIdFromItem(item);
-        if (item.getHasSubtypes()) {
-            for (int meta = 0; meta < 16; meta++) {
-                int stateId = (id << 4) | meta;
-                ItemStack stackWithMeta = new ItemStack(item, 1, meta);
-                ITextComponent text = new TextComponentTranslation("stat.useItem", stackWithMeta.getTextComponent());
-                StatSubItem statWithMeta = (StatSubItem) new StatSubItem(baseStat, meta, text).registerStat();
-                OBJECT_USE_META_STATS.put(stateId, statWithMeta);
-            }
-        } else {
-            for (int meta = 0; meta < 16; meta++) {
-                int stateId = (id << 4) | meta;
-                OBJECT_USE_META_STATS.put(stateId, baseStat);
-            }
-        }
+    public static void addMineStats(StatCrafting baseStat) {
+        registerSubStats(baseStat, (state, stat) -> BLOCK_STATE_STATS[state] = stat, text -> new TextComponentTranslation("stat.mineBlock", text));
     }
 
-    public static void addPickedUpAndDroppedStats(Item item, StatCrafting basePickupStat, StatCrafting baseDropStat) {
-        int id = Item.getIdFromItem(item);
-        if (item.getHasSubtypes()) {
-            for (int meta = 0; meta < 16; meta++) {
-                int stateId = (id << 4) | meta;
-                ItemStack stackWithMeta = new ItemStack(item, 1, meta);
-                ITextComponent textPickup = new TextComponentTranslation("stat.pickup", stackWithMeta.getTextComponent());
-                StatSubItem pickupWithMeta = (StatSubItem) new StatSubItem(basePickupStat, meta, textPickup).registerStat();
-                OBJECTS_PICKED_UP_META_STATS.put(stateId, pickupWithMeta);
-                ITextComponent textDrop = new TextComponentTranslation("stat.drop", stackWithMeta.getTextComponent());
-                StatSubItem dropWithMeta = (StatSubItem) new StatSubItem(baseDropStat, meta, textDrop).registerStat();
-                OBJECTS_DROPPED_META_STATS.put(stateId, dropWithMeta);
-            }
-        } else {
-            for (int meta = 0; meta < 16; meta++) {
-                int stateId = (id << 4) | meta;
-                OBJECTS_PICKED_UP_META_STATS.put(stateId, basePickupStat);
-                OBJECTS_DROPPED_META_STATS.put(stateId, baseDropStat);
-            }
-        }
+    public static void addUseStats(StatCrafting baseStat) {
+        registerSubStats(baseStat, OBJECT_USE_META_STATS::put, text -> new TextComponentTranslation("stat.useItem", text));
+    }
+
+    public static void addPickedUpStats(StatCrafting baseStat) {
+        registerSubStats(baseStat, OBJECTS_PICKED_UP_META_STATS::put, text -> new TextComponentTranslation("stat.pickup", text));
+    }
+
+    public static void addDroppedStats(StatCrafting baseStat) {
+        registerSubStats(baseStat, OBJECTS_DROPPED_META_STATS::put, text -> new TextComponentTranslation("stat.drop", text));
     }
 }

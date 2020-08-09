@@ -1,6 +1,7 @@
 package carpet.utils;
 
 import carpet.mixin.accessors.EntitySlimeAccessor;
+import carpet.mixin.accessors.EntityVillagerAccessor;
 import carpet.mixin.accessors.EntityZombieVillagerAccessor;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -297,7 +298,7 @@ public class EntityInfo
 							{
 								lst.add(String.format(" - Inventory:%s", inventory_content));
 							}
-							if (ev.getWealth()>0)
+							if (((EntityVillagerAccessor) ev).getWealth()>0)
 							{
 								lst.add(String.format(" - Wealth: %d emeralds", ev.getWealth()));
 							}

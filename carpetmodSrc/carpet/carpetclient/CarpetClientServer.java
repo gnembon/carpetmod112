@@ -13,27 +13,55 @@ import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CPacketCustomPayload;
+import net.minecraft.network.play.server.SPacketBlockChange;
 import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerInteractionManager;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
 
 public class CarpetClientServer implements PluginChannelHandler {
 
-    private MinecraftServer minecraftServer;
-    private static LinkedHashSet<EntityPlayerMP> players = new LinkedHashSet<>();
+    private final MinecraftServer minecraftServer;
+    private static final LinkedHashSet<EntityPlayerMP> players = new LinkedHashSet<>();
     public static final String CARPET_CHANNEL_NAME = "carpet:client";
+    public static final String MINE_CHANNEL_NAME = "carpet:mine";
 
     public CarpetClientServer(MinecraftServer server) {
         this.minecraftServer = server;
     }
 
     public String[] getChannels() {
-        return new String[]{CARPET_CHANNEL_NAME};
+        return new String[]{CARPET_CHANNEL_NAME, MINE_CHANNEL_NAME};
     }
 
     public void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player) {
-        PacketBuffer buffer = PacketSplitter.receive(player, packet);
-        if(buffer != null) {
-            CarpetClientMessageHandler.handler(player, buffer);
+        switch (packet.getChannelName()) {
+            case CARPET_CHANNEL_NAME:
+                PacketBuffer buffer = PacketSplitter.receive(player, packet);
+                if(buffer != null) {
+                    CarpetClientMessageHandler.handler(player, buffer);
+                }
+                break;
+            case MINE_CHANNEL_NAME:
+                // Mining packets for carpet client to get around few bugs and careful break. CARPET-XCOM
+                PacketBuffer payload = packet.getBufferData();
+                payload.readBoolean();
+                boolean start = payload.readBoolean();
+                BlockPos pos = payload.readBlockPos();
+                EnumFacing facing = EnumFacing.byIndex(payload.readUnsignedByte());
+                PlayerInteractionManager.activateInstantMine = payload.readBoolean();
+                if (start) {
+                    if (!this.minecraftServer.isBlockProtected(player.world, pos, player) && player.world.getWorldBorder().contains(pos)) {
+                        player.interactionManager.onBlockClicked(pos, facing);
+                    } else {
+                        player.connection.sendPacket(new SPacketBlockChange(player.world, pos));
+                    }
+                } else {
+                    player.interactionManager.blockRemoving(pos);
+                }
+                PlayerInteractionManager.activateInstantMine = true;
+                break;
         }
     }
 

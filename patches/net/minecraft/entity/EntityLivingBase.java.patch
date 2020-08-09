@@ -37,38 +37,7 @@
          return !this.func_70631_g_();
      }
  
-@@ -741,8 +750,16 @@
-             }
-             else
-             {
--                potioneffect.func_76452_a(p_70690_1_);
--                this.func_70695_b(potioneffect, true);
-+                PotionEffect newEffect = potioneffect.combine(p_70690_1_);
-+                if (newEffect != potioneffect) {
-+                    // carpet
-+                    this.field_70713_bf.put(newEffect.func_188419_a(), newEffect);
-+                    this.func_70688_c(potioneffect);
-+                    this.func_70670_a(newEffect);
-+                } else {
-+                    // vanilla
-+                    this.func_70695_b(newEffect, true);
-+                }
-             }
-         }
-     }
-@@ -813,6 +830,11 @@
-         {
-             p_70688_1_.func_188419_a().func_111187_a(this, this.func_110140_aT(), p_70688_1_.func_76458_c());
-         }
-+        // CM
-+        if (CarpetSettings.effectsFix && p_70688_1_.previous != null) {
-+            func_70690_d(p_70688_1_.previous);
-+        }
-+        // CM END
-     }
- 
-     public void func_70691_i(float p_70691_1_)
-@@ -847,14 +869,20 @@
+@@ -847,14 +856,20 @@
          }
          else
          {
@@ -90,7 +59,7 @@
                  return false;
              }
              else
-@@ -864,6 +892,7 @@
+@@ -864,6 +879,7 @@
                  if ((p_70097_1_ == DamageSource.field_82728_o || p_70097_1_ == DamageSource.field_82729_p) && !this.func_184582_a(EntityEquipmentSlot.HEAD).func_190926_b())
                  {
                      this.func_184582_a(EntityEquipmentSlot.HEAD).func_77972_a((int)(p_70097_2_ * 4.0F + this.field_70146_Z.nextFloat() * p_70097_2_ * 2.0F), this);
@@ -98,7 +67,7 @@
                      p_70097_2_ *= 0.75F;
                  }
  
-@@ -872,6 +901,7 @@
+@@ -872,6 +888,7 @@
                  if (p_70097_2_ > 0.0F && this.func_184583_d(p_70097_1_))
                  {
                      this.func_184590_k(p_70097_2_);
@@ -106,7 +75,7 @@
                      p_70097_2_ = 0.0F;
  
                      if (!p_70097_1_.func_76352_a())
-@@ -894,9 +924,10 @@
+@@ -894,9 +911,10 @@
                  {
                      if (p_70097_2_ <= this.field_110153_bc)
                      {
@@ -118,7 +87,7 @@
                      this.func_70665_d(p_70097_1_, p_70097_2_ - this.field_110153_bc);
                      this.field_110153_bc = p_70097_2_;
                      flag1 = false;
-@@ -1009,6 +1040,11 @@
+@@ -1009,6 +1027,11 @@
                  {
                      this.func_184581_c(p_70097_1_);
                  }
@@ -130,7 +99,7 @@
  
                  boolean flag2 = !flag || p_70097_2_ > 0.0F;
  
-@@ -1345,6 +1381,7 @@
+@@ -1345,6 +1368,7 @@
                  int i = (this.func_70660_b(MobEffects.field_76429_m).func_76458_c() + 1) * 5;
                  int j = 25 - i;
                  float f = p_70672_2_ * (float)j;
@@ -138,7 +107,7 @@
                  p_70672_2_ = f / 25.0F;
              }
  
-@@ -1358,7 +1395,10 @@
+@@ -1358,7 +1382,10 @@
  
                  if (k > 0)
                  {
@@ -149,7 +118,7 @@
                  }
  
                  return p_70672_2_;
-@@ -1370,15 +1410,21 @@
+@@ -1370,15 +1397,21 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -171,7 +140,7 @@
                  this.func_70606_j(f1 - p_70665_2_);
                  this.func_110142_aN().func_94547_a(p_70665_1_, f1, p_70665_2_);
                  this.func_110149_m(this.func_110139_bj() - p_70665_2_);
-@@ -1828,7 +1874,10 @@
+@@ -1828,7 +1861,10 @@
                              }
                          }
  
@@ -182,7 +151,7 @@
  
                          if (this.field_70123_F && this.func_70617_f_())
                          {
-@@ -2306,6 +2355,9 @@
+@@ -2306,6 +2342,9 @@
  
      protected void func_85033_bc()
      {
@@ -192,7 +161,7 @@
          List<Entity> list = this.field_70170_p.func_175674_a(this, this.func_174813_aQ(), EntitySelectors.func_188442_a(this));
  
          if (!list.isEmpty())
-@@ -2330,8 +2382,13 @@
+@@ -2330,8 +2369,13 @@
                  }
              }
  
@@ -207,7 +176,7 @@
                  Entity entity = list.get(l);
                  this.func_82167_n(entity);
              }
-@@ -2366,6 +2423,11 @@
+@@ -2366,6 +2410,11 @@
      {
          this.field_70703_bu = p_70637_1_;
      }

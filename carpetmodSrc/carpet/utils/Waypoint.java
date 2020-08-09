@@ -88,13 +88,14 @@ public class Waypoint implements Comparable<Waypoint> {
                 player.connection.sendPacket(new SPacketRespawn(dimension, worldFrom.getDifficulty(), worldFrom.getWorldInfo().getTerrainType(), player.interactionManager.getGameType()));
                 server.getPlayerList().updatePermissionLevel(player);
             }
-            worldFrom.removeEntityDangerously(entity);
+            worldFrom.removeEntity(entity);
+            worldFrom.getChunk(entity.chunkCoordX, entity.chunkCoordZ).removeEntityAtIndex(entity, entity.chunkCoordY);
             entity.isDead = false;
             entity.setLocationAndAngles(x, y, z, (float) yaw, (float) pitch);
 
             if (entity.isEntityAlive())
             {
-                worldFrom.updateEntityWithOptionalForce(entity, false);
+                // worldFrom.updateEntityWithOptionalForce(entity, false);
                 worldTo.spawnEntity(entity);
                 worldTo.updateEntityWithOptionalForce(entity, false);
             }

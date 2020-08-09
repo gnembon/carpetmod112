@@ -113,6 +113,7 @@ public class StackTraceDeobfuscator {
                     break;
             }
             try {
+                //noinspection BusyWait
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -130,6 +131,7 @@ public class StackTraceDeobfuscator {
                     break;
             }
             try {
+                //noinspection BusyWait
                 Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -303,11 +305,7 @@ public class StackTraceDeobfuscator {
     }
 
     private StackTraceElement deobfuscate(StackTraceElement elem) {
-        return deobfCache.computeIfAbsent(elem, e -> {
-            StackTraceElement deobf = computeDeobfuscatedElement(e);
-            System.out.println(deobf);
-            return deobf;
-        });
+        return deobfCache.computeIfAbsent(elem, this::computeDeobfuscatedElement);
     }
 
     private StackTraceElement computeDeobfuscatedElement(StackTraceElement elem) {

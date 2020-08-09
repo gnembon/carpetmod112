@@ -1,21 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/network/NetHandlerPlayServer.java
 +++ ../src-work/minecraft/net/minecraft/network/NetHandlerPlayServer.java
-@@ -1,5 +1,6 @@
- package net.minecraft.network;
- 
-+import carpet.commands.CommandGMS;
- import com.google.common.collect.Lists;
- import com.google.common.primitives.Doubles;
- import com.google.common.primitives.Floats;
-@@ -89,6 +90,7 @@
- import net.minecraft.network.play.server.SPacketRespawn;
- import net.minecraft.network.play.server.SPacketSetSlot;
- import net.minecraft.network.play.server.SPacketTabComplete;
-+import net.minecraft.potion.Potion;
- import net.minecraft.server.MinecraftServer;
- import net.minecraft.tileentity.CommandBlockBaseLogic;
- import net.minecraft.tileentity.TileEntity;
-@@ -121,15 +123,24 @@
+@@ -121,6 +121,15 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -29,26 +14,9 @@
 +import static carpet.commands.CommandGMS.setPlayerToSurvival;
 +
  public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable
--{
--    private static final Logger field_147370_c = LogManager.getLogger();
--    public final NetworkManager field_147371_a;
--    private final MinecraftServer field_147367_d;
--    public EntityPlayerMP field_147369_b;
--    private int field_147368_e;
--    private long field_194402_f;
--    private boolean field_194403_g;
-+        {
-+            private static final Logger field_147370_c = LogManager.getLogger();
-+            public final NetworkManager field_147371_a;
-+            protected final MinecraftServer field_147367_d; // CM changed from private
-+            public EntityPlayerMP field_147369_b;
-+            private int field_147368_e;
-+            private long field_194402_f;
-+            private boolean field_194403_g;
-     private long field_194404_h;
-     private int field_147374_l;
-     private int field_147375_m;
-@@ -257,9 +268,19 @@
+ {
+     private static final Logger field_147370_c = LogManager.getLogger();
+@@ -257,9 +266,19 @@
          {
              this.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.idling", new Object[0]));
          }
@@ -69,7 +37,7 @@
      {
          this.field_184349_l = this.field_147369_b.field_70165_t;
          this.field_184350_m = this.field_147369_b.field_70163_u;
-@@ -297,6 +318,11 @@
+@@ -297,6 +316,11 @@
      {
          PacketThreadUtil.func_180031_a(p_147358_1_, this, this.field_147369_b.func_71121_q());
          this.field_147369_b.func_110430_a(p_147358_1_.func_149620_c(), p_147358_1_.func_192620_b(), p_147358_1_.func_149618_e(), p_147358_1_.func_149617_f());
@@ -81,7 +49,7 @@
      }
  
      private static boolean func_183006_b(CPacketPlayer p_183006_0_)
-@@ -500,6 +526,10 @@
+@@ -500,6 +524,10 @@
                          double d10 = this.field_147369_b.field_70159_w * this.field_147369_b.field_70159_w + this.field_147369_b.field_70181_x * this.field_147369_b.field_70181_x + this.field_147369_b.field_70179_y * this.field_147369_b.field_70179_y;
                          double d11 = d7 * d7 + d8 * d8 + d9 * d9;
  
@@ -92,16 +60,7 @@
                          if (this.field_147369_b.func_70608_bn())
                          {
                              if (d11 > 1.0D)
-@@ -518,7 +548,7 @@
-                                 i = 1;
-                             }
- 
--                            if (!this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_82766_b("disableElytraMovementCheck") || !this.field_147369_b.func_184613_cA()))
-+                            if (!CarpetSettings.antiCheatSpeed && !this.field_147369_b.func_184850_K() && (!this.field_147369_b.func_71121_q().func_82736_K().func_82766_b("disableElytraMovementCheck") || !this.field_147369_b.func_184613_cA()))
-                             {
-                                 float f2 = this.field_147369_b.func_184613_cA() ? 300.0F : 100.0F;
- 
-@@ -564,7 +594,9 @@
+@@ -564,7 +592,9 @@
                              this.field_147369_b.func_70080_a(d4, d5, d6, f, f1);
                              this.field_147369_b.func_71000_j(this.field_147369_b.field_70165_t - d0, this.field_147369_b.field_70163_u - d1, this.field_147369_b.field_70161_v - d2);
  
@@ -112,16 +71,7 @@
                              {
                                  boolean flag1 = worldserver.func_184144_a(this.field_147369_b, this.field_147369_b.func_174813_aQ().func_186664_h(0.0625D)).isEmpty();
  
-@@ -627,6 +659,8 @@
- 
-     public void func_147345_a(CPacketPlayerDigging p_147345_1_)
-     {
-+        // Prevent player preforming actions after disconnecting. CARPET-XCOM
-+        if(CarpetSettings.duplicationFixLogout && field_147369_b.func_193105_t()) return;
-         PacketThreadUtil.func_180031_a(p_147345_1_, this, this.field_147369_b.func_71121_q());
-         WorldServer worldserver = this.field_147367_d.func_71218_a(this.field_147369_b.field_71093_bK);
-         BlockPos blockpos = p_147345_1_.func_179715_a();
-@@ -731,7 +765,10 @@
+@@ -731,7 +761,10 @@
          {
              if (this.field_184362_y == null && this.field_147369_b.func_70092_e((double)blockpos.func_177958_n() + 0.5D, (double)blockpos.func_177956_o() + 0.5D, (double)blockpos.func_177952_p() + 0.5D) < 64.0D && !this.field_147367_d.func_175579_a(worldserver, blockpos, this.field_147369_b) && worldserver.func_175723_af().func_177746_a(blockpos))
              {
@@ -132,24 +82,7 @@
              }
          }
          else
-@@ -755,12 +792,16 @@
- 
-         if (!itemstack.func_190926_b())
-         {
-+            if (WorldEditBridge.onRightClickAir(worldserver, field_147369_b))
-             this.field_147369_b.field_71134_c.func_187250_a(this.field_147369_b, worldserver, itemstack, enumhand);
-         }
-     }
- 
-     public void func_175088_a(CPacketSpectate p_175088_1_)
-     {
-+        // Disables spectating other players when using /c and carpet rule cameraModeDisableSpectatePlayers is true CARPET-XCOM
-+        if(field_147369_b.isDisableSpectatePlayers()) return;
-+
-         PacketThreadUtil.func_180031_a(p_175088_1_, this, this.field_147369_b.func_71121_q());
- 
-         if (this.field_147369_b.func_175149_v())
-@@ -796,13 +837,13 @@
+@@ -796,13 +829,13 @@
                      this.field_147369_b.field_71093_bK = entity.field_71093_bK;
                      this.func_147359_a(new SPacketRespawn(this.field_147369_b.field_71093_bK, worldserver1.func_175659_aa(), worldserver1.func_72912_H().func_76067_t(), this.field_147369_b.field_71134_c.func_73081_b()));
                      this.field_147367_d.func_184103_al().func_187243_f(this.field_147369_b);
@@ -165,40 +98,26 @@
                          worldserver2.func_72838_d(this.field_147369_b);
                          worldserver2.func_72866_a(this.field_147369_b, false);
                      }
-@@ -841,6 +882,11 @@
-         textcomponenttranslation.func_150256_b().func_150238_a(TextFormatting.YELLOW);
-         this.field_147367_d.func_184103_al().func_148539_a(textcomponenttranslation);
-         this.field_147369_b.func_71123_m();
-+        // Fix exploit related to camera mode and logging out CARPET-XCOM
-+        if(CarpetSettings.cameraModeRestoreLocation && field_147369_b.getGamemodeCamera()){
-+            setPlayerToSurvival(field_147367_d,field_147369_b,true);
-+        }
-+
-         this.field_147367_d.func_184103_al().func_72367_e(this.field_147369_b);
- 
-         if (this.field_147367_d.func_71264_H() && this.field_147369_b.func_70005_c_().equals(this.field_147367_d.func_71214_G()))
-@@ -1019,13 +1065,15 @@
+@@ -1019,14 +1052,17 @@
                  break;
              case START_FALL_FLYING:
  
 -                if (!this.field_147369_b.field_70122_E && this.field_147369_b.field_70181_x < 0.0D && !this.field_147369_b.func_184613_cA() && !this.field_147369_b.func_70090_H())
 +                if (!this.field_147369_b.field_70122_E && !this.field_147369_b.func_184613_cA() && !this.field_147369_b.func_70090_H())
                  {
--                    ItemStack itemstack = this.field_147369_b.func_184582_a(EntityEquipmentSlot.CHEST);
 +                    // Remove the falling check as in 1.15 CARPET-XCOM
 +                    if(CarpetSettings.elytraCheckFix || this.field_147369_b.field_70181_x < 0.0D) {
-+                        ItemStack itemstack = this.field_147369_b.func_184582_a(EntityEquipmentSlot.CHEST);
+                     ItemStack itemstack = this.field_147369_b.func_184582_a(EntityEquipmentSlot.CHEST);
  
--                    if (itemstack.func_77973_b() == Items.field_185160_cR && ItemElytra.func_185069_d(itemstack))
--                    {
--                        this.field_147369_b.func_184847_M();
-+                        if (itemstack.func_77973_b() == Items.field_185160_cR && ItemElytra.func_185069_d(itemstack)) {
-+                            this.field_147369_b.func_184847_M();
-+                        }
+                     if (itemstack.func_77973_b() == Items.field_185160_cR && ItemElytra.func_185069_d(itemstack))
+                     {
+                         this.field_147369_b.func_184847_M();
                      }
++                    }
                  }
                  else
-@@ -1147,11 +1195,15 @@
+                 {
+@@ -1147,11 +1183,15 @@
              }
              else
              {
@@ -214,81 +133,3 @@
                      this.field_147369_b.field_71137_h = true;
                      this.field_147369_b.field_71070_bA.func_75142_b();
                      this.field_147369_b.func_71113_k();
-@@ -1355,7 +1407,27 @@
-         PacketThreadUtil.func_180031_a(p_147349_1_, this, this.field_147369_b.func_71121_q());
-         String s = p_147349_1_.func_149559_c();
- 
--        if ("MC|BEdit".equals(s))
-+        // Mining packets for carpet client to get around few bugs and careful break. CARPET-XCOM
-+        if("carpet:mine".equals(s)) {
-+            PacketBuffer payload = p_147349_1_.func_180760_b();
-+            payload.readBoolean();
-+            boolean start = payload.readBoolean();
-+            BlockPos pos = payload.func_179259_c();
-+            EnumFacing facing = EnumFacing.func_82600_a(payload.readUnsignedByte());
-+            PlayerInteractionManager.activateInstantMine = payload.readBoolean();
-+
-+            if(start) {
-+                if (!this.field_147367_d.func_175579_a(field_147369_b.field_70170_p, pos, this.field_147369_b) && field_147369_b.field_70170_p.func_175723_af().func_177746_a(pos)) {
-+                    this.field_147369_b.field_71134_c.func_180784_a(pos, facing);
-+                } else {
-+                    this.field_147369_b.field_71135_a.func_147359_a(new SPacketBlockChange(field_147369_b.field_70170_p, pos));
-+                }
-+            }else{
-+                this.field_147369_b.field_71134_c.func_180785_a(pos);
-+            }
-+            PlayerInteractionManager.activateInstantMine = true;
-+        }
-+        else if ("MC|BEdit".equals(s))
-         {
-             PacketBuffer packetbuffer = p_147349_1_.func_180760_b();
- 
-@@ -1666,13 +1738,14 @@
-                     String s8 = packetbuffer5.func_150789_c(32);
-                     tileentitystructure.func_184405_a(TileEntityStructure.Mode.valueOf(s8));
-                     tileentitystructure.func_184404_a(packetbuffer5.func_150789_c(64));
--                    int i2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -32, 32);
--                    int j2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -32, 32);
--                    int k2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -32, 32);
-+                    int sbl = CarpetSettings.structureBlockLimit;
-+                    int i2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -sbl, sbl);
-+                    int j2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -sbl, sbl);
-+                    int k2 = MathHelper.func_76125_a(packetbuffer5.readInt(), -sbl, sbl);
-                     tileentitystructure.func_184414_b(new BlockPos(i2, j2, k2));
--                    int l2 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, 32);
--                    int i3 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, 32);
--                    int j = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, 32);
-+                    int l2 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, sbl);
-+                    int i3 = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, sbl);
-+                    int j = MathHelper.func_76125_a(packetbuffer5.readInt(), 0, sbl);
-                     tileentitystructure.func_184409_c(new BlockPos(l2, i3, j));
-                     String s2 = packetbuffer5.func_150789_c(32);
-                     tileentitystructure.func_184411_a(Mirror.valueOf(s2));
-@@ -1709,6 +1782,17 @@
-                         }
-                         else
-                         {
-+                            boolean structureTooBig = false;
-+                            Template template = field_147367_d.field_71305_c[0].func_184163_y().func_189942_b(field_147367_d, new ResourceLocation(s4));
-+                            if (template != null)
-+                            {
-+                                BlockPos size = template.func_186259_a();
-+                                if (size.func_177958_n() > sbl || size.func_177956_o() > sbl || size.func_177952_p() > sbl)
-+                                    structureTooBig = true;
-+                            }
-+                            if (structureTooBig)
-+                                field_147369_b.func_146105_b(new TextComponentString("Structure is too big for structure limit"), false);
-+                            else
-                             this.field_147369_b.func_146105_b(new TextComponentTranslation("structure_block.load_prepare", new Object[] {s4}), false);
-                         }
-                     }
-@@ -1750,5 +1834,9 @@
-                 field_147370_c.error("Couldn't pick item", (Throwable)exception);
-             }
-         }
-+        else // CM handling all the packets from modders cheaters
-+        {
-+            CarpetServer.pluginChannels.process(this.field_147369_b, p_147349_1_);
-+        }
-     }
- }

@@ -4,6 +4,7 @@ import carpet.helpers.HopperCounter;
 import carpet.helpers.TickSpeed;
 import carpet.logging.LoggerRegistry;
 import carpet.logging.logHelpers.PacketCounter;
+import carpet.mixin.accessors.SPacketPlayerListHeaderFooterAccessor;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -41,8 +42,9 @@ public class HUDController
     public static void clear_player(EntityPlayer player)
     {
         SPacketPlayerListHeaderFooter packet = new SPacketPlayerListHeaderFooter();
-        packet.header = new TextComponentString("");
-        packet.footer = new TextComponentString("");
+        SPacketPlayerListHeaderFooterAccessor acc = (SPacketPlayerListHeaderFooterAccessor) packet;
+        acc.setHeader(new TextComponentString(""));
+        acc.setFooter(new TextComponentString(""));
         ((EntityPlayerMP)player).connection.sendPacket(packet);
     }
 
@@ -71,8 +73,9 @@ public class HUDController
         for (EntityPlayer player: player_huds.keySet())
         {
             SPacketPlayerListHeaderFooter packet = new SPacketPlayerListHeaderFooter();
-            packet.header = new TextComponentString("");
-            packet.footer = Messenger.m(null, player_huds.get(player).toArray(new Object[0]));
+            SPacketPlayerListHeaderFooterAccessor acc = (SPacketPlayerListHeaderFooterAccessor) packet;
+            acc.setHeader(new TextComponentString(""));
+            acc.setFooter(Messenger.m(null, player_huds.get(player).toArray(new Object[0])));
             ((EntityPlayerMP)player).connection.sendPacket(packet);
         }
     }

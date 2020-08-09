@@ -22,12 +22,9 @@
  public class EntityVillager extends EntityAgeable implements INpc, IMerchant
  {
      private static final Logger field_190674_bx = LogManager.getLogger();
-@@ -105,13 +109,21 @@
-     private int field_70961_j;
-     private boolean field_70959_by;
+@@ -107,11 +111,19 @@
      private boolean field_175565_bs;
--    private int field_70956_bz;
-+    public int field_70956_bz;
+     private int field_70956_bz;
      private String field_82189_bL;
 -    private int field_175563_bv;
 -    private int field_175562_bw;
