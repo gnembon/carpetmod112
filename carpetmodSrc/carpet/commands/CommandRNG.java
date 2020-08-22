@@ -1,6 +1,5 @@
 package carpet.commands;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import javax.annotation.Nullable;
@@ -16,6 +15,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.WrongUsageException;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EnumCreatureType;
@@ -27,12 +27,14 @@ import net.minecraft.util.WeightedRandom;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraft.world.gen.ChunkGeneratorEnd;
 import net.minecraft.world.gen.ChunkGeneratorOverworld;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.IChunkGenerator;
@@ -65,6 +67,7 @@ public class CommandRNG extends CommandCarpetBase {
      */
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (!command_enabled("commandRNG", sender)) return;
+        if (args.length <=0) throw new WrongUsageException(getUsage(sender));
         if ("seed".equalsIgnoreCase(args[0])) {
             try {
                 World world = sender.getEntityWorld();
@@ -263,6 +266,32 @@ public class CommandRNG extends CommandCarpetBase {
                     }
                 }
             }
+        } else if ("getEndChunkSeed".equalsIgnoreCase(args[0])) {
+            ChunkProviderServer chunkProvider = server.getWorld(1).getChunkProvider();
+            ChunkGeneratorEnd chunkGeneratorEnd = ((ChunkGeneratorEnd) chunkProvider.chunkGenerator);
+            long seed = chunkGeneratorEnd.lastRandomSeed;
+            if (chunkGeneratorEnd.randomSeedUsed) {
+                sender.sendMessage(new TextComponentString("The ChunkGeneratorEnd seed " + seed + " was already used for population and is currently random!"));
+            } else {
+                sender.sendMessage(new TextComponentString("Current ChunkGeneratorEnd seed: " + seed));
+            }
+        } else if ("setEndChunkSeed".equalsIgnoreCase(args[0])) {
+            if (args.length == 2 || (args.length == 3 && "once".equalsIgnoreCase(args[2]))) {
+                ChunkProviderServer chunkProvider = server.getWorld(1).getChunkProvider();
+                ChunkGeneratorEnd chunkGeneratorEnd = ((ChunkGeneratorEnd) chunkProvider.chunkGenerator);
+                long seed = parseLong(args[1]);
+                chunkGeneratorEnd.randomSeedUsed = false;
+                chunkGeneratorEnd.lastRandomSeed = seed;
+                if (args.length == 2) {
+                    CarpetSettings.endChunkSeed = seed;
+                    sender.sendMessage(new TextComponentString("Set the ChunkGeneratorEnd seed to: " + CarpetSettings.endChunkSeed));
+                } else if (args.length == 3) {
+                    chunkGeneratorEnd.setEndChunkSeed(seed);
+                    sender.sendMessage(new TextComponentString("Set the ChunkGeneratorEnd seed once to: " + chunkGeneratorEnd.lastRandomSeed));
+                }
+            } else {
+                throw new WrongUsageException("/rng setEndChunkSeed <seed> [once]");
+            }
         }
     }
 
@@ -273,7 +302,7 @@ public class CommandRNG extends CommandCarpetBase {
         }
         if (args.length == 1) {
             return getListOfStringsMatchingLastWord(args, "seed", "setSeed", "getMobspawningChunk",
-                    "randomtickedChunksCount", "randomtickedBlocksInRange", "logWeather", "getLCG", "setLCG");
+                    "randomtickedChunksCount", "randomtickedBlocksInRange", "logWeather", "getLCG", "setLCG", "getEndChunkSeed", "setEndChunkSeed");
         }
         if (args.length >= 2) {
             if ("seed".equalsIgnoreCase(args[0])) {
@@ -295,6 +324,9 @@ public class CommandRNG extends CommandCarpetBase {
             }
             if ("setLCG".equalsIgnoreCase(args[0])) {
                 return getListOfStringsMatchingLastWord(args, "OVERWORLD", "NETHER", "THE_END");
+            }
+            if ("setEndChunkSeed".equalsIgnoreCase(args[0]) && args.length == 3) {
+                return getListOfStringsMatchingLastWord(args, "once");
             }
         }
 

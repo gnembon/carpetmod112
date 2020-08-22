@@ -51,11 +51,16 @@ public class CarpetSettings
     public static final Logger LOG = LogManager.getLogger();
 
     public static long setSeed = 0; // Xcom: if you dunno where to put it, shove it in CarpetSettings - Earth :)
+    public static long endChunkSeed = 0;
+
 
     // ===== COMMANDS ===== //
     /*
      * Rules in this category should start with the "command" prefix
      */
+
+    @Rule(desc = "Enables /repopulate command to repopulate given chunk", category = COMMANDS)
+    public static boolean commandRepopulate;
 
     @Rule(desc = "Enables /grow command for growing plants", category = COMMANDS)
     public static boolean commandGrow = true;

@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorEnd.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorEnd.java
-@@ -22,6 +22,11 @@
+@@ -22,9 +22,16 @@
  import net.minecraft.world.gen.feature.WorldGenEndIsland;
  import net.minecraft.world.gen.structure.MapGenEndCity;
  
@@ -12,7 +12,61 @@
  public class ChunkGeneratorEnd implements IChunkGenerator
  {
      private final Random field_73220_k;
-@@ -404,6 +409,13 @@
++    public  long lastRandomSeed = 0;
++    public boolean randomSeedUsed = false;
+     protected static final IBlockState field_185964_a = Blocks.field_150377_bs.func_176223_P();
+     protected static final IBlockState field_185965_b = Blocks.field_150350_a.func_176223_P();
+     private final NoiseGeneratorOctaves field_185969_i;
+@@ -173,7 +180,14 @@
+ 
+     public Chunk func_185932_a(int p_185932_1_, int p_185932_2_)
+     {
+-        this.field_73220_k.setSeed((long)p_185932_1_ * 341873128712L + (long)p_185932_2_ * 132897987541L);
++        if (CarpetSettings.endChunkSeed != 0) {
++            this.field_73220_k.setSeed(CarpetSettings.endChunkSeed);
++            this.lastRandomSeed = CarpetSettings.endChunkSeed;
++        } else {
++            this.field_73220_k.setSeed((long)p_185932_1_ * 341873128712L + (long)p_185932_2_ * 132897987541L);
++            this.lastRandomSeed = (long)p_185932_1_ * 341873128712L + (long)p_185932_2_ * 132897987541L;
++        }
++        this.randomSeedUsed = false;
+         ChunkPrimer chunkprimer = new ChunkPrimer();
+         this.field_73231_z = this.field_73230_p.func_72959_q().func_76933_b(this.field_73231_z, p_185932_1_ * 16, p_185932_2_ * 16, 16, 16);
+         this.func_180518_a(p_185932_1_, p_185932_2_, chunkprimer);
+@@ -327,7 +341,9 @@
+     {
+         BlockFalling.field_149832_M = true;
+         BlockPos blockpos = new BlockPos(p_185931_1_ * 16, 0, p_185931_2_ * 16);
+-
++        if (CarpetSettings.endChunkSeed != 0) {
++            this.field_73220_k.setSeed(CarpetSettings.endChunkSeed);
++        }
+         if (this.field_73229_q)
+         {
+             this.field_185972_n.func_175794_a(this.field_73230_p, this.field_73220_k, new ChunkPos(p_185931_1_, p_185931_2_));
+@@ -339,7 +355,6 @@
+         if (i > 4096L)
+         {
+             float f = this.func_185960_a(p_185931_1_, p_185931_2_, 1, 1);
+-
+             if (f < -20.0F && this.field_73220_k.nextInt(14) == 0)
+             {
+                 this.field_185975_r.func_180709_b(this.field_73230_p, this.field_73220_k, blockpos.func_177982_a(this.field_73220_k.nextInt(16) + 8, 55 + this.field_73220_k.nextInt(16), this.field_73220_k.nextInt(16) + 8));
+@@ -395,8 +410,13 @@
+         }
+ 
+         BlockFalling.field_149832_M = false;
++        this.randomSeedUsed = true;
+     }
+ 
++    public void setEndChunkSeed(long seed) {
++        this.field_73220_k.setSeed(seed);
++    }
++
+     public boolean func_185933_a(Chunk p_185933_1_, int p_185933_2_, int p_185933_3_)
+     {
+         return false;
+@@ -404,6 +424,13 @@
  
      public List<Biome.SpawnListEntry> func_177458_a(EnumCreatureType p_177458_1_, BlockPos p_177458_2_)
      {
@@ -26,7 +80,7 @@
          return this.field_73230_p.func_180494_b(p_177458_2_).func_76747_a(p_177458_1_);
      }
  
-@@ -420,5 +432,14 @@
+@@ -420,5 +447,14 @@
  
      public void func_180514_a(Chunk p_180514_1_, int p_180514_2_, int p_180514_3_)
      {

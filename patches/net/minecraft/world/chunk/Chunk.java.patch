@@ -518,7 +518,19 @@
  
          while (!this.field_177447_w.isEmpty())
          {
-@@ -1389,4 +1488,67 @@
+@@ -1041,6 +1140,11 @@
+         return this.field_150815_m && this.field_76646_k && this.field_150814_l;
+     }
+ 
++    public void setUnpopulated()
++    {
++        this.field_76646_k = false;
++    }
++
+     public boolean func_186035_j()
+     {
+         return this.field_150815_m;
+@@ -1389,4 +1493,67 @@
          QUEUED,
          CHECK;
      }
