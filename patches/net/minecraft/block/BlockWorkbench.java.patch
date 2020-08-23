@@ -46,7 +46,7 @@
              p_180639_4_.func_71029_a(StatList.field_188062_ab);
              return true;
          }
-@@ -75,4 +89,50 @@
+@@ -75,4 +89,52 @@
                  return "minecraft:crafting_table";
              }
          }
@@ -83,15 +83,17 @@
 +    @Override
 +    public void func_180663_b(World worldIn, BlockPos pos, IBlockState state)
 +    {
-+        if (!func_149716_u()) return;
 +        // Maybe also check for some carpet rule
-+        TileEntity tileEntity = worldIn.func_175625_s(pos);
-+        if (tileEntity instanceof TileEntityCraftingTable)
-+        {
-+            ((TileEntityCraftingTable)tileEntity).dropContent(worldIn, pos);
-+//            InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityCraftingTable)tileEntity);
-+            worldIn.func_175666_e(pos, this);
-+        }
++	if(func_149716_u())
++	{
++	    TileEntity tileEntity = worldIn.func_175625_s(pos);
++	    if (tileEntity instanceof TileEntityCraftingTable)
++	    {
++		((TileEntityCraftingTable)tileEntity).dropContent(worldIn, pos);
++		// InventoryHelper.dropInventoryItems(worldIn, pos, (TileEntityCraftingTable)tileEntity);
++		worldIn.func_175666_e(pos, this);
++	    }
++	}
 +        worldIn.func_175713_t(pos);
 +        super.func_180663_b(worldIn, pos, state);
 +    }
