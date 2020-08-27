@@ -246,7 +246,9 @@ public class CarpetSettings
     @SurvivalDefault
     public static boolean flippinCactus = false;
 
-    @Rule(desc = "hoppers pointing to wool will count items passing through them", category = {COMMANDS, CREATIVE, SURVIVAL}, extra = {
+    @Rule(desc = "Count items passing through hoppers", category = {COMMANDS, CREATIVE, SURVIVAL}, extra = {
+            "wool: Hoppers pointing to wool will count items passing through them",
+            "all: All items in hoppers will be counted",
             "Enables /counter command, and actions while placing red and green carpets on wool blocks",
             "Use /counter <color?> reset to reset the counter, and /counter <color?> to query",
             "In survival, place green carpet on same color wool to query, red to reset the counters",
@@ -255,7 +257,11 @@ public class CarpetSettings
     })
     @CreativeDefault
     @SurvivalDefault
-    public static boolean hopperCounters = false;
+    public static HopperCounters hopperCounters = HopperCounters.off;
+    public static enum HopperCounters
+    {
+        off, wool, all
+    }
 
     @Rule(desc = "Items thrown into a cactus will count items that are destroyed in them.", category = {COMMANDS, CREATIVE, SURVIVAL}, extra = {
     })
