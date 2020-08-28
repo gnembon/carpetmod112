@@ -83,7 +83,7 @@
                  }
  
                  if (flag)
-@@ -191,10 +233,36 @@
+@@ -191,10 +233,42 @@
  
      private boolean func_145883_k()
      {
@@ -92,7 +92,13 @@
 +        /* carpet mod */
 +        if (CarpetSettings.hopperCounters != CarpetSettings.HopperCounters.off)
 +        {
-+            String counter = CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.all ? "all" : this.get_wool_pointing();
++            String counter;
++            if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.all){
++                counter = "all";
++            } else {
++                EnumDyeColor woolColor = this.get_wool_pointing();
++                counter = woolColor != null ? woolColor.func_176610_l() : null;
++            }
 +
 +            if (counter != null)
 +            {
@@ -120,7 +126,7 @@
              return false;
          }
          else
-@@ -203,6 +271,10 @@
+@@ -203,6 +277,10 @@
  
              if (this.func_174919_a(iinventory, enumfacing))
              {
@@ -131,7 +137,7 @@
                  return false;
              }
              else
-@@ -297,7 +369,10 @@
+@@ -297,7 +375,10 @@
  
      public static boolean func_145891_a(IHopper p_145891_0_)
      {
@@ -142,7 +148,7 @@
  
          if (iinventory != null)
          {
-@@ -305,6 +380,14 @@
+@@ -305,6 +386,14 @@
  
              if (func_174917_b(iinventory, enumfacing))
              {
@@ -157,7 +163,7 @@
                  return false;
              }
  
-@@ -333,6 +416,13 @@
+@@ -333,6 +422,13 @@
                      }
                  }
              }
@@ -171,7 +177,7 @@
          }
          else
          {
-@@ -352,6 +442,11 @@
+@@ -352,6 +448,11 @@
      {
          ItemStack itemstack = p_174915_1_.func_70301_a(p_174915_2_);
  
@@ -183,23 +189,22 @@
          if (!itemstack.func_190926_b() && func_174921_b(p_174915_1_, itemstack, p_174915_2_, p_174915_3_))
          {
              ItemStack itemstack1 = itemstack.func_77946_l();
-@@ -499,6 +594,15 @@
+@@ -499,6 +600,14 @@
          return func_145893_b(this.func_145831_w(), this.func_96107_aA() + (double)enumfacing.func_82601_c(), this.func_96109_aB() + (double)enumfacing.func_96559_d(), this.func_96108_aC() + (double)enumfacing.func_82599_e());
      }
  
 +    /* carpet mod */
-+    private String get_wool_pointing()
++    private EnumDyeColor get_wool_pointing()
 +    {
-+        EnumDyeColor wool = WoolTool.getWoolColorAtPosition(
++        return WoolTool.getWoolColorAtPosition(
 +                func_145831_w(),
 +                new BlockPos(func_96107_aA(),func_96109_aB(),func_96108_aC() ).func_177972_a(BlockHopper.func_176428_b(this.func_145832_p())));
-+        return wool != null ? wool.func_176610_l() : null;
 +    }
 +
      public static IInventory func_145884_b(IHopper p_145884_0_)
      {
          return func_145893_b(p_145884_0_.func_145831_w(), p_145884_0_.func_96107_aA(), p_145884_0_.func_96109_aB() + 1.0D, p_145884_0_.func_96108_aC());
-@@ -546,7 +650,7 @@
+@@ -546,7 +655,7 @@
          return iinventory;
      }
  
@@ -208,7 +213,7 @@
      {
          if (p_145894_0_.func_77973_b() != p_145894_1_.func_77973_b())
          {
-@@ -611,4 +715,15 @@
+@@ -611,4 +720,15 @@
      {
          return this.field_145900_a;
      }

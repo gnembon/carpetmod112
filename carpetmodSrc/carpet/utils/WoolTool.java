@@ -15,7 +15,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 
-import java.security.MessageDigest;
 import java.util.List;
 
 public class WoolTool
