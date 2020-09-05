@@ -15,7 +15,7 @@
  
 +    //CM start
 +    public void func_189540_a(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos){
-+        if (CarpetSettings.oreUpdateSupressor && this == Blocks.field_150412_bA){
++        if (CarpetSettings.oreUpdateSuppressor && this == Blocks.field_150412_bA){
 +            throw new StackOverflowError();
 +        }
 +    }
