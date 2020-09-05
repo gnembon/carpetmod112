@@ -147,6 +147,9 @@ public class CarpetSettings
 
     // ===== CREATIVE TOOLS ===== //
 
+    @Rule(desc = "Emerald ore receiving a block update, will throw a StackOverflowError, simulating an update supressor.", category = CREATIVE)
+    public static boolean oreUpdateSupressor = false;
+
     @Rule(desc = "Makes update carpet public for all users.", category = CREATIVE)
     public static boolean updateCarpetAll;
 
