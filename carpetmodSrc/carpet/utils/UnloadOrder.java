@@ -604,7 +604,10 @@ public class UnloadOrder
         AnvilChunkLoader.writeChunkToNBT(chunk, chunk.getWorld(), levelTag);
         CountingOutputStream counter = new CountingOutputStream(NullOutputStream.NULL_OUTPUT_STREAM);
         try {
-            CompressedStreamTools.write(chunkTag, new DataOutputStream(new BufferedOutputStream(new DeflaterOutputStream(counter))));
+            DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new DeflaterOutputStream(counter)));
+            CompressedStreamTools.write(chunkTag, out);
+            out.flush();
+            out.close();
         }
         catch (IOException ignore) {}
         return counter.getCount();
