@@ -2,6 +2,7 @@ package carpet.mixin.loggers;
 
 import carpet.logging.LoggerRegistry;
 import carpet.logging.logHelpers.InstantComparators;
+import carpet.utils.extensions.ExtendedTileEntityComparator;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneComparator;
 import net.minecraft.block.state.IBlockState;
@@ -32,8 +33,9 @@ public abstract class BlockRedstoneComparatorMixin {
                 int index = (int) Math.floorMod(worldIn.getTotalWorldTime(), 3);
                 // output signal 0 is generally considered to just be a too fast pulse for a comparator, rather
                 // than an instant comparator
-                if (comparator.getOutputSignal() != comparator.scheduledOutputSignal[index] && comparator.getOutputSignal() != 0) {
-                    InstantComparators.onInstantComparator(worldIn, pos, comparator.buggy[index]);
+                ExtendedTileEntityComparator ext = (ExtendedTileEntityComparator) comparator;
+                if (comparator.getOutputSignal() != ext.getScheduledOutputSignal()[index] && comparator.getOutputSignal() != 0) {
+                    InstantComparators.onInstantComparator(worldIn, pos, ext.getBuggy()[index]);
                 }
             }
         }
@@ -45,8 +47,9 @@ public abstract class BlockRedstoneComparatorMixin {
             if (tileentity instanceof TileEntityComparator) {
                 TileEntityComparator comparator = (TileEntityComparator) tileentity;
                 int index = (int) Math.floorMod(worldIn.getTotalWorldTime() + 2, 3);
-                comparator.scheduledOutputSignal[index] = computedOutput;
-                comparator.buggy[index] = computedOutput == currentOutput;
+                ExtendedTileEntityComparator ext = (ExtendedTileEntityComparator) comparator;
+                ext.getScheduledOutputSignal()[index] = computedOutput;
+                ext.getBuggy()[index] = computedOutput == currentOutput;
             } else {
                 InstantComparators.onNoTileEntity(worldIn, pos);
             }
@@ -61,7 +64,8 @@ public abstract class BlockRedstoneComparatorMixin {
             if (te instanceof TileEntityComparator) {
                 TileEntityComparator comparator = (TileEntityComparator) te;
                 int index = (int) Math.floorMod(world.getTotalWorldTime() + 2, 3);
-                comparator.scheduledOutputSignal[index] = calculateOutput(world, pos, state);
+                ExtendedTileEntityComparator ext = (ExtendedTileEntityComparator) comparator;
+                ext.getScheduledOutputSignal()[index] = calculateOutput(world, pos, state);
             }
         }
         return true;

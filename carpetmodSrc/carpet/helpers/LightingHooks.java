@@ -6,6 +6,7 @@ package carpet.helpers;
 
 import javax.annotation.Nullable;
 
+import carpet.mixin.accessors.EnumFacingAccessor;
 import carpet.utils.extensions.NewLightChunk;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -123,7 +124,7 @@ public class LightingHooks
                 final int yMax = chunk.getHeightValue(x, z);
                 int yMin = Math.max(yMax - 1, 0);
 
-                for (final EnumFacing dir : EnumFacing.HORIZONTALS)
+                for (final EnumFacing dir : EnumFacingAccessor.getHorizontals())
                 {
                     final int nX = x + dir.getXOffset();
                     final int nZ = z + dir.getZOffset();
@@ -193,7 +194,7 @@ public class LightingHooks
 
                 int yMax = nChunk.getHeightValue(x, z) - 1;
 
-                for (final EnumFacing dir : EnumFacing.HORIZONTALS)
+                for (final EnumFacing dir : EnumFacingAccessor.getHorizontals())
                 {
                     final int nX = x + dir.getXOffset();
                     final int nZ = z + dir.getZOffset();
@@ -215,7 +216,7 @@ public class LightingHooks
     {
         final IChunkProvider provider = world.getChunkProvider();
 
-        for (final EnumFacing dir : EnumFacing.HORIZONTALS)
+        for (final EnumFacing dir : EnumFacingAccessor.getHorizontals())
         {
             final Chunk nChunk = provider.getLoadedChunk(chunk.x + dir.getXOffset(), chunk.z + dir.getZOffset());
 
@@ -305,7 +306,7 @@ public class LightingHooks
 
         if (emptySections != 0)
         {
-            for (final EnumFacing dir : EnumFacing.HORIZONTALS)
+            for (final EnumFacing dir : EnumFacingAccessor.getHorizontals())
             {
                 final int xOffset = dir.getXOffset();
                 final int zOffset = dir.getZOffset();
@@ -390,7 +391,7 @@ public class LightingHooks
 
     public static void scheduleRelightChecksForChunkBoundaries(final World world, final Chunk chunk)
     {
-        for (final EnumFacing dir : EnumFacing.HORIZONTALS)
+        for (final EnumFacing dir : EnumFacingAccessor.getHorizontals())
         {
             final int xOffset = dir.getXOffset();
             final int zOffset = dir.getZOffset();

@@ -2,8 +2,6 @@ package carpet.helpers;
 
 import java.util.List;
 
-import com.google.common.base.Predicates;
-
 import carpet.CarpetSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockDirectional;
@@ -14,7 +12,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
 import net.minecraft.dispenser.IBlockSource;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityMinecartEmpty;
@@ -25,15 +22,12 @@ import net.minecraft.init.Bootstrap;
 import net.minecraft.init.Items;
 import net.minecraft.init.PotionTypes;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.tileentity.TileEntityDispenser;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.datafix.fixes.MinecartEntityTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -68,21 +62,21 @@ public class BetterDispenser {
                 // Block rotation for blocks that can be placed in all 6 rotations.
                 if(block instanceof BlockDirectional || block instanceof BlockDispenser){ 
                     EnumFacing face = (EnumFacing)iblockstate.getValue(BlockDirectional.FACING);
-                    face = face.rotateAround(sourceFace.getAxis());
+                    face = rotateAround(face, sourceFace.getAxis());
                     if(sourceFace.getIndex() % 2 == 0){ // Rotate twice more to make blocks always rotate clockwise relative to the dispenser
                                                         // when index is equal to zero. when index is equal to zero the dispenser is in the opposite direction.
-                        face = face.rotateAround(sourceFace.getAxis());
-                        face = face.rotateAround(sourceFace.getAxis());
+                        face = rotateAround(face, sourceFace.getAxis());
+                        face = rotateAround(face, sourceFace.getAxis());
                     }
                     world.setBlockState(blockpos, iblockstate.withProperty(BlockDirectional.FACING, face), 3);
                 
                 // Block rotation for blocks that can be placed in only 4 horizontal rotations.
                 }else if(block instanceof BlockHorizontal){
                     EnumFacing face = (EnumFacing)iblockstate.getValue(BlockHorizontal.FACING);
-                    face = face.rotateAround(sourceFace.getAxis());
+                    face = rotateAround(face, sourceFace.getAxis());
                     if(sourceFace.getIndex() % 2 == 0){ // same as above.
-                        face = face.rotateAround(sourceFace.getAxis());
-                        face = face.rotateAround(sourceFace.getAxis());
+                        face = rotateAround(face, sourceFace.getAxis());
+                        face = rotateAround(face, sourceFace.getAxis());
                     }
                     if(sourceFace.getIndex() <= 1){ // Make sure to suppress rotation when index is lower then 2 as that will result in a faulty rotation for 
                                                     // blocks that only can be placed horizontaly.
@@ -152,7 +146,36 @@ public class BetterDispenser {
          */
 
     }
-    
+
+    public static EnumFacing rotateAround(EnumFacing facing, EnumFacing.Axis axis) {
+        switch (axis) {
+            case X: return facing != EnumFacing.WEST && facing != EnumFacing.EAST ? rotateX(facing) : facing;
+            case Y: return facing != EnumFacing.UP && facing != EnumFacing.DOWN ? facing.rotateY() : facing;
+            case Z: return facing != EnumFacing.NORTH && facing != EnumFacing.SOUTH ? rotateZ(facing) : facing;
+            default: throw new IllegalStateException("Unable to get CW facing for axis " + axis);
+        }
+    }
+
+    public static EnumFacing rotateX(EnumFacing facing) {
+        switch (facing) {
+            case NORTH: return EnumFacing.DOWN;
+            case SOUTH: return EnumFacing.UP;
+            case UP: return EnumFacing.NORTH;
+            case DOWN: return EnumFacing.SOUTH;
+            default: throw new IllegalStateException("Unable to get X-rotated facing of " + facing);
+        }
+    }
+
+    public static EnumFacing rotateZ(EnumFacing facing) {
+        switch (facing) {
+            case EAST: return EnumFacing.DOWN;
+            case WEST: return EnumFacing.UP;
+            case UP: return EnumFacing.EAST;
+            case DOWN: return EnumFacing.WEST;
+            default: throw new IllegalStateException("Unable to get Z-rotated facing of " + facing);
+        }
+    }
+
     public static class BehaviorDispenseMinecart extends BehaviorDefaultDispenseItem
     {
         private final BehaviorDefaultDispenseItem dispenseBehavior = new BehaviorDefaultDispenseItem();

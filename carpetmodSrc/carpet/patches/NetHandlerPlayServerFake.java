@@ -5,6 +5,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.NetworkManager;
+import net.minecraft.util.text.ITextComponent;
 
 public class NetHandlerPlayServerFake extends NetHandlerPlayServer
 {
@@ -17,8 +18,9 @@ public class NetHandlerPlayServerFake extends NetHandlerPlayServer
     {
     }
 
-    public void disconnect(String reason)
-    {
+    @Override
+    public void disconnect(ITextComponent textComponent) {
+        player.onKillCommand();
     }
 }
 

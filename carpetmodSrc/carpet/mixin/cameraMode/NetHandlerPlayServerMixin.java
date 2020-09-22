@@ -1,6 +1,7 @@
 package carpet.mixin.cameraMode;
 
 import carpet.CarpetSettings;
+import carpet.utils.extensions.CameraPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.play.client.CPacketSpectate;
@@ -24,7 +25,7 @@ public class NetHandlerPlayServerMixin {
     @Inject(method = "onDisconnect", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerList;playerLoggedOut(Lnet/minecraft/entity/player/EntityPlayerMP;)V"))
     private void onLogout(ITextComponent reason, CallbackInfo ci) {
         // Fix exploit related to camera mode and logging out CARPET-XCOM
-        if(CarpetSettings.cameraModeRestoreLocation && player.getGamemodeCamera()){
+        if(CarpetSettings.cameraModeRestoreLocation && ((CameraPlayer) player).getGamemodeCamera()){
             setPlayerToSurvival(server, player,true);
         }
     }
@@ -32,6 +33,6 @@ public class NetHandlerPlayServerMixin {
     @Inject(method = "handleSpectate", at = @At("HEAD"), cancellable = true)
     private void onSpectate(CPacketSpectate packetIn, CallbackInfo ci) {
         // Disables spectating other players when using /c and carpet rule cameraModeDisableSpectatePlayers is true CARPET-XCOM
-        if (player.isDisableSpectatePlayers()) ci.cancel();
+        if (((CameraPlayer) player).isDisableSpectatePlayers()) ci.cancel();
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
+import carpet.utils.extensions.CameraPlayer;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -63,7 +64,7 @@ public class CommandGMC extends CommandCarpetBase
             }
             EntityPlayerMP entityplayer = getCommandSenderAsPlayer(sender);
             if(entityplayer.isSpectator()) return;
-            if(CarpetSettings.cameraModeSurvivalRestrictions && entityplayer.isSurvival()) {
+            if(CarpetSettings.cameraModeSurvivalRestrictions && entityplayer.interactionManager.getGameType() == GameType.SURVIVAL) {
                 List<EntityMob> hostiles = sender.getEntityWorld().getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB(entityplayer.posX - 8.0D, entityplayer.posY - 5.0D, entityplayer.posZ - 8.0D, entityplayer.posX + 8.0D, entityplayer.posY + 5.0D, entityplayer.posZ + 8.0D), new EntityPlayer.SleepEnemyPredicate(entityplayer));
                 PotionEffect fireresist = entityplayer.getActivePotionEffect(Potion.getPotionFromResourceLocation("fire_resistance"));
                 if(!entityplayer.onGround || entityplayer.isElytraFlying() || (entityplayer.getFire() > 0 && (fireresist == null || fireresist.getDuration() < entityplayer.getFire())) || entityplayer.getAir() != 300 || !hostiles.isEmpty()){
@@ -73,14 +74,14 @@ public class CommandGMC extends CommandCarpetBase
             }
             Potion nightvision = Potion.getPotionFromResourceLocation("night_vision");
             boolean hasNightvision = entityplayer.getActivePotionEffect(nightvision) != null;
-            entityplayer.storeCameraData(hasNightvision);
+            ((CameraPlayer) entityplayer).storeCameraData(hasNightvision);
             GameType gametype = GameType.parseGameTypeWithDefault("spectator", GameType.NOT_SET);
             entityplayer.setGameType(gametype);
             if(!hasNightvision) {
                 PotionEffect potioneffect = new PotionEffect(nightvision, 999999, 0, false, false);
                 entityplayer.addPotionEffect(potioneffect);
             }
-            entityplayer.setGamemodeCamera();
+            ((CameraPlayer) entityplayer).setGamemodeCamera();
         }
     }
 

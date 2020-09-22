@@ -27,16 +27,7 @@
      }
  
      protected void func_71222_d()
-@@ -389,6 +396,8 @@
-         if (this.field_71318_t != null)
-         {
-             field_147145_h.info("Saving players");
-+            this.field_71318_t.removeBotTeam();
-+            this.field_71318_t.storeFakePlayerData();
-             this.field_71318_t.func_72389_g();
-             this.field_71318_t.func_72392_r();
-         }
-@@ -620,13 +629,16 @@
+@@ -620,6 +627,7 @@
              this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
          }
  
@@ -44,8 +35,7 @@
          if (this.field_71315_w % 900 == 0)
          {
              this.field_71304_b.func_76320_a("save");
-+            this.field_71318_t.storeFakePlayerData();
-             this.field_71318_t.func_72389_g();
+@@ -627,6 +635,7 @@
              this.func_71267_a(true);
              this.field_71304_b.func_76319_b();
          }
@@ -53,7 +43,7 @@
  
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
-@@ -649,8 +661,10 @@
+@@ -649,8 +658,10 @@
  
      public void func_71190_q()
      {
@@ -64,7 +54,7 @@
          synchronized (this.field_175589_i)
          {
              while (!this.field_175589_i.isEmpty())
-@@ -658,6 +672,7 @@
+@@ -658,6 +669,7 @@
                  Util.func_181617_a(this.field_175589_i.poll(), field_147145_h);
              }
          }
@@ -72,7 +62,7 @@
  
          this.field_71304_b.func_76318_c("levels");
  
-@@ -672,6 +687,7 @@
+@@ -672,6 +684,7 @@
                  {
                      return worldserver.func_72912_H().func_76065_j();
                  });
@@ -80,7 +70,7 @@
  
                  if (this.field_71315_w % 20 == 0)
                  {
-@@ -707,6 +723,7 @@
+@@ -707,6 +720,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76320_a("tracker");
                  worldserver.func_73039_n().func_72788_a();

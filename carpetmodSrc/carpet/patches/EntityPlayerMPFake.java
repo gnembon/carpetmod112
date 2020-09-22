@@ -1,6 +1,7 @@
 package carpet.patches;
 
 import carpet.CarpetSettings;
+import carpet.utils.extensions.CameraPlayer;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -13,8 +14,10 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerInteractionManager;
+import net.minecraft.stats.StatBase;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.GameType;
@@ -74,9 +77,9 @@ public class EntityPlayerMPFake extends EntityPlayerMP
 
     public static EntityPlayerMPFake createShadow(MinecraftServer server, EntityPlayerMP player)
     {
-        if(CarpetSettings.cameraModeRestoreLocation && player.getGamemodeCamera()) {
+        if(CarpetSettings.cameraModeRestoreLocation && ((CameraPlayer) player).getGamemodeCamera()) {
             GameType gametype = server.getGameType();
-            player.moveToStoredCameraData();
+            ((CameraPlayer) player).moveToStoredCameraData();
             player.setGameType(gametype);
             player.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
         }
@@ -176,12 +179,12 @@ public class EntityPlayerMPFake extends EntityPlayerMP
 
     private void logout() {
         this.dismountRidingEntity();
-        getServer().getPlayerList().playerLoggedOut(this);
+        connection.onDisconnect(new TextComponentString("Logout"));
         removePlayerFromTeams(this);
     }
 
     public void despawn() {
-        getServer().getPlayerList().playerLoggedOut(this);
+        connection.onDisconnect(new TextComponentString("Despawn"));
         removePlayerFromTeams(this);
     }
 
@@ -231,5 +234,12 @@ public class EntityPlayerMPFake extends EntityPlayerMP
 
     public static String getInfo(EntityPlayerMP p){
         return p.getName() + "/" + p.actionPack;
+    }
+
+    @Override
+    public void addStat(StatBase stat, int amount) {
+        if (CarpetSettings.fakePlayerStats) {
+            super.addStat(stat, amount);
+        }
     }
 }

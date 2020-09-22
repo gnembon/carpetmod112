@@ -1,6 +1,7 @@
 package carpet.helpers;
 
 
+import carpet.mixin.accessors.InventoryCraftingAccessor;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -74,7 +75,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     public NBTTagCompound writeToNBT(NBTTagCompound tag)
     {
         super.writeToNBT(tag);
-        ItemStackHelper.saveAllItems(tag, inventory.stackList);
+        ItemStackHelper.saveAllItems(tag, ((InventoryCraftingAccessor) inventory).getStackList());
         tag.setTag("Output", output.writeToNBT(new NBTTagCompound()));
         return tag;
     }
@@ -83,7 +84,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     public void readFromNBT(NBTTagCompound tag)
     {
         super.readFromNBT(tag);
-        ItemStackHelper.loadAllItems(tag, inventory.stackList);
+        ItemStackHelper.loadAllItems(tag, ((InventoryCraftingAccessor) inventory).getStackList());
         this.output = new ItemStack(tag.getCompoundTag("Output"));
     }
 
@@ -108,7 +109,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
     public Container createContainer(InventoryPlayer playerInventory, EntityPlayer playerIn)
     {
         ContainerAutoCraftingTable container = new ContainerAutoCraftingTable(playerInventory, this, this.world, this.pos);
-        inventory.eventHandler = container;
+        ((InventoryCraftingAccessor) inventory).setEventHandler(container);
         this.openContainers.add(container);
         return container;
     }
@@ -197,7 +198,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
             }
             return output.splitStack(amount);
         }
-        return ItemStackHelper.getAndSplit(inventory.stackList, slot - 1, amount);
+        return ItemStackHelper.getAndSplit(((InventoryCraftingAccessor) inventory).getStackList(), slot - 1, amount);
     }
 
     @Override
@@ -221,7 +222,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
             output = stack;
             return;
         }
-        inventory.stackList.set(slot - 1, stack);
+        ((InventoryCraftingAccessor) inventory).getStackList().set(slot - 1, stack);
     }
 
     @Override

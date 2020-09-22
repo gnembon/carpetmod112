@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class EntityTrackerEntryMixin {
     @Inject(method = "removeFromTrackedPlayers", at = @At("HEAD"))
     private void invisDebug(EntityPlayerMP playerMP, CallbackInfo ci) {
-        DebugLogHelper.invisDebug(() -> "r1: " + playerMP);
+        DebugLogHelper.invisDebug(() -> "r1: " + playerMP, true);
     }
 }

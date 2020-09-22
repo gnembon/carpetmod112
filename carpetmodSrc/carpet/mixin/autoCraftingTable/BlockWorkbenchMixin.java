@@ -2,6 +2,7 @@ package carpet.mixin.autoCraftingTable;
 
 import carpet.CarpetSettings;
 import carpet.helpers.TileEntityCraftingTable;
+import carpet.mixin.accessors.InventoryCraftingAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWorkbench;
 import net.minecraft.block.ITileEntityProvider;
@@ -52,7 +53,7 @@ public class BlockWorkbenchMixin extends Block implements ITileEntityProvider {
         TileEntityCraftingTable te = getTileEntity(world, pos);
         if (te == null) return 0;
         int count = 0;
-        for (ItemStack stack : te.inventory.stackList) {
+        for (ItemStack stack : ((InventoryCraftingAccessor) te.inventory).getStackList()) {
             if (!stack.isEmpty()) count++;
         }
         return (count * 15) / 9;

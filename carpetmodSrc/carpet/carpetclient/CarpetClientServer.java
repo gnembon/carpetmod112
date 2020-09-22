@@ -1,27 +1,21 @@
 package carpet.carpetclient;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
-import java.util.List;
 
-import carpet.CarpetSettings;
 import carpet.network.PacketSplitter;
 import carpet.network.PluginChannelHandler;
-import com.google.common.base.Charsets;
 
-import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.client.CPacketCustomPayload;
 import net.minecraft.network.play.server.SPacketBlockChange;
-import net.minecraft.network.play.server.SPacketCustomPayload;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.PlayerInteractionManager;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 
 public class CarpetClientServer implements PluginChannelHandler {
 
+    public static boolean activateInstantMine = true;
     private final MinecraftServer minecraftServer;
     private static final LinkedHashSet<EntityPlayerMP> players = new LinkedHashSet<>();
     public static final String CARPET_CHANNEL_NAME = "carpet:client";
@@ -50,7 +44,7 @@ public class CarpetClientServer implements PluginChannelHandler {
                 boolean start = payload.readBoolean();
                 BlockPos pos = payload.readBlockPos();
                 EnumFacing facing = EnumFacing.byIndex(payload.readUnsignedByte());
-                PlayerInteractionManager.activateInstantMine = payload.readBoolean();
+                activateInstantMine = payload.readBoolean();
                 if (start) {
                     if (!this.minecraftServer.isBlockProtected(player.world, pos, player) && player.world.getWorldBorder().contains(pos)) {
                         player.interactionManager.onBlockClicked(pos, facing);
@@ -60,7 +54,7 @@ public class CarpetClientServer implements PluginChannelHandler {
                 } else {
                     player.interactionManager.blockRemoving(pos);
                 }
-                PlayerInteractionManager.activateInstantMine = true;
+                activateInstantMine = true;
                 break;
         }
     }

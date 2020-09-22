@@ -2,9 +2,11 @@ package carpet.mixin.carefulBreak;
 
 import carpet.CarpetServer;
 import carpet.CarpetSettings;
+import carpet.helpers.CarefulBreakHelper;
 import carpet.logging.LoggerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.server.SPacketSoundEffect;
@@ -22,10 +24,11 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 public class BlockMixin {
     @Inject(method = "spawnAsEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/item/EntityItem;setDefaultPickupDelay()V"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
     private static void doCarefulBreak(World worldIn, BlockPos pos, ItemStack stack, CallbackInfo ci, float f, double d0, double d1, double d2, EntityItem item) {
-        if(CarpetSettings.carefulBreak && PlayerInteractionManager.playerMinedBlock != null && PlayerInteractionManager.playerMinedBlock.isSneaking() && LoggerRegistry.getLogger("carefulBreak").subscribed(PlayerInteractionManager.playerMinedBlock)){
-            item.onCollideWithPlayer(PlayerInteractionManager.playerMinedBlock);
+        EntityPlayerMP player = CarefulBreakHelper.miningPlayer;
+        if(CarpetSettings.carefulBreak && player != null && player.isSneaking() && LoggerRegistry.getLogger("carefulBreak").subscribed(player)){
+            item.onCollideWithPlayer(player);
             if(item.isDead){
-                PlayerInteractionManager.playerMinedBlock.connection.sendPacket(new SPacketSoundEffect(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, pos.getX(), pos.getY(), pos.getZ(), 0.2F, (CarpetServer.rand.nextFloat() - CarpetServer.rand.nextFloat()) * 1.4F + 2.0F));
+                player.connection.sendPacket(new SPacketSoundEffect(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, pos.getX(), pos.getY(), pos.getZ(), 0.2F, (CarpetServer.rand.nextFloat() - CarpetServer.rand.nextFloat()) * 1.4F + 2.0F));
                 ci.cancel();
             }
         }

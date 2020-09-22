@@ -137,18 +137,15 @@
                  this.func_70106_y();
              }
  
-@@ -366,6 +421,10 @@
+@@ -366,6 +421,7 @@
              Item item = itemstack.func_77973_b();
              int i = itemstack.func_190916_E();
  
-+            if(CarpetSettings.craftingWindowDuplication && p_70100_1_ instanceof EntityPlayerMP){
-+                ((EntityPlayerMP)p_70100_1_).dupeItemScan(true);
-+            }
 +            CarpetServer.playerInventoryStacking = true;
              if (this.field_145804_b == 0 && (this.field_145802_g == null || 6000 - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && p_70100_1_.field_71071_by.func_70441_a(itemstack))
              {
                  p_70100_1_.func_71001_a(this, i);
-@@ -376,8 +435,13 @@
+@@ -376,8 +432,10 @@
                      itemstack.func_190920_e(i);
                  }
  
@@ -157,13 +154,10 @@
 +                p_70100_1_.func_71064_a(StatHelper.getObjectsPickedUpStats(item, itemstack.func_77960_j()), i);
              }
 +            CarpetServer.playerInventoryStacking = false;
-+            if(CarpetSettings.craftingWindowDuplication && p_70100_1_ instanceof EntityPlayerMP){
-+                ((EntityPlayerMP)p_70100_1_).dupeItemScan(false);
-+            }
          }
      }
  
-@@ -470,4 +534,9 @@
+@@ -470,4 +528,9 @@
          this.func_174871_r();
          this.field_70292_b = 5999;
      }

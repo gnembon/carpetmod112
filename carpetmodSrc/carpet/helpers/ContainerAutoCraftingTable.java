@@ -106,7 +106,6 @@ public class ContainerAutoCraftingTable extends ContainerWorkbench {
         }
     }
 
-    @Override
     public InventoryCrafting getInventoryCrafting() {
         return tileEntity.inventory;
     }

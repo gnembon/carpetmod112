@@ -4,6 +4,7 @@ package carpet.helpers;
  * Copyright PhiPro
  */
 
+import carpet.mixin.accessors.EnumFacingAccessor;
 import carpet.utils.extensions.NewLightChunk;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.profiler.Profiler;
@@ -57,7 +58,7 @@ public class LightingEngine {
 
     static {
         for (int i = 0; i < 6; ++i) {
-            final Vec3i offset = EnumFacing.VALUES[i].directionVec;
+            final Vec3i offset = ((EnumFacingAccessor) (Object) EnumFacingAccessor.getValues()[i]).getDirectionVec();
             neighborShifts[i] = ((long) offset.getY() << sY) | ((long) offset.getX() << sX) | ((long) offset.getZ() << sZ);
         }
     }
@@ -248,7 +249,7 @@ public class LightingEngine {
                         final Chunk nChunk = this.neighborsChunk[i];
 
                         if (nChunk == null) {
-                            LightingHooks.flagSecBoundaryForUpdate(this.curChunk, this.curPos, this.lightType, EnumFacing.VALUES[i], LightingHooks.EnumBoundaryFacing.OUT);
+                            LightingHooks.flagSecBoundaryForUpdate(this.curChunk, this.curPos, this.lightType, EnumFacingAccessor.getValues()[i], LightingHooks.EnumBoundaryFacing.OUT);
                             continue;
                         }
 
@@ -349,7 +350,7 @@ public class LightingEngine {
 
         for (int i = 0; i < 6; ++i) {
             if (this.neighborsChunk[i] == null) {
-                LightingHooks.flagSecBoundaryForUpdate(this.curChunk, this.curPos, this.lightType, EnumFacing.VALUES[i], LightingHooks.EnumBoundaryFacing.IN);
+                LightingHooks.flagSecBoundaryForUpdate(this.curChunk, this.curPos, this.lightType, EnumFacingAccessor.getValues()[i], LightingHooks.EnumBoundaryFacing.IN);
                 continue;
             }
 
@@ -370,7 +371,7 @@ public class LightingEngine {
             final Chunk nChunk = this.neighborsChunk[i];
 
             if (nChunk == null) {
-                LightingHooks.flagSecBoundaryForUpdate(this.curChunk, this.curPos, this.lightType, EnumFacing.VALUES[i], LightingHooks.EnumBoundaryFacing.OUT);
+                LightingHooks.flagSecBoundaryForUpdate(this.curChunk, this.curPos, this.lightType, EnumFacingAccessor.getValues()[i], LightingHooks.EnumBoundaryFacing.OUT);
                 continue;
             }
 

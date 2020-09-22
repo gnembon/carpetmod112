@@ -1,5 +1,6 @@
 package carpet.helpers;
 
+import carpet.mixin.accessors.ScoreCriteriaStatAccessor;
 import carpet.mixin.accessors.StatCraftingAccessor;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -88,7 +89,7 @@ public class StatHelper {
         LOGGER.info("Initializing " + objective);
         IScoreCriteria criteria = objective.getCriteria();
         if (!(criteria instanceof ScoreCriteriaStat)) return;
-        StatBase stat = ((ScoreCriteriaStat) criteria).stat;
+        StatBase stat = ((ScoreCriteriaStatAccessor) criteria).getStat();
         for (Map.Entry<UUID, StatisticsManager> statEntry : getAllStatistics(server).entrySet()) {
             StatisticsManager stats = statEntry.getValue();
             int value = stats.readStat(stat);

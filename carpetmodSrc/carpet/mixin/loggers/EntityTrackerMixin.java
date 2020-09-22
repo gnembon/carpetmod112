@@ -12,6 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class EntityTrackerMixin {
     @Inject(method = "untrack", at = @At(value = "INVOKE", target = "Ljava/util/Set;iterator()Ljava/util/Iterator;"))
     private void invisDebug(Entity entityIn, CallbackInfo ci) {
-        DebugLogHelper.invisDebug(() -> "t1: " + entityIn);
+        DebugLogHelper.invisDebug(() -> "t1: " + entityIn, true);
     }
 }
