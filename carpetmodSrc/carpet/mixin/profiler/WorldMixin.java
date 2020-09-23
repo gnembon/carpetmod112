@@ -40,7 +40,7 @@ public class WorldMixin {
         LagSpikeHelper.processLagSpikes((World) (Object) this, LagSpikeHelper.TickPhase.ENTITY, LagSpikeHelper.EntitySubPhase.POST_PLAYERS);
     }
 
-    @Redirect(method = "updateEntities", at = @At(value = "INVOKE", target = "Ljava/util/List;get(I)Ljava/lang/Object;", remap = false))
+    @Redirect(method = "updateEntities", at = @At(value = "INVOKE", target = "Ljava/util/List;get(I)Ljava/lang/Object;", remap = false, ordinal = 3))
     private Object onStartEntity(List<Entity> list, int index) {
         Entity entity = list.get(index);
         CarpetProfiler.start_entity_section(this.provider.getDimensionType().getName(), entity);

@@ -25,7 +25,7 @@ public class PlayerInteractionManagerMixin {
 
     @Inject(method = "onBlockClicked", at = @At("HEAD"), cancellable = true)
     private void onWorldEditLeftClick(BlockPos pos, EnumFacing side, CallbackInfo ci) {
-        if (WorldEditBridge.onLeftClickBlock(world, pos, player)) {
+        if (!WorldEditBridge.onLeftClickBlock(world, pos, player)) {
             player.connection.sendPacket(new SPacketBlockChange(world, pos));
             ci.cancel();
         }

@@ -1,6 +1,7 @@
 package narcolepticfrog.rsmm.meterable;
 
 import carpet.helpers.RedstoneWireTurbo;
+import carpet.mixin.accessors.BlockPistonBaseAccessor;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -29,7 +30,7 @@ public class IsPoweredHelper {
         } else if (block instanceof BlockObserver) {
             return state.getValue(BlockObserver.POWERED);
         } else if (block instanceof BlockPistonBase) {
-            return ((BlockPistonBase) (block)).shouldBeExtended(world, pos, state.getValue(BlockDirectional.FACING));
+            return ((BlockPistonBaseAccessor) block).invokeShouldBeExtended(world, pos, state.getValue(BlockDirectional.FACING));
         } else if (block instanceof BlockPressurePlateWeighted) {
             return state.getValue(BlockPressurePlateWeighted.POWER) > 0;
         } else if (block instanceof BlockPressurePlate) {

@@ -1,9 +1,9 @@
-package carpet.mixin.duplicationFixMovingTNT;
+package carpet.mixin.duplicationFixMovingBlock;
 
 import carpet.CarpetSettings;
 import carpet.helpers.PistonHelper;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockTNT;
+import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -12,10 +12,10 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(BlockTNT.class)
-public class BlockTntMixin {
-    @Inject(method = "neighborChanged", at = @At("HEAD"), cancellable = true)
+@Mixin(BlockRailBase.class)
+public class BlockRailBaseMixin {
+    @Inject(method = "neighborChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockRailBase;dropBlockAsItem(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;I)V"), cancellable = true)
     private void fixDupe(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, CallbackInfo ci) {
-        if (CarpetSettings.duplicationFixMovingTNT && PistonHelper.isBeingPushed(pos)) ci.cancel();
+        if (CarpetSettings.duplicationFixMovingRail && PistonHelper.isBeingPushed(pos)) ci.cancel();
     }
 }

@@ -1,6 +1,6 @@
 package carpet.helpers;
 
-import carpet.CarpetSettings;
+import carpet.mixin.accessors.BlockRedstoneWireAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockObserver;
 import net.minecraft.block.BlockRedstoneRepeater;
@@ -16,12 +16,6 @@ import java.util.EnumSet;
 
 public class RedstoneOreRedirectHelper
 {
-    private final BlockRedstoneWire wire;
-    
-    public RedstoneOreRedirectHelper(BlockRedstoneWire redstoneWire)
-    {
-        this.wire = redstoneWire;
-    }
     
     public static boolean canConnectToCM(IBlockState blockState, @Nullable EnumFacing side)
     {
@@ -47,10 +41,10 @@ public class RedstoneOreRedirectHelper
         }
     }
     
-    public int getWeakPowerCM(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    public static int getWeakPowerCM(BlockRedstoneWire wire, IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
     {
         IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side.getOpposite()));
-        if (!wire.canProvidePower)
+        if (!((BlockRedstoneWireAccessor) wire).getCanProvidePower())
         {
             return 0;
         }
@@ -77,7 +71,7 @@ public class RedstoneOreRedirectHelper
                 
                 for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
                 {
-                    if (wire.isPowerSourceAt(blockAccess, pos, enumfacing))
+                    if (((BlockRedstoneWireAccessor) wire).invokeIsPowerSourceAt(blockAccess, pos, enumfacing))
                     {
                         enumset.add(enumfacing);
                     }
