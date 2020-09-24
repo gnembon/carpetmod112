@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import carpet.mixin.accessors.EntityLivingAccessor;
 import carpet.mixin.accessors.WeightedRandomItemAccessor;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
@@ -484,5 +486,22 @@ public class SpawnReporter
         return rep;
     }
 
-
+    // Added optimized despawn mobs causing netlag by Luflosi CARPET-XCOM
+    public static boolean willImmediatelyDespawn(EntityLiving entity) {
+        EntityLivingAccessor accessor = (EntityLivingAccessor) entity;
+        if (accessor.invokeCanDespawn() || accessor.getPersistenceRequired()) return false;
+        World world = entity.world;
+        boolean playerInDimension = false;
+        for (int i = 0; i < world.playerEntities.size(); i++) {
+            EntityPlayer entityplayer = world.playerEntities.get(i);
+            if (!entityplayer.isSpectator()) {
+                playerInDimension = true;
+                double distanceSq = entityplayer.getDistanceSq(entity.posX, entity.posY, entity.posZ);
+                if (distanceSq <= 16384.0D) {
+                    return false;
+                }
+            }
+        }
+        return playerInDimension;
+    }
 }

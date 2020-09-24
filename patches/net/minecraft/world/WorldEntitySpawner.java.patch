@@ -85,7 +85,7 @@
                                                          ++j2;
 -                                                        p_77192_1_.func_72838_d(entityliving);
 +                                                        //CM replacing //worldServerIn.spawnEntityInWorld(entityliving);
-+                                                        if (optimizedDespawnRange && entityliving.willImmediatelyDespawn()) // Added optimized despawn mobs causing netlag by Luflosi CARPET-XCOM
++                                                        if (optimizedDespawnRange && SpawnReporter.willImmediatelyDespawn(entityliving)) // Added optimized despawn mobs causing netlag by Luflosi CARPET-XCOM
 +                                                        {
 +                                                            entityliving.func_70106_y();
 +                                                        }

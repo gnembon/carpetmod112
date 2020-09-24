@@ -12,7 +12,6 @@ import carpet.worldedit.WorldEditBridge;
 import java.io.*;
 import java.util.*;
 
-import narcolepticfrog.rsmm.MeterCommand;
 import narcolepticfrog.rsmm.events.TickStartEventDispatcher;
 import narcolepticfrog.rsmm.server.RSMMServer;
 
@@ -38,7 +37,7 @@ public class CarpetServer // static for now - easier to handle all around the co
     public static RSMMServer rsmmServer;
     public static ToggleableChannelHandler rsmmChannel;
     public static ToggleableChannelHandler wecuiChannel;
-    public static boolean playerInventoryStacking = false;
+    public static ThreadLocal<Boolean> playerInventoryStacking = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     private static CarpetClientServer CCServer;
 

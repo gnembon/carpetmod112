@@ -1,5 +1,6 @@
 package carpet.mixin.scoreboardDelta;
 
+import carpet.utils.extensions.ExtendedScore;
 import net.minecraft.network.play.server.SPacketUpdateScore;
 import net.minecraft.scoreboard.Score;
 import org.spongepowered.asm.mixin.Mixin;
@@ -10,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class SPacketUpdateScoreMixin {
     @Redirect(method = "<init>(Lnet/minecraft/scoreboard/Score;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/scoreboard/Score;getScorePoints()I"))
     private int getScorePoints(Score score) {
-        return score.getScorePointsDelta();
+        return ((ExtendedScore) score).getScorePointsDelta();
     }
 }

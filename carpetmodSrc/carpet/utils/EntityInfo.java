@@ -1,5 +1,6 @@
 package carpet.utils;
 
+import carpet.mixin.accessors.EntityItemAccessor;
 import carpet.mixin.accessors.EntitySlimeAccessor;
 import carpet.mixin.accessors.EntityVillagerAccessor;
 import carpet.mixin.accessors.EntityZombieVillagerAccessor;
@@ -154,7 +155,7 @@ public class EntityInfo
 			ItemStack stack = ei.getItem();// getEntityItem();
 			String stackname = stack.getCount()>1?String.format("%dx%s",stack.getCount(), stack.getDisplayName()):stack.getDisplayName();
 			lst.add(String.format(" - Content: %s", stackname));
-			lst.add(String.format(" - Despawn Timer: %s", makeTime(ei.getAge())));
+			lst.add(String.format(" - Despawn Timer: %s", makeTime(((EntityItemAccessor) ei).getAge())));
         }
 		if (e instanceof EntityXPOrb)
         {

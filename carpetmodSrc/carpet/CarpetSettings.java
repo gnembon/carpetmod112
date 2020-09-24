@@ -539,6 +539,7 @@ public final class CarpetSettings
     @Rule(desc = "Won't let mobs glitch into blocks when reloaded.", category = FIX)
     @BugFixDefault
     public static boolean reloadSuffocationFix = false;
+    // Mixins: AxisAlignedBB.margin was removed since it was unused
 //    private static boolean validateReloadSuffocationFix(boolean value) {
 //        if (value)
 //            AxisAlignedBB.margin = 1.0 / (1L << 27);

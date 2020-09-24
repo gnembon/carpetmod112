@@ -1,19 +1,9 @@
 package carpet.helpers;
 //Author: xcom & masa
 
-import java.math.RoundingMode;
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import carpet.logging.LoggerRegistry;
+import carpet.CarpetSettings;
+import carpet.mixin.accessors.ExplosionAccessor;
 import carpet.utils.Messenger;
-import net.minecraft.entity.item.EntityMinecartTNT;
-import net.minecraft.util.text.ITextComponent;
-import org.apache.commons.lang3.tuple.MutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-
 import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
@@ -23,9 +13,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.enchantment.EnchantmentProtection;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityMinecartTNT;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.player.EntityPlayer;
-import carpet.CarpetSettings;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.DamageSource;
@@ -38,6 +28,13 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import org.apache.commons.lang3.tuple.MutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.math.RoundingMode;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 public class OptimizedTNT
 {
@@ -58,13 +55,13 @@ public class OptimizedTNT
     private static BlockPos blastChanceLocation;
     private static boolean minecartTNT;
 
-    public static void doExplosionA(Explosion e) {
+    public static void doExplosionA(ExplosionAccessor e) {
         blastCalc(e);
 
         if (!CarpetSettings.explosionNoBlockDamage) {
             rayCalcDone = false;
             firstRay = true;
-            minecartTNT = e.exploder instanceof EntityMinecartTNT;
+            minecartTNT = e.getExploder() instanceof EntityMinecartTNT;
 			getAffectedPositionsOnPlaneY(e,  0,  0, 15,  0, 15); // bottom
 			getAffectedPositionsOnPlaneY(e, 15,  0, 15,  0, 15); // top
 			getAffectedPositionsOnPlaneX(e,  0,  1, 14,  0, 15); // west
@@ -73,23 +70,23 @@ public class OptimizedTNT
 			getAffectedPositionsOnPlaneZ(e, 15,  1, 14,  1, 14); // south
 			stateCache.clear();
 
-            e.affectedBlockPositions.addAll(affectedBlockPositionsSet);
+            e.getAffectedBlockPositions().addAll(affectedBlockPositionsSet);
             affectedBlockPositionsSet.clear();
         }
 
-        float f3 = e.size * 2.0F;
-        int k1 = MathHelper.floor(e.x - (double) f3 - 1.0D);
-        int l1 = MathHelper.floor(e.x + (double) f3 + 1.0D);
-        int i2 = MathHelper.floor(e.y - (double) f3 - 1.0D);
-        int i1 = MathHelper.floor(e.y + (double) f3 + 1.0D);
-        int j2 = MathHelper.floor(e.z - (double) f3 - 1.0D);
-        int j1 = MathHelper.floor(e.z + (double) f3 + 1.0D);
-        Vec3d vec3d = new Vec3d(e.x, e.y, e.z);
+        float f3 = e.getSize() * 2.0F;
+        int k1 = MathHelper.floor(e.getX() - (double) f3 - 1.0D);
+        int l1 = MathHelper.floor(e.getX() + (double) f3 + 1.0D);
+        int i2 = MathHelper.floor(e.getY() - (double) f3 - 1.0D);
+        int i1 = MathHelper.floor(e.getY() + (double) f3 + 1.0D);
+        int j2 = MathHelper.floor(e.getZ() - (double) f3 - 1.0D);
+        int j1 = MathHelper.floor(e.getZ() + (double) f3 + 1.0D);
+        Vec3d vec3d = new Vec3d(e.getX(), e.getY(), e.getZ());
 
-        if (vec3dmem == null || !vec3dmem.equals(vec3d) || tickmem != e.world.getTotalWorldTime()) {
+        if (vec3dmem == null || !vec3dmem.equals(vec3d) || tickmem != e.getWorld().getTotalWorldTime()) {
             vec3dmem = vec3d;
-            tickmem = e.world.getTotalWorldTime();
-            entitylist = e.world.getEntitiesWithinAABBExcludingEntity(null,
+            tickmem = e.getWorld().getTotalWorldTime();
+            entitylist = e.getWorld().getEntitiesWithinAABBExcludingEntity(null,
                     new AxisAlignedBB((double) k1, (double) i2, (double) j2, (double) l1, (double) i1, (double) j1));
             explosionSound = 0;
         }
@@ -99,7 +96,7 @@ public class OptimizedTNT
         for (int k2 = 0; k2 < entitylist.size(); ++k2) {
             Entity entity = entitylist.get(k2);
 
-            if (entity == e.exploder) {
+            if (entity == e.getExploder()) {
                 // entitylist.remove(k2);
                 removeFast(entitylist, k2);
                 k2--;
@@ -107,19 +104,19 @@ public class OptimizedTNT
             }
 
             if (entity instanceof EntityTNTPrimed &&
-                entity.posX == e.exploder.posX &&
-                entity.posY == e.exploder.posY &&
-                entity.posZ == e.exploder.posZ) {
+                entity.posX == e.getExploder().posX &&
+                entity.posY == e.getExploder().posY &&
+                entity.posZ == e.getExploder().posZ) {
                 continue;
             }
 
             if (!entity.isImmuneToExplosions()) {
-                double d12 = entity.getDistance(e.x, e.y, e.z) / (double) f3;
+                double d12 = entity.getDistance(e.getX(), e.getY(), e.getZ()) / (double) f3;
 
                 if (d12 <= 1.0D) {
-                    double d5 = entity.posX - e.x;
-                    double d7 = entity.posY + (double) entity.getEyeHeight() - e.y;
-                    double d9 = entity.posZ - e.z;
+                    double d5 = entity.posX - e.getX();
+                    double d7 = entity.posY + (double) entity.getEyeHeight() - e.getY();
+                    double d9 = entity.posZ - e.getZ();
                     double d13 = (double) MathHelper.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
 
                     if (d13 != 0.0D) {
@@ -135,12 +132,12 @@ public class OptimizedTNT
 						if (density == Double.MAX_VALUE)
 						{
 							Pair<Vec3d, AxisAlignedBB> pair = Pair.of(vec3d, entity.getEntityBoundingBox());
-							density = e.world.getBlockDensity(vec3d, entity.getEntityBoundingBox());
+							density = e.getWorld().getBlockDensity(vec3d, entity.getEntityBoundingBox());
 							densityCache.put(pair, density);
 						}
 
                         double d10 = (1.0D - d12) * density;
-                        entity.attackEntityFrom(DamageSource.causeExplosionDamage(e),
+                        entity.attackEntityFrom(DamageSource.causeExplosionDamage((Explosion) e),
                                 (float) ((int) ((d10 * d10 + d10) / 2.0D * 7.0D * (double) f3 + 1.0D)));
                         double d11 = d10;
 
@@ -157,7 +154,7 @@ public class OptimizedTNT
 
                             if (!entityplayer.isSpectator()
                                     && (!entityplayer.isCreative() || !entityplayer.capabilities.isFlying)) {
-                                e.playerKnockbackMap.put(entityplayer, new Vec3d(d5 * d10, d7 * d10, d9 * d10));
+                                e.getPlayerKnockbackMap().put(entityplayer, new Vec3d(d5 * d10, d7 * d10, d9 * d10));
                             }
                         }
                     }
@@ -168,12 +165,12 @@ public class OptimizedTNT
         densityCache.clear();
     }
 
-    public static void doExplosionB(Explosion e, boolean spawnParticles)
+    public static void doExplosionB(ExplosionAccessor e, boolean spawnParticles)
     {
-        World world = e.world;
-        double posX = e.x;
-        double posY = e.y;
-        double posZ = e.z;
+        World world = e.getWorld();
+        double posX = e.getX();
+        double posY = e.getY();
+        double posZ = e.getZ();
 
         // explosionSound incremented till disabling the explosion particles and sound
         if (explosionSound < 100 || explosionSound % 100 == 0)
@@ -181,7 +178,7 @@ public class OptimizedTNT
             world.playSound(null, posX, posY, posZ, SoundEvents.ENTITY_GENERIC_EXPLODE, SoundCategory.BLOCKS, 4.0F,
                     (1.0F + (world.rand.nextFloat() - world.rand.nextFloat()) * 0.2F) * 0.7F);
 
-            if (e.size >= 2.0F && e.damagesTerrain)
+            if (e.getSize() >= 2.0F && e.getDamagesTerrain())
             {
                 world.spawnParticle(EnumParticleTypes.EXPLOSION_HUGE, posX, posY, posZ, 1.0D, 0.0D, 0.0D);
             }
@@ -191,9 +188,9 @@ public class OptimizedTNT
             }
         }
 
-        if (e.damagesTerrain)
+        if (e.getDamagesTerrain())
         {
-            for (BlockPos blockpos : e.affectedBlockPositions)
+            for (BlockPos blockpos : e.getAffectedBlockPositions())
             {
                 IBlockState iblockstate = world.getBlockState(blockpos);
                 Block block = iblockstate.getBlock();
@@ -210,7 +207,7 @@ public class OptimizedTNT
                     d3 = d3 / d6;
                     d4 = d4 / d6;
                     d5 = d5 / d6;
-                    double d7 = 0.5D / (d6 / (double) e.size + 0.1D);
+                    double d7 = 0.5D / (d6 / (double) e.getSize() + 0.1D);
                     d7 = d7 * (double)(world.rand.nextFloat() * world.rand.nextFloat() + 0.3F);
                     d3 = d3 * d7;
                     d4 = d4 * d7;
@@ -222,28 +219,28 @@ public class OptimizedTNT
 
                 if (iblockstate.getMaterial() != Material.AIR)
                 {
-                    if (block.canDropFromExplosion(e))
+                    if (block.canDropFromExplosion((Explosion) e))
                     {
                         // CARPET-MASA: use the state from above instead of getting it again from the world
-                        block.dropBlockAsItemWithChance(world, blockpos, iblockstate, 1.0F / e.size, 0);
+                        block.dropBlockAsItemWithChance(world, blockpos, iblockstate, 1.0F / e.getSize(), 0);
                     }
 
                     world.setBlockState(blockpos, Blocks.AIR.getDefaultState(), 3);
-                    block.onExplosionDestroy(world, blockpos, e);
+                    block.onExplosionDestroy(world, blockpos, (Explosion) e);
                 }
             }
         }
 
-        if (e.causesFire)
+        if (e.getCausesFire())
         {
-            for (BlockPos blockpos1 : e.affectedBlockPositions)
+            for (BlockPos blockpos1 : e.getAffectedBlockPositions())
             {
                 // Use the same Chunk reference because the positions are in the same xz-column
                 Chunk chunk = world.getChunk(blockpos1.getX() >> 4, blockpos1.getZ() >> 4);
 
                 if (chunk.getBlockState(blockpos1).getMaterial() == Material.AIR &&
                     chunk.getBlockState(blockpos1.down()).isFullBlock() &&
-                    e.random.nextInt(3) == 0)
+                    e.getRandom().nextInt(3) == 0)
                 {
                     world.setBlockState(blockpos1, Blocks.FIRE.getDefaultState());
                 }
@@ -257,7 +254,7 @@ public class OptimizedTNT
         lst.remove(lst.size() - 1);
     }
 
-    private static void rayCalcs(Explosion e) {
+    private static void rayCalcs(ExplosionAccessor e) {
         boolean first = true;
 
         for (int j = 0; j < 16; ++j) {
@@ -271,28 +268,28 @@ public class OptimizedTNT
                         d0 = d0 / d3;
                         d1 = d1 / d3;
                         d2 = d2 / d3;
-                        float rand = e.world.rand.nextFloat();
+                        float rand = e.getWorld().rand.nextFloat();
                         if (CarpetSettings.tntRandomRange >= 0) {
                             rand = (float) CarpetSettings.tntRandomRange;
                         }
-                        float f = e.size * (0.7F + rand * 0.6F);
-                        double d4 = e.x;
-                        double d6 = e.y;
-                        double d8 = e.z;
+                        float f = e.getSize() * (0.7F + rand * 0.6F);
+                        double d4 = e.getX();
+                        double d6 = e.getY();
+                        double d8 = e.getZ();
 
                         for (float f1 = 0.3F; f > 0.0F; f -= 0.22500001F) {
                             BlockPos blockpos = new BlockPos(d4, d6, d8);
-                            IBlockState iblockstate = e.world.getBlockState(blockpos);
+                            IBlockState iblockstate = e.getWorld().getBlockState(blockpos);
 
                             if (iblockstate.getMaterial() != Material.AIR) {
-                                float f2 = e.exploder != null
-                                        ? e.exploder.getExplosionResistance(e, e.world, blockpos, iblockstate)
+                                float f2 = e.getExploder() != null
+                                        ? e.getExploder().getExplosionResistance((Explosion) e, e.getWorld(), blockpos, iblockstate)
                                         : iblockstate.getBlock().getExplosionResistance((Entity) null);
                                 f -= (f2 + 0.3F) * 0.3F;
                             }
 
-                            if (f > 0.0F && (e.exploder == null ||
-                                e.exploder.canExplosionDestroyBlock(e, e.world, blockpos, iblockstate, f)))
+                            if (f > 0.0F && (e.getExploder() == null ||
+                                e.getExploder().canExplosionDestroyBlock((Explosion) e, e.getWorld(), blockpos, iblockstate, f)))
                             {
                                 affectedBlockPositionsSet.add(blockpos);
                             }
@@ -312,7 +309,7 @@ public class OptimizedTNT
         }
     }
 
-    private static void getAffectedPositionsOnPlaneX(Explosion e, int x, int yStart, int yEnd, int zStart, int zEnd)
+    private static void getAffectedPositionsOnPlaneX(ExplosionAccessor e, int x, int yStart, int yEnd, int zStart, int zEnd)
     {
         if (rayCalcDone == false)
         {
@@ -335,7 +332,7 @@ public class OptimizedTNT
         }
     }
 
-    private static void getAffectedPositionsOnPlaneY(Explosion e, int y, int xStart, int xEnd, int zStart, int zEnd)
+    private static void getAffectedPositionsOnPlaneY(ExplosionAccessor e, int y, int xStart, int xEnd, int zStart, int zEnd)
     {
         if (rayCalcDone == false)
         {
@@ -358,7 +355,7 @@ public class OptimizedTNT
         }
     }
 
-    private static void getAffectedPositionsOnPlaneZ(Explosion e, int z, int xStart, int xEnd, int yStart, int yEnd)
+    private static void getAffectedPositionsOnPlaneZ(ExplosionAccessor e, int z, int xStart, int xEnd, int yStart, int yEnd)
     {
         if (rayCalcDone == false)
         {
@@ -381,18 +378,18 @@ public class OptimizedTNT
         }
     }
 
-    private static boolean checkAffectedPosition(Explosion e, double xRel, double yRel, double zRel)
+    private static boolean checkAffectedPosition(ExplosionAccessor e, double xRel, double yRel, double zRel)
     {
         double len = Math.sqrt(xRel * xRel + yRel * yRel + zRel * zRel);
         double xInc = (xRel / len) * 0.3;
         double yInc = (yRel / len) * 0.3;
         double zInc = (zRel / len) * 0.3;
-        float rand = e.world.rand.nextFloat();
+        float rand = e.getWorld().rand.nextFloat();
         float sizeRand = (CarpetSettings.tntRandomRange >= 0 ? (float) CarpetSettings.tntRandomRange : rand);
-        float size = e.size * (0.7F + sizeRand * 0.6F);
-        double posX = e.x;
-        double posY = e.y;
-        double posZ = e.z;
+        float size = e.getSize() * (0.7F + sizeRand * 0.6F);
+        double posX = e.getX();
+        double posY = e.getY();
+        double posZ = e.getZ();
 
         for (float f1 = 0.3F; size > 0.0F; size -= 0.22500001F)
         {
@@ -405,7 +402,7 @@ public class OptimizedTNT
             if (state == null)
             {
                 posImmutable = posMutable.toImmutable();
-                state = e.world.getBlockState(posImmutable);
+                state = e.getWorld().getBlockState(posImmutable);
                 stateCache.put(posImmutable, state);
             }
 
@@ -413,9 +410,9 @@ public class OptimizedTNT
             {
                 float resistance;
 
-                if (e.exploder != null)
+                if (e.getExploder() != null)
                 {
-                    resistance = e.exploder.getExplosionResistance(e, e.world, posMutable, state);
+                    resistance = e.getExploder().getExplosionResistance((Explosion) e, e.getWorld(), posMutable, state);
                 }
                 else
                 {
@@ -425,7 +422,7 @@ public class OptimizedTNT
                 size -= (resistance + 0.3F) * 0.3F;
             }
 
-            if (size > 0.0F && (e.exploder == null || e.exploder.canExplosionDestroyBlock(e, e.world, posMutable, state, size)))
+            if (size > 0.0F && (e.getExploder() == null || e.getExploder().canExplosionDestroyBlock((Explosion) e, e.getWorld(), posMutable, state, size)))
             {
                 affectedBlockPositionsSet.add(posImmutable != null ? posImmutable : posMutable.toImmutable());
             }
@@ -449,8 +446,8 @@ public class OptimizedTNT
         blastChanceLocation = p;
     }
 
-    private static void blastCalc(Explosion e){
-        if(blastChanceLocation == null || blastChanceLocation.distanceSq(e.x, e.y, e.z) > 200) return;
+    private static void blastCalc(ExplosionAccessor e){
+        if(blastChanceLocation == null || blastChanceLocation.distanceSq(e.getX(), e.getY(), e.getZ()) > 200) return;
         chances.clear();
         for (int j = 0; j < 16; ++j) {
             for (int k = 0; k < 16; ++k) {
@@ -463,25 +460,25 @@ public class OptimizedTNT
                         d0 = d0 / d3;
                         d1 = d1 / d3;
                         d2 = d2 / d3;
-                        float f = e.size * (0.7F + 0.6F);
-                        double d4 = e.x;
-                        double d6 = e.y;
-                        double d8 = e.z;
+                        float f = e.getSize() * (0.7F + 0.6F);
+                        double d4 = e.getX();
+                        double d6 = e.getY();
+                        double d8 = e.getZ();
                         boolean found = false;
 
                         for (float f1 = 0.3F; f > 0.0F; f -= 0.22500001F) {
                             BlockPos blockpos = new BlockPos(d4, d6, d8);
-                            IBlockState iblockstate = e.world.getBlockState(blockpos);
+                            IBlockState iblockstate = e.getWorld().getBlockState(blockpos);
 
                             if (iblockstate.getMaterial() != Material.AIR) {
-                                float f2 = e.exploder != null
-                                        ? e.exploder.getExplosionResistance(e, e.world, blockpos, iblockstate)
+                                float f2 = e.getExploder() != null
+                                        ? e.getExploder().getExplosionResistance((Explosion) e, e.getWorld(), blockpos, iblockstate)
                                         : iblockstate.getBlock().getExplosionResistance((Entity) null);
                                 f -= (f2 + 0.3F) * 0.3F;
                             }
 
-                            if (f > 0.0F && (e.exploder == null ||
-                                    e.exploder.canExplosionDestroyBlock(e, e.world, blockpos, iblockstate, f))) {
+                            if (f > 0.0F && (e.getExploder() == null ||
+                                    e.getExploder().canExplosionDestroyBlock((Explosion) e, e.getWorld(), blockpos, iblockstate, f))) {
                                 if(!found && blockpos.equals(blastChanceLocation)){
                                     chances.add(f);
                                     found = true;
@@ -500,8 +497,8 @@ public class OptimizedTNT
         showTNTblastChance(e);
     }
 
-    private static void showTNTblastChance(Explosion e){
-        double randMax = 0.6F * e.size;
+    private static void showTNTblastChance(ExplosionAccessor e){
+        double randMax = 0.6F * e.getSize();
         double total = 0;
         boolean fullyBlownUp = false;
         boolean first = true;
@@ -525,7 +522,7 @@ public class OptimizedTNT
         NumberFormat nf = NumberFormat.getNumberInstance();
         nf.setRoundingMode (RoundingMode.DOWN);
         nf.setMaximumFractionDigits(2);
-        for(EntityPlayer player : e.world.playerEntities){
+        for(EntityPlayer player : e.getWorld().playerEntities){
             Messenger.m(player,"w Pop: ",
                     "c " + nf.format(chance) + " ",
                     "^w Chance for the block to be destroyed by the blast: " + chance,
@@ -539,13 +536,13 @@ public class OptimizedTNT
                     "^w TNT blast rays going through the block",
                     "?" + rays,
                     "w Size: ",
-                    String.format("c %.1f ", e.size),
+                    String.format("c %.1f ", e.getSize()),
                     "^w TNT blast size",
-                    "?" + e.size,
+                    "?" + e.getSize(),
                     "w @: ",
-                    String.format("c [%.1f %.1f %.1f] ", e.x, e.y, e.z),
-                    "^w TNT blast location X:" + e.x + " Y:" + e.y + " Z:" + e.z,
-                    "?" + e.x + " " + e.y + " " + e.z
+                    String.format("c [%.1f %.1f %.1f] ", e.getX(), e.getY(), e.getZ()),
+                    "^w TNT blast location X:" + e.getX() + " Y:" + e.getY() + " Z:" + e.getZ(),
+                    "?" + e.getX() + " " + e.getY() + " " + e.getZ()
             );
         }
     }

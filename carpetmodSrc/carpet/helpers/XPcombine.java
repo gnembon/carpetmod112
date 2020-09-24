@@ -1,7 +1,10 @@
 package carpet.helpers;
 //Author: xcom
 
+import carpet.mixin.accessors.EntityXPOrbAccessor;
+import carpet.utils.extensions.ExtendedEntityXPOrb;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.world.World;
 
 public class XPcombine {
 
@@ -25,20 +28,20 @@ public class XPcombine {
             if (first.delayBeforeCanPickup != 32767 && other.delayBeforeCanPickup != 32767)
             {
                 if (first.xpOrbAge != -32768 && other.xpOrbAge != -32768
-                        && first.delayBeforeCombine == 0 && other.delayBeforeCombine == 0)
+                        && ((ExtendedEntityXPOrb) first).getDelayBeforeCombine() == 0 && ((ExtendedEntityXPOrb) other).getDelayBeforeCombine() == 0)
                 {
                     int size = getTextureByXP(other.getXpValue() );
-                    other.xpValue = other.getXpValue() + first.getXpValue();
+                    ((EntityXPOrbAccessor) other).setXpValue(other.getXpValue() + first.getXpValue());
                     other.delayBeforeCanPickup = Math.max(other.delayBeforeCanPickup, first.delayBeforeCanPickup);
                     other.xpOrbAge = Math.min(other.xpOrbAge, first.xpOrbAge);
                     if (getTextureByXP(other.getXpValue() ) != size)
                     {
                         other.setDead();
-                        first.world.spawnEntity(new EntityXPOrb(other.world, other.getXpValue(), other));
+                        first.world.spawnEntity(newXPOrb(other.world, other.getXpValue(), other));
                     }
                     else
                     {
-                        other.delayBeforeCombine = 50;
+                        ((ExtendedEntityXPOrb) other).setDelayBeforeCombine(50);
                     }
                     first.setDead();
                     return true;
@@ -57,6 +60,15 @@ public class XPcombine {
         {
             return false;
         }
+    }
+
+    private static EntityXPOrb newXPOrb(World world, int expValue, EntityXPOrb old) {
+        EntityXPOrb orb = new EntityXPOrb(world, old.posX, old.posY, old.posZ, expValue);
+        orb.rotationYaw = old.rotationYaw;
+        orb.motionX = old.motionX;
+        orb.motionY = old.motionY;
+        orb.motionZ = old.motionZ;
+        return orb;
     }
 
     public static int getTextureByXP(int value)

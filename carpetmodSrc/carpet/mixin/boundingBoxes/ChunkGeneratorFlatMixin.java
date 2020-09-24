@@ -1,5 +1,6 @@
 package carpet.mixin.boundingBoxes;
 
+import carpet.carpetclient.CarpetClientMarkers;
 import carpet.utils.extensions.BoundingBoxProvider;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagList;
@@ -20,7 +21,7 @@ public class ChunkGeneratorFlatMixin implements BoundingBoxProvider {
     public NBTTagList getBoundingBoxes(Entity entity) {
         NBTTagList nbttaglist = new NBTTagList();
         for (Map.Entry<String, MapGenStructure> e : structureGenerators.entrySet()) {
-            nbttaglist.appendTag(e.getValue().getBoundingBoxes(entity, 1));
+            nbttaglist.appendTag(CarpetClientMarkers.getBoundingBoxes(e.getValue(), entity, 1));
         }
         return nbttaglist;
     }

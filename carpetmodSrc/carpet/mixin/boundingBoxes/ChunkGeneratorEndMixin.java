@@ -16,7 +16,7 @@ public class ChunkGeneratorEndMixin implements BoundingBoxProvider {
 
     public NBTTagList getBoundingBoxes(Entity entity) {
         NBTTagList nbttaglist = new NBTTagList();
-        nbttaglist.appendTag(endCityGen.getBoundingBoxes(entity, CarpetClientMarkers.END_CITY));
+        nbttaglist.appendTag(CarpetClientMarkers.getBoundingBoxes(endCityGen, entity, CarpetClientMarkers.END_CITY));
         return nbttaglist;
     }
 }

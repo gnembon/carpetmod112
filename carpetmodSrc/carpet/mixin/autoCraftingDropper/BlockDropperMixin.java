@@ -2,6 +2,7 @@ package carpet.mixin.autoCraftingDropper;
 
 import carpet.CarpetSettings;
 import carpet.helpers.AutoCraftingDropperHelper;
+import carpet.mixin.accessors.TileEntityDispenserAccessor;
 import carpet.utils.VoidContainer;
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.block.BlockDropper;
@@ -36,7 +37,7 @@ public class BlockDropperMixin extends BlockDispenser {
                 TileEntityDispenser dispenserTE = (TileEntityDispenser) worldIn.getTileEntity(pos);
                 if (dispenserTE != null) {
                     int filled = 0;
-                    for (ItemStack stack : dispenserTE.getItems()) {
+                    for (ItemStack stack : ((TileEntityDispenserAccessor) dispenserTE).getStacks()) {
                         if (!stack.isEmpty()) filled++;
                     }
                     return (filled * 15) / 9;

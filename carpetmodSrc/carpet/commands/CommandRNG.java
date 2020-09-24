@@ -5,6 +5,7 @@ import java.util.*;
 
 import javax.annotation.Nullable;
 
+import carpet.mixin.accessors.ChunkGeneratorOverworldAccessor;
 import carpet.mixin.accessors.WorldAccessor;
 import carpet.utils.Messenger;
 import carpet.utils.extensions.ExtendedWorld;
@@ -101,7 +102,7 @@ public class CommandRNG extends CommandCarpetBase {
                         }
                     }
 
-                    ((ChunkGeneratorOverworld) gen).woodlandMansionGenerator.generate(world, x, z, (ChunkPrimer) null);
+                    ((ChunkGeneratorOverworldAccessor) gen).getWoodlandMansionGenerator().generate(world, x, z, (ChunkPrimer) null);
                     notifyCommandListener(sender, this,
                             String.format("Seed at chunk coords: %d %d seed: %d", x, z, ((ExtendedWorld) world).getRandSeed()));
                 }

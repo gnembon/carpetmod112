@@ -1,6 +1,7 @@
 package carpet.helpers;
 
 import carpet.CarpetServer;
+import carpet.utils.extensions.ExtendedScore;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 
@@ -17,9 +18,9 @@ public class ScoreboardDelta {
             Collection<Score> list = CarpetServer.minecraft_server.getWorld(0).getScoreboard().getSortedScores(objective);
 
             for(Score s : list){
-                s.computeScoreDelta();
+                ((ExtendedScore) s).computeScoreDelta();
                 s.getScoreScoreboard().onScoreUpdated(s);
-                if(s.getScorePointsDelta() == 0){
+                if(((ExtendedScore) s).getScorePointsDelta() == 0){
                     s.getScoreScoreboard().broadcastScoreUpdate(s.getPlayerName());
                 }
             }
@@ -32,7 +33,7 @@ public class ScoreboardDelta {
             Collection<Score> list = CarpetServer.minecraft_server.getWorld(0).getScoreboard().getSortedScores(objective);
 
             for(Score s : list){
-                s.computeScoreDelta();
+                ((ExtendedScore) s).computeScoreDelta();
                 s.getScoreScoreboard().onScoreUpdated(s);
             }
         }

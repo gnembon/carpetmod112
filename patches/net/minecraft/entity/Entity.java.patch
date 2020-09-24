@@ -53,20 +53,15 @@
      {
          this.field_70177_z = p_70101_1_ % 360.0F;
          this.field_70125_A = p_70101_2_ % 360.0F;
-@@ -508,6 +523,12 @@
+@@ -508,6 +523,7 @@
  
      public void func_70091_d(MoverType p_70091_1_, double p_70091_2_, double p_70091_4_, double p_70091_6_)
      {
-+        // [CM] PistonClippingFix -- Check to add to player counter
-+        if (CarpetSettings.pistonClippingFix > 0 && this instanceof EntityPlayerMP)
-+        {
-+            ((EntityPlayerMP)this).pistonClippingCounter = CarpetSettings.pistonClippingFix;
-+        }
 +
          if (this.field_70145_X)
          {
              this.func_174826_a(this.func_174813_aQ().func_72317_d(p_70091_2_, p_70091_4_, p_70091_6_));
-@@ -654,12 +675,28 @@
+@@ -654,12 +670,28 @@
                  }
              }
  
@@ -96,7 +91,7 @@
  
                  for (int l = list1.size(); k < l; ++k)
                  {
-@@ -672,6 +709,9 @@
+@@ -672,6 +704,9 @@
              if (p_70091_2_ != 0.0D)
              {
                  int j5 = 0;
@@ -106,7 +101,7 @@
  
                  for (int l5 = list1.size(); j5 < l5; ++j5)
                  {
-@@ -687,6 +727,9 @@
+@@ -687,6 +722,9 @@
              if (p_70091_6_ != 0.0D)
              {
                  int k5 = 0;
@@ -116,7 +111,7 @@
  
                  for (int i6 = list1.size(); k5 < i6; ++k5)
                  {
-@@ -1140,6 +1183,8 @@
+@@ -1140,6 +1178,8 @@
  
      public boolean func_70072_I()
      {
@@ -125,7 +120,7 @@
          if (this.func_184187_bx() instanceof EntityBoat)
          {
              this.field_70171_ac = false;
-@@ -1159,6 +1204,7 @@
+@@ -1159,6 +1199,7 @@
          {
              this.field_70171_ac = false;
          }
@@ -133,7 +128,7 @@
  
          return this.field_70171_ac;
      }
-@@ -1533,6 +1579,9 @@
+@@ -1533,6 +1574,9 @@
  
          if (!this.field_70128_L && s != null && !this.func_184218_aH())
          {
@@ -143,7 +138,7 @@
              p_70039_1_.func_74778_a("id", s);
              this.func_189511_e(p_70039_1_);
              return true;
-@@ -1543,6 +1592,19 @@
+@@ -1543,6 +1587,19 @@
          }
      }
  
@@ -163,7 +158,7 @@
      public static void func_190533_a(DataFixer p_190533_0_)
      {
          p_190533_0_.func_188258_a(FixTypes.ENTITY, new IDataWalker()
-@@ -1663,19 +1725,19 @@
+@@ -1663,19 +1720,19 @@
              this.field_70181_x = nbttaglist2.func_150309_d(1);
              this.field_70179_y = nbttaglist2.func_150309_d(2);
  
@@ -194,7 +189,7 @@
              }
  
              this.field_70165_t = nbttaglist.func_150309_d(0);
-@@ -1908,6 +1970,10 @@
+@@ -1908,6 +1965,10 @@
  
      public double func_70042_X()
      {
@@ -205,7 +200,7 @@
          return (double)this.field_70131_O * 0.75D;
      }
  
-@@ -1966,6 +2032,18 @@
+@@ -1966,6 +2027,18 @@
          }
      }
  
@@ -224,7 +219,7 @@
      protected void func_184200_o(Entity p_184200_1_)
      {
          if (p_184200_1_.func_184187_bx() != this)
-@@ -2398,7 +2476,10 @@
+@@ -2398,7 +2471,10 @@
                  float f = this.field_70177_z;
                  this.func_70012_b(d0, this.field_70163_u, d1, 90.0F, 0.0F);
                  Teleporter teleporter = worldserver1.func_85176_s();
@@ -235,7 +230,7 @@
                  blockpos = new BlockPos(this);
              }
  
-@@ -2578,6 +2659,10 @@
+@@ -2578,6 +2654,10 @@
  
      public EnumFacing func_174811_aO()
      {
@@ -246,7 +241,7 @@
          return EnumFacing.func_176731_b(MathHelper.func_76128_c((double)(this.field_70177_z * 4.0F / 360.0F) + 0.5D) & 3);
      }
  
-@@ -2886,4 +2971,10 @@
+@@ -2886,4 +2966,10 @@
      {
          return 1;
      }

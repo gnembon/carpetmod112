@@ -31,7 +31,7 @@ public abstract class ItemStackMixin implements ExtendedItemStack {
 
     @Inject(method = "getMaxStackSize", at = @At("HEAD"), cancellable = true)
     private void stackableShulkersPlayerInventory(CallbackInfoReturnable<Integer> cir) {
-        if (!CarpetSettings.stackableShulkersPlayerInventory || !CarpetServer.playerInventoryStacking) return;
+        if (!CarpetSettings.stackableShulkersPlayerInventory || !CarpetServer.playerInventoryStacking.get()) return;
         if (getItem() instanceof ItemShulkerBox && !hasTagCompound()) cir.setReturnValue(64);
     }
 }

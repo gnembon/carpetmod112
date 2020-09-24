@@ -16,7 +16,7 @@ public class ChunkGeneratorHellMixin implements BoundingBoxProvider {
 
     public NBTTagList getBoundingBoxes(Entity entity) {
         NBTTagList nbttaglist = new NBTTagList();
-        nbttaglist.appendTag(this.genNetherBridge.getBoundingBoxes(entity, CarpetClientMarkers.FORTRESS));
+        nbttaglist.appendTag(CarpetClientMarkers.getBoundingBoxes(this.genNetherBridge, entity, CarpetClientMarkers.FORTRESS));
         return nbttaglist;
     }
 }

@@ -25,7 +25,6 @@ public abstract class BlockPistonMovingMixin extends BlockContainer {
 
     @Override
     @Overwrite
-    @SuppressWarnings("OverwriteAuthorRequired")
     protected BlockStateContainer createBlockState() {
         // Adding the properties to the list of allowed properties. CARPET-XCOM
         return new BlockStateContainer(this, FACING, TYPE, PistonHelper.OPACITY, PistonHelper.LIGHT);

@@ -21,12 +21,12 @@ public class ChunkGeneratorOverworldMixin implements BoundingBoxProvider {
 
     public NBTTagList getBoundingBoxes(Entity entity) {
         NBTTagList nbttaglist = new NBTTagList();
-        nbttaglist.appendTag(scatteredFeatureGenerator.getBoundingBoxes(entity, CarpetClientMarkers.TEMPLE));
-        nbttaglist.appendTag(villageGenerator.getBoundingBoxes(entity, CarpetClientMarkers.VILLAGE));
-        nbttaglist.appendTag(strongholdGenerator.getBoundingBoxes(entity, CarpetClientMarkers.STRONGHOLD));
-        nbttaglist.appendTag(mineshaftGenerator.getBoundingBoxes(entity, CarpetClientMarkers.MINESHAFT));
-        nbttaglist.appendTag(oceanMonumentGenerator.getBoundingBoxes(entity, CarpetClientMarkers.MONUMENT));
-        nbttaglist.appendTag(woodlandMansionGenerator.getBoundingBoxes(entity, CarpetClientMarkers.MANSION));
+        nbttaglist.appendTag(CarpetClientMarkers.getBoundingBoxes(scatteredFeatureGenerator, entity, CarpetClientMarkers.TEMPLE));
+        nbttaglist.appendTag(CarpetClientMarkers.getBoundingBoxes(villageGenerator, entity, CarpetClientMarkers.VILLAGE));
+        nbttaglist.appendTag(CarpetClientMarkers.getBoundingBoxes(strongholdGenerator, entity, CarpetClientMarkers.STRONGHOLD));
+        nbttaglist.appendTag(CarpetClientMarkers.getBoundingBoxes(mineshaftGenerator, entity, CarpetClientMarkers.MINESHAFT));
+        nbttaglist.appendTag(CarpetClientMarkers.getBoundingBoxes(oceanMonumentGenerator, entity, CarpetClientMarkers.MONUMENT));
+        nbttaglist.appendTag(CarpetClientMarkers.getBoundingBoxes(woodlandMansionGenerator, entity, CarpetClientMarkers.MANSION));
         return nbttaglist;
     }
 }

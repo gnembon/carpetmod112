@@ -2,15 +2,22 @@ package carpet.carpetclient;
 
 import java.util.ArrayList;
 
+import carpet.mixin.accessors.MapGenStructureAccessor;
 import carpet.utils.extensions.BoundingBoxProvider;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.village.Village;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.gen.structure.MapGenStructure;
+import net.minecraft.world.gen.structure.StructureComponent;
+import net.minecraft.world.gen.structure.StructureStart;
 
 public class CarpetClientMarkers {
 
@@ -71,5 +78,26 @@ public class CarpetClientMarkers {
 
     public static void unregisterPlayerVillageMarkers(EntityPlayerMP player) {
         playersVillageMarkers.remove(player);
+    }
+
+    // Retrieval method to get the bounding boxes CARPET-XCOM
+    public static NBTTagList getBoundingBoxes(MapGenStructure structure, Entity entity, int type) {
+        NBTTagList list = new NBTTagList();
+        for (StructureStart structurestart : ((MapGenStructureAccessor) structure).getStructureMap().values()) {
+            if (MathHelper.sqrt(new ChunkPos(structurestart.getChunkPosX(), structurestart.getChunkPosZ()).getDistanceSq(entity)) > 700) {
+                continue;
+            }
+            NBTTagCompound outerBox = new NBTTagCompound();
+            outerBox.setInteger("type", OUTER_BOUNDING_BOX);
+            outerBox.setTag("bb", structurestart.getBoundingBox().toNBTTagIntArray());
+            list.appendTag(outerBox);
+            for (StructureComponent child : structurestart.getComponents()) {
+                NBTTagCompound innerBox = new NBTTagCompound();
+                innerBox.setInteger("type", type);
+                innerBox.setTag("bb", child.getBoundingBox().toNBTTagIntArray());
+                list.appendTag(innerBox);
+            }
+        }
+        return list;
     }
 }

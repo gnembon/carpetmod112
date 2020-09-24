@@ -17,30 +17,18 @@
  public class EntityPlayerMP extends EntityPlayer implements IContainerListener
  {
      private static final Logger field_147102_bM = LogManager.getLogger();
-@@ -153,6 +163,12 @@
+@@ -153,6 +163,10 @@
      public int field_71138_i;
      public boolean field_71136_j;
  
 +    //CM
-+    public EntityPlayerActionPack actionPack;
-+
-+    // [CM] PistonClippingFix -- Counter
-+    public int pistonClippingCounter;
++    //CM
++    public EntityPlayerActionPack actionPack = new EntityPlayerActionPack(this);
 +
      public EntityPlayerMP(MinecraftServer p_i45285_1_, WorldServer p_i45285_2_, GameProfile p_i45285_3_, PlayerInteractionManager p_i45285_4_)
      {
          super(p_i45285_2_, p_i45285_3_);
-@@ -188,6 +204,9 @@
-         {
-             this.func_70107_b(this.field_70165_t, this.field_70163_u + 1.0D, this.field_70161_v);
-         }
-+
-+        //CM
-+        actionPack = new EntityPlayerActionPack(this);
-     }
- 
-     public void func_70037_a(NBTTagCompound p_70037_1_)
-@@ -313,6 +332,9 @@
+@@ -313,6 +327,9 @@
  
      public void func_70071_h_()
      {
@@ -50,7 +38,7 @@
          this.field_71134_c.func_73075_a();
          --this.field_147101_bU;
  
-@@ -365,6 +387,13 @@
+@@ -365,6 +382,13 @@
              }
          }
  
@@ -64,7 +52,7 @@
          CriteriaTriggers.field_193135_v.func_193182_a(this);
  
          if (this.field_193107_ct != null)
-@@ -503,6 +532,34 @@
+@@ -503,6 +527,34 @@
              this.field_71071_by.func_70436_m();
          }
  
@@ -99,7 +87,7 @@
          for (ScoreObjective scoreobjective : this.field_70170_p.func_96441_U().func_96520_a(IScoreCriteria.field_96642_c))
          {
              Score score = this.func_96123_co().func_96529_a(this.func_70005_c_(), scoreobjective);
-@@ -605,6 +662,7 @@
+@@ -605,6 +657,7 @@
  
              if (!flag && this.field_147101_bU > 0 && p_70097_1_ != DamageSource.field_76380_i)
              {
@@ -107,7 +95,7 @@
                  return false;
              }
              else
-@@ -615,6 +673,7 @@
+@@ -615,6 +668,7 @@
  
                      if (entity instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entity))
                      {
@@ -115,7 +103,7 @@
                          return false;
                      }
  
-@@ -624,6 +683,7 @@
+@@ -624,6 +678,7 @@
  
                          if (entityarrow.field_70250_c instanceof EntityPlayer && !this.func_96122_a((EntityPlayer)entityarrow.field_70250_c))
                          {
@@ -123,7 +111,7 @@
                              return false;
                          }
                      }
-@@ -704,6 +764,8 @@
+@@ -704,6 +759,8 @@
          if (p_147097_1_ != null)
          {
              SPacketUpdateTileEntity spacketupdatetileentity = p_147097_1_.func_189518_D_();
@@ -132,7 +120,7 @@
  
              if (spacketupdatetileentity != null)
              {
-@@ -1216,11 +1278,13 @@
+@@ -1216,11 +1273,13 @@
  
          if (p_71033_1_ == GameType.SPECTATOR)
          {

@@ -2,6 +2,7 @@ package carpet.helpers;
 
 
 import carpet.mixin.accessors.InventoryCraftingAccessor;
+import carpet.mixin.accessors.TileEntityHopperAccessor;
 import com.google.common.collect.Lists;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -23,6 +24,7 @@ import net.minecraft.world.World;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 
 /**
  * Class provided by Skyrising ported to 1.12.2 by Xcom and DeadlyMC
@@ -62,7 +64,7 @@ public class TileEntityCraftingTable extends TileEntityLockable implements ISide
                 if(source.getStackInSlot(j).isEmpty()){
                     return false;
                 }
-                if(TileEntityHopper.canCombine(itemstack, source.getStackInSlot(j))) {
+                if(TileEntityHopperAccessor.invokeCanCombine(itemstack, source.getStackInSlot(j))) {
                     return false;
                 }
             }

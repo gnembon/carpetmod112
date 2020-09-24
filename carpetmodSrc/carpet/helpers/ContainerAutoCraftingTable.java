@@ -3,10 +3,7 @@ package carpet.helpers;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ContainerWorkbench;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.inventory.Slot;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.play.server.SPacketSetSlot;
@@ -48,6 +45,16 @@ public class ContainerAutoCraftingTable extends ContainerWorkbench {
     }
 
     @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        try {
+            tileEntity.setPlayer(player);
+            return super.slotClick(slotId, dragType, clickTypeIn, player);
+        } finally {
+            tileEntity.setPlayer(null);
+        }
+    }
+
+    @Override
     public void onCraftMatrixChanged(IInventory inv) {
         if (this.player instanceof EntityPlayerMP) {
             NetHandlerPlayServer netHandler = ((EntityPlayerMP) this.player).connection;
@@ -79,15 +86,6 @@ public class ContainerAutoCraftingTable extends ContainerWorkbench {
             playerInventory.setItemStack(ItemStack.EMPTY);
         }
         this.tileEntity.onContainerClose(this);
-    }
-
-    @Override
-    public ItemStack decrStackSize(EntityPlayer player, int slotId, int amount){
-        tileEntity.setPlayer(player);
-        Slot slot = this.inventorySlots.get(slotId);
-        ItemStack itemStack = slot.decrStackSize(amount);
-        tileEntity.setPlayer(null);
-        return itemStack;
     }
 
     private class OutputSlot extends Slot {
