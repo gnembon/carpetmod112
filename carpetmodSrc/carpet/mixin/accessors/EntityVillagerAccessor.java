@@ -1,6 +1,7 @@
 package carpet.mixin.accessors;
 
 import net.minecraft.entity.passive.EntityVillager;
+import net.minecraft.inventory.InventoryBasic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
@@ -8,4 +9,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface EntityVillagerAccessor {
     @Accessor int getWealth();
     @Accessor void setWealth(int wealth);
+    @Accessor int getCareerId();
+    @Accessor void setCareerId(int id);
+    @Accessor int getCareerLevel();
+    @Accessor void setCareerLevel(int level);
 }

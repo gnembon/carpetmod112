@@ -3,6 +3,7 @@ package carpet.commands;
 import javax.annotation.Nullable;
 
 import carpet.mixin.accessors.EntityTrackerAccessor;
+import carpet.mixin.accessors.WorldServerAccessor;
 import carpet.utils.Messenger;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -66,7 +67,7 @@ public class CommandDebugCarpet extends CommandCarpetBase {
             }
         }
         if("pendingTickListEntriesTreeSet".equalsIgnoreCase(args[0])) {
-            for(NextTickListEntry e : ((WorldServer)sender.getEntityWorld()).pendingTickListEntriesTreeSet){
+            for(NextTickListEntry e : ((WorldServerAccessor)sender.getEntityWorld()).getPendingTickListEntriesTreeSet()){
                 sender.sendMessage(Messenger.s(sender, e.toString()));
             }
         }

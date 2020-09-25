@@ -301,7 +301,7 @@ public class EntityInfo
 							}
 							if (((EntityVillagerAccessor) ev).getWealth()>0)
 							{
-								lst.add(String.format(" - Wealth: %d emeralds", ev.getWealth()));
+								lst.add(String.format(" - Wealth: %d emeralds", ((EntityVillagerAccessor) ev).getWealth()));
 							}
 						}
 						if (e instanceof AbstractHorse)

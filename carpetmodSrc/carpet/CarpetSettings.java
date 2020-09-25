@@ -25,6 +25,7 @@ import carpet.mixin.accessors.BlockAccessor;
 import carpet.mixin.accessors.WorldAccessor;
 import carpet.patches.BlockWool;
 import carpet.utils.TickingArea;
+import carpet.utils.extensions.WorldWithBlockEventSerializer;
 import carpet.worldedit.WorldEditBridge;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.init.Blocks;
@@ -453,7 +454,7 @@ public final class CarpetSettings
         if (!value){
             for (int dim = 0; dim < 3; dim++) {
                 WorldServer world = CarpetServer.minecraft_server.worlds[dim];
-                world.blockEventSerializer.markDirty();
+                ((WorldWithBlockEventSerializer) world).getBlockEventSerializer().markDirty();
             }
         }
 

@@ -11,8 +11,10 @@ import net.minecraft.util.math.BlockPos;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class CommandTNT extends CommandCarpetBase{
+    public static Random rand = new Random();
     public static BlockPos tntScanPos = null;
     public static final String USAGE = "/tnt [x y z]/clear";
 
@@ -33,7 +35,7 @@ public class CommandTNT extends CommandCarpetBase{
         int z;
          if(args[0].equals("setSeed")){
              try {
-                 EntityTNTPrimed.randAngle.setSeed(Long.parseLong(args[1]) ^ 0x5DEECE66DL);
+                 rand.setSeed(Long.parseLong(args[1]) ^ 0x5DEECE66DL);
                  notifyCommandListener(sender, this, "RNG TNT angle seed set to " + args[1] + (CarpetSettings.TNTAdjustableRandomAngle ? "" : " Enable TNTAdjustableRandomAngle rule or seed wont work."));
              } catch (Exception e) {
              }

@@ -9,7 +9,11 @@ package carpet.carpetclient;
 
 import carpet.CarpetSettings;
 import carpet.helpers.StackTraceDeobfuscator;
+import carpet.mixin.accessors.PlayerChunkMapAccessor;
+import carpet.mixin.accessors.PlayerChunkMapEntryAccessor;
 import carpet.utils.LRUCache;
+import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.Iterators;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,6 +21,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerChunkMap;
+import net.minecraft.server.management.PlayerChunkMapEntry;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.IBlockAccess;
@@ -181,13 +186,31 @@ public class CarpetClientChunkLogger {
                 }
             }
             PlayerChunkMap chunkmap = ((WorldServer) w).getPlayerChunkMap();
-            Iterator<ChunkPos> i = chunkmap.carpetGetAllChunkCoordinates();
+            Iterator<ChunkPos> i = carpetGetAllChunkCoordinates(chunkmap);
             while (i.hasNext()) {
                 ChunkPos pos = i.next();
                 forNewClient.add(new ChunkLog(pos.x, pos.z, dimension, Event.PLAYER_ENTERS, null, null));
             }
         }
         return forNewClient;
+    }
+
+    /*
+     * Gets the coordinates of all chunks
+     */
+    private static Iterator<ChunkPos> carpetGetAllChunkCoordinates(PlayerChunkMap map){
+        return new AbstractIterator<ChunkPos>() {
+            final Iterator<PlayerChunkMapEntry> allChunks = Iterators.concat(((PlayerChunkMapAccessor) map).getEntries().iterator(), ((PlayerChunkMapAccessor) map).getEntriesWithoutChunks().iterator());
+
+            @Override
+            protected ChunkPos computeNext() {
+                if (allChunks.hasNext()) {
+                    return allChunks.next().getPos();
+                } else {
+                    return this.endOfData();
+                }
+            }
+        };
     }
 
     private ArrayList<ChunkLog> getEventsThisGametick() {

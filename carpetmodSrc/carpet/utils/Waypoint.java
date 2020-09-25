@@ -1,5 +1,6 @@
 package carpet.utils;
 
+import carpet.utils.extensions.WaypointContainer;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.TypeAdapter;
@@ -14,6 +15,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.DimensionType;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldServerMulti;
 
 import javax.annotation.Nullable;
 import java.io.File;
@@ -123,7 +125,7 @@ public class Waypoint implements Comparable<Waypoint> {
 
     public static Set<Waypoint> getAllWaypoints(WorldServer ...worlds) {
         Set<Waypoint> all = new HashSet<>();
-        for (WorldServer world : worlds) all.addAll(world.waypoints.values());
+        for (WorldServer world : worlds) all.addAll(((WaypointContainer) world).getWaypoints().values());
         return all;
     }
 
@@ -143,12 +145,12 @@ public class Waypoint implements Comparable<Waypoint> {
             }
         }
         if (dimension == null) {
-            Map<String, Waypoint> waypoints = defaultWorld.waypoints;
+            Map<String, Waypoint> waypoints = ((WaypointContainer) defaultWorld).getWaypoints();
             if (waypoints.containsKey(name)) return waypoints.get(name);
         }
         for (WorldServer world : worlds) {
             if (dimension != null && !dimension.equals(world.provider.getDimensionType())) continue;
-            Map<String, Waypoint> waypoints = world.waypoints;
+            Map<String, Waypoint> waypoints = ((WaypointContainer) world).getWaypoints();
             if (waypoints.containsKey(name)) return waypoints.get(name);
         }
         return null;

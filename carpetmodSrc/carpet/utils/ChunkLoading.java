@@ -1,6 +1,8 @@
 package carpet.utils;
 
 import carpet.CarpetSettings;
+import carpet.mixin.accessors.AnvilChunkLoaderAccessor;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.management.PlayerChunkMap;
@@ -28,8 +30,9 @@ import it.unimi.dsi.fastutil.longs.LongSet;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.commons.io.output.NullOutputStream;
 
-public class UnloadOrder
+public class ChunkLoading
 {
+    public static final ThreadLocal<EntityPlayerMP> INITIAL_PLAYER_FOR_CHUNK_MAP_ENTRY = new ThreadLocal<>();
     public static final LongSet droppedChunksSet_new = new LongOpenHashSet();
     public static void queueUnload113(WorldServer world, ChunkProviderServer chunkproviderserver, Chunk chunkIn)
     {
@@ -59,7 +62,7 @@ public class UnloadOrder
                     chunkproviderserver.queueUnload(chunk);
                 }
             }
-            return UnloadOrder.tick_reportive_no_action(server, pos, verbose);
+            return ChunkLoading.tick_reportive_no_action(server, pos, verbose);
         }
         List<String> rep = new ArrayList<String>();
         rep.add("Saving is disabled on the server");
@@ -86,7 +89,7 @@ public class UnloadOrder
                     queueUnload113(server, chunkproviderserver, chunk);
                 }
             }
-            List <String> rep = UnloadOrder.tick_reportive_no_action_113(server, pos, verbose);
+            List <String> rep = ChunkLoading.tick_reportive_no_action_113(server, pos, verbose);
             return rep;
         }
         List<String> rep = new ArrayList<String>();
@@ -362,7 +365,7 @@ public class UnloadOrder
                 index+1,
                 chunk.x, chunk.z,
                 chunk.x * 16+7, chunk.z*16+7,
-                UnloadOrder.getChunkOrder(new ChunkPos(chunk.x, chunk.z), size),
+                ChunkLoading.getChunkOrder(new ChunkPos(chunk.x, chunk.z), size),
                 size
         );
     }
@@ -375,7 +378,7 @@ public class UnloadOrder
                 index+1,
                 chunk.x, chunk.z,
                 chunk.x * 16+7, chunk.z*16+7,
-                UnloadOrder.get_chunk_order_113(new ChunkPos(chunk.x, chunk.z), size),
+                ChunkLoading.get_chunk_order_113(new ChunkPos(chunk.x, chunk.z), size),
                 size
         );
     }
@@ -391,7 +394,7 @@ public class UnloadOrder
             test_chunk_xpos = pos.getX() >> 4;
             test_chunk_zpos = pos.getZ() >> 4;
         }
-        int current_size = UnloadOrder.getCurrentHashSize(world);
+        int current_size = ChunkLoading.getCurrentHashSize(world);
         if (!world.disableLevelSaving)
         {
             if (!provider.droppedChunks.isEmpty())
@@ -506,7 +509,7 @@ public class UnloadOrder
                 int selected_chunk = -1;
                 int iti = 0;
                 int i = 0;
-                int current_size = UnloadOrder.getCurrentHashSize_113();
+                int current_size = ChunkLoading.getCurrentHashSize_113();
                 for (i = 0; iterator.hasNext(); iterator.remove())
                 {
 
@@ -519,7 +522,7 @@ public class UnloadOrder
                         if ( pos != null && chunk.x == test_chunk_xpos && chunk.z == test_chunk_zpos) selected_chunk = i;
                         chunks_ids_order.add(olong);
                         chunk_to_len.put(olong, current_size);
-                        current_size = UnloadOrder.getCurrentHashSize_113();
+                        current_size = ChunkLoading.getCurrentHashSize_113();
                         ++i;
                     }
                     ++iti;
@@ -601,12 +604,16 @@ public class UnloadOrder
         NBTTagCompound levelTag = new NBTTagCompound();
         chunkTag.setTag("Level", levelTag);
         chunkTag.setInteger("DataVersion", 1343);
-        AnvilChunkLoader.writeChunkToNBT(chunk, chunk.getWorld(), levelTag);
+        ((AnvilChunkLoaderAccessor) getChunkLoader(chunk)).invokeWriteChunkToNBT(chunk, chunk.getWorld(), levelTag);
         CountingOutputStream counter = new CountingOutputStream(NullOutputStream.NULL_OUTPUT_STREAM);
         try {
             CompressedStreamTools.write(chunkTag, new DataOutputStream(new BufferedOutputStream(new DeflaterOutputStream(counter))));
         }
         catch (IOException ignore) {}
         return counter.getCount();
+    }
+
+    public static AnvilChunkLoader getChunkLoader(Chunk chunk) {
+        return (AnvilChunkLoader) ((ChunkProviderServer) chunk.getWorld().getChunkProvider()).chunkLoader;
     }
 }

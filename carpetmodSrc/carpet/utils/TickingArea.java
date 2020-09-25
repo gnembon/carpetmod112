@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import carpet.mixin.accessors.AnvilChunkLoaderAccessor;
 import carpet.mixin.accessors.MinecraftServerAccessor;
 import carpet.utils.extensions.WorldWithTickingAreas;
 import org.apache.logging.log4j.LogManager;
@@ -122,7 +123,7 @@ public abstract class TickingArea
                 continue;
             }
             
-            File configFile = new File(((AnvilChunkLoader) chunkLoader).chunkSaveLocation, "tickingareas.conf");
+            File configFile = new File(((AnvilChunkLoaderAccessor) chunkLoader).getChunkSaveLocation(), "tickingareas.conf");
             if (!configFile.isFile())
             {
                 continue;
@@ -174,7 +175,7 @@ public abstract class TickingArea
             if (!(chunkLoader instanceof AnvilChunkLoader))
                 continue;
             
-            File configFile = new File(((AnvilChunkLoader) chunkLoader).chunkSaveLocation, "tickingareas.conf");
+            File configFile = new File(((AnvilChunkLoaderAccessor) chunkLoader).getChunkSaveLocation(), "tickingareas.conf");
             
             try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(configFile))))
             {

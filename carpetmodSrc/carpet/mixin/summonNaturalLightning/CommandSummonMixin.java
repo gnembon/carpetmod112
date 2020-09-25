@@ -1,6 +1,7 @@
 package carpet.mixin.summonNaturalLightning;
 
 import carpet.CarpetSettings;
+import carpet.mixin.accessors.WorldServerAccessor;
 import carpet.worldedit.WorldEditBridge;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.server.CommandSummon;
@@ -21,7 +22,7 @@ public class CommandSummonMixin {
     @Redirect(method = "execute", at = @At(value = "NEW", target = "net/minecraft/entity/effect/EntityLightningBolt"))
     private EntityLightningBolt summonNaturalLightning(World world, double x, double y, double z, boolean effectOnly, MinecraftServer server, ICommandSender sender) {
         if (!CarpetSettings.summonNaturalLightning) return new EntityLightningBolt(world, x, y,z, effectOnly);
-        BlockPos bp = ((WorldServer)world).adjustPosToNearbyEntity(new BlockPos(x, 0, z));
+        BlockPos bp = ((WorldServerAccessor)world).invokeAdjustPosToNearbyEntity(new BlockPos(x, 0, z));
         if (!world.isRainingAt(bp)) return new EntityLightningBolt(world, x, y,z, effectOnly);
 
         DifficultyInstance difficulty = world.getDifficultyForLocation(bp);

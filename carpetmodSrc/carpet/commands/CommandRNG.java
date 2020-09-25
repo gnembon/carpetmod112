@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 
 import carpet.mixin.accessors.ChunkGeneratorOverworldAccessor;
 import carpet.mixin.accessors.WorldAccessor;
+import carpet.mixin.accessors.WorldServerAccessor;
 import carpet.utils.Messenger;
 import carpet.utils.extensions.ExtendedWorld;
 import com.google.common.collect.Lists;
@@ -158,8 +159,8 @@ public class CommandRNG extends CommandCarpetBase {
 
             if (world instanceof WorldServer) {
                 int count = 0;
-                for (Iterator<Chunk> iterator = ((WorldServer) world).playerChunkMap.getChunkIterator(); iterator
-                        .hasNext() && chunkCount < iters; ((WorldServer) world).profiler.endSection()) {
+                for (Iterator<Chunk> iterator = ((WorldServerAccessor) world).getPlayerChunkMap().getChunkIterator(); iterator
+                        .hasNext() && chunkCount < iters; world.profiler.endSection()) {
                     Chunk chunk = iterator.next();
                     if (iters != Integer.MAX_VALUE) {
                         chunkCount++;
@@ -203,8 +204,8 @@ public class CommandRNG extends CommandCarpetBase {
 
             if (world instanceof WorldServer) {
                 int count = 0;
-                for (Iterator<Chunk> iterator = ((WorldServer) world).playerChunkMap.getChunkIterator(); iterator
-                        .hasNext() && chunkCount < iters; ((WorldServer) world).profiler.endSection()) {
+                for (Iterator<Chunk> iterator = ((WorldServerAccessor) world).getPlayerChunkMap().getChunkIterator(); iterator
+                        .hasNext() && chunkCount < iters; world.profiler.endSection()) {
                     Chunk chunk = iterator.next();
                     if (iters != Integer.MAX_VALUE) {
                         chunkCount++;

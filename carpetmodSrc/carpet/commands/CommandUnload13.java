@@ -5,7 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
-import carpet.utils.UnloadOrder;
+import carpet.utils.ChunkLoading;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -53,7 +53,7 @@ public class CommandUnload13 extends CommandCarpetBase
         {
             WorldServer world = (WorldServer) (sender.getEntityWorld() );
             notifyCommandListener(sender, this, "Chunk unloading report for "+world.provider.getDimensionType());
-            List<String> report = UnloadOrder.test_save_chunks_113(world, pos, false);
+            List<String> report = ChunkLoading.test_save_chunks_113(world, pos, false);
             print_multi_message(report, sender);
             return;
         }
@@ -95,19 +95,19 @@ public class CommandUnload13 extends CommandCarpetBase
 
         if (order)
         {
-            List<String> orders = UnloadOrder.check_unload_order_13((WorldServer)sender.getEntityWorld(), pos, pos2);
+            List<String> orders = ChunkLoading.check_unload_order_13((WorldServer)sender.getEntityWorld(), pos, pos2);
             print_multi_message(orders, sender);
             return;
         }
         if (protect)
         {
-            List<String> orders = UnloadOrder.protect_13((WorldServer)sender.getEntityWorld(), pos, pos2, args[0]);
+            List<String> orders = ChunkLoading.protect_13((WorldServer)sender.getEntityWorld(), pos, pos2, args[0]);
             print_multi_message(orders, sender);
             return;
         }
         WorldServer world = (WorldServer) (custom_dim?server.getWorld(custom_dim_id):sender.getEntityWorld() );
         notifyCommandListener(sender, this, "Chunk unloading report for "+world.provider.getDimensionType());
-        List<String> report = UnloadOrder.test_save_chunks_113(world, pos, verbose);
+        List<String> report = ChunkLoading.test_save_chunks_113(world, pos, verbose);
         print_multi_message(report, sender);
     }
 

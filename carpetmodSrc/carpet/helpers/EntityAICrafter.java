@@ -666,7 +666,7 @@ public class EntityAICrafter extends EntityAIBase {
 	 * on the saved data.
 	 */
 	private void updateCareerID() {
-		if (villager.careerId == 0) {
+		if (((EntityVillagerAccessor) villager).getCareerId() == 0) {
 			randomiseStats();
 		} else {
 			decodeVillager();
@@ -728,8 +728,8 @@ public class EntityAICrafter extends EntityAIBase {
 	 * Decodes the stats from saved data and sets the stats of the villager.
 	 */
 	private void decodeVillager() {
-		int taskEncoder = villager.careerId;
-		int foodEncoder = villager.careerLevel;
+		int taskEncoder = ((EntityVillagerAccessor) villager).getCareerId();
+		int foodEncoder = ((EntityVillagerAccessor) villager).getCareerLevel();
 
 		for (int i = 0; i < 3; i++) {
 			tasks[i] = taskEncoder % 100;
@@ -763,8 +763,8 @@ public class EntityAICrafter extends EntityAIBase {
 		int taskEncoder = tasks[0] + tasks[1] * 100 + tasks[2] * 10000 + food[2] * 1000000 + currentTask * 100000000;
 		int foodEncoder = food[0] + food[1] * 10;
 
-		villager.careerId = taskEncoder;
-		villager.careerLevel = foodEncoder;
+		((EntityVillagerAccessor) villager).setCareerId(taskEncoder);
+		((EntityVillagerAccessor) villager).setCareerLevel(foodEncoder);
 	}
 
 	/**

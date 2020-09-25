@@ -2,6 +2,7 @@ package carpet.commands;
 
 import carpet.utils.Messenger;
 import carpet.utils.Waypoint;
+import carpet.utils.extensions.WaypointContainer;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.SyntaxErrorException;
@@ -18,6 +19,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldServerMulti;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -90,7 +92,7 @@ public class CommandWaypoint extends CommandCarpetBase {
         if (!validDimension) {
             dimension = (WorldServer) sender.getEntityWorld();
         }
-        if (dimension.waypoints.containsKey(name)) {
+        if (((WaypointContainer) dimension).getWaypoints().containsKey(name)) {
             throw new CommandException("Waypoint already exists");
         }
         double yaw = 0;
@@ -117,7 +119,7 @@ public class CommandWaypoint extends CommandCarpetBase {
             }
         }
         Waypoint w = new Waypoint(dimension, name, sender.getName(), x, y, z, yaw, pitch);
-        dimension.waypoints.put(name, w);
+        ((WaypointContainer) dimension).getWaypoints().put(name, w);
         Messenger.m(sender, "w Waypoint ", "w " + w.getDimension().getName(), "g :", "y " + w.name + " ", Messenger.tp("c", w), "w  added");
     }
 
@@ -132,7 +134,7 @@ public class CommandWaypoint extends CommandCarpetBase {
         if (!w.canManipulate(sender)) {
             throw new CommandException("You are not allowed to remove this waypoint");
         }
-        w.world.waypoints.remove(w.name);
+        ((WaypointContainer) w.world).getWaypoints().remove(w.name);
         Messenger.s(sender, "Waypoint removed");
     }
 
@@ -152,17 +154,17 @@ public class CommandWaypoint extends CommandCarpetBase {
         if (args.length > 1) {
             if (validDimension) {
                 printDimension = false;
-                waypoints.addAll(dimension.waypoints.values());
+                waypoints.addAll(((WaypointContainer) dimension).getWaypoints().values());
             } else if ("all".equalsIgnoreCase(args[1])) {
                 header = new TextComponentString("All waypoints");
                 for (WorldServer w : sender.getServer().worlds) {
-                    waypoints.addAll(w.waypoints.values());
+                    waypoints.addAll(((WaypointContainer) w).getWaypoints().values());
                 }
             } else {
                 printCreator = false;
                 header = Messenger.m(null, "w Waypoints by ", "e " + args[1]);
                 for (WorldServer w : sender.getServer().worlds) {
-                    for (Waypoint wp : w.waypoints.values()) {
+                    for (Waypoint wp : ((WaypointContainer) w).getWaypoints().values()) {
                         if (args[1].equalsIgnoreCase(wp.creator)) waypoints.add(wp);
                     }
                 }
@@ -170,7 +172,7 @@ public class CommandWaypoint extends CommandCarpetBase {
             }
         } else {
             printDimension = false;
-            waypoints.addAll(dimension.waypoints.values());
+            waypoints.addAll(((WaypointContainer) dimension).getWaypoints().values());
         }
         int PAGE_SIZE = 20;
         int total = waypoints.size();
@@ -237,7 +239,7 @@ public class CommandWaypoint extends CommandCarpetBase {
                 if (args.length == 2) {
                     Set<String> users = new TreeSet<>();
                     for (WorldServer world : server.worlds) {
-                        for (Waypoint w : world.waypoints.values()) {
+                        for (Waypoint w : ((WaypointContainer) world).getWaypoints().values()) {
                             if (w.creator != null) users.add(w.creator);
                         }
                     }

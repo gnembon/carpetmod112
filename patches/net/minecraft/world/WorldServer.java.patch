@@ -1,109 +1,45 @@
 --- ../src-base/minecraft/net/minecraft/world/WorldServer.java
 +++ ../src-work/minecraft/net/minecraft/world/WorldServer.java
-@@ -1,5 +1,8 @@
- package net.minecraft.world;
- 
-+import carpet.helpers.NextTickListEntryFix;
-+import carpet.helpers.ScheduledBlockEventSerializer;
-+import carpet.utils.extensions.ExtendedWorld;
- import com.google.common.collect.Lists;
- import com.google.common.collect.Maps;
- import com.google.common.collect.Sets;
-@@ -14,7 +17,6 @@
- import java.util.Set;
- import java.util.TreeSet;
- import java.util.UUID;
--import java.util.function.Predicate;
- import java.util.stream.Collectors;
- import javax.annotation.Nullable;
- import net.minecraft.advancements.AdvancementManager;
-@@ -60,6 +62,7 @@
- import net.minecraft.util.math.ChunkPos;
- import net.minecraft.util.math.MathHelper;
- import net.minecraft.util.math.Vec3d;
-+import net.minecraft.util.text.ITextComponent;
- import net.minecraft.village.VillageCollection;
- import net.minecraft.village.VillageSiege;
- import net.minecraft.world.biome.Biome;
-@@ -80,14 +83,23 @@
+@@ -80,6 +80,12 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import carpet.CarpetSettings;
-+import carpet.helpers.LagSpikeHelper;
 +import carpet.helpers.RandomTickOptimization;
 +import carpet.helpers.TickSpeed;
-+import carpet.logging.LoggerRegistry;
-+import carpet.utils.CarpetProfiler;
-+import carpet.utils.Messenger;
 +import carpet.utils.Waypoint;
++import carpet.helpers.ScheduledBlockEventSerializer;
 +
  public class WorldServer extends World implements IThreadListener
  {
      private static final Logger field_147491_a = LogManager.getLogger();
-     private final MinecraftServer field_73061_a;
-     private final EntityTracker field_73062_L;
--    private final PlayerChunkMap field_73063_M;
--    private final Set<NextTickListEntry> field_73064_N = Sets.<NextTickListEntry>newHashSet();
--    private final TreeSet<NextTickListEntry> field_73065_O = new TreeSet<NextTickListEntry>();
-+    public final PlayerChunkMap field_73063_M;
-+    public final Set<NextTickListEntry> field_73064_N = Sets.<NextTickListEntry>newHashSet(); // CM: made public for doubleTileTickSchedulingFix
-+    public final TreeSet<NextTickListEntry> field_73065_O = new TreeSet<NextTickListEntry>(); // CM: made public for doubleTileTickSchedulingFix
-     private final Map<UUID, Entity> field_175741_N = Maps.<UUID, Entity>newHashMap();
-     public boolean field_73058_d;
-     private boolean field_73068_P;
-@@ -99,6 +111,13 @@
+@@ -99,6 +105,8 @@
      private int field_147489_T;
      private final List<NextTickListEntry> field_94579_S = Lists.<NextTickListEntry>newArrayList();
  
-+    // Carpet waypoints
-+    public Map<String, Waypoint> waypoints;
-+    // [CM] Piston ghost blocks fix
-+    public boolean blockActionsProcessed;
-+    public ScheduledBlockEventSerializer blockEventSerializer;
 +    public static boolean loginMinecartFix = false;
 +
      public WorldServer(MinecraftServer p_i45921_1_, ISaveHandler p_i45921_2_, WorldInfo p_i45921_3_, int p_i45921_4_, Profiler p_i45921_5_)
      {
          super(p_i45921_2_, p_i45921_3_, DimensionType.func_186069_a(p_i45921_4_).func_186070_d(), p_i45921_5_, false);
-@@ -164,6 +183,9 @@
- 
-     public void func_72835_b()
-     {
-+        // [CM] Piston ghost blocks fix
-+        this.blockActionsProcessed = false;
-+        
-         super.func_72835_b();
- 
-         if (this.func_72912_H().func_76093_s() && this.func_175659_aa() != EnumDifficulty.HARD)
-@@ -184,15 +206,26 @@
+@@ -184,12 +192,16 @@
              this.func_73053_d();
          }
  
-+        String world_name = this.field_73011_w.func_186058_p().func_186065_b();
 +        if (TickSpeed.process_entities)
 +        {// extra indent
 +
          this.field_72984_F.func_76320_a("mobSpawner");
-+        CarpetProfiler.start_section(world_name, "spawning");
  
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.MOB_SPAWNING, LagSpikeHelper.PrePostSubPhase.PRE);
          if (this.func_82736_K().func_82766_b("doMobSpawning") && this.field_72986_A.func_76067_t() != WorldType.field_180272_g)
          {
              this.field_175742_R.func_77192_a(this, this.field_72985_G, this.field_72992_H, this.field_72986_A.func_82573_f() % 400L == 0L);
          }
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.MOB_SPAWNING, LagSpikeHelper.PrePostSubPhase.POST);
-+        CarpetProfiler.end_current_section();
 +        }//end indent
  
          this.field_72984_F.func_76318_c("chunkSource");
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.CHUNK_UNLOADING, LagSpikeHelper.PrePostSubPhase.PRE);
          this.field_73020_y.func_73156_b();
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.CHUNK_UNLOADING, LagSpikeHelper.PrePostSubPhase.POST);
-         int j = this.func_72967_a(1.0F);
- 
-         if (j != this.func_175657_ab())
-@@ -200,26 +233,68 @@
+@@ -200,6 +212,8 @@
              this.func_175692_b(j);
          }
  
@@ -112,69 +48,26 @@
          this.field_72986_A.func_82572_b(this.field_72986_A.func_82573_f() + 1L);
  
          if (this.func_82736_K().func_82766_b("doDaylightCycle"))
-         {
-             this.field_72986_A.func_76068_b(this.field_72986_A.func_76073_f() + 1L);
-         }
--
+@@ -209,15 +223,18 @@
+ 
          this.field_72984_F.func_76318_c("tickPending");
--        this.func_72955_a(false);
-+
-+        CarpetProfiler.start_section(world_name, "blocks");
-+
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.TILE_TICK, LagSpikeHelper.PrePostSubPhase.PRE);
-+		this.func_72955_a(false);
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.TILE_TICK, LagSpikeHelper.PrePostSubPhase.POST);
-+
-+		if(LoggerRegistry.__rng){
-+            LoggerRegistry.getLogger("rng").log(()-> new ITextComponent[]{
-+                    Messenger.s(null, String.format("RNG TickUp. t:%d seed:%d d:%s", field_73061_a.func_71259_af(), ((ExtendedWorld) this).getRandSeed(), field_73011_w.func_186058_p().name()))
-+            });
-+        }
-+		if(CarpetSettings.setSeed != 0){
-+        	this.field_73012_v.setSeed(CarpetSettings.setSeed ^ 0x5DEECE66DL);
-+        }
-+		
-+		CarpetProfiler.end_current_section();
-+		
+         this.func_72955_a(false);
 +		}
-+		CarpetProfiler.start_section(world_name, "blocks");
          this.field_72984_F.func_76318_c("tickBlocks");
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.RANDOM_TICK, LagSpikeHelper.PrePostSubPhase.PRE);
          this.func_147456_g();
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.RANDOM_TICK, LagSpikeHelper.PrePostSubPhase.POST);
-+        CarpetProfiler.end_current_section();
          this.field_72984_F.func_76318_c("chunkMap");
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.PLAYER_CHUNK_MAP, LagSpikeHelper.PrePostSubPhase.PRE);
          this.field_73063_M.func_72693_b();
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.PLAYER_CHUNK_MAP, LagSpikeHelper.PrePostSubPhase.POST);
-+
 +        if (TickSpeed.process_entities) { // CM indent
          this.field_72984_F.func_76318_c("village");
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.VILLAGE, LagSpikeHelper.PrePostSubPhase.PRE);
          this.field_72982_D.func_75544_a();
          this.field_175740_d.func_75528_a();
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.VILLAGE, LagSpikeHelper.PrePostSubPhase.POST);
          this.field_72984_F.func_76318_c("portalForcer");
          this.field_85177_Q.func_85189_a(this.func_82737_E());
 +        }
          this.field_72984_F.func_76319_b();
-+
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.BLOCK_EVENT, LagSpikeHelper.PrePostSubPhase.PRE);
          this.func_147488_Z();
-+        LagSpikeHelper.processLagSpikes(this, LagSpikeHelper.TickPhase.BLOCK_EVENT, LagSpikeHelper.PrePostSubPhase.POST);
-+
-+        if(LoggerRegistry.__rng){
-+            LoggerRegistry.getLogger("rng").log(()-> new ITextComponent[]{
-+                    Messenger.s(null, String.format("RNG BlockEv. t:%d seed:%d d:%s", field_73061_a.func_71259_af(), ((ExtendedWorld) this).getRandSeed(), field_73011_w.func_186058_p().name()))
-+            });
-+        }
-+        if(CarpetSettings.setSeed != 0){
-+        	this.field_73012_v.setSeed(CarpetSettings.setSeed ^ 0x5DEECE66DL);
-+        }
      }
- 
-     @Nullable
-@@ -255,8 +330,15 @@
+@@ -255,8 +272,15 @@
                      ++j;
                  }
              }
@@ -192,7 +85,7 @@
          }
      }
  
-@@ -287,6 +369,28 @@
+@@ -287,6 +311,28 @@
      {
          if (this.field_73068_P && !this.field_72995_K)
          {
@@ -221,16 +114,7 @@
              for (EntityPlayer entityplayer : this.field_73010_i)
              {
                  if (!entityplayer.func_175149_v() && !entityplayer.func_71026_bH())
-@@ -303,7 +407,7 @@
-         }
-     }
- 
--    protected boolean func_175680_a(int p_175680_1_, int p_175680_2_, boolean p_175680_3_)
-+    public boolean func_175680_a(int p_175680_1_, int p_175680_2_, boolean p_175680_3_)
-     {
-         return this.func_72863_F().func_73149_a(p_175680_1_, p_175680_2_);
-     }
-@@ -344,6 +448,7 @@
+@@ -344,6 +390,7 @@
              boolean flag = this.func_72896_J();
              boolean flag1 = this.func_72911_I();
              this.field_72984_F.func_76320_a("pollingChunks");
@@ -238,7 +122,7 @@
  
              for (Iterator<Chunk> iterator = this.field_73063_M.func_187300_b(); iterator.hasNext(); this.field_72984_F.func_76319_b())
              {
-@@ -355,9 +460,14 @@
+@@ -355,9 +402,14 @@
                  chunk.func_76594_o();
                  this.field_72984_F.func_76318_c("tickChunk");
                  chunk.func_150804_b(false);
@@ -254,7 +138,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int l = this.field_73005_l >> 2;
-@@ -385,7 +495,7 @@
+@@ -385,7 +437,7 @@
  
                  this.field_72984_F.func_76318_c("iceandsnow");
  
@@ -263,44 +147,7 @@
                  {
                      this.field_73005_l = this.field_73005_l * 3 + 1013904223;
                      int j2 = this.field_73005_l >> 2;
-@@ -443,7 +553,7 @@
-         }
-     }
- 
--    protected BlockPos func_175736_a(BlockPos p_175736_1_)
-+    public BlockPos func_175736_a(BlockPos p_175736_1_)
-     {
-         BlockPos blockpos = this.func_175725_q(p_175736_1_);
-         AxisAlignedBB axisalignedbb = (new AxisAlignedBB(blockpos, new BlockPos(blockpos.func_177958_n(), this.func_72800_K(), blockpos.func_177952_p()))).func_186662_g(3.0D);
-@@ -472,13 +582,25 @@
- 
-     public boolean func_175691_a(BlockPos p_175691_1_, Block p_175691_2_)
-     {
--        NextTickListEntry nextticklistentry = new NextTickListEntry(p_175691_1_, p_175691_2_);
-+        NextTickListEntry nextticklistentry;
-+        // Fix double tile tick scheduling with a java bug similar to how its fixed in MC1.13 and above CARPET-XCOM
-+        if(!CarpetSettings.doubleTileTickSchedulingFix){
-+            nextticklistentry = new NextTickListEntry(p_175691_1_, p_175691_2_);
-+        }else{
-+            nextticklistentry = new NextTickListEntryFix(p_175691_1_, p_175691_2_);
-+        }
-         return this.field_94579_S.contains(nextticklistentry);
-     }
- 
-     public boolean func_184145_b(BlockPos p_184145_1_, Block p_184145_2_)
-     {
--        NextTickListEntry nextticklistentry = new NextTickListEntry(p_184145_1_, p_184145_2_);
-+        NextTickListEntry nextticklistentry;
-+        // Fix double tile tick scheduling with a java bug similar to how its fixed in MC1.13 and above CARPET-XCOM
-+        if(!CarpetSettings.doubleTileTickSchedulingFix){
-+            nextticklistentry = new NextTickListEntry(p_184145_1_, p_184145_2_);
-+        }else{
-+            nextticklistentry = new NextTickListEntryFix(p_184145_1_, p_184145_2_);
-+        }
-         return this.field_73064_N.contains(nextticklistentry);
-     }
- 
-@@ -503,15 +625,22 @@
+@@ -503,9 +555,10 @@
                      {
                          iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
                      }
@@ -312,83 +159,7 @@
              }
  
              p_175654_3_ = 1;
-         }
- 
--        NextTickListEntry nextticklistentry = new NextTickListEntry(p_175654_1_, p_175654_2_);
-+        NextTickListEntry nextticklistentry;
-+        // Fix double tile tick scheduling with a java bug similar to how its fixed in MC1.13 and above CARPET-XCOM
-+        if(!CarpetSettings.doubleTileTickSchedulingFix){
-+            nextticklistentry = new NextTickListEntry(p_175654_1_, p_175654_2_);
-+        }else{
-+            nextticklistentry = new NextTickListEntryFix(p_175654_1_, p_175654_2_);
-+        }
- 
-         if (this.func_175667_e(p_175654_1_))
-         {
-@@ -531,7 +660,13 @@
- 
-     public void func_180497_b(BlockPos p_180497_1_, Block p_180497_2_, int p_180497_3_, int p_180497_4_)
-     {
--        NextTickListEntry nextticklistentry = new NextTickListEntry(p_180497_1_, p_180497_2_);
-+        NextTickListEntry nextticklistentry;
-+        // Fix double tile tick scheduling with a java bug similar to how its fixed in MC1.13 and above CARPET-XCOM
-+        if(!CarpetSettings.doubleTileTickSchedulingFix){
-+            nextticklistentry = new NextTickListEntry(p_180497_1_, p_180497_2_);
-+        }else{
-+            nextticklistentry = new NextTickListEntryFix(p_180497_1_, p_180497_2_);
-+        }
-         nextticklistentry.func_82753_a(p_180497_4_);
-         Material material = p_180497_2_.func_176223_P().func_185904_a();
- 
-@@ -549,7 +684,8 @@
- 
-     public void func_72939_s()
-     {
--        if (this.field_73010_i.isEmpty())
-+        // Remove dimension loading
-+        if (!CarpetSettings.dimensionLoading && this.field_73010_i.isEmpty())
-         {
-             if (this.field_80004_Q++ >= 300)
-             {
-@@ -644,9 +780,18 @@
-             }
-             else
-             {
--                if (i > 65536)
-+                int tileTickLimit = CarpetSettings.tileTickLimit;
-+                if (tileTickLimit >= 0 && i > tileTickLimit)
-                 {
--                    i = 65536;
-+                    if (LoggerRegistry.__tileTickLimit) {
-+                        final int fi = i;
-+                        LoggerRegistry.getLogger("tileTickLimit").log(() -> new ITextComponent[] {
-+                            Messenger.s(null, String.format("Reached tile tick limit (%d > %d)", fi, tileTickLimit))
-+                        },
-+                        "NUMBER", i,
-+                        "LIMIT", tileTickLimit);
-+                    }
-+                    i = tileTickLimit;
-                 }
- 
-                 this.field_72984_F.func_76320_a("cleaning");
-@@ -677,6 +822,8 @@
- 
-                     if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0), nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0)))
-                     {
-+                        if (carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
-+                            carpet.carpetclient.CarpetClientChunkLogger.setReason("Block update: " + nextticklistentry1.func_151351_a().func_149732_F());
-                         IBlockState iblockstate = this.func_180495_p(nextticklistentry1.field_180282_a);
- 
-                         if (iblockstate.func_185904_a() != Material.field_151579_a && Block.func_149680_a(iblockstate.func_177230_c(), nextticklistentry1.func_151351_a()))
-@@ -699,6 +846,7 @@
-                         this.func_175684_a(nextticklistentry1.field_180282_a, nextticklistentry1.func_151351_a(), 0);
-                     }
-                 }
-+                carpet.carpetclient.CarpetClientChunkLogger.resetReason();
- 
-                 this.field_72984_F.func_76319_b();
-                 this.field_94579_S.clear();
-@@ -950,11 +1098,18 @@
+@@ -950,11 +1003,18 @@
  
              chunkproviderserver.func_186027_a(p_73044_1_);
  
@@ -408,7 +179,7 @@
                  }
              }
          }
-@@ -1033,9 +1188,15 @@
+@@ -1033,6 +1093,10 @@
                  }
                  else
                  {
@@ -419,48 +190,3 @@
                      if (!(p_184165_1_ instanceof EntityPlayer))
                      {
                          field_147491_a.warn("Keeping entity {} that already exists with UUID {}", EntityList.func_191301_a(entity), uuid.toString());
-+                        if (CarpetSettings.sendDuplicateEntitiesToClients)
-+                            field_73062_L.func_72786_a(p_184165_1_); // vanilla handles the un-tracking properly
-                         return false;
-                     }
- 
-@@ -1150,14 +1311,19 @@
- 
-             for (BlockEventData blockeventdata : this.field_147490_S[i])
-             {
-+                if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
-+                    carpet.carpetclient.CarpetClientChunkLogger.setReason("Queued block event: " + blockeventdata);
-                 if (this.func_147485_a(blockeventdata))
-                 {
-                     this.field_73061_a.func_184103_al().func_148543_a((EntityPlayer)null, (double)blockeventdata.func_180328_a().func_177958_n(), (double)blockeventdata.func_180328_a().func_177956_o(), (double)blockeventdata.func_180328_a().func_177952_p(), 64.0D, this.field_73011_w.func_186058_p().func_186068_a(), new SPacketBlockAction(blockeventdata.func_180328_a(), blockeventdata.func_151337_f(), blockeventdata.func_151339_d(), blockeventdata.func_151338_e()));
-                 }
-             }
-+            carpet.carpetclient.CarpetClientChunkLogger.resetReason();
- 
-             this.field_147490_S[i].clear();
-         }
-+        // [CM] Piston ghost blocks fix
-+        this.blockActionsProcessed = true;
-     }
- 
-     private boolean func_147485_a(BlockEventData p_147485_1_)
-@@ -1299,4 +1465,19 @@
-             {
-             }
-         }
-+    
-+    public boolean haveBlockActionsProcessed()
-+    {
-+        return this.blockActionsProcessed;
-+    }
-+
-+    // Carpet block event sereilization. CARPET-XCOM
-+    public ArrayList<BlockEventData> getBlockEventQueue() {
-+        return field_147490_S[this.field_147489_T];
-+    }
-+    public void setBlockEventQueue(ArrayList<BlockEventData> list) {
-+        for(BlockEventData data : list){
-+            field_147490_S[this.field_147489_T].add(data);
-+        }
-+    }
- }

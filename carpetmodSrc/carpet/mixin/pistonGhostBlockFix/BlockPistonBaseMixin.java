@@ -2,6 +2,7 @@ package carpet.mixin.pistonGhostBlockFix;
 
 import carpet.CarpetSettings;
 import carpet.utils.extensions.ExtendedTileEntityPistonGhostBlockFix;
+import carpet.utils.extensions.ExtendedWorldServerPistonGhostBlockFix;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -34,7 +35,7 @@ public class BlockPistonBaseMixin {
                     boolean progressMatch = ext.getLastProgress() < 0.5F;
                     if (facingMatch && extending && progressMatch
                             && te.getWorld().getTotalWorldTime() == ext.getLastTicked()
-                            && !((WorldServer) world).haveBlockActionsProcessed()) {
+                            && !((ExtendedWorldServerPistonGhostBlockFix) world).haveBlockActionsProcessed()) {
                         suppressMove = true;
                     }
                 }

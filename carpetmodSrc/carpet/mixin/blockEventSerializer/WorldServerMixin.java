@@ -2,6 +2,7 @@ package carpet.mixin.blockEventSerializer;
 
 import carpet.CarpetSettings;
 import carpet.helpers.ScheduledBlockEventSerializer;
+import carpet.utils.extensions.WorldWithBlockEventSerializer;
 import net.minecraft.block.Block;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.util.math.BlockPos;
@@ -17,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(WorldServer.class)
-public abstract class WorldServerMixin extends World {
+public abstract class WorldServerMixin extends World implements WorldWithBlockEventSerializer {
     protected ScheduledBlockEventSerializer blockEventSerializer;
 
     protected WorldServerMixin(ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, Profiler profilerIn, boolean client) {
@@ -37,12 +38,16 @@ public abstract class WorldServerMixin extends World {
     protected void initBlockEventSerializer() {
         blockEventSerializer = (ScheduledBlockEventSerializer)this.mapStorage.getOrLoadData(ScheduledBlockEventSerializer.class, "blockEvents");
 
-        if (blockEventSerializer == null)
-        {
+        if (blockEventSerializer == null) {
             blockEventSerializer = new ScheduledBlockEventSerializer();
             this.mapStorage.setData("blockEvents", blockEventSerializer);
         }
 
         blockEventSerializer.setBlockEvents((WorldServer) (Object) this);
+    }
+
+    @Override
+    public ScheduledBlockEventSerializer getBlockEventSerializer() {
+        return blockEventSerializer;
     }
 }

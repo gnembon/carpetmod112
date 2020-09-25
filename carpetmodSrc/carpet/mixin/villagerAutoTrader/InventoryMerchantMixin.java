@@ -1,5 +1,6 @@
 package carpet.mixin.villagerAutoTrader;
 
+import carpet.utils.extensions.ExtendedEntityVillagerAutotrader;
 import net.minecraft.entity.IMerchant;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.inventory.InventoryMerchant;
@@ -19,7 +20,7 @@ public class InventoryMerchantMixin {
     @Inject(method = "resetRecipeAndSlots", at = @At(value = "INVOKE", target = "Lnet/minecraft/inventory/InventoryMerchant;setInventorySlotContents(ILnet/minecraft/item/ItemStack;)V", ordinal = 1, shift = At.Shift.AFTER))
     private void addToFirstList(CallbackInfo ci) {
         if (merchant instanceof EntityVillager) {
-            ((EntityVillager) merchant).addToFirstList(currentRecipe);
+            ((ExtendedEntityVillagerAutotrader) merchant).addToFirstList(currentRecipe);
         }
     }
 }

@@ -7,6 +7,7 @@ import carpet.network.ToggleableChannelHandler;
 import carpet.patches.EntityPlayerMPFake;
 import carpet.pubsub.*;
 import carpet.utils.*;
+import carpet.utils.extensions.WaypointContainer;
 import carpet.worldedit.WorldEditBridge;
 
 import java.io.*;
@@ -25,6 +26,7 @@ import carpet.logging.LoggerRegistry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldServerMulti;
 
 public class CarpetServer // static for now - easier to handle all around the code, its one anyways
 {
@@ -74,14 +76,17 @@ public class CarpetServer // static for now - easier to handle all around the co
         for (WorldServer world : server.worlds) {
             int dim = world.provider.getDimensionType().getId();
             try {
-                world.waypoints = Waypoint.loadWaypoints(world);
+                Map<String, Waypoint> waypoints = ((WaypointContainer) world).getWaypoints();
+                waypoints.clear();
+                waypoints.putAll(Waypoint.loadWaypoints(world));
+                ((WaypointContainer) world).setWaypoints(Waypoint.loadWaypoints(world));
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
 
             String prefix = "minecraft." + world.provider.getDimensionType().getName();
             new PubSubInfoProvider<>(PUBSUB,prefix + ".chunk_loading.dropped_chunks.hash_size",20,
-                    () -> UnloadOrder.getCurrentHashSize(world));
+                    () -> ChunkLoading.getCurrentHashSize(world));
             for (EnumCreatureType creatureType : EnumCreatureType.values()) {
                 String mobCapPrefix = prefix + ".mob_cap." + creatureType.name().toLowerCase(Locale.ROOT);
                 new PubSubInfoProvider<>(PUBSUB, mobCapPrefix + ".filled", 20, () -> {
@@ -102,7 +107,7 @@ public class CarpetServer // static for now - easier to handle all around the co
         TickingArea.saveConfig(server);
         for (WorldServer world : server.worlds) {
             try {
-                Waypoint.saveWaypoints(world, world.waypoints);
+                Waypoint.saveWaypoints(world, ((WaypointContainer) world).getWaypoints());
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
