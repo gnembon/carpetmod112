@@ -6,6 +6,7 @@ import java.util.*;
 import javax.annotation.Nullable;
 
 import carpet.mixin.accessors.ChunkGeneratorOverworldAccessor;
+import carpet.mixin.accessors.ChunkProviderServerAccessor;
 import carpet.mixin.accessors.WorldAccessor;
 import carpet.mixin.accessors.WorldServerAccessor;
 import carpet.utils.Messenger;
@@ -73,7 +74,7 @@ public class CommandRNG extends CommandCarpetBase {
             try {
                 World world = sender.getEntityWorld();
 
-                IChunkGenerator gen = ((ChunkProviderServer) world.getChunkProvider()).chunkGenerator;
+                IChunkGenerator gen = ((ChunkProviderServerAccessor) world.getChunkProvider()).getChunkGenerator();
 
                 if (gen instanceof ChunkGeneratorOverworld) {
                     int x;

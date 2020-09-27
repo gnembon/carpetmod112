@@ -1,4 +1,4 @@
-package carpet.mixin.tickingAreas;
+package carpet.mixin.chunkLoading;
 
 import carpet.utils.TickingArea;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;

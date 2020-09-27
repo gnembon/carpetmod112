@@ -76,9 +76,6 @@ public class CarpetServer // static for now - easier to handle all around the co
         for (WorldServer world : server.worlds) {
             int dim = world.provider.getDimensionType().getId();
             try {
-                Map<String, Waypoint> waypoints = ((WaypointContainer) world).getWaypoints();
-                waypoints.clear();
-                waypoints.putAll(Waypoint.loadWaypoints(world));
                 ((WaypointContainer) world).setWaypoints(Waypoint.loadWaypoints(world));
             } catch (IOException e) {
                 throw new UncheckedIOException(e);

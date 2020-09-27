@@ -1,4 +1,4 @@
-package carpet.mixin.tickingAreas;
+package carpet.mixin.chunkLoading;
 
 import carpet.CarpetSettings;
 import carpet.utils.TickingArea;

@@ -1,15 +1,14 @@
 
 package carpet.utils;
 
-import java.util.List;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 import carpet.mixin.accessors.EntityLivingAccessor;
 import carpet.mixin.accessors.WeightedRandomItemAccessor;
+import com.google.common.collect.AbstractIterator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 import net.minecraft.util.math.BlockPos;
@@ -37,7 +36,7 @@ public class SpawnReporter
     
     public static Long track_spawns = 0L;
     public static final HashMap<Integer, HashMap<EnumCreatureType, Tuple<Integer,Integer>>> mobcaps = new HashMap<>();
-    public static final HashMap<String, HashMap<String,Long>> spawn_stats = new HashMap<String, HashMap<String,Long>>();
+    public static final HashMap<EnumCreatureType, HashMap<String,Long>> spawn_stats = new HashMap<>();
     public static double mobcap_exponent = 0.0D;
     
     public static final HashMap<String, Long> spawn_attempts = new HashMap<String, Long>();
@@ -57,8 +56,8 @@ public class SpawnReporter
             this.pos = pos;
         }
     }
-    public static final HashMap<String, EvictingQueue<SpawnPos, Integer>> spawned_mobs = new HashMap<>();
-    public static final HashMap<String, Integer> spawn_tries = new HashMap<>();
+    public static final HashMap<EnumCreatureType, EvictingQueue<SpawnPos, Integer>> spawned_mobs = new HashMap<>();
+    public static final HashMap<EnumCreatureType, Integer> spawn_tries = new HashMap<>();
     public static BlockPos lower_spawning_limit = null;
     public static BlockPos upper_spawning_limit = null;
 
@@ -66,9 +65,12 @@ public class SpawnReporter
         reset_spawn_stats(true);
     }
 
-    public static void registerSpawn(EntityLiving el, String type, String mob, BlockPos pos) { registerSpawn(el, type, mob, pos, 1L);}
-    public static void registerSpawn(EntityLiving el, String type, String mob, BlockPos pos, long value)
+    public static void registerSpawn(EntityLiving el, EnumCreatureType type) {
+        registerSpawn(el, type, EntityList.getEntityString(el), 1L);
+    }
+    public static void registerSpawn(EntityLiving el, EnumCreatureType type, String mob, long value)
     {
+        BlockPos pos = new BlockPos(el);
         if (lower_spawning_limit != null)
         {
             if (!( (lower_spawning_limit.getX() <= pos.getX() && pos.getX() <= upper_spawning_limit.getX()) &&
@@ -82,7 +84,7 @@ public class SpawnReporter
         
         long count = spawn_stats.get(type).getOrDefault(mob, 0L);
         spawn_stats.get(type).put(mob, count + value);
-        spawned_mobs.get(type).put(new SpawnPos(mob, new BlockPos(el)), 1);
+        spawned_mobs.get(type).put(new SpawnPos(mob, pos), 1);
     }
 
 
@@ -131,7 +133,7 @@ public class SpawnReporter
         String type_code = get_type_string(creature_type);
         
         lst.add(Messenger.s(null, String.format("Recent %s spawns:",type_code)));
-        for (SpawnPos entry: spawned_mobs.get(type_code).keySet())
+        for (SpawnPos entry: spawned_mobs.get(creature_type).keySet())
         {
             lst.add( Messenger.m(null, String.format("w  - %s ",entry.mob), Messenger.tp("wb",entry.pos)));
         }
@@ -278,7 +280,7 @@ public class SpawnReporter
             String type_code = String.format("%s", enumcreaturetype);
             if (full)
             {
-                spawn_tries.put(type_code, 1);
+                spawn_tries.put(enumcreaturetype, 1);
             }
             for (String suffix: new String[] {""," (N)"," (E)"})
             {
@@ -292,8 +294,8 @@ public class SpawnReporter
                 spawn_cap_count.put(code, 0L);
             }
             
-            spawn_stats.put(type_code, new HashMap<>());
-            spawned_mobs.put(type_code, new EvictingQueue<>());
+            spawn_stats.put(enumcreaturetype, new HashMap<>());
+            spawned_mobs.put(enumcreaturetype, new EvictingQueue<>());
         }
         mobcaps.put(-1,new HashMap<>());
         mobcaps.put(0,new HashMap<>());
@@ -503,5 +505,23 @@ public class SpawnReporter
             }
         }
         return playerInDimension;
+    }
+
+    public static Iterator<ChunkPos> createChunkIterator(Set<ChunkPos> chunks, EnumCreatureType category, Runnable onEnd) {
+        return new AbstractIterator<ChunkPos>() {
+            int tries = spawn_tries.get(category);
+            Iterator<ChunkPos> orig;
+            @Override
+            protected ChunkPos computeNext() {
+                while (orig == null || !orig.hasNext()) {
+                    if (tries-- == 0) {
+                        onEnd.run();
+                        return endOfData();
+                    }
+                    orig = chunks.iterator();
+                }
+                return orig.next();
+            }
+        };
     }
 }

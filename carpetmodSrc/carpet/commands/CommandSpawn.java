@@ -174,7 +174,7 @@ public class CommandSpawn extends CommandCarpetBase
         {
             if (args.length >= 2 && "reset".equalsIgnoreCase(args[1]))
             {
-                for (String s: SpawnReporter.spawn_tries.keySet())
+                for (EnumCreatureType s: SpawnReporter.spawn_tries.keySet())
                 {
                     SpawnReporter.spawn_tries.put(s,1);
                 }
@@ -182,9 +182,8 @@ public class CommandSpawn extends CommandCarpetBase
             else if (args.length >= 3)
             {
                 String str = args[1];
-                String code = SpawnReporter.get_creature_code_from_string(str);
                 int num = parseInt(args[2], 0, 1000);
-                SpawnReporter.spawn_tries.put(code, num);
+                SpawnReporter.spawn_tries.put(SpawnReporter.get_creature_type_from_code(str), num);
             }
             if (sender instanceof EntityPlayerMP)
             {

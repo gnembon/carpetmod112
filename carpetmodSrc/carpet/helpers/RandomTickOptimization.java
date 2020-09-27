@@ -1,8 +1,8 @@
 package carpet.helpers;
 
 import carpet.CarpetServer;
-import carpet.CarpetSettings;
 import carpet.mixin.accessors.BlockAccessor;
+import carpet.mixin.accessors.ChunkProviderServerAccessor;
 import net.minecraft.block.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -58,7 +58,7 @@ public class RandomTickOptimization {
             IChunkProvider provider = world.getChunkProvider();
             if (!(provider instanceof ChunkProviderServer))
                 continue;
-            for (Chunk chunk : ((ChunkProviderServer) provider).loadedChunks.values()) {
+            for (Chunk chunk : ((ChunkProviderServerAccessor) provider).getLoadedChunksMap().values()) {
                 for (ExtendedBlockStorage subchunk : chunk.getBlockStorageArray()) {
                     if (subchunk != null)
                         subchunk.recalculateRefCounts();

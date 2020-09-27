@@ -3,6 +3,7 @@ package carpet.helpers;
 
 import java.util.List;
 
+import carpet.mixin.accessors.EntityAccessor;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.AxisAlignedBB;
 
@@ -18,7 +19,7 @@ public class BabyGrowingUp {
         entity.setEntityBoundingBox(new AxisAlignedBB(entity.posX - d0, entity.posY, entity.posZ - d0, entity.posX + d0,
                 entity.posY + (double) entity.height, entity.posZ + d0));
 
-        if (entity.width > f && !entity.firstUpdate && !entity.world.isRemote) {
+        if (entity.width > f && !((EntityAccessor) entity).isFirstUpdate() && !entity.world.isRemote) {
             pushEntityOutOfBlocks(entity, oldAABB);
         }
     }

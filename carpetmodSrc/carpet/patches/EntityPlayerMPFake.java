@@ -24,9 +24,11 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
 
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EntityPlayerMPFake extends EntityPlayerMP
 {
+    private static final ThreadLocal<Boolean> loginMinecartFix = new ThreadLocal<>();
     private double lastReportedPosX;
     private double lastReportedPosY;
     private double lastReportedPosZ;
@@ -36,6 +38,15 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     private double setZ;
     private float setYaw;
     private float setPitch;
+
+    public static boolean shouldFixMinecart() {
+        Boolean fix = loginMinecartFix.get();
+        return fix != null && fix;
+    }
+
+    private static void setShouldFixMinecart(boolean fix) {
+        loginMinecartFix.set(fix);
+    }
 
     public static EntityPlayerMPFake createFake(String username, MinecraftServer server, double x, double y, double z, double yaw, double pitch, int dimension, int gamemode)
     {
@@ -122,9 +133,9 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         EntityPlayerMPFake instance = new EntityPlayerMPFake(server, worldIn, gameprofile, interactionManagerIn);
         server.getPlayerList().readPlayerDataFromFile(instance);
         instance.setSetPosition(instance.posX, instance.posY, instance.posZ, instance.rotationYaw, instance.rotationPitch);
-        worldIn.loginMinecartFix = true;
+        setShouldFixMinecart(true);
         server.getPlayerList().initializeConnectionToPlayer(new NetworkManagerFake(EnumPacketDirection.CLIENTBOUND), instance);
-        worldIn.loginMinecartFix = false;
+        setShouldFixMinecart(false);
         if (instance.dimension != 0) //player was logged in in a different dimension
         {
             worldIn = server.getWorld(instance.dimension);

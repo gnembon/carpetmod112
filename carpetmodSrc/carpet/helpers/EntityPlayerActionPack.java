@@ -1,6 +1,8 @@
 package carpet.helpers;
 
 import carpet.mixin.accessors.CPacketPlayerDiggingAccessor;
+import carpet.mixin.accessors.EntityAccessor;
+import carpet.patches.EntityPlayerMPFake;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import javax.annotation.Nullable;
@@ -230,7 +232,7 @@ public class EntityPlayerActionPack
     }
     public EntityPlayerActionPack look(float yaw, float pitch)
     {
-        player.setRotation(yaw, MathHelper.clamp(pitch,-90.0F, 90.0F));
+        ((EntityAccessor) player).invokeSetRotation(yaw, MathHelper.clamp(pitch,-90.0F, 90.0F));
         return this;
     }
     public boolean turn(String where)
@@ -250,7 +252,7 @@ public class EntityPlayerActionPack
     }
     public EntityPlayerActionPack turn(float yaw, float pitch)
     {
-        player.setRotation(player.rotationYaw+yaw,MathHelper.clamp(player.rotationPitch+pitch,-90.0F, 90.0F));
+        ((EntityAccessor) player).invokeSetRotation(player.rotationYaw+yaw,MathHelper.clamp(player.rotationPitch+pitch,-90.0F, 90.0F));
         return  this;
     }
 

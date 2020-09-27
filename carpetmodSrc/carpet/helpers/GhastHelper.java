@@ -1,6 +1,7 @@
 package carpet.helpers;
 
 import carpet.CarpetSettings;
+import carpet.mixin.accessors.EntityLivingBaseAccessor;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -151,7 +152,7 @@ public class GhastHelper
                 float s = MathHelper.sin(rider.rotationYaw* 0.017453292F);
                 vec3d = new Vec3d(vec3d.x+c*strafe,vec3d.y,vec3d.z+s*strafe);
             }
-            if (rider.getJumping())
+            if (((EntityLivingBaseAccessor) rider).isJumping())
             {
                 vec3d = new Vec3d(vec3d.x,vec3d.y+1.0D,vec3d.z);
             }

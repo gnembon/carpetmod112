@@ -62,4 +62,10 @@ public class EntityGhastMixin extends EntityFlying {
     public Entity getControllingPassenger() {
         return this.getPassengers().isEmpty() ? null : this.getPassengers().get(0);
     }
+
+    @Override
+    public double getMountedYOffset() {
+        if (CarpetSettings.rideableGhasts) return this.height - 0.2;
+        return super.getMountedYOffset();
+    }
 }

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 
+import carpet.mixin.accessors.ChunkProviderServerAccessor;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
@@ -240,7 +241,7 @@ class CarpetWorld extends AbstractWorld {
                 }
                 u.setAccessible(true);
                 */
-                Set<Long> unloadQueue = chunkServer.droppedChunks;
+                Set<Long> unloadQueue = ((ChunkProviderServerAccessor) chunkServer).getDroppedChunks();
                 /*
                 Field m;
                 try {
@@ -250,7 +251,7 @@ class CarpetWorld extends AbstractWorld {
                 }
                 m.setAccessible(true);
                 */
-                Long2ObjectMap<Chunk> loadedMap = chunkServer.loadedChunks;
+                Long2ObjectMap<Chunk> loadedMap = ((ChunkProviderServerAccessor) chunkServer).getLoadedChunksMap();
                 /*
                 Field lc;
                 try {

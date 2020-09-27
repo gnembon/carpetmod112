@@ -1,9 +1,6 @@
 package carpet.utils;
 
-import carpet.mixin.accessors.EntityItemAccessor;
-import carpet.mixin.accessors.EntitySlimeAccessor;
-import carpet.mixin.accessors.EntityVillagerAccessor;
-import carpet.mixin.accessors.EntityZombieVillagerAccessor;
+import carpet.mixin.accessors.*;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -143,7 +140,8 @@ public class EntityInfo
 		{
 			lst.add(String.format(" - Dimension: %s", (e.dimension>0)?"The End":((e.dimension<0)?"Nether":"Overworld")));
 		}
-        if (e.getFire() > 0) { lst.add(String.format(" - Fire for %d ticks",e.getFire())); }
+		int fire = ((EntityAccessor) e).getFire();
+        if (fire > 0) { lst.add(String.format(" - Fire for %d ticks",fire)); }
 		if (e.isImmuneToFire() ) { lst.add(" - Immune to fire"); }
 		if (e.timeUntilPortal > 0) { lst.add(String.format(" - Portal cooldown for %d ticks",e.timeUntilPortal)); }
 		if (e.getIsInvulnerable()) { lst.add(" - Invulnerable"); } //  func_190530_aW()

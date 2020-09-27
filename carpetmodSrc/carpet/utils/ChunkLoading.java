@@ -2,6 +2,7 @@ package carpet.utils;
 
 import carpet.CarpetSettings;
 import carpet.mixin.accessors.AnvilChunkLoaderAccessor;
+import carpet.mixin.accessors.ChunkProviderServerAccessor;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -106,9 +107,10 @@ public class ChunkLoading
         ChunkProviderServer chunkproviderserver = server.getChunkProvider();
         try
         {
-            Field field = chunkproviderserver.droppedChunks.getClass().getDeclaredField("map");
+            Set<Long> droppedChunks = ((ChunkProviderServerAccessor) chunkproviderserver).getDroppedChunks();
+            Field field = droppedChunks.getClass().getDeclaredField("map");
             field.setAccessible(true);
-            HashMap map = (HashMap<Object,Object>)field.get(chunkproviderserver.droppedChunks);
+            HashMap<?, ?> map = (HashMap<?,?>) field.get(droppedChunks);
             field = map.getClass().getDeclaredField("table");
             field.setAccessible(true);
             Object [] table = (Object [])field.get(map);
@@ -116,10 +118,7 @@ public class ChunkLoading
                 return 2;
             return table.length;
         }
-        catch (NoSuchFieldException e)
-        {
-            e.printStackTrace();
-        } catch (IllegalAccessException e)
+        catch (NoSuchFieldException | IllegalAccessException e)
         {
             e.printStackTrace();
         }
@@ -359,7 +358,7 @@ public class ChunkLoading
 
     public static String stringify_chunk_id(ChunkProviderServer provider, int index, Long olong, int size)
     {
-        Chunk chunk = provider.loadedChunks.get(olong);
+        Chunk chunk = ((ChunkProviderServerAccessor) provider).getLoadedChunksMap().get(olong);
 
         return String.format(" - %4d: (%d, %d) at X %d, Z %d (order: %d / %d)",
                 index+1,
@@ -372,7 +371,7 @@ public class ChunkLoading
 
     public static String stringify_chunk_id_113(ChunkProviderServer provider, int index, Long olong, int size)
     {
-        Chunk chunk = provider.loadedChunks.get(olong);
+        Chunk chunk = ((ChunkProviderServerAccessor) provider).getLoadedChunksMap().get(olong);
 
         return String.format(" - %4d: (%d, %d) at X %d, Z %d (order: %d / %d)",
                 index+1,
@@ -397,9 +396,10 @@ public class ChunkLoading
         int current_size = ChunkLoading.getCurrentHashSize(world);
         if (!world.disableLevelSaving)
         {
-            if (!provider.droppedChunks.isEmpty())
+            Set<Long> droppedChunks = ((ChunkProviderServerAccessor) provider).getDroppedChunks();
+            if (!droppedChunks.isEmpty())
             {
-                Iterator<Long> iterator = provider.droppedChunks.iterator();
+                Iterator<Long> iterator = droppedChunks.iterator();
                 List<Long> chunks_ids_order = new ArrayList<>();
                 int selected_chunk = -1;
                 int iti = 0;
@@ -407,7 +407,7 @@ public class ChunkLoading
                 for (i = 0; iterator.hasNext(); iterator.remove())
                 {
                     Long olong = iterator.next();
-                    Chunk chunk = provider.loadedChunks.get(olong);
+                    Chunk chunk = ((ChunkProviderServerAccessor) provider).getLoadedChunksMap().get(olong);
 
                     if (chunk != null && chunk.unloadQueued)
                     {
@@ -514,8 +514,8 @@ public class ChunkLoading
                 {
 
                     Long olong = iterator.next();
-                    Chunk chunk = provider.loadedChunks.get(olong);
-                    provider.droppedChunks.remove(olong);
+                    Chunk chunk = ((ChunkProviderServerAccessor) provider).getLoadedChunksMap().get(olong);
+                    ((ChunkProviderServerAccessor) provider).getDroppedChunks().remove(olong);
 
                     if (chunk != null && chunk.unloadQueued)
                     {
@@ -614,6 +614,6 @@ public class ChunkLoading
     }
 
     public static AnvilChunkLoader getChunkLoader(Chunk chunk) {
-        return (AnvilChunkLoader) ((ChunkProviderServer) chunk.getWorld().getChunkProvider()).chunkLoader;
+        return (AnvilChunkLoader) ((ChunkProviderServerAccessor) chunk.getWorld().getChunkProvider()).getChunkLoader();
     }
 }

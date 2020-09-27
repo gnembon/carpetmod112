@@ -19,6 +19,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import carpet.mixin.accessors.AnvilChunkLoaderAccessor;
+import carpet.mixin.accessors.ChunkProviderServerAccessor;
 import carpet.mixin.accessors.MinecraftServerAccessor;
 import carpet.utils.extensions.WorldWithTickingAreas;
 import org.apache.logging.log4j.LogManager;
@@ -117,7 +118,7 @@ public abstract class TickingArea
             {
                 continue;
             }
-            IChunkLoader chunkLoader = ((ChunkProviderServer) chunkProvider).chunkLoader;
+            IChunkLoader chunkLoader = ((ChunkProviderServerAccessor) chunkProvider).getChunkLoader();
             if (!(chunkLoader instanceof AnvilChunkLoader))
             {
                 continue;
@@ -171,7 +172,7 @@ public abstract class TickingArea
             IChunkProvider chunkProvider = world.getChunkProvider();
             if (!(chunkProvider instanceof ChunkProviderServer))
                 continue;
-            IChunkLoader chunkLoader = ((ChunkProviderServer) chunkProvider).chunkLoader;
+            IChunkLoader chunkLoader = ((ChunkProviderServerAccessor) chunkProvider).getChunkLoader();
             if (!(chunkLoader instanceof AnvilChunkLoader))
                 continue;
             

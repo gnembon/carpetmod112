@@ -9,6 +9,7 @@ package carpet.carpetclient;
 
 import carpet.CarpetSettings;
 import carpet.helpers.StackTraceDeobfuscator;
+import carpet.mixin.accessors.ChunkProviderServerAccessor;
 import carpet.mixin.accessors.PlayerChunkMapAccessor;
 import carpet.mixin.accessors.PlayerChunkMapEntryAccessor;
 import carpet.utils.LRUCache;
@@ -178,7 +179,7 @@ public class CarpetClientChunkLogger {
             dimension++;
             for (Chunk c : provider.getLoadedChunks()) {
                 forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.LOADING, null, null));
-                if (provider.isChunkUnloadScheduled(c.x, c.z)) {
+                if (((ChunkProviderServerAccessor) provider).getDroppedChunks().contains(ChunkPos.asLong(c.x, c.z))) {
                     forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.QUEUE_UNLOAD, null, null));
                     if (!c.unloadQueued) {
                         forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.CANCEL_UNLOAD, null, null));
