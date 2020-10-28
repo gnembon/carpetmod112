@@ -68,8 +68,8 @@ public class CommandTickingArea extends CommandCarpetBase
     
     private static ChunkPos parseChunkPos(ICommandSender sender, String[] args, int index) throws CommandException
     {
-        int x = (int) Math.round(parseCoordinate(sender.getPosition().getX() / 16, args[index], false).getResult());
-        int z = (int) Math.round(parseCoordinate(sender.getPosition().getZ() / 16, args[index + 1], false).getResult());
+        int x = (int) Math.round(parseCoordinate(sender.getPosition().getX() >> 4, args[index], false).getResult());
+        int z = (int) Math.round(parseCoordinate(sender.getPosition().getZ() >> 4, args[index + 1], false).getResult());
         return new ChunkPos(x, z);
     }
     
