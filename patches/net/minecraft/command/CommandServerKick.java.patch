@@ -15,7 +15,7 @@
  {
 +    @Override
 +    public boolean func_184882_a(MinecraftServer server, ICommandSender sender) {
-+        return CarpetSettings.publicKick;
++        return CarpetSettings.publicKick || super.func_184882_a(server, sender);
 +    }
 +
      public String func_71517_b()
