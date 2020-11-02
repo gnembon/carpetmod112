@@ -63,6 +63,11 @@ public abstract class MinecraftServerMixin {
         CarpetServer.onLoadAllWorlds((MinecraftServer) (Object) this);
     }
 
+    @Inject(method = "loadAllWorlds", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;initialWorldChunkLoad()V", shift = At.Shift.AFTER))
+    private void loadCarpetBots(String saveName, String worldNameIn, long seed, WorldType type, String generatorOptions, CallbackInfo ci) {
+        CarpetServer.loadBots((MinecraftServer) (Object) this);
+    }
+
     @Inject(method = "saveAllWorlds", at = @At("RETURN"))
     private void onWorldsSaved(boolean isSilent, CallbackInfo ci) {
         CarpetServer.onWorldsSaved((MinecraftServer) (Object) this);

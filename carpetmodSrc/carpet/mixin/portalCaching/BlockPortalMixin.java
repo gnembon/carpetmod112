@@ -1,6 +1,7 @@
 package carpet.mixin.portalCaching;
 
 import carpet.CarpetSettings;
+import carpet.utils.extensions.ExtendedTeleporter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPortal;
 import net.minecraft.block.state.IBlockState;
@@ -17,11 +18,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class BlockPortalMixin {
     @Inject(method = "trySpawnPortal", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockPortal$Size;placePortalBlocks()V", shift = At.Shift.AFTER), expect = 2)
     private void clearOnSpawnPortal(World world, BlockPos pos, CallbackInfoReturnable<Boolean> cir) {
-        if (CarpetSettings.portalCaching) ((WorldServer) world).getDefaultTeleporter().clearHistoryCache();
+        if (CarpetSettings.portalCaching) ((ExtendedTeleporter) ((WorldServer) world).getDefaultTeleporter()).clearHistoryCache();
     }
 
     @Inject(method = "neighborChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z", shift = At.Shift.AFTER), expect = 2)
     private void clearOnNeighborChange(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, CallbackInfo ci) {
-        if (CarpetSettings.portalCaching) ((WorldServer) world).getDefaultTeleporter().clearHistoryCache();
+        if (CarpetSettings.portalCaching) ((ExtendedTeleporter) ((WorldServer) world).getDefaultTeleporter()).clearHistoryCache();
     }
 }

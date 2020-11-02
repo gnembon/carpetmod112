@@ -1,6 +1,7 @@
 package carpet.patches;
 
 import carpet.CarpetSettings;
+import carpet.utils.extensions.ActionPackOwner;
 import carpet.utils.extensions.CameraPlayer;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.entity.player.EntityPlayer;
@@ -107,7 +108,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         playerShadow.setHealth(player.getHealth());
         playerShadow.connection.setPlayerLocation(player.posX, player.posY,player.posZ, player.rotationYaw, player.rotationPitch);
         interactionManagerIn.setGameType(player.interactionManager.getGameType());
-        playerShadow.actionPack.copyFrom(player.actionPack);
+        ((ActionPackOwner) playerShadow).getActionPack().copyFrom(((ActionPackOwner) player).getActionPack());
         playerShadow.stepHeight = 0.6F;
 
         server.getPlayerList().sendPacketToAllPlayersInDimension(new SPacketEntityHeadLook(playerShadow, (byte)(player.rotationYawHead * 256 / 360) ),playerShadow.dimension);
@@ -150,7 +151,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
         server.getPlayerList().serverUpdateMovingPlayer(instance);
         instance.dataManager.set(PLAYER_MODEL_FLAG, (byte) 0x7f); // show all model layers (incl. capes)
         createAndAddFakePlayerToTeamBot(instance);
-        if(infos.length > 1) instance.actionPack.fromString(infos[1]);
+        if(infos.length > 1) ((ActionPackOwner) instance).getActionPack().fromString(infos[1]);
         return instance;
     }
 
@@ -244,7 +245,7 @@ public class EntityPlayerMPFake extends EntityPlayerMP
     }
 
     public static String getInfo(EntityPlayerMP p){
-        return p.getName() + "/" + p.actionPack;
+        return p.getName() + "/" + ((ActionPackOwner) p).getActionPack();
     }
 
     @Override

@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import carpet.utils.EntityInfo;
+import carpet.utils.extensions.ActionPackOwner;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -130,8 +131,8 @@ public class CommandEntityInfo extends CommandCarpetBase
             notifyCommandListener(sender, this, "Command is disabled in carpet settings");
         }
         List<String> list = getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
-        RayTraceResult result = ((EntityPlayerMP)sender).actionPack.mouseOver();
-        if(result != null && result.typeOfHit == RayTraceResult.Type.ENTITY){
+        RayTraceResult result = ((ActionPackOwner) sender).getActionPack().mouseOver();
+        if (result != null && result.typeOfHit == RayTraceResult.Type.ENTITY) {
             list.add(result.entityHit.getUniqueID().toString());
         }
         return args.length == 1 ? list : Collections.emptyList();

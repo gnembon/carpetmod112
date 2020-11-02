@@ -56,7 +56,7 @@ public abstract class WorldServerMixin extends World {
         }
     }
 
-    @Redirect(method = "updateBlocks", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerChunkMap;getChunkIterator()Ljava/util/Iterator;"))
+    @Redirect(method = "updateBlocks", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerChunkMap;getChunkIterator()Ljava/util/Iterator;", ordinal = 1))
     private Iterator<Chunk> getChunkIterator(PlayerChunkMap map) {
         Iterator<Chunk> iterator = map.getChunkIterator();
         if (!TickSpeed.process_entities) {

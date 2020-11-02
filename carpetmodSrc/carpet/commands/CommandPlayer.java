@@ -1,7 +1,9 @@
 package carpet.commands;
 
 import carpet.CarpetSettings;
+import carpet.helpers.EntityPlayerActionPack;
 import carpet.patches.EntityPlayerMPFake;
+import carpet.utils.extensions.ActionPackOwner;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
@@ -69,6 +71,7 @@ public class CommandPlayer extends CommandCarpetBase
         {
             throw new WrongUsageException("player doesn't exist");
         }
+        EntityPlayerActionPack actionPack = player == null ? null : ((ActionPackOwner) player).getActionPack();
         if ("use".equalsIgnoreCase(action) || "attack".equalsIgnoreCase(action) || "jump".equalsIgnoreCase(action))
         {
             String option = "once";
@@ -84,45 +87,45 @@ public class CommandPlayer extends CommandCarpetBase
             if (action.equalsIgnoreCase("use"))
             {
                 if (option.equalsIgnoreCase("once"))
-                    player.actionPack.useOnce();
+                    actionPack.useOnce();
                 if (option.equalsIgnoreCase("continuous"))
-                    player.actionPack.setUseForever();
+                    actionPack.setUseForever();
                 if (option.equalsIgnoreCase("interval") && interval > 1)
-                    player.actionPack.setUse(interval, 0);
+                    actionPack.setUse(interval, 0);
             }
             if (action.equalsIgnoreCase("attack"))
             {
                 if (option.equalsIgnoreCase("once"))
-                    player.actionPack.attackOnce();
+                    actionPack.attackOnce();
                 if (option.equalsIgnoreCase("continuous"))
-                    player.actionPack.setAttackForever();
+                    actionPack.setAttackForever();
                 if (option.equalsIgnoreCase("interval") && interval > 1)
-                    player.actionPack.setAttack(interval, 0);
+                    actionPack.setAttack(interval, 0);
             }
             if (action.equalsIgnoreCase("jump"))
             {
                 if (option.equalsIgnoreCase("once"))
-                    player.actionPack.jumpOnce();
+                    actionPack.jumpOnce();
                 if (option.equalsIgnoreCase("continuous"))
-                    player.actionPack.setJumpForever();
+                    actionPack.setJumpForever();
                 if (option.equalsIgnoreCase("interval") && interval > 1)
-                    player.actionPack.setJump(interval, 0);
+                    actionPack.setJump(interval, 0);
             }
             return;
         }
         if ("stop".equalsIgnoreCase(action))
         {
-            player.actionPack.stop();
+            actionPack.stop();
             return;
         }
         if ("drop".equalsIgnoreCase(action))
         {
-            player.actionPack.dropItem();
+            actionPack.dropItem();
             return;
         }
         if ("swapHands".equalsIgnoreCase(action))
         {
-            player.actionPack.swapHands();
+            actionPack.swapHands();
             return;
         }
         if ("spawn".equalsIgnoreCase(action))
@@ -206,12 +209,12 @@ public class CommandPlayer extends CommandCarpetBase
         }
         if ("mount".equalsIgnoreCase(action))
         {
-            player.actionPack.mount();
+            actionPack.mount();
             return;
         }
         if ("dismount".equalsIgnoreCase(action))
         {
-            player.actionPack.dismount();
+            actionPack.dismount();
             return;
         }
         //FP only
@@ -227,34 +230,34 @@ public class CommandPlayer extends CommandCarpetBase
                 String where = args[2];
                 if ("forward".equalsIgnoreCase(where))
                 {
-                    player.actionPack.setForward(1.0F);
+                    actionPack.setForward(1.0F);
                     return;
                 }
                 if ("backward".equalsIgnoreCase(where))
                 {
-                    player.actionPack.setForward(-1.0F);
+                    actionPack.setForward(-1.0F);
                     return;
                 }
                 if ("left".equalsIgnoreCase(where))
                 {
-                    player.actionPack.setStrafing(-1.0F);
+                    actionPack.setStrafing(-1.0F);
                     return;
                 }
                 if ("right".equalsIgnoreCase(where))
                 {
-                    player.actionPack.setStrafing(1.0F);
+                    actionPack.setStrafing(1.0F);
                     return;
                 }
                 throw new WrongUsageException("/player "+playerName+" go <forward|backward|left|right>");
             }
             if ("sneak".equalsIgnoreCase(action))
             {
-                player.actionPack.setSneaking(true);
+                actionPack.setSneaking(true);
                 return;
             }
             if ("sprint".equalsIgnoreCase(action))
             {
-                player.actionPack.setSprinting(true);
+                actionPack.setSprinting(true);
                 return;
             }
             if ("look".equalsIgnoreCase(action))
@@ -263,7 +266,7 @@ public class CommandPlayer extends CommandCarpetBase
                     throw new WrongUsageException("/player "+playerName+" look <left|right|north|south|east|west|up|down| yaw .. pitch>");
                 if (args[2].charAt(0)>='A' && args[2].charAt(0)<='z')
                 {
-                    if(!player.actionPack.look(args[2].toLowerCase()))
+                    if(!actionPack.look(args[2].toLowerCase()))
                     {
                         throw new WrongUsageException("look direction is north, south, east, west, up or down");
                     }
@@ -272,7 +275,7 @@ public class CommandPlayer extends CommandCarpetBase
                 {
                     float yaw = (float) parseCoordinate(player.rotationYaw, args[2], false).getResult();
                     float pitch = (float) parseCoordinate(player.rotationPitch, args[3], false).getResult();
-                    player.actionPack.look(yaw,pitch);
+                    actionPack.look(yaw,pitch);
                 }
                 else
                 {
