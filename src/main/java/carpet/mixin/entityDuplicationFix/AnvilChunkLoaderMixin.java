@@ -22,7 +22,7 @@ import java.util.Set;
 
 @Mixin(AnvilChunkLoader.class)
 public abstract class AnvilChunkLoaderMixin {
-    @Shadow private @Final Map<ChunkPos, NBTTagCompound> chunksToSave = new HashMap<>();
+    @Shadow @Final private final Map<ChunkPos, NBTTagCompound> chunksToSave = new HashMap<>();
     @Shadow private boolean flushing;
     @Shadow @Final private static Logger LOGGER;
     @Shadow @Final private File chunkSaveLocation;

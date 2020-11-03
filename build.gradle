@@ -1,11 +1,3 @@
-// ======================
-// JAR MOD BUILDSCRIPT
-// ======================
-
-
-// ===== HEADER =====
-
-// Use the ForgeGradle plugin (must go absolutely first! (before imports!) :( )
 buildscript
 {
 	repositories
@@ -19,483 +11,97 @@ buildscript
 	dependencies
 	{
 		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-7764e3e'
-		classpath 'de.undercouch:gradle-download-task:3.4.3'
-		classpath 'commons-io:commons-io:2.6'
-		classpath "gradle.plugin.com.dorongold.plugins:task-tree:1.3" // For debug purposes
+		classpath "org.spongepowered:mixingradle:0.6-SNAPSHOT"
 		classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
 	}
 }
-apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'application'
-def patcher_plugin = plugins.apply 'net.minecraftforge.gradle.patcher'
-apply plugin: 'de.undercouch.download'
-apply plugin: "com.dorongold.task-tree" // For debug purposes
 
+apply plugin: "java"
+apply plugin: "net.minecraftforge.gradle.tweaker-server"
+apply plugin: "org.spongepowered.mixin"
+apply plugin: "com.github.johnrengelman.shadow"
 
-import com.google.common.io.Resources
-import de.undercouch.gradle.tasks.download.Download
-import groovy.io.FileType
-import java.text.SimpleDateFormat
-import java.util.zip.ZipFile
-import net.minecraftforge.gradle.common.Constants
-import net.minecraftforge.gradle.patcher.PatcherConstants
-import net.minecraftforge.gradle.patcher.TaskReobfuscate
-import net.minecraftforge.gradle.patcher.TaskSubprojectCall
-import net.minecraftforge.gradle.util.json.version.OS
-import org.apache.commons.io.FileUtils
-import org.apache.commons.io.IOUtils
-
-
-// ===== PROPERTIES =====
-
-// Set basic project properties
 group = name
-version = gradle.modVersion
-def capitalizedName = '' + Character.toUpperCase(project.name.charAt(0)) + project.name.substring(1)
+version = 'dev'
+archivesBaseName = name
 
-allprojects {
-	sourceSets.main.java.srcDirs = ['src']
-	sourceSets.main.resources.srcDirs = ['resources']
-	repositories {
-		mavenCentral()
-		maven {url 'https://files.minecraftforge.net/maven'}
-		maven {url 'https://libraries.minecraft.net/'}
+minecraft {
+	version = "1.12.2"
+	mappings = "stable_39"
+	runDir = "run"
+	tweakClass = "carpet.launch.ServerTweaker"
+	serverJvmArgs.addAll("-Dmixin.debug=true")
+	makeObfSourceJar = false
+}
+
+reobf {
+	jar {
+		mappingType = "NOTCH"
 	}
-	dependencies
-	{
-		implementation files('resources/1.12.2.jar')
-	}
-	configurations.compile.extendsFrom configurations.forgeGradleMcDeps
-}
-sourceSets {
-	main {
-		java {
-			srcDirs = ['src']
-			mainClassName = 'net.minecraft.server.MinecraftServer'
-		}
-	}
-}
-File runningDir = new File('server/')
-runningDir.mkdirs()
-tasks.run.workingDir = runningDir
-//tasks.run.args = ['nogui'] // add this to remove server gui
-// ForgeGradle settings
-minecraft
-{
-	version = gradle.mcVersion
-	mappings = gradle.mappings
-	workspaceDir = 'projects'
-	// versionJson is used to download assets because ForgeGradle insists
-	versionJson = "jsons/${minecraft.version}-dev.json"
-	
-	def common = {
-		patchPrefixOriginal = '../src-base/minecraft'
-		patchPrefixChanged = '../src-work/minecraft'
-		mainClassServer = 'net.minecraft.server.MinecraftServer'
-	}
-	
-	project(project.name)
-	{
-		rootDir '.'
-		sourcesDir project.name + 'Src'
-		patchDir 'patches'
-		patchAfter 'clean'
-		genPatchesFrom 'clean'
-		genMcpPatches = false
-		applyMcpPatches = false
-		s2sKeepImports = true
-		with common
-	}
-}
-processJson
-{
-	// also used to download assets
-	releaseJson = "jsons/${minecraft.version}-rel.json"
-}
-
-sourceSets.main.ext.refMap = "${project.name}-refmap.json"
-
-// ===== TOP-LEVEL TASKS =====
-
-/**
- * setup[Project] is used after you pull from the remote repository
- * 1. git pull ...
- * 2. gradlew setup[Project]
- */
-task('setup' + capitalizedName) {
-	group = 'ForgeGradle'
-	dependsOn 'setup'
-}
-
-/**
- * createRelease creates a ZIP file with all the modified classes
- */
-task('createRelease') {
-	group = 'ForgeGradle'
-}
-project.afterEvaluate { createRelease.dependsOn tasks.getByName(project.name + 'OutputJar') }
-
-gradle.taskGraph.whenReady
-{ graph ->
-	if (graph.hasTask(':copyCodeToSrc'))
-		warnOverwrite()
-}
-
-project.afterEvaluate {
-	def task = tasks.getByName("genGradleProjects")
-	def res = task.getClass().getSuperclass().getDeclaredField("resource")
-	def replacement = """compileJava {
-        if (project.name == '""" + capitalizedName + """') {
-            options.compilerArgs += [
-                '-AoutRefMapFile=""" + sourceSets.main.ext.refMap + """',
-                '-AreobfSrgFile=""" + patcher_plugin.delayedFile(Constants.SRG_MCP_TO_NOTCH) + """'
-            ]
-        }"""
-	res.setAccessible(true)
-	res.set(task, ((String) res.get(task)).replace("compileJava {", replacement))
-}
-
-void warnOverwrite()
-{
-	ant.input(message: 'WARNING: this will overwrite your working changes. Continue? (y/n)', addproperty: 'answer', defaultValue: 'y')
-	def answer = ant.properties.answer.toLowerCase()
-	if (answer != 'y' && answer != 'yes')
-		throw new Exception('User canceled execution')
-}
-
-
-// ===== MODIFY EXISTING TASKS =====
-
-// Exclude Forge files
-tasks.getByName('extract' + capitalizedName + 'Sources').exclude '**/SideOnly.java', '**/Side.java'
-
-
-// ===== DECOMPILING AND DEOBFUSCATING =====
-
-// Only decompile the right side
-if (gradle.side == 'client')
-{
-	deobfuscateJar.dependsOn.remove mergeJars
-	deobfuscateJar.dependsOn downloadClient
-	sourceProcessJar.patches = patcher_plugin.delayedFile(Constants.MCP_PATCHES_CLIENT)
-	deobfuscateJar.inJar = patcher_plugin.delayedFile(Constants.JAR_CLIENT_FRESH)
-}
-else if (gradle.side == 'server')
-{
-	// TODO: ffs half these lines don't work, fix later
-	deobfuscateJar.dependsOn.remove mergeJars
-	deobfuscateJar.dependsOn splitServerJar
-	sourceProcessJar.patches = patcher_plugin.delayedFile(Constants.MCP_PATCHES_SERVER)
-	deobfuscateJar.inJar = patcher_plugin.delayedFile(Constants.JAR_SERVER_PURE)
-}
-
-// Make decompilation as close as possible to the original MCP
-if (gradle.useJavadocs)
-{
-	remapCleanJar.addsJavadocs = true
-	tasks.getByName('remap' + capitalizedName + 'Jar').addsJavadocs = true
-}
-
-if (gradle.useAstyle)
-{
-	task(downloadMcp, type: Download) {
-		src 'http://www.modcoderpack.com/files/mcp940.zip'
-		dest 'build/localCache/downloadMcp/mcp940.zip'
-	}
-	task(extractAstyle, type: Copy) {
-		from(zipTree('build/localCache/downloadMcp/mcp940.zip'))
-		{
-			include 'runtime/bin/astyle.exe'
-			include 'runtime/bin/astyle-osx'
-		}
-		into 'build/localCache/mcp'
-		dependsOn downloadMcp
-	}
-	sourceProcessJar.outJar = 'build/localCache/sourceProcessJar/sourceProcessed.jar'
-	task(extractSrcForAstyle, type: Copy) {
-		from zipTree('build/localCache/sourceProcessJar/sourceProcessed.jar')
-		into 'build/localCache/astyle'
-		dependsOn sourceProcessJar
-	}
-	task(runAstyle, type: Exec) {
-		def extra_args = ['--suffix=none', '--quiet', '--recursive',
-				'--options=' + patcher_plugin.delayedFile(Constants.MCP_DATA_STYLE), 'build/localCache/astyle/*.java']
-		switch (OS.CURRENT)
-		{
-			case OS.WINDOWS:
-				commandLine(['"build/localCache/mcp/runtime/bin/astyle.exe"'] + extra_args)
-				break
-			case OS.OSX:
-				commandLine(['build/localCache/mcp/runtime/bin/astyle-osx'] + extra_args)
-				break
-			default:
-				commandLine(['astyle'] + extra_args)
-				break
-		}
-		
-		dependsOn extractSrcForAstyle
-		if (OS.CURRENT == OS.WINDOWS || OS.CURRENT == OS.OSX)
-			dependsOn extractAstyle
-	}
-	task(zipAstyledSrc, type: Zip) {
-		from('build/localCache/astyle')
-		exclude '**/*.orig'
-		
-		def destFile = file(patcher_plugin.delayedFile(PatcherConstants.JAR_DECOMP_POST))
-		destinationDir = destFile.getParentFile()
-		archiveName = destFile.getName()
-		includeEmptyDirs = false
-		
-		dependsOn runAstyle
-	}
-	remapCleanJar.dependsOn zipAstyledSrc
-	tasks.getByName('patch' + capitalizedName + 'Jar').dependsOn zipAstyledSrc
-	tasks.getByName('remap' + capitalizedName + 'Jar').dependsOn zipAstyledSrc
-}
-
-
-// ===== RECOMPILING AND REOBFUSCATING =====
-
-// Create recompile clean tasks so that we can properly check that two class files are equal without relying on using the same compiler as Mojang
-
-// Compile
-task(compileClean, type: TaskSubprojectCall)
-{
-	projectDir = patcher_plugin.subWorkspace('Clean')
-	callLine = 'jar'
-	addInitScript(Resources.getResource(TaskSubprojectCall, 'initscriptJar.gradle'))
-	addReplacement('@RECOMP_DIR@', 'build/compileClean')
-	addReplacement('@JAR_NAME@', 'recompiled.jar')
-	mustRunAfter setup
-}
-// Obfuscate
-task(reobfClean, type: TaskReobfuscate)
-{
-	srg = reobfuscate.srg
-	exc = reobfuscate.exc
-	preFFJar = reobfuscate.preFFJar
-	inJar = file('projects/Clean/build/compileClean/recompiled.jar')
-	methodsCsv = reobfuscate.methodsCsv
-	fieldsCsv = reobfuscate.fieldsCsv
-	outJar = file('build/localCache/reobfClean/reobfuscated.jar')
-	addLibs configurations.forgeGradleMcDeps
-	dependsOn compileClean, genSrgs, setup
-}
-
-// Do the output Jar ourselves because the build-in ForgeGradle version assumes we have permission
-// to redistribute the MCP mappings (we don't)
-task(project.name + 'OutputJar', type: Zip)
-{
-	from(zipTree(patcher_plugin.delayedFile(PatcherConstants.JAR_OBFUSCATED)))
-	{
-		eachFile
-		{ moddedFile ->
-			def entryName = moddedFile.getRelativePath().toString()
-			def vanillaJar = new ZipFile(file('build/localCache/reobfClean/reobfuscated.jar'))
-			def vanillaEntry = vanillaJar.getEntry entryName
-			if (vanillaEntry != null)
-			{
-				def moddedJar = new ZipFile(file(patcher_plugin.delayedFile(PatcherConstants.JAR_OBFUSCATED)))
-				def moddedEntry = moddedJar.getEntry entryName
-				if (IOUtils.contentEquals(vanillaJar.getInputStream(vanillaEntry), moddedJar.getInputStream(moddedEntry)))
-					moddedFile.exclude()
-			}
-		}
-	}
-	
-	archiveName = "${capitalizedName}_${project.version}.zip"
-	destinationDir = outputJar.destinationDir
-	includeEmptyDirs = false
-	
-	dependsOn reobfClean, reobfuscate
-}
-
-// Make [project]OutputJar replace outputJar
-tasks.each
-{ t ->
-	if (t.dependsOn.contains(outputJar))
-	{
-		t.dependsOn.remove outputJar
-		t.dependsOn tasks.getByName(project.name + 'OutputJar')
-	}
-}
-outputJar.destinationDir = file('build/localCache/outputTrash')
-
-
-// ===== MAKE ALL SOURCES IN SAME DIRECTORY =====
-
-task('copy' + capitalizedName + 'FromSrc', type: Sync) {
-	from('src/')
-	{
-		eachFile
-		{ file ->
-			if (new File('projects/Clean/src/main/java', file.getRelativePath().toString()).isFile())
-				file.exclude()
-		}
-	}
-	into project.name + 'Src/'
-	includeEmptyDirs = false
-	dependsOn extractCleanSources
-}
-task(copyMcFromSrc, type: Sync) {
-	from('src/')
-	{
-		include 'mcp/**'
-	}
-	from('src/')
-	{
-		eachFile
-		{ file ->
-			if (!(new File('projects/Clean/src/main/java', file.getRelativePath().toString()).isFile()))
-				file.exclude()
-		}
-		exclude 'mcp/**'
-	}
-	into "projects/${capitalizedName}/src/main/java"
-	includeEmptyDirs = false
-	dependsOn extractCleanSources
-}
-task copyCodeToSrc(type: Sync) {
-	from project.name + 'Src/'
-	from "projects/${capitalizedName}/src/main/java"
-	into 'src/'
-	dependsOn tasks.getByName('extract' + capitalizedName + 'Sources')
-	includeEmptyDirs = false
-}
-
-task copyMixinJsonToSrc(type: Copy) {
-	from "jsons/${project.name}.mixins.json"
-	from "jsons/META-INF"
-	into 'resources/'
-}
-copyCodeToSrc.dependsOn copyMixinJsonToSrc
-
-task copyMixinJsonFromSrc(type: Copy) {
-	from "resources/${project.name}.mixins.json"
-	from "resources/META-INF"
-	into 'jsons/'
-}
-genPatches.dependsOn copyMixinJsonFromSrc
-
-task(copyResources, type: Sync) {
-	from "projects/${capitalizedName}/src/main/resources"
-	into 'resources/'
-	dependsOn tasks.getByName('extract' + capitalizedName + 'Resources')
-	includeEmptyDirs = false
-}
-task downloadFile(type: Download) {
-	src 'https://launcher.mojang.com/mc/game/1.12.2/server/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar'
-	dest 'resources/1.12.2.jar'
-}
-
-tasks.getByName('makeJar' + capitalizedName).dependsOn tasks.getByName('copy' + capitalizedName + 'FromSrc'), copyMcFromSrc
-genIdeProjects.dependsOn copyCodeToSrc, downloadFile
-
-clean {
-	delete 'src'
-}
-
-
-// ===== PATCH FIXES =====
-
-if (gradle.useJavadocs)
-{
-	def retromap = tasks.getByName('retromapMc' + capitalizedName)
-	
-	task(stripJavadoc, type: Zip) {
-		from(zipTree('build/localCache/retromapped/retromapped.zip')) {
-			include '**/*.java'
-			exclude 'mcp/**'
-			filter StripJavadoc
-		}
-		from(zipTree('build/localCache/retromapped/retromapped.zip')) {
-			exclude '**/*.java'
-		}
-		from(zipTree('build/localCache/retromapped/retromapped.zip')) {
-			include 'mcp/**'
-		}
-		archiveName = file(retromap.out).getName()
-		destinationDir = file(retromap.out).getParentFile()
-		dependsOn retromap
-	}
-	
-	retromap.out = 'build/localCache/retromapped/retromapped.zip'
-	project.afterEvaluate { tasks.getByName('gen' + capitalizedName + 'Patches').dependsOn stripJavadoc }
-}
-
-task(deleteUnnecessaryPatches) << {
-	fileTree('patches/').visit
-	{ file ->
-		def fileName = file.getPath()
-		if (fileName.endsWith('.patch'))
-		{
-			fileName = fileName.substring(0, fileName.length() - 6)
-			if (FileUtils.contentEquals(project.file('src/' + fileName), project.file('projects/Clean/src/main/java/' + fileName)))
-			{
-				delete file.getFile()
-			}
-		}
-	}
-}
-deleteUnnecessaryPatches.dependsOn extractCleanSources
-afterEvaluate {
-	tasks.getByName('gen' + capitalizedName + 'Patches').dependsOn.each { deleteUnnecessaryPatches.dependsOn it }
-	tasks.each
-	{ task ->
-		if (task.dependsOn.contains(tasks.getByName('gen' + capitalizedName + 'Patches')))
-			task.dependsOn deleteUnnecessaryPatches
+	shadowJar {
+		mappingType = "NOTCH"
 	}
 }
 
+mixin {
+	defaultObfuscationEnv notch
+}
 
-// ===== REMOVE UNNECESSARY TASKS =====
+sourceSets.main.ext.refMap = "${name}-refmap.json"
 
-// Again, half these lines don't work either, ffs
-def sideToIgnore = null
-if (gradle.side == 'client')
-	sideToIgnore = 'Server'
-else if (gradle.side == 'server')
-	sideToIgnore = 'Client'
-tasks.each
-{ t ->
-	t.dependsOn.remove makeCleanStart
-	t.dependsOn.remove tasks.getByName('make' + capitalizedName + 'Start')
-	if (sideToIgnore != null)
-	{
-		t.dependsOn.remove tasks.getByName('makeEclipseCleanRun' + sideToIgnore)
-		t.dependsOn.remove tasks.getByName('makeEclipse' + capitalizedName + 'Run' + sideToIgnore)
-		t.dependsOn.remove tasks.getByName('makeIdeaCleanRun' + sideToIgnore)
-		t.dependsOn.remove tasks.getByName('makeIdea' + capitalizedName + 'Run' + sideToIgnore)
+repositories {
+	maven { url = "https://repo.spongepowered.org/maven" }
+	maven { url = "https://libraries.minecraft.net/" }
+	maven { url = "https://maven.sk89q.com/repo" }
+}
+
+configurations {
+	shadowed
+	implementation.extendsFrom(shadowed)
+}
+
+
+dependencies {
+	shadowed "org.spongepowered:mixin:0.8.1-SNAPSHOT"
+	shadowed "org.ow2.asm:asm-debug-all:5.2"
+	provided "org.ow2.asm:asm-all:5.2"
+	shadowed("net.minecraft:launchwrapper:1.12") {
+		exclude group: "org.lwjgl.lwjgl"
+	}
+	shadowed "org.apache.logging.log4j:log4j-api:2.8.1"
+	shadowed "org.apache.logging.log4j:log4j-core:2.8.1"
+	implementation "com.eclipsesource.minimal-json:minimal-json:0.9.5"
+	implementation "com.google.guava:guava:21.0"
+	implementation "org.apache.commons:commons-lang3:3.5"
+	implementation "commons-io:commons-io:2.5"
+	implementation "com.google.code.gson:gson:2.8.0"
+
+	// World Edit
+	implementation "com.sk89q.worldedit:worldedit-core:6.1"
+	implementation "com.sk89q:jchronic:0.2.4a"
+	implementation "com.thoughtworks.paranamer:paranamer:2.6"
+	implementation "com.sk89q.lib:jlibnoise:1.0.0"
+}
+
+jar {
+	manifest {
+		attributes(
+			'Main-Class': 'carpet.Main',
+			'Class-Path': 'minecraft_server.1.12.2.jar'
+		)
 	}
 }
-installer.enabled = false
-installer.dependsOn.remove downloadInstaller
-installer.dependsOn.remove outputJar
-installer.dependsOn.remove processJson
 
-//Adds idea tools tab
-
-task setupProject {
-	group = 'tools ' + capitalizedName
-	description = 'Sets project up from patches, or clean project running it the first time'
-	dependsOn 'setup' + capitalizedName
+shadowJar {
+	classifier = ""
+	configurations = [project.configurations.shadowed]
+	exclude "META-INF/maven/**"
+	exclude "META-INF/DEPENDENCIES"
+	exclude "META-INF/fml_cache_*.json"
+	exclude "META-INF/LICENSE"
+	exclude "META-INF/log4j-provider.properties"
+	exclude "META-INF/NOTICE"
+	exclude "META-INF/web-fragment.xml"
+	exclude "LICENSE.txt"
 }
-task generatePatches {
-	group = 'tools ' + capitalizedName
-	description = 'Convert project to patches for public distribution'
-	dependsOn genPatches
-}
-task releaseProject {
-	group = 'tools ' + capitalizedName
-	description = 'Creates a release from the current project'
-	dependsOn createRelease
-}
-task runServer {
-	group = 'tools ' + capitalizedName
-	description = 'runs the minecraft server'
-	dependsOn run
-}
-
+tasks.build.dependsOn(shadowJar)

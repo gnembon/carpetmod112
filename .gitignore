@@ -18,17 +18,6 @@
 /buildSrc/build
 /buildSrc/.gradle
 
-# Stuff we're not allowed to upload
-/projects/
-/repo/
-/src/
-/src_/
-/src__/
-/test/
-/resources/
-/out/
-/server/
-
 # Patch rejects
 /patches-/
 *.patch.rej
@@ -49,3 +38,6 @@ whitelist.json
 /buildSrc/out/
 /run/
 /.mixin.out/
+/test/
+/out/
+/server/
