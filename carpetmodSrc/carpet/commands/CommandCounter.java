@@ -39,7 +39,7 @@ public class CommandCounter extends CommandCarpetBase
      */
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
-        if (!CarpetSettings.hopperCounters && !CarpetSettings.cactusCounter){
+        if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.off && !CarpetSettings.cactusCounter){
             msg(sender, Messenger.m(null, "Need cactusCounter or hopperCounters to be enabled to use this command."));
             return;
         }
@@ -77,7 +77,7 @@ public class CommandCounter extends CommandCarpetBase
 
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
     {
-        if (!CarpetSettings.hopperCounters && !CarpetSettings.cactusCounter)
+        if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.off && !CarpetSettings.cactusCounter)
         {
             msg(sender, Messenger.m(null, "Need cactusCounter or hopperCounters to be enabled to use this command."));
             return Collections.<String>emptyList();
@@ -90,6 +90,8 @@ public class CommandCounter extends CommandCarpetBase
             {
                 lst.add(clr.name().toLowerCase(Locale.ROOT));
             }
+            lst.add("cactus");
+            lst.add("all");
             lst.add("realtime");
             String[] stockArr = new String[lst.size()];
             stockArr = lst.toArray(stockArr);

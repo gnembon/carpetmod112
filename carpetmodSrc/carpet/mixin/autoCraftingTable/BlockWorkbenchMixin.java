@@ -61,12 +61,13 @@ public class BlockWorkbenchMixin extends Block implements ITileEntityProvider {
 
     @Override
     public void breakBlock(World world, BlockPos pos, IBlockState state) {
-        if (!hasTileEntity()) return;
         // Maybe also check for some carpet rule
-        TileEntityCraftingTable tileEntity = getTileEntity(world, pos);
-        if (tileEntity != null) {
-            tileEntity.dropContent(world, pos);
-            world.updateComparatorOutputLevel(pos, this);
+        if (hasTileEntity()) {
+            TileEntityCraftingTable tileEntity = getTileEntity(world, pos);
+            if (tileEntity != null) {
+                tileEntity.dropContent(world, pos);
+                world.updateComparatorOutputLevel(pos, this);
+            }
         }
         world.removeTileEntity(pos);
         super.breakBlock(world, pos, state);

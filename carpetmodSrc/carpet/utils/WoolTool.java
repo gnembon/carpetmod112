@@ -53,20 +53,27 @@ public class WoolTool
                     EntityInfo.issue_entity_info(placer);
                 break;
 			case GREEN:
-                if (CarpetSettings.hopperCounters)
+                if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.wool)
                 {
                     EnumDyeColor under = getWoolColorAtPosition(worldIn, pos.down());
                     if (under == null) return;
                     Messenger.send(placer, HopperCounter.COUNTERS.get(under.getName()).format(worldIn.getMinecraftServer(), false, false));
                 }
+                else if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.all){
+                    Messenger.send(placer, HopperCounter.COUNTERS.get("all").format(worldIn.getMinecraftServer(), false, false));
+                }
 				break;
 			case RED:
-                if (CarpetSettings.hopperCounters)
+                if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.wool)
                 {
                     EnumDyeColor under = getWoolColorAtPosition(worldIn, pos.down());
                     if (under == null) return;
                     HopperCounter.COUNTERS.get(under.getName()).reset(worldIn.getMinecraftServer());
                     Messenger.s(placer, String.format("%s counter reset",under.toString() ));
+                }
+                else if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.all){
+                    HopperCounter.COUNTERS.get("all").reset(worldIn.getMinecraftServer());
+                    Messenger.s(placer, "Reset hopper counters");
                 }
 			    break;
         }

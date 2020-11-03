@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.Mixin;
 public abstract class CommandServerKickMixin extends CommandBase {
     @Override
     public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
-        return CarpetSettings.publicKick || sender.canUseCommand(this.getRequiredPermissionLevel(), this.getName());
+        return CarpetSettings.publicKick || super.checkPermission(server, sender);
     }
 }

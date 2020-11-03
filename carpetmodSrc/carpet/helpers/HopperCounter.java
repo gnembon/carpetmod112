@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class HopperCounter
 {
     public static final HopperCounter cactus = new HopperCounter(EnumDyeColor.GREEN, "cactus");
+    public static final HopperCounter all = new HopperCounter(EnumDyeColor.GRAY, "all");
     public static final Map<String, HopperCounter> COUNTERS;
 
     static {
@@ -26,6 +27,7 @@ public class HopperCounter
             COUNTERS.put(color.getName(), new HopperCounter(color, color.getName()));
         }
         COUNTERS.put("cactus", cactus);
+        COUNTERS.put("all", all);
     }
 
     public final EnumDyeColor color;

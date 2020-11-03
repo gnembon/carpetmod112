@@ -186,41 +186,4 @@ public class CarpetServer // static for now - easier to handle all around the co
             e.printStackTrace();
         }
     }
-
-    public static void registerCommands(ServerCommandManager mgr) {
-        mgr.registerCommand(new CommandEntityInfo());
-        mgr.registerCommand(new CommandSpawn());
-        mgr.registerCommand(new CommandTick());
-        mgr.registerCommand(new CommandProfile());
-        mgr.registerCommand(new CommandDistance());
-        mgr.registerCommand(new CommandBlockInfo());
-        mgr.registerCommand(new CommandCarpet());
-        mgr.registerCommand(new CommandCounter());
-        mgr.registerCommand(new CommandUnload());
-        mgr.registerCommand(new CommandUnload13());
-        mgr.registerCommand(new CommandGMC());
-        mgr.registerCommand(new CommandGMS());
-        mgr.registerCommand(new CommandLog());
-        mgr.registerCommand(new CommandDebuglogger());
-        mgr.registerCommand(new CommandDebugCarpet());
-        mgr.registerCommand(new CommandSubscribe());
-        mgr.registerCommand(new CommandPerimeter());
-        mgr.registerCommand(new CommandRNG());
-        mgr.registerCommand(new CommandTickingArea());
-        mgr.registerCommand(new CommandStructure());
-        mgr.registerCommand(new CommandFillBiome());
-        mgr.registerCommand(new CommandPing());
-        mgr.registerCommand(new CommandRemoveEntity());
-        mgr.registerCommand(new CommandGrow());
-        mgr.registerCommand(new CommandScoreboardPublic());
-        mgr.registerCommand(new CommandUpdateCarpet());
-        mgr.registerCommand(new CommandLagSpike());
-        mgr.registerCommand(new CommandPlayer());
-        mgr.registerCommand(new CommandAutosave());
-        mgr.registerCommand(new CommandWaypoint());
-        mgr.registerCommand(new CommandTNT());
-        mgr.registerCommand(new CommandLight());
-
-        rsmmServer.registerCommands(mgr);
-    }
 }
