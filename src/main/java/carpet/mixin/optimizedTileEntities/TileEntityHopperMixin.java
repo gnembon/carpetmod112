@@ -18,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(TileEntityHopper.class)
 public abstract class TileEntityHopperMixin implements TileEntityOptimizer.ILazyTileEntity {
     @Shadow protected abstract boolean isInventoryEmpty();
-
     @Shadow protected abstract boolean isFull();
 
     // CARPET-optimizedTileEntities: Whether the tile entity is asleep or not. Hoppers have 2 different actions that can sleep: pushing and pulling.
@@ -73,11 +72,11 @@ public abstract class TileEntityHopperMixin implements TileEntityOptimizer.ILazy
     }
 
     @Inject(method = "pullItems", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private static void setPullSleep2(IHopper hopper, CallbackInfoReturnable<Boolean> cir, IInventory input) {
+    private static void setPullSleep2(IHopper hopper, CallbackInfoReturnable<Boolean> cir) {
         // There is a non-empty inventory above the hopper, but for some reason the hopper cannot suck
         // items from it. Therefore the hopper pulling should sleep (if the inventory is not a minecart).
         if (hopper instanceof TileEntityHopperMixin) {
-            ((TileEntityHopperMixin) hopper).pullSleeping = input instanceof TileEntityLockable;
+            ((TileEntityHopperMixin) hopper).pullSleeping = CarpetSettings.optimizedTileEntities && TileEntityHopper.getSourceInventory(hopper) instanceof TileEntityLockable;
         }
     }
 }

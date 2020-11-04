@@ -17,7 +17,7 @@ import java.util.Iterator;
 @Mixin(WorldServer.class)
 public class WorldServerMixin {
     @Inject(method = "tickUpdates", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void setChunkLoadingReason(boolean runAllPending, CallbackInfoReturnable<Boolean> cir, int i, Iterator<NextTickListEntry> iterator, NextTickListEntry entry) {
+    private void setChunkLoadingReason(boolean runAllPending, CallbackInfoReturnable<Boolean> cir, Iterator<NextTickListEntry> iterator, NextTickListEntry entry) {
         CarpetClientChunkLogger.setReason(() -> "Block update: " + Block.REGISTRY.getNameForObject(entry.getBlock()) + " at " + entry.position);
     }
 

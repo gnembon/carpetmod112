@@ -1,8 +1,6 @@
 package carpet.mixin.duplicationFixUpdateSuppression;
 
 import carpet.CarpetSettings;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemSkull;
 import net.minecraft.item.ItemStack;
@@ -21,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(ItemSkull.class)
 public class ItemSkullMixin {
     @Inject(method = "onItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;setBlockState(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;I)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void shrinkBefore(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ, CallbackInfoReturnable<EnumActionResult> cir, IBlockState state, Block block, boolean replaceable, ItemStack stack) {
+    private void shrinkBefore(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ, CallbackInfoReturnable<EnumActionResult> cir, ItemStack stack) {
         if(CarpetSettings.duplicationFixUpdateSuppression) stack.shrink(1);
     }
 

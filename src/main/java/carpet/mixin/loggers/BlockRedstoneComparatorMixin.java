@@ -24,6 +24,10 @@ import java.util.Random;
 public abstract class BlockRedstoneComparatorMixin {
     @Shadow protected abstract int calculateOutput(World worldIn, BlockPos pos, IBlockState state);
 
+    @Shadow protected abstract boolean isPowered(IBlockState state);
+
+    @Shadow protected abstract boolean shouldBePowered(World worldIn, BlockPos pos, IBlockState state);
+
     @Inject(method = "updateTick", at = @At("RETURN"))
     private void logOnUpdateTick(World worldIn, BlockPos pos, IBlockState state, Random rand, CallbackInfo ci) {
         if (LoggerRegistry.__instantComparators) {
@@ -41,9 +45,10 @@ public abstract class BlockRedstoneComparatorMixin {
         }
     }
 
-    @Inject(method = "updateState", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockRedstoneComparator;isFacingTowardsRepeater(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)Z"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void logOnPowerChange(World worldIn, BlockPos pos, IBlockState state, CallbackInfo ci, int computedOutput, TileEntity tileentity, int currentOutput) {
-        if (LoggerRegistry.__instantComparators) {
+    @Inject(method = "updateState", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getTileEntity(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/tileentity/TileEntity;"), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void logOnPowerChange(World worldIn, BlockPos pos, IBlockState state, CallbackInfo ci, int computedOutput, TileEntity tileentity) {
+        int currentOutput = tileentity instanceof TileEntityComparator ? ((TileEntityComparator)tileentity).getOutputSignal() : 0;
+        if (LoggerRegistry.__instantComparators && (currentOutput != computedOutput || this.isPowered(state) != this.shouldBePowered(worldIn, pos, state))) {
             if (tileentity instanceof TileEntityComparator) {
                 TileEntityComparator comparator = (TileEntityComparator) tileentity;
                 int index = (int) Math.floorMod(worldIn.getTotalWorldTime() + 2, 3);

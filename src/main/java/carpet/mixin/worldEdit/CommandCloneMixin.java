@@ -28,7 +28,7 @@ import java.util.List;
 public class CommandCloneMixin {
     @Inject(method = "execute", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getTileEntity(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/tileentity/TileEntity;", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
     private void recordRemove(MinecraftServer server, ICommandSender sender, String[] args, CallbackInfo ci,
-                              BlockPos pos1, BlockPos pos2, BlockPos pos3, StructureBoundingBox box1, StructureBoundingBox box2, int i, boolean flag, Block block, Predicate<IBlockState> predicate,
+                              BlockPos pos1, BlockPos pos2, BlockPos pos3, StructureBoundingBox box1, StructureBoundingBox box2, boolean flag, Block block, Predicate<IBlockState> predicate,
                               World world, boolean flag1, List<?> list, List<?> list1, List<?> list2, Deque<BlockPos> deque, BlockPos pos4, Iterator<BlockPos> it,
                               BlockPos currentPos) {
         EntityPlayerMP worldEditPlayer = sender instanceof EntityPlayerMP ? (EntityPlayerMP) sender : null;

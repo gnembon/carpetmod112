@@ -5,22 +5,17 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.command.server.CommandSummon;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
+import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(CommandSummon.class)
 public class CommandSummonMixin {
-    @Inject(method = "execute", at = @At(value = "INVOKE", target = "Lnet/minecraft/command/server/CommandSummon;notifyCommandListener(Lnet/minecraft/command/ICommandSender;Lnet/minecraft/command/ICommand;Ljava/lang/String;[Ljava/lang/Object;)V", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void recordEntityCreation(MinecraftServer server, ICommandSender sender, String[] args, CallbackInfo ci, String s, BlockPos blockpos, Vec3d vec3d, double d0, double d1, double d2, World world, NBTTagCompound nbttagcompound, boolean flag, Entity entity) {
+    @Redirect(method = "execute", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;setLocationAndAngles(DDDFF)V"))
+    private void recordEntityCreation(Entity entity, double x, double y, double z, float yaw, float pitch, MinecraftServer server, ICommandSender sender) {
+        entity.setLocationAndAngles(x, y, z, yaw, pitch);
         EntityPlayerMP worldEditPlayer = sender instanceof EntityPlayerMP ? (EntityPlayerMP) sender : null;
-        WorldEditBridge.recordEntityCreation(worldEditPlayer, world, entity);
+        WorldEditBridge.recordEntityCreation(worldEditPlayer, entity.world, entity);
     }
 }

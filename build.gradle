@@ -62,7 +62,7 @@ configurations {
 
 
 dependencies {
-	shadowed "org.spongepowered:mixin:0.8.1-SNAPSHOT"
+	shadowed "org.spongepowered:mixin:0.8.2"
 	shadowed "org.ow2.asm:asm-debug-all:5.2"
 	provided "org.ow2.asm:asm-all:5.2"
 	shadowed("net.minecraft:launchwrapper:1.12") {
