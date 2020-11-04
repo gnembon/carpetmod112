@@ -7,7 +7,6 @@ import carpet.utils.extensions.ActionPackOwner;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -23,7 +22,6 @@ import java.util.Set;
 
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import org.apache.commons.lang3.ArrayUtils;
 
 public class CommandPlayer extends CommandCarpetBase
 {

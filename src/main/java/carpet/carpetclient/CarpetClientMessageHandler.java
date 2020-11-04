@@ -1,13 +1,9 @@
 package carpet.carpetclient;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import carpet.CarpetSettings;
 import carpet.helpers.CustomCrafting;
 import carpet.helpers.TickSpeed;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import io.netty.buffer.Unpooled;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;

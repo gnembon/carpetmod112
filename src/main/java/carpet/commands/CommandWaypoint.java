@@ -19,7 +19,6 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.event.ClickEvent;
 import net.minecraft.util.text.event.HoverEvent;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldServerMulti;
 
 import javax.annotation.Nullable;
 import java.util.*;

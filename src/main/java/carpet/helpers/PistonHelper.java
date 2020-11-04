@@ -1,8 +1,6 @@
 package carpet.helpers;
 
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDaylightDetector;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.properties.PropertyInteger;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;

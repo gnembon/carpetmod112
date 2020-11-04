@@ -25,7 +25,6 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.WorldServer;
 
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class EntityPlayerMPFake extends EntityPlayerMP
 {

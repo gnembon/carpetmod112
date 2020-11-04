@@ -1,6 +1,5 @@
 package narcolepticfrog.rsmm.meterable;
 
-import carpet.helpers.RedstoneWireTurbo;
 import carpet.mixin.accessors.BlockPistonBaseAccessor;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;

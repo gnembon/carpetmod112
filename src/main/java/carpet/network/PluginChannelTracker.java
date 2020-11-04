@@ -1,6 +1,5 @@
 package carpet.network;
 
-import carpet.network.PluginChannelManager;
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.SetMultimap;
 import net.minecraft.entity.player.EntityPlayerMP;

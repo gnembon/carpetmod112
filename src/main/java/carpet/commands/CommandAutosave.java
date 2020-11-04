@@ -7,13 +7,10 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 
 public class CommandAutosave extends CommandCarpetBase {
 

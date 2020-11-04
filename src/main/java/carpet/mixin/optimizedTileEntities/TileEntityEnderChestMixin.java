@@ -2,7 +2,6 @@ package carpet.mixin.optimizedTileEntities;
 
 import carpet.CarpetSettings;
 import carpet.helpers.TileEntityOptimizer;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.tileentity.TileEntityEnderChest;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

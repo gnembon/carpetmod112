@@ -1,7 +1,6 @@
 package carpet.mixin.accessors;
 
 import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.inventory.InventoryBasic;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 

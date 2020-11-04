@@ -2,7 +2,6 @@ package carpet.mixin.villagerAutoTrader;
 
 import carpet.CarpetSettings;
 import carpet.helpers.EntityAIAutotrader;
-import carpet.helpers.EntityAICrafter;
 import carpet.utils.extensions.ExtendedEntityVillagerAutotrader;
 import net.minecraft.entity.EntityAgeable;
 import net.minecraft.entity.item.EntityItem;
@@ -28,7 +27,7 @@ public abstract class EntityVillagerMixin extends EntityAgeable implements Exten
     @Shadow @Nullable private MerchantRecipeList buyingList;
     private EntityAIAutotrader autotraderAI;
     private MerchantRecipeList buyingListsorted;
-    private List<Integer> sortedTradeList = new LinkedList<>();
+    private final List<Integer> sortedTradeList = new LinkedList<>();
 
     public EntityVillagerMixin(World worldIn) {
         super(worldIn);

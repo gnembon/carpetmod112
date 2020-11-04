@@ -4,14 +4,11 @@ import java.util.Collections;
 import java.util.List;
 import javax.annotation.Nullable;
 
-import carpet.logging.LoggerRegistry;
 import carpet.logging.logHelpers.DebugLogHelper;
-import carpet.utils.Messenger;
 import carpet.utils.extensions.CameraPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.GameType;
 
 import net.minecraft.command.WrongUsageException;

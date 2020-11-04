@@ -4,7 +4,6 @@ import net.minecraft.block.BlockRail;
 import net.minecraft.block.BlockRailBase;
 import net.minecraft.block.BlockRailDetector;
 import net.minecraft.block.BlockRailPowered;
-import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.Rotation;
 import org.spongepowered.asm.mixin.Mixin;

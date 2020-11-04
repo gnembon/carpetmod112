@@ -1,7 +1,6 @@
 package carpet.commands;
 
 import carpet.mixin.accessors.WorldAccessor;
-import carpet.mixin.accessors.WorldServerAccessor;
 import carpet.utils.extensions.RepopulatableChunk;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;

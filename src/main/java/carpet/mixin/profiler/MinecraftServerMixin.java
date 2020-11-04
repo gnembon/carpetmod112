@@ -8,7 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static carpet.helpers.LagSpikeHelper.PrePostSubPhase.*;
+import static carpet.helpers.LagSpikeHelper.PrePostSubPhase.POST;
+import static carpet.helpers.LagSpikeHelper.PrePostSubPhase.PRE;
 import static carpet.helpers.LagSpikeHelper.TickPhase.*;
 
 @Mixin(MinecraftServer.class)

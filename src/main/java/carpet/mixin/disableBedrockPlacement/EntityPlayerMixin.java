@@ -1,7 +1,6 @@
 package carpet.mixin.disableBedrockPlacement;
 
 import carpet.CarpetSettings;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.init.Blocks;

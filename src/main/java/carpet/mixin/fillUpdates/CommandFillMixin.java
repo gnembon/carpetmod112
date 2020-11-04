@@ -2,7 +2,6 @@ package carpet.mixin.fillUpdates;
 
 import carpet.CarpetSettings;
 import net.minecraft.block.Block;
-import net.minecraft.command.CommandClone;
 import net.minecraft.command.CommandFill;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

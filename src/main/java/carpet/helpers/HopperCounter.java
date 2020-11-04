@@ -3,7 +3,6 @@ package carpet.helpers;
 import carpet.CarpetServer;
 import carpet.pubsub.PubSubInfoProvider;
 import carpet.utils.Messenger;
-import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
 import net.minecraft.item.EnumDyeColor;

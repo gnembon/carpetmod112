@@ -1,6 +1,5 @@
 package carpet.network;
 
-import carpet.CarpetServer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.play.client.CPacketCustomPayload;
 

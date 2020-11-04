@@ -11,7 +11,6 @@ import carpet.CarpetSettings;
 import carpet.helpers.StackTraceDeobfuscator;
 import carpet.mixin.accessors.ChunkProviderServerAccessor;
 import carpet.mixin.accessors.PlayerChunkMapAccessor;
-import carpet.mixin.accessors.PlayerChunkMapEntryAccessor;
 import carpet.utils.LRUCache;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Iterators;

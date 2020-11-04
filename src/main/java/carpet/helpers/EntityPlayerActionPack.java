@@ -2,7 +2,6 @@ package carpet.helpers;
 
 import carpet.mixin.accessors.CPacketPlayerDiggingAccessor;
 import carpet.mixin.accessors.EntityAccessor;
-import carpet.patches.EntityPlayerMPFake;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import javax.annotation.Nullable;

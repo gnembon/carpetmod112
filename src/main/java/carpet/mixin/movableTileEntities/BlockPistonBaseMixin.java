@@ -3,7 +3,6 @@ package carpet.mixin.movableTileEntities;
 import carpet.CarpetSettings;
 import carpet.helpers.PistonHelper;
 import carpet.utils.extensions.ExtendedTileEntityPistonMTE;
-import com.google.common.collect.Lists;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.BlockPistonMoving;

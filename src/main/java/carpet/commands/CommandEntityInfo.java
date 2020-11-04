@@ -11,7 +11,6 @@ import carpet.utils.EntityInfo;
 import carpet.utils.extensions.ActionPackOwner;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 

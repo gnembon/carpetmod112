@@ -20,7 +20,6 @@ import net.minecraft.stats.StatCrafting;
 import net.minecraft.stats.StatisticsManager;
 import net.minecraft.stats.StatisticsManagerServer;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentBase;
 import net.minecraft.util.text.TextComponentTranslation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -30,7 +29,6 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class StatHelper {

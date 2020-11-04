@@ -2,7 +2,10 @@ package carpet.mixin.waypoints;
 
 import carpet.CarpetSettings;
 import carpet.utils.Waypoint;
-import net.minecraft.command.*;
+import net.minecraft.command.CommandBase;
+import net.minecraft.command.CommandException;
+import net.minecraft.command.CommandTP;
+import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.WorldServer;

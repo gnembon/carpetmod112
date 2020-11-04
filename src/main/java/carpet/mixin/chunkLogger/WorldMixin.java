@@ -1,8 +1,6 @@
 package carpet.mixin.chunkLogger;
 
 import carpet.carpetclient.CarpetClientChunkLogger;
-import carpet.helpers.LagSpikeHelper;
-import carpet.utils.CarpetProfiler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;

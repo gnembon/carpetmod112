@@ -1,6 +1,5 @@
 package carpet;
 
-import carpet.commands.*;
 import carpet.helpers.StackTraceDeobfuscator;
 import carpet.network.PluginChannelManager;
 import carpet.network.ToggleableChannelHandler;
@@ -19,14 +18,12 @@ import narcolepticfrog.rsmm.server.RSMMServer;
 import carpet.carpetclient.CarpetClientServer;
 
 import carpet.helpers.TickSpeed;
-import net.minecraft.command.ServerCommandManager;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayerMP;
 import carpet.logging.LoggerRegistry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldServerMulti;
 
 public class CarpetServer // static for now - easier to handle all around the code, its one anyways
 {

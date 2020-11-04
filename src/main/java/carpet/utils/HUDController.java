@@ -8,7 +8,6 @@ import carpet.mixin.accessors.SPacketPlayerListHeaderFooterAccessor;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.network.play.server.SPacketPlayerListHeaderFooter;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Tuple;

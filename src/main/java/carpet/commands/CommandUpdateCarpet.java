@@ -2,11 +2,9 @@ package carpet.commands;
 
 import carpet.CarpetSettings;
 import carpet.helpers.CarpetUpdater;
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentTranslation;
 
 public class CommandUpdateCarpet extends CommandCarpetBase {
     @Override

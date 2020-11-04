@@ -8,7 +8,6 @@ import carpet.CarpetSettings;
 import carpet.mixin.accessors.EntityAccessor;
 import carpet.utils.extensions.CameraPlayer;
 import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.AxisAlignedBB;

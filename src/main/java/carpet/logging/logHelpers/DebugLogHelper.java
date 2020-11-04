@@ -1,7 +1,6 @@
 package carpet.logging.logHelpers;
 
 import carpet.logging.LoggerRegistry;
-import carpet.utils.Messenger;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 

@@ -1,6 +1,5 @@
 package carpet.mixin.core;
 
-import carpet.CarpetServer;
 import carpet.commands.CarpetCommands;
 import net.minecraft.command.ServerCommandManager;
 import net.minecraft.server.MinecraftServer;

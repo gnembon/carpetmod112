@@ -3,7 +3,6 @@ package carpet.mixin.entityDuplicationFix;
 import carpet.CarpetSettings;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;

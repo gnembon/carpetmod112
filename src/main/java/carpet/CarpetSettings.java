@@ -30,12 +30,9 @@ import carpet.worldedit.WorldEditBridge;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.ChunkPos;
-import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldServerMulti;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
