@@ -5,9 +5,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class CarpetProfiler
@@ -180,6 +178,13 @@ public class CarpetProfiler
         {
             finalize_tick_report(server);
         }
+
+        if(coolmannProfiler){
+            coolmannProfiler = false;
+            coolmannProfilerStart = false;
+
+            reportOfCoolmannProfiler(server);
+        }
     }
 
     public static void finalize_tick_report(MinecraftServer server)
@@ -327,5 +332,28 @@ public class CarpetProfiler
         current_section_start = 0L;
         current_section = null;
 
+    }
+
+    public static List<Stack<Long>> threads = new ArrayList<>();
+    public static boolean coolmannProfiler = false;
+    public static boolean coolmannProfilerStart = false;
+    public static ThreadLocal<Stack<Long>> profileCoolmann = ThreadLocal.withInitial(
+            () -> {
+                Stack<Long> stacks = new Stack<>();
+                threads.add(stacks);
+                return stacks;
+            }
+    );
+
+    public static void fallingBlockProfile() {
+        coolmannProfilerStart = true;
+    }
+
+    private static void reportOfCoolmannProfiler(MinecraftServer server) {
+        for(Stack<Long> s : threads) {
+            while(!s.empty()){
+                Messenger.print_server_message(server, Long.toString(s.pop()));
+            }
+        }
     }
 }

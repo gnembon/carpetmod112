@@ -23,16 +23,20 @@ public class CommandProfile extends CommandCarpetBase
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "Usage: /profile <entities>";
+        return "Usage: /profileCoolmann <entities>";
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandProfile", sender)) return;
-        if (args.length > 0 && "entities".equalsIgnoreCase(args[0]))
+        if (args.length > 0)
         {
-            CarpetProfiler.prepare_entity_report(100);
+            if("entities".equalsIgnoreCase(args[0])) {
+                CarpetProfiler.prepare_entity_report(100);
+            }else if("coolmann".equalsIgnoreCase(args[0])) {
+                CarpetProfiler.fallingBlockProfile();
+            }
         }
         else
         {
@@ -48,7 +52,7 @@ public class CommandProfile extends CommandCarpetBase
         }
         if (args.length == 1)
         {
-            return getListOfStringsMatchingLastWord(args, "entities");
+            return getListOfStringsMatchingLastWord(args, "entities", "coolmann");
         }
         return Collections.<String>emptyList();
     }
