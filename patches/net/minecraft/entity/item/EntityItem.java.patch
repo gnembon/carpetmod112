@@ -53,7 +53,7 @@
 +        //CM
 +        if (LoggerRegistry.__items)
 +        {
-+            logHelper = new ItemLogHelper("items");
++            logHelper = new ItemLogHelper("items", p_i1709_2_, p_i1709_4_, p_i1709_6_, field_70159_w, field_70181_x, field_70179_y);
 +        }
      }
  
