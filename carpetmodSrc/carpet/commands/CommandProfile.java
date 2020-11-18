@@ -23,7 +23,7 @@ public class CommandProfile extends CommandCarpetBase
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "Usage: /profileLastQuest <entities>";
+        return "Usage: /profile <entities>";
     }
 
     @Override
