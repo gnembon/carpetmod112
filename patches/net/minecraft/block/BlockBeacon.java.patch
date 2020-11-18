@@ -7,38 +7,39 @@
  import net.minecraft.block.material.MapColor;
  import net.minecraft.block.material.Material;
  import net.minecraft.block.state.IBlockState;
-@@ -97,10 +98,16 @@
+@@ -97,10 +98,17 @@
  
      public static void func_176450_d(final World p_176450_0_, final BlockPos p_176450_1_)
      {
-+        if(CarpetProfiler.coolmannProfilerStart) CarpetProfiler.coolmannProfiler = true;
++        if(CarpetProfiler.lastQuestProfilerStart) CarpetProfiler.lastQuestProfiler = true;
          HttpUtil.field_180193_a.submit(new Runnable()
          {
              public void run()
              {
-+                if(CarpetProfiler.coolmannProfiler) {
-+                    CarpetProfiler.profileCoolmann.get().push(-11000000000L);
-+                    CarpetProfiler.profileCoolmann.get().push(-1000000000L);
-+                    CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
++                if(CarpetProfiler.lastQuestProfiler) {
++                    CarpetProfiler.initThread();
++                    CarpetProfiler.profileLastQuest.get().push(-11000000000L);
++                    CarpetProfiler.profileLastQuest.get().push(-1000000000L);
++                    CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
 +                }
                  Chunk chunk = p_176450_0_.func_175726_f(p_176450_1_);
  
                  for (int i = p_176450_1_.func_177956_o() - 1; i >= 0; --i)
-@@ -131,7 +138,17 @@
+@@ -131,7 +139,17 @@
                          });
                      }
                  }
-+                if(CarpetProfiler.coolmannProfiler) {
-+                    CarpetProfiler.profileCoolmann.get().push(-4000000000L);
-+                    CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
-+                    CarpetProfiler.endCoolmannProfile = false;
++                if(CarpetProfiler.lastQuestProfiler) {
++                    CarpetProfiler.profileLastQuest.get().push(-4000000000L);
++                    CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
++                    CarpetProfiler.endLastQuestProfile = false;
 +                }
              }
          });
-+        if(CarpetProfiler.coolmannProfiler) {
-+            CarpetProfiler.profileCoolmann.get().push(-22000000000L);
-+            CarpetProfiler.profileCoolmann.get().push(-5000000000L);
-+            CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
++        if(CarpetProfiler.lastQuestProfiler) {
++            CarpetProfiler.profileLastQuest.get().push(-22000000000L);
++            CarpetProfiler.profileLastQuest.get().push(-5000000000L);
++            CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
 +        }
      }
  }

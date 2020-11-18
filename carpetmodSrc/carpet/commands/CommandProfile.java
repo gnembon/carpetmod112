@@ -23,7 +23,7 @@ public class CommandProfile extends CommandCarpetBase
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "Usage: /profileCoolmann <entities>";
+        return "Usage: /profileLastQuest <entities>";
     }
 
     @Override
@@ -34,7 +34,7 @@ public class CommandProfile extends CommandCarpetBase
         {
             if("entities".equalsIgnoreCase(args[0])) {
                 CarpetProfiler.prepare_entity_report(100);
-            }else if("coolmann".equalsIgnoreCase(args[0])) {
+            }else if("lastQuest".equalsIgnoreCase(args[0])) {
                 CarpetProfiler.fallingBlockProfile();
             }
         }
@@ -52,7 +52,7 @@ public class CommandProfile extends CommandCarpetBase
         }
         if (args.length == 1)
         {
-            return getListOfStringsMatchingLastWord(args, "entities", "coolmann");
+            return getListOfStringsMatchingLastWord(args, "entities", "lastQuest");
         }
         return Collections.<String>emptyList();
     }

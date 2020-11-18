@@ -328,48 +328,47 @@ public class CarpetProfiler
     }
 
     public static List<Stack<Long>> threads = new ArrayList<>();
-    public static boolean coolmannProfiler = false;
-    public static boolean coolmannProfilerStart = false;
-    public static boolean endCoolmannProfile = false;
+    public static boolean lastQuestProfiler = false;
+    public static boolean lastQuestProfilerStart = false;
+    public static boolean endLastQuestProfile = false;
 
-    public static ThreadLocal<Stack<Long>> profileCoolmann = ThreadLocal.withInitial(
-            () -> {
-                Stack<Long> stacks = new Stack<>();
-                threads.add(stacks);
-                return stacks;
-            }
-    );
+    public static ThreadLocal<Stack<Long>> profileLastQuest = new ThreadLocal<>();
+    public static ThreadLocal<Boolean> mainThread = ThreadLocal.withInitial(() -> false);
 
     public static void fallingBlockProfile() {
         threads.clear();
-        Stack<Long> stack = new Stack<>();
-        threads.add(stack);
-        profileCoolmann.set(stack);
-        coolmannProfilerStart = true;
-        endCoolmannProfile = true;
+        mainThread.set(true);
+        initThread();
+        lastQuestProfilerStart = true;
+        endLastQuestProfile = true;
     }
 
     public static void endCarpetProfiler(MinecraftServer minecraftServer) {
-        if(coolmannProfiler) {
-            while(endCoolmannProfile) {
+        if(lastQuestProfiler) {
+            while(endLastQuestProfile) {
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             }
-            reportOfCoolmannProfiler(minecraftServer);
-            coolmannProfiler = false;
-            coolmannProfilerStart = false;
+            reportOfLastQuestProfiler(minecraftServer);
+            lastQuestProfiler = false;
+            lastQuestProfilerStart = false;
         }
     }
 
-    private static void reportOfCoolmannProfiler(MinecraftServer server) {
-        System.out.println(threads.size());
+    private static void reportOfLastQuestProfiler(MinecraftServer server) {
         for(Stack<Long> s : threads) {
             while(!s.empty()){
                 Messenger.print_server_message(server, Long.toString(s.pop()));
             }
         }
+    }
+
+    public static void initThread() {
+        Stack<Long> stack = new Stack<>();
+        threads.add(stack);
+        profileLastQuest.set(stack);
     }
 }

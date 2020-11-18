@@ -12,32 +12,33 @@ public class Long2ObjectOpenHashMapProfile<V> extends Long2ObjectOpenHashMap<V> 
 
     @Override
     public V get(long k) {
-        if(!CarpetProfiler.coolmannProfiler) return super.get(k);
+        if(!CarpetProfiler.lastQuestProfiler) return super.get(k);
+        if(CarpetProfiler.mainThread.get()) return super.get(k);
 
         if (k == 0L) {
             return this.containsNullKey ? this.value[this.n] : this.defRetValue;
         } else {
             long[] key = this.key;
-//            CarpetProfiler.profileCoolmann.get().push(-2000000000L);
-//            CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
+            CarpetProfiler.profileLastQuest.get().push(-2000000000L);
+            CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
             long curr;
             int pos;
             if ((curr = key[pos = (int) HashCommon.mix(k) & this.mask]) == 0L) {
                 return this.defRetValue;
             } else if (k == curr) {
-//                CarpetProfiler.profileCoolmann.get().push(-33000000000L);
-//                CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
+                CarpetProfiler.profileLastQuest.get().push(-33000000000L);
+                CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
                 return this.value[pos];
             } else {
                 while((curr = key[pos = pos + 1 & this.mask]) != 0L) {
                     if (k == curr) {
-//                        CarpetProfiler.profileCoolmann.get().push(-3000000000L);
-//                        CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
+                        CarpetProfiler.profileLastQuest.get().push(-3000000000L);
+                        CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
                         return this.value[pos];
                     }
                 }
-//                CarpetProfiler.profileCoolmann.get().push(-333000000000L);
-//                CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
+                CarpetProfiler.profileLastQuest.get().push(-333000000000L);
+                CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
                 return this.defRetValue;
             }
         }
@@ -45,12 +46,12 @@ public class Long2ObjectOpenHashMapProfile<V> extends Long2ObjectOpenHashMap<V> 
 
     @Override
     protected void rehash(int newN) {
-        if(!CarpetProfiler.coolmannProfiler) {
+        if(!CarpetProfiler.lastQuestProfiler) {
             super.rehash(newN);
             return;
         }
-        CarpetProfiler.profileCoolmann.get().push(-6000000000L);
-        CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
+        CarpetProfiler.profileLastQuest.get().push(-6000000000L);
+        CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
         long[] key = this.key;
         V[] value = this.value;
         int mask = newN - 1;
@@ -75,8 +76,8 @@ public class Long2ObjectOpenHashMapProfile<V> extends Long2ObjectOpenHashMap<V> 
         newValue[newN] = value[this.n];
         this.n = newN;
         this.mask = mask;
-        CarpetProfiler.profileCoolmann.get().push(-7000000000L);
-        CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
+        CarpetProfiler.profileLastQuest.get().push(-7000000000L);
+        CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
         this.maxFill = HashCommon.maxFill(this.n, this.f);
         this.key = newKey;
         this.value = newValue;
