@@ -233,7 +233,7 @@
  
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
-@@ -645,12 +719,30 @@
+@@ -645,12 +719,31 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -249,6 +249,7 @@
 +        {
 +            CarpetProfiler.end_tick_profiling(this);
 +        }
++        CarpetProfiler.endCarpetProfiler(this);
 +
 +        if(CarpetSettings.scoreboardDelta > 0 && field_71315_w % 20 == 0){
 +            ScoreboardDelta.update();
@@ -264,7 +265,7 @@
          synchronized (this.field_175589_i)
          {
              while (!this.field_175589_i.isEmpty())
-@@ -658,6 +750,7 @@
+@@ -658,6 +751,7 @@
                  Util.func_181617_a(this.field_175589_i.poll(), field_147145_h);
              }
          }
@@ -272,7 +273,7 @@
  
          this.field_71304_b.func_76318_c("levels");
  
-@@ -672,6 +765,7 @@
+@@ -672,6 +766,7 @@
                  {
                      return worldserver.func_72912_H().func_76065_j();
                  });
@@ -280,7 +281,7 @@
  
                  if (this.field_71315_w % 20 == 0)
                  {
-@@ -686,27 +780,44 @@
+@@ -686,27 +781,44 @@
                  {
                      worldserver.func_72835_b();
                  }
@@ -327,7 +328,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76319_b();
              }
-@@ -714,10 +825,12 @@
+@@ -714,10 +826,12 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  
@@ -340,7 +341,7 @@
          this.field_71304_b.func_76318_c("commandFunctions");
          this.func_193030_aL().func_73660_a();
          this.field_71304_b.func_76318_c("tickables");
-@@ -728,6 +841,8 @@
+@@ -728,6 +842,8 @@
          }
  
          this.field_71304_b.func_76319_b();
@@ -349,7 +350,7 @@
      }
  
      public boolean func_71255_r()
-@@ -939,7 +1054,7 @@
+@@ -939,7 +1055,7 @@
  
      public String getServerModName()
      {

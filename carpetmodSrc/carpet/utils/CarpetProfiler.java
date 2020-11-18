@@ -178,13 +178,6 @@ public class CarpetProfiler
         {
             finalize_tick_report(server);
         }
-
-        if(coolmannProfiler){
-            coolmannProfiler = false;
-            coolmannProfilerStart = false;
-
-            reportOfCoolmannProfiler(server);
-        }
     }
 
     public static void finalize_tick_report(MinecraftServer server)
@@ -337,6 +330,8 @@ public class CarpetProfiler
     public static List<Stack<Long>> threads = new ArrayList<>();
     public static boolean coolmannProfiler = false;
     public static boolean coolmannProfilerStart = false;
+    public static boolean endCoolmannProfile = false;
+
     public static ThreadLocal<Stack<Long>> profileCoolmann = ThreadLocal.withInitial(
             () -> {
                 Stack<Long> stacks = new Stack<>();
@@ -346,10 +341,31 @@ public class CarpetProfiler
     );
 
     public static void fallingBlockProfile() {
+        threads.clear();
+        Stack<Long> stack = new Stack<>();
+        threads.add(stack);
+        profileCoolmann.set(stack);
         coolmannProfilerStart = true;
+        endCoolmannProfile = true;
+    }
+
+    public static void endCarpetProfiler(MinecraftServer minecraftServer) {
+        if(coolmannProfiler) {
+            while(endCoolmannProfile) {
+                try {
+                    Thread.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            reportOfCoolmannProfiler(minecraftServer);
+            coolmannProfiler = false;
+            coolmannProfilerStart = false;
+        }
     }
 
     private static void reportOfCoolmannProfiler(MinecraftServer server) {
+        System.out.println(threads.size());
         for(Stack<Long> s : threads) {
             while(!s.empty()){
                 Messenger.print_server_message(server, Long.toString(s.pop()));

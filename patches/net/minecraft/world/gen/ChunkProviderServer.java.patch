@@ -88,14 +88,14 @@
          if (chunk == null)
          {
 +            if(CarpetProfiler.coolmannProfiler) {
-+                CarpetProfiler.profileCoolmann.get().push(-8L);
++                CarpetProfiler.profileCoolmann.get().push(-8000000000L);
 +                CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
 +                CarpetProfiler.profileCoolmann.get().push((long)p_186028_1_);
 +                CarpetProfiler.profileCoolmann.get().push((long)p_186028_2_);
 +            }
              chunk = this.func_73239_e(p_186028_1_, p_186028_2_);
 +            if(CarpetProfiler.coolmannProfiler) {
-+                CarpetProfiler.profileCoolmann.get().push(-9L);
++                CarpetProfiler.profileCoolmann.get().push(-9000000000L);
 +                CarpetProfiler.profileCoolmann.get().push(System.nanoTime());
 +                CarpetProfiler.profileCoolmann.get().push((long)p_186028_1_);
 +                CarpetProfiler.profileCoolmann.get().push((long)p_186028_2_);
