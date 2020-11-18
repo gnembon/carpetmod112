@@ -232,6 +232,11 @@ public class CarpetSettings
     })
     public static boolean repeaterPoweredTerracotta = false;
 
+    @Rule(desc = "Observer delays depends on stained hardened clay aka terracotta on which they are placed", category = {EXPERIMENTAL, CREATIVE}, extra = {
+            "1 to 15 gt per delay added (1-15 block data), 0 (white) adds 100gt per tick"
+    })
+    public static boolean observerPoweredTerracotta = false;
+
     @Rule(desc = "TNT doesn't update when placed against a power source", category = TNT)
     public static boolean TNTDoNotUpdate = false;
 
