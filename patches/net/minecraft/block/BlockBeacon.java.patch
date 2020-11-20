@@ -18,27 +18,26 @@
              {
 +                if(CarpetProfiler.lastQuestProfiler) {
 +                    CarpetProfiler.initThread();
-+                    CarpetProfiler.profileLastQuest.get().push(-11000000000L);
-+                    CarpetProfiler.profileLastQuest.get().push(-1000000000L);
++                    CarpetProfiler.profileLastQuest.get().push(CarpetProfiler.GLASS_START);
++//                    CarpetProfiler.profileLastQuest.get().push(-1000000000L);
 +                    CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
 +                }
                  Chunk chunk = p_176450_0_.func_175726_f(p_176450_1_);
  
                  for (int i = p_176450_1_.func_177956_o() - 1; i >= 0; --i)
-@@ -131,7 +139,17 @@
+@@ -131,7 +139,16 @@
                          });
                      }
                  }
 +                if(CarpetProfiler.lastQuestProfiler) {
-+                    CarpetProfiler.profileLastQuest.get().push(-4000000000L);
++                    CarpetProfiler.profileLastQuest.get().push(CarpetProfiler.GLASS_END);
 +                    CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
 +                    CarpetProfiler.endLastQuestProfile = false;
 +                }
              }
          });
 +        if(CarpetProfiler.lastQuestProfiler) {
-+            CarpetProfiler.profileLastQuest.get().push(-22000000000L);
-+            CarpetProfiler.profileLastQuest.get().push(-5000000000L);
++            CarpetProfiler.profileLastQuest.get().push(CarpetProfiler.BEACON_FINISH);
 +            CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
 +        }
      }

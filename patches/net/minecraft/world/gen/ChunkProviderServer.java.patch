@@ -88,14 +88,14 @@
          if (chunk == null)
          {
 +            if(CarpetProfiler.lastQuestProfiler) {
-+                CarpetProfiler.profileLastQuest.get().push(-8000000000L);
++                CarpetProfiler.profileLastQuest.get().push(CarpetProfiler.LOAD_CHUNK);
 +                CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
 +                CarpetProfiler.profileLastQuest.get().push((long)p_186028_1_);
 +                CarpetProfiler.profileLastQuest.get().push((long)p_186028_2_);
 +            }
              chunk = this.func_73239_e(p_186028_1_, p_186028_2_);
 +            if(CarpetProfiler.lastQuestProfiler) {
-+                CarpetProfiler.profileLastQuest.get().push(-9000000000L);
++                CarpetProfiler.profileLastQuest.get().push(CarpetProfiler.CHUNK_LOADED);
 +                CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
 +                CarpetProfiler.profileLastQuest.get().push((long)p_186028_1_);
 +                CarpetProfiler.profileLastQuest.get().push((long)p_186028_2_);

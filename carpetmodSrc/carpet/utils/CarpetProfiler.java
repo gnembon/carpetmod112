@@ -1,10 +1,12 @@
 package carpet.utils;
 
 import carpet.CarpetSettings;
+import javafx.util.Pair;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 
+import javax.annotation.processing.Messager;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -327,12 +329,12 @@ public class CarpetProfiler
 
     }
 
-    public static List<Stack<Long>> threads = new ArrayList<>();
+    public static List<ArrayDeque<Long>> threads = new ArrayList<>();
     public static boolean lastQuestProfiler = false;
     public static boolean lastQuestProfilerStart = false;
     public static boolean endLastQuestProfile = false;
 
-    public static ThreadLocal<Stack<Long>> profileLastQuest = new ThreadLocal<>();
+    public static ThreadLocal<ArrayDeque<Long>> profileLastQuest = new ThreadLocal<>();
     public static ThreadLocal<Boolean> mainThread = ThreadLocal.withInitial(() -> false);
 
     public static void fallingBlockProfile() {
@@ -358,16 +360,137 @@ public class CarpetProfiler
         }
     }
 
+    public enum events {
+        glass_start,
+        glass_end,
+        beacon_finish,
+
+        get_begins,
+        get_isEmpty,
+        get_noCollision,
+        get_collision,
+        get_collision_finish,
+
+        rehash_start,
+        rehash_finish,
+
+        load_chunk,
+        chunk_loaded;
+
+        private static final long ABSURD_NUMBER = -1000000000L;
+        public long getConst() { return ordinal() * ABSURD_NUMBER; }
+        public static events fromConst(final long x) {return values()[(int) (x / ABSURD_NUMBER)];}
+    }
+    public final static long GLASS_START = events.glass_start.getConst();
+    public final static long GLASS_END = events.glass_end.getConst();
+    public final static long BEACON_FINISH = events.beacon_finish.getConst();
+
+    public final static long GET_BEGIN = events.get_begins.getConst();
+    public final static long GET_IS_EMPTY = events.get_isEmpty.getConst();
+    public final static long GET_COLLISION = events.get_collision.getConst();
+    public final static long GET_NO_COLLISION = events.get_noCollision.getConst();
+    public final static long GET_COLLISION_FINISHED = events.get_collision_finish.getConst();
+
+    public final static long REHASH_START = events.rehash_start.getConst();
+    public final static long REHASH_FINISHED = events.rehash_finish.getConst();
+
+    public final static long LOAD_CHUNK = events.load_chunk.getConst();
+    public final static long CHUNK_LOADED = events.chunk_loaded.getConst();
+
+
+
     private static void reportOfLastQuestProfiler(MinecraftServer server) {
-        for(Stack<Long> s : threads) {
-            while(!s.empty()){
-                Messenger.print_server_message(server, Long.toString(s.pop()));
+        long glass_start = 0,glass_finish = 0, load_chunk = 0, chunk_loaded=0, get_begins = 0, get_finished = 0;
+        long rehash_start = 0, rehash_finish = 0, x = 0, z = 0;
+
+        long totalCollisionTime = 0;
+        for(ArrayDeque<Long> s : threads) {
+
+            while(!s.isEmpty()){
+                events event = events.fromConst(s.poll());
+                switch (event){
+                    case glass_start:
+                        glass_start = s.poll();
+                        Messenger.print_server_message(server, "Glass thread started");
+                        break;
+                    case glass_end:
+                        glass_finish = s.poll();
+                        Messenger.print_server_message(server, "Glass thread finished at" + (glass_finish - glass_start));
+                        break;
+                    case beacon_finish:
+                        Messenger.print_server_message(server, "Beacon finished");
+                        break;
+                    case load_chunk:
+                        load_chunk = s.poll();
+                        x = s.poll();
+                        z = s.poll();
+                        Messenger.print_server_message(server, "Loading chunk" + x + " " + z);
+                        break;
+                    case chunk_loaded:
+                        chunk_loaded = s.poll();
+                        Messenger.print_server_message(server, "Loaded took " + (chunk_loaded - load_chunk));
+                        break;
+                    case get_begins:
+                        get_begins = s.poll();
+                        Messenger.print_server_message(server, "Get started");
+                        break;
+                    case get_isEmpty:
+                        get_finished = s.poll();
+                        totalCollisionTime += get_begins - get_finished;
+                        Messenger.print_server_message(server, "Get was empty, took " + (get_begins - get_finished));
+                        break;
+                    case get_noCollision:
+                        get_finished = s.poll();
+                        totalCollisionTime += get_begins - get_finished;
+                        Messenger.print_server_message(server, "Get didn't collided, took " + (get_begins - get_finished));
+                        break;
+                    case get_collision:
+                        get_finished = s.poll();
+                        totalCollisionTime += get_begins - get_finished;
+                        Messenger.print_server_message(server, "Get looptiloopty, took " + (get_begins - get_finished));
+                        break;
+                    case get_collision_finish:
+                        get_finished = s.poll();
+                        totalCollisionTime += get_begins - get_finished;
+                        Messenger.print_server_message(server, "Get looptiloopty ended, took " + (get_begins - get_finished));
+                        break;
+                    case rehash_start:
+                        rehash_start = s.poll();
+                        Messenger.print_server_message(server, "Rehash started");
+                        break;
+                    case rehash_finish:
+                        rehash_finish = s.poll();
+                        Messenger.print_server_message(server, "Rehash finished " + (rehash_finish - rehash_start));
+                        break;
+
+                    default:
+                        Messenger.print_server_message(server, "unrecognized error" + s.poll());
+                }
             }
         }
+
+        ArrayList<Pair<String, Long>> collisions = new ArrayList<>();
+        collisions.add(new Pair<String, Long>( "Glass Start", glass_start));
+        collisions.add(new Pair<String, Long>( "Rehash Finish", rehash_finish));
+        collisions.add(new Pair<String, Long>( "Glass Finish", glass_finish));
+
+        collisions
+                .stream()
+                .sorted(Comparator.comparing(Pair::getValue))
+                .forEach( pair -> Messenger.print_server_message(server, pair.getKey()));
+
+
+        long totalGlass = (glass_finish - glass_start);
+
+        Messenger.print_server_message(server, "Total time in glass thread: "+ totalGlass);
+        Messenger.print_server_message(server, "Total time in getBlockState: "+ totalCollisionTime);
+        Messenger.print_server_message(server, "Time Spend ratio: " + Math.round((totalCollisionTime / totalGlass) * 10000) / 100);
+        Messenger.print_server_message(server, "Total time in rehash: " + (rehash_finish - rehash_start));
+        Messenger.print_server_message(server, "Chunk " + x + " " + z + " load time: " + (load_chunk - chunk_loaded));
     }
 
     public static void initThread() {
-        Stack<Long> stack = new Stack<>();
+        ArrayDeque<Long> stack = new ArrayDeque<>();
         threads.add(stack);
         profileLastQuest.set(stack);
     }
