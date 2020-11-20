@@ -375,7 +375,9 @@ public class CarpetProfiler
         rehash_finish,
 
         load_chunk,
-        chunk_loaded;
+        chunk_loaded,
+
+        def;
 
         private static final long ABSURD_NUMBER = -1000000000L;
         public long getConst() { return ordinal() * ABSURD_NUMBER; }
@@ -407,64 +409,73 @@ public class CarpetProfiler
         for(ArrayDeque<Long> s : threads) {
 
             while(!s.isEmpty()){
-                events event = events.fromConst(s.poll());
+                long e = s.pop();
+                events event = events.def;
+                try {
+                    event = events.fromConst(e);
+                }catch (IndexOutOfBoundsException err){
+
+                }
+
                 switch (event){
                     case glass_start:
-                        glass_start = s.poll();
+                        glass_start = s.pop();
                         Messenger.print_server_message(server, "Glass thread started");
                         break;
                     case glass_end:
-                        glass_finish = s.poll();
+                        glass_finish = s.pop();
                         Messenger.print_server_message(server, "Glass thread finished at" + (glass_finish - glass_start));
                         break;
                     case beacon_finish:
+                        s.pop();
                         Messenger.print_server_message(server, "Beacon finished");
                         break;
                     case load_chunk:
-                        load_chunk = s.poll();
-                        x = s.poll();
-                        z = s.poll();
+                        load_chunk = s.pop();
+                        x = s.pop();
+                        System.out.println(x);
+                        z = s.pop();
                         Messenger.print_server_message(server, "Loading chunk" + x + " " + z);
                         break;
                     case chunk_loaded:
-                        chunk_loaded = s.poll();
+                        chunk_loaded = s.pop();
                         Messenger.print_server_message(server, "Loaded took " + (chunk_loaded - load_chunk));
                         break;
                     case get_begins:
-                        get_begins = s.poll();
+                        get_begins = s.pop();
                         Messenger.print_server_message(server, "Get started");
                         break;
                     case get_isEmpty:
-                        get_finished = s.poll();
-                        totalCollisionTime += get_begins - get_finished;
-                        Messenger.print_server_message(server, "Get was empty, took " + (get_begins - get_finished));
+                        get_finished = s.pop();
+                        totalCollisionTime += (get_finished - get_begins);
+                        Messenger.print_server_message(server, "Get was empty, took " + (get_finished - get_begins));
                         break;
                     case get_noCollision:
-                        get_finished = s.poll();
-                        totalCollisionTime += get_begins - get_finished;
-                        Messenger.print_server_message(server, "Get didn't collided, took " + (get_begins - get_finished));
+                        get_finished = s.pop();
+                        totalCollisionTime += (get_finished - get_begins);
+                        Messenger.print_server_message(server, "Get didn't collided, took " + (get_finished - get_begins));
                         break;
                     case get_collision:
-                        get_finished = s.poll();
-                        totalCollisionTime += get_begins - get_finished;
-                        Messenger.print_server_message(server, "Get looptiloopty, took " + (get_begins - get_finished));
+                        get_finished = s.pop();
+                        totalCollisionTime += (get_finished - get_begins);
+                        Messenger.print_server_message(server, "Get looptiloopty, took " + (get_finished - get_begins));
                         break;
                     case get_collision_finish:
-                        get_finished = s.poll();
-                        totalCollisionTime += get_begins - get_finished;
-                        Messenger.print_server_message(server, "Get looptiloopty ended, took " + (get_begins - get_finished));
+                        get_finished = s.pop();
+                        totalCollisionTime += (get_finished - get_begins);
+                        Messenger.print_server_message(server, "Get looptiloopty ended, took " + (get_finished - get_begins));
                         break;
                     case rehash_start:
-                        rehash_start = s.poll();
+                        rehash_start = s.pop();
                         Messenger.print_server_message(server, "Rehash started");
                         break;
                     case rehash_finish:
-                        rehash_finish = s.poll();
+                        rehash_finish = s.pop();
                         Messenger.print_server_message(server, "Rehash finished " + (rehash_finish - rehash_start));
                         break;
 
                     default:
-                        Messenger.print_server_message(server, "unrecognized error" + s.poll());
+                        Messenger.print_server_message(server, "unrecognized error" + e);
                 }
             }
         }
@@ -482,16 +493,16 @@ public class CarpetProfiler
 
         long totalGlass = (glass_finish - glass_start);
 
-        Messenger.print_server_message(server, "Total time in glass thread: "+ totalGlass);
-        Messenger.print_server_message(server, "Total time in getBlockState: "+ totalCollisionTime);
-        Messenger.print_server_message(server, "Time Spend ratio: " + Math.round((totalCollisionTime / totalGlass) * 10000) / 100);
+        Messenger.print_server_message(server, "Total time in glass thread: " + totalGlass);
+        Messenger.print_server_message(server, "Total time in getBlockState: " + totalCollisionTime);
+        Messenger.print_server_message(server, "Time Spend ratio: " + String.format("%.2f", (totalCollisionTime / totalGlass) * 100));
         Messenger.print_server_message(server, "Total time in rehash: " + (rehash_finish - rehash_start));
-        Messenger.print_server_message(server, "Chunk " + x + " " + z + " load time: " + (load_chunk - chunk_loaded));
+        Messenger.print_server_message(server, "Chunk " + x + " " + z + " load time: " + (chunk_loaded - load_chunk));
     }
 
     public static void initThread() {
-        ArrayDeque<Long> stack = new ArrayDeque<>();
-        threads.add(stack);
-        profileLastQuest.set(stack);
+        ArrayDeque<Long> deque = new ArrayDeque<>();
+        threads.add(deque);
+        profileLastQuest.set(deque);
     }
 }

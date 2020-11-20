@@ -18,9 +18,9 @@
              {
 +                if(CarpetProfiler.lastQuestProfiler) {
 +                    CarpetProfiler.initThread();
-+                    CarpetProfiler.profileLastQuest.get().push(CarpetProfiler.GLASS_START);
-+//                    CarpetProfiler.profileLastQuest.get().push(-1000000000L);
-+                    CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
++                    CarpetProfiler.profileLastQuest.get().add(CarpetProfiler.GLASS_START);
++//                    CarpetProfiler.profileLastQuest.get().add(-1000000000L);
++                    CarpetProfiler.profileLastQuest.get().add(System.nanoTime());
 +                }
                  Chunk chunk = p_176450_0_.func_175726_f(p_176450_1_);
  
@@ -30,15 +30,15 @@
                      }
                  }
 +                if(CarpetProfiler.lastQuestProfiler) {
-+                    CarpetProfiler.profileLastQuest.get().push(CarpetProfiler.GLASS_END);
-+                    CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
++                    CarpetProfiler.profileLastQuest.get().add(CarpetProfiler.GLASS_END);
++                    CarpetProfiler.profileLastQuest.get().add(System.nanoTime());
 +                    CarpetProfiler.endLastQuestProfile = false;
 +                }
              }
          });
 +        if(CarpetProfiler.lastQuestProfiler) {
-+            CarpetProfiler.profileLastQuest.get().push(CarpetProfiler.BEACON_FINISH);
-+            CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
++            CarpetProfiler.profileLastQuest.get().add(CarpetProfiler.BEACON_FINISH);
++            CarpetProfiler.profileLastQuest.get().add(System.nanoTime());
 +        }
      }
  }
