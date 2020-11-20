@@ -402,7 +402,7 @@ public class CarpetProfiler
 
 
     private static void reportOfLastQuestProfiler(MinecraftServer server) {
-        long glass_start = 0,glass_finish = 0, load_chunk = 0, chunk_loaded=0, get_begins = 0, get_finished = 0;
+        long glass_start = 0,glass_finish = 0, load_chunk_start = 0, load_chunk_finish=0, get_begins = 0, get_finished = 0;
         long rehash_start = 0, rehash_finish = 0, x = 0, z = 0;
 
         long totalCollisionTime = 0;
@@ -431,15 +431,15 @@ public class CarpetProfiler
                         Messenger.print_server_message(server, "Beacon finished");
                         break;
                     case load_chunk:
-                        load_chunk = s.pop();
+                        load_chunk_start = s.pop();
                         x = s.pop();
                         System.out.println(x);
                         z = s.pop();
                         Messenger.print_server_message(server, "Loading chunk" + x + " " + z);
                         break;
                     case chunk_loaded:
-                        chunk_loaded = s.pop();
-                        Messenger.print_server_message(server, "Loaded took " + (chunk_loaded - load_chunk));
+                        load_chunk_finish = s.pop();
+                        Messenger.print_server_message(server, "Loaded took " + (load_chunk_finish - load_chunk_start));
                         break;
                     case get_begins:
                         get_begins = s.pop();
@@ -497,7 +497,7 @@ public class CarpetProfiler
         Messenger.print_server_message(server, "Total time in getBlockState: " + totalCollisionTime);
         Messenger.print_server_message(server, "Time Spend ratio: " + String.format("%.2f", (totalCollisionTime / totalGlass) * 100));
         Messenger.print_server_message(server, "Total time in rehash: " + (rehash_finish - rehash_start));
-        Messenger.print_server_message(server, "Chunk " + x + " " + z + " load time: " + (chunk_loaded - load_chunk));
+        Messenger.print_server_message(server, "Chunk " + x + " " + z + " load time: " + (load_chunk_start - load_chunk_finish));
     }
 
     public static void initThread() {
