@@ -1,12 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/scoreboard/Score.java
 +++ ../src-work/minecraft/net/minecraft/scoreboard/Score.java
-@@ -1,6 +1,13 @@
+@@ -1,6 +1,12 @@
  package net.minecraft.scoreboard;
  
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
 +import org.apache.commons.lang3.tuple.Pair;
-+import org.lwjgl.Sys;
 +
  import java.util.Comparator;
 +import java.util.Iterator;
@@ -14,7 +13,7 @@
  
  public class Score
  {
-@@ -8,13 +15,13 @@
+@@ -8,13 +14,13 @@
      {
          public int compare(Score p_compare_1_, Score p_compare_2_)
          {
@@ -30,7 +29,7 @@
              }
          }
      };
-@@ -24,6 +31,7 @@
+@@ -24,6 +30,7 @@
      private int field_96655_e;
      private boolean field_178817_f;
      private boolean field_178818_g;
@@ -38,7 +37,7 @@
  
      public Score(Scoreboard p_i2309_1_, ScoreObjective p_i2309_2_, String p_i2309_3_)
      {
-@@ -79,6 +87,11 @@
+@@ -79,6 +86,11 @@
          int i = this.field_96655_e;
          this.field_96655_e = p_96647_1_;
  
@@ -50,7 +49,7 @@
          if (i != p_96647_1_ || this.field_178818_g)
          {
              this.field_178818_g = false;
-@@ -110,4 +123,33 @@
+@@ -110,4 +122,33 @@
      {
          this.field_178817_f = p_178815_1_;
      }
