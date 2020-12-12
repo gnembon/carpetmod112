@@ -239,6 +239,7 @@
     "nitwitCrafter.EntityVillagerMixin",
     "noteBlockImitationOf1_13.BlockNoteMixin",
     "noteBlockImitationOf1_13.TileEntityNoteMixin",
+    "observerPoweredTerracotta.BlockObserverMixin",
     "observersDoNonUpdate.BlockObserverMixin",
     "optimizedCollisionCancellations.EntityLivingBaseMixin",
     "optimizedTileEntities.TileEntityBeaconMixin",

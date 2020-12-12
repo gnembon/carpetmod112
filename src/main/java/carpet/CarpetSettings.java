@@ -47,7 +47,7 @@ public final class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v20_09_08";
+    public static final String carpetVersion = "v20_12_12";
     public static final String minecraftVersion = "1.12.2";
     public static final String mcpMappings = "39-1.12";
 
@@ -230,6 +230,11 @@ public final class CarpetSettings
             "1 to 15 gt per delay added (1-15 block data), 0 (white) adds 100gt per tick"
     })
     public static boolean repeaterPoweredTerracotta = false;
+
+    @Rule(desc = "Observer delays depends on stained hardened clay aka terracotta on which they are placed", category = {EXPERIMENTAL, CREATIVE}, extra = {
+            "1 to 15 gt per delay added (1-15 block data), 0 (white) adds 100gt per tick"
+    })
+    public static boolean observerPoweredTerracotta = false;
 
     @Rule(desc = "TNT doesn't update when placed against a power source", category = TNT)
     public static boolean TNTDoNotUpdate = false;
