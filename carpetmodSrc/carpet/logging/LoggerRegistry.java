@@ -35,6 +35,7 @@ public class LoggerRegistry
     public static boolean __projectiles;
     public static boolean __fallingBlocks;
     public static boolean __kills;
+    public static boolean __autosave;
     public static boolean __tps;
     public static boolean __counter;
     public static boolean __mobcaps;
@@ -65,6 +66,7 @@ public class LoggerRegistry
         registerLogger("items",new Logger(server, "items", "brief", new String[]{"brief", "full"}, LogHandler.CHAT));
         registerLogger("rng", new Logger(server, "rng", null, null, LogHandler.CHAT));
 
+        registerLogger("autosave", new Logger(server, "autosave", null, null, LogHandler.HUD));
         registerLogger("tps", new Logger(server, "tps", null, null, LogHandler.HUD));
         registerLogger("packets", new Logger(server, "packets", null, null, LogHandler.HUD));
         registerLogger("counter",new Logger(server, "counter","white", new String[]{"all","cactus","white","orange","magenta","light_blue","yellow","lime","pink","gray","silver","cyan","purple","blue","brown","green","red","black"}, LogHandler.HUD));
