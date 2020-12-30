@@ -51,10 +51,10 @@ public class WorldEntitySpawnerMixin {
 
     @Inject(method = "findChunksForSpawning", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EnumCreatureType;getPeacefulCreature()Z", ordinal = 0, shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
     private void spawnTrackingAll(WorldServer worldServer, boolean spawnHostileMobs, boolean spawnPeacefulMobs, boolean spawnOnSetTickRate, CallbackInfoReturnable<Integer> cir, int chunks, int j4, BlockPos spawnPos, EnumCreatureType[] types, int var9, int var10, EnumCreatureType category) {
-        if (SpawnReporter.track_spawns <= 0) return;
         currentCategory = category;
+        if (SpawnReporter.track_spawns <= 0) return;
         String group_code = category + suffix;
-        SpawnReporter.overall_spawn_ticks.put(group_code, SpawnReporter.overall_spawn_ticks.get(group_code) + SpawnReporter.spawn_tries.get(category));
+        SpawnReporter.overall_spawn_ticks.put(group_code, SpawnReporter.overall_spawn_ticks.get(group_code) + SpawnReporter.spawn_tries.getOrDefault(category, 1));
     }
 
     @Redirect(method = "findChunksForSpawning", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EnumCreatureType;getMaxNumberOfCreature()I"))
@@ -77,7 +77,7 @@ public class WorldEntitySpawnerMixin {
         String group_code = currentCategory + suffix;
         SpawnReporter.mobcaps.get(did).put(currentCategory, new Tuple<>(existingCount, mobcapTotal));
         if (SpawnReporter.track_spawns > 0L) {
-            int tries = SpawnReporter.spawn_tries.get(currentCategory);
+            int tries = SpawnReporter.spawn_tries.getOrDefault(currentCategory, 1);
             if (existingCount > mobcapTotal) {
                 SpawnReporter.spawn_ticks_full.put(group_code, SpawnReporter.spawn_ticks_full.get(group_code) + tries);
             }

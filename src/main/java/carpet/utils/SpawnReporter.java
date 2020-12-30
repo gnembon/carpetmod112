@@ -98,11 +98,11 @@ public class SpawnReporter
             Tuple<Integer, Integer> stat = mobcaps.get(dim).getOrDefault(enumcreaturetype, new Tuple<>(0,0));
             int cur = stat.getFirst();
             int max = stat.getSecond();
-            int rounds = spawn_tries.get(type_code);
+            int rounds = spawn_tries.getOrDefault(enumcreaturetype, 1);
             lst.add( Messenger.m(null,
                     String.format("w   %s: ",type_code),
                     (cur+max==0)?"g -/-":String.format("%s %d/%d", (cur >= max)?"r":((cur >= 8*max/10)?"y":"l") ,cur, max),
-                    (rounds == 1)?"w ":String.format("fi  (%d rounds/tick)",spawn_tries.get(type_code))
+                    (rounds == 1)?"w ":String.format("fi  (%d rounds/tick)", rounds)
             ));
         }
         return lst;
@@ -509,7 +509,7 @@ public class SpawnReporter
 
     public static Iterator<ChunkPos> createChunkIterator(Set<ChunkPos> chunks, EnumCreatureType category, Runnable onEnd) {
         return new AbstractIterator<ChunkPos>() {
-            int tries = spawn_tries.get(category);
+            int tries = spawn_tries.getOrDefault(category, 1);
             Iterator<ChunkPos> orig;
             @Override
             protected ChunkPos computeNext() {
