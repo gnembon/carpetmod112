@@ -8,6 +8,7 @@ import net.minecraft.world.WorldServer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Surrogate;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
@@ -17,8 +18,14 @@ import java.util.Iterator;
 @Mixin(WorldServer.class)
 public class WorldServerMixin {
     @Inject(method = "tickUpdates", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/state/IBlockState;"), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void setChunkLoadingReason(boolean runAllPending, CallbackInfoReturnable<Boolean> cir, Iterator<NextTickListEntry> iterator, NextTickListEntry entry) {
+    private void setChunkLoadingReason(boolean runAllPending, CallbackInfoReturnable<Boolean> cir, Iterator<NextTickListEntry> iterator, NextTickListEntry entry, int unused) {
         CarpetClientChunkLogger.setReason(() -> "Block update: " + Block.REGISTRY.getNameForObject(entry.getBlock()) + " at " + entry.position);
+    }
+
+    // extra int i
+    @Surrogate
+    private void setChunkLoadingReason(boolean runAllPending, CallbackInfoReturnable<Boolean> cir, int listSize, Iterator<NextTickListEntry> iterator, NextTickListEntry entry) {
+        setChunkLoadingReason(runAllPending, cir, iterator, entry, 0);
     }
 
     @Inject(method = "tickUpdates", at = @At("RETURN"))

@@ -29,6 +29,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 
 @Mixin(Teleporter.class)
@@ -97,12 +100,12 @@ public class TeleporterMixin implements ExtendedTeleporter {
         }
 
         if (flag) {
-            this.destinationCoordinateCache.put(posKey, (Teleporter.PortalPosition) (Object) new PortalPositionMixin(outPos, this.world.getTotalWorldTime(), new Vec3d(entity.posX, entity.posY, entity.posZ)));
+            this.destinationCoordinateCache.put(posKey, createPortalPosition(outPos, this.world.getTotalWorldTime(), new Vec3d(entity.posX, entity.posY, entity.posZ)));
         }
 
         if (CarpetSettings.portalCaching && (flag || flag_cm)) {
             //its timeless
-            this.destinationHistoryCache.put(posKey, (Teleporter.PortalPosition) (Object) new PortalPositionMixin(outPos, 0L, new Vec3d(entity.posX, entity.posY, entity.posZ)));
+            this.destinationHistoryCache.put(posKey, createPortalPosition(outPos, 0L, new Vec3d(entity.posX, entity.posY, entity.posZ)));
         }
 
         double outX = outPos.getX() + 0.5;
@@ -223,5 +226,26 @@ public class TeleporterMixin implements ExtendedTeleporter {
 
     public void removeAllCachedEntries() {
         this.destinationHistoryCache.clear();
+    }
+
+    private static MethodHandle portalPositionConstructor;
+
+    private Teleporter.PortalPosition createPortalPosition(BlockPos pos, long lastUpdate, Vec3d cachingCoords) {
+        if (portalPositionConstructor == null) {
+            try {
+                MethodHandles.Lookup lookup = MethodHandles.lookup();
+                Constructor<Teleporter.PortalPosition> constructor = Teleporter.PortalPosition.class.getDeclaredConstructor(Teleporter.class, BlockPos.class, long.class);
+                portalPositionConstructor = lookup.unreflectConstructor(constructor);
+            } catch (ReflectiveOperationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        try {
+            Teleporter.PortalPosition portalPos = (Teleporter.PortalPosition) portalPositionConstructor.invokeExact((Teleporter) (Object) this, pos, lastUpdate);
+            ((ExtendedPortalPosition) portalPos).setCachingCoords(cachingCoords);
+            return portalPos;
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
     }
 }

@@ -19,9 +19,9 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ItemSign.class)
 public class ItemSignMixin {
-    @Inject(method = "onItemUse", at = @At(value = "FIELD", target = "Lnet/minecraft/util/EnumFacing;UP:Lnet/minecraft/util/EnumFacing;", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void shrinkBefore(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ, CallbackInfoReturnable<EnumActionResult> cir, IBlockState state, boolean replaceable, ItemStack stack) {
-        if (CarpetSettings.duplicationFixUpdateSuppression) stack.shrink(1);
+    @Inject(method = "onItemUse", at = @At(value = "FIELD", target = "Lnet/minecraft/util/EnumFacing;UP:Lnet/minecraft/util/EnumFacing;", ordinal = 1))
+    private void shrinkBefore(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ, CallbackInfoReturnable<EnumActionResult> cir) {
+        if (CarpetSettings.duplicationFixUpdateSuppression) player.getHeldItem(hand).shrink(1);
     }
 
     @Redirect(method = "onItemUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;shrink(I)V"))

@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.Surrogate;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
@@ -37,6 +38,11 @@ public abstract class PlayerChunkMapMixin {
 
     @Inject(method = "setPlayerViewRadius", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/EntityPlayerMP;posX:D"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void capturePlayer(int radius, CallbackInfo ci, int i, List<EntityPlayerMP> list, Iterator<EntityPlayerMP> iterator, EntityPlayerMP player) {
+        ChunkLoading.INITIAL_PLAYER_FOR_CHUNK_MAP_ENTRY.set(player);
+    }
+
+    @Surrogate
+    private void capturePlayer(int radius, CallbackInfo ci, int i, Iterator<EntityPlayerMP> iterator, EntityPlayerMP player) {
         ChunkLoading.INITIAL_PLAYER_FOR_CHUNK_MAP_ENTRY.set(player);
     }
 

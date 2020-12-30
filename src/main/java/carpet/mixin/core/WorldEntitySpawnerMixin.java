@@ -37,13 +37,13 @@ public class WorldEntitySpawnerMixin {
 
     @Inject(method = "findChunksForSpawning", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;getSpawnPoint()Lnet/minecraft/util/math/BlockPos;"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
     private void optimizedEarlyExit(WorldServer worldServer, boolean spawnHostileMobs, boolean spawnPeacefulMobs, boolean spawnOnSetTickRate, CallbackInfoReturnable<Integer> cir, int count) {
+        chunksCount = count;
         if (count == 0 && CarpetSettings.optimizedDespawnRange) {
             cir.setReturnValue(0);
             return;
         }
         if (world == null) {
             world = worldServer;
-            chunksCount = count;
             did = world.provider.getDimensionType().getId();
             suffix = (did == 0 ? "" : (did < 0 ? " (N)" : " (E)"));
         }

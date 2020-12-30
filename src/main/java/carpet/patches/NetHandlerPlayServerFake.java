@@ -7,15 +7,13 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.util.text.ITextComponent;
 
-public class NetHandlerPlayServerFake extends NetHandlerPlayServer
-{
-    public NetHandlerPlayServerFake(MinecraftServer server, NetworkManager nm, EntityPlayerMP playerIn)
-    {
+public class NetHandlerPlayServerFake extends NetHandlerPlayServer {
+    public NetHandlerPlayServerFake(MinecraftServer server, NetworkManager nm, EntityPlayerMP playerIn) {
         super(server, nm, playerIn);
     }
 
-    public void sendPacket(final Packet<?> packetIn)
-    {
+    @Override
+    public void sendPacket(final Packet<?> packetIn) {
     }
 
     @Override

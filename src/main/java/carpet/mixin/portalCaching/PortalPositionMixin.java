@@ -12,10 +12,9 @@ public class PortalPositionMixin extends BlockPos implements ExtendedPortalPosit
     @Shadow public long lastUpdateTime;
     private Vec3d cachingCoords;
 
-    public PortalPositionMixin(BlockPos pos, long lastUpdate, Vec3d cachingCoords) {
+    public PortalPositionMixin(BlockPos pos, long lastUpdate) {
         super(pos.getX(), pos.getY(), pos.getZ());
         this.lastUpdateTime = lastUpdate;
-        this.cachingCoords = cachingCoords;
     }
 
     @Override
