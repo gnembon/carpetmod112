@@ -1,0 +1,23 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockBeacon.java
++++ ../src-work/minecraft/net/minecraft/block/BlockBeacon.java
+@@ -20,6 +20,8 @@
+ import net.minecraft.world.WorldServer;
+ import net.minecraft.world.chunk.Chunk;
+ 
++import carpet.CarpetSettings;
++
+ public class BlockBeacon extends BlockContainer
+ {
+     public BlockBeacon()
+@@ -93,6 +95,11 @@
+             ((TileEntityBeacon)tileentity).func_174908_m();
+             p_189540_2_.func_175641_c(p_189540_3_, this, 1, 0);
+         }
++
++        if (CarpetSettings.asyncBeaconUpdates && p_189540_2_.func_175640_z(p_189540_3_))
++        {
++            HttpUtil.field_180193_a.submit(() -> p_189540_2_.func_175722_b(p_189540_3_, this, true));
++        }
+     }
+ 
+     public static void func_176450_d(final World p_176450_0_, final BlockPos p_176450_1_)

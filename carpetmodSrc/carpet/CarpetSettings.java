@@ -187,6 +187,9 @@ public class CarpetSettings
         return true;
     }
 
+    @Rule(desc = "Beacons send out async block updates when powered", category = CREATIVE)
+    public static boolean asyncBeaconUpdates = false;
+
     @Rule(desc = "Quasi Connectivity doesn't require block updates.", category = EXPERIMENTAL, extra = {
             "All redstone components will send extra block updates downwards",
             "Affects hoppers, droppers and dispensers"
