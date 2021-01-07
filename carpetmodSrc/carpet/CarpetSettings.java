@@ -565,7 +565,7 @@ public class CarpetSettings
     @BugFixDefault
     public static boolean growingUpWallJumpFix = false;
 
-    //    @Rule(desc = "Won't let mobs glitch into blocks when reloaded.", category = {FIX, EXPERIMENTAL}, validator = "validateReloadSuffocationFix", extra = {
+//    @Rule(desc = "Won't let mobs glitch into blocks when reloaded.", category = {FIX, EXPERIMENTAL}, validator = "validateReloadSuffocationFix", extra = {
 //            "Can cause slight differences in mobs behaviour"
 //    })
     @Rule(desc = "Won't let mobs glitch into blocks when reloaded.", category = FIX)
@@ -725,7 +725,7 @@ public class CarpetSettings
     @BugFixDefault
     public static boolean ridingPlayerUpdateFix = false;
 
-    //    @Rule(desc = "Fixes players clipping through moving piston blocks partially.", category = FIX, options = {"0", "20", "40", "100"}, validator = "validatePistonClippingFix")
+//    @Rule(desc = "Fixes players clipping through moving piston blocks partially.", category = FIX, options = {"0", "20", "40", "100"}, validator = "validatePistonClippingFix")
     public static int pistonClippingFix = 0;
 //    private static boolean validatePistonClippingFix(int pistonClippingFix) {
 //        // TODO

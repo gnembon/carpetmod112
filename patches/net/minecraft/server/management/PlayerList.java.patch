@@ -19,19 +19,11 @@
  import javax.annotation.Nullable;
  import net.minecraft.advancements.CriteriaTriggers;
  import net.minecraft.advancements.PlayerAdvancements;
-@@ -53,10 +51,7 @@
- import net.minecraft.util.text.ITextComponent;
- import net.minecraft.util.text.TextComponentTranslation;
- import net.minecraft.util.text.TextFormatting;
--import net.minecraft.world.DimensionType;
--import net.minecraft.world.GameType;
--import net.minecraft.world.World;
--import net.minecraft.world.WorldServer;
-+import net.minecraft.world.*;
- import net.minecraft.world.border.IBorderListener;
- import net.minecraft.world.border.WorldBorder;
+@@ -62,9 +60,14 @@
  import net.minecraft.world.chunk.storage.AnvilChunkLoader;
-@@ -65,6 +60,10 @@
+ import net.minecraft.world.storage.IPlayerFileData;
+ import net.minecraft.world.storage.WorldInfo;
++import net.minecraft.world.WorldType;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -42,7 +34,7 @@
  public abstract class PlayerList
  {
      public static final File field_152613_a = new File("banned-players.json");
-@@ -112,6 +111,8 @@
+@@ -112,6 +115,8 @@
          String s = gameprofile1 == null ? gameprofile.getName() : gameprofile1.getName();
          playerprofilecache.func_152649_a(gameprofile);
          NBTTagCompound nbttagcompound = this.func_72380_a(p_72355_2_);
@@ -51,7 +43,7 @@
          p_72355_2_.func_70029_a(this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK));
          p_72355_2_.field_71134_c.func_73080_a((WorldServer)p_72355_2_.field_70170_p);
          String s1 = "local";
-@@ -125,8 +126,9 @@
+@@ -125,8 +130,9 @@
          WorldServer worldserver = this.field_72400_f.func_71218_a(p_72355_2_.field_71093_bK);
          WorldInfo worldinfo = worldserver.func_72912_H();
          this.func_72381_a(p_72355_2_, (EntityPlayerMP)null, worldserver);
@@ -63,7 +55,7 @@
          nethandlerplayserver.func_147359_a(new SPacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).func_180714_a(this.func_72365_p().getServerModName())));
          nethandlerplayserver.func_147359_a(new SPacketServerDifficulty(worldinfo.func_176130_y(), worldinfo.func_176123_z()));
          nethandlerplayserver.func_147359_a(new SPacketPlayerAbilities(p_72355_2_.field_71075_bZ));
-@@ -343,6 +345,8 @@
+@@ -343,6 +349,8 @@
  
          worldserver.func_72838_d(p_72377_1_);
          this.func_72375_a(p_72377_1_, (WorldServer)null);
@@ -72,7 +64,7 @@
      }
  
      public void func_72358_d(EntityPlayerMP p_72358_1_)
-@@ -352,6 +356,8 @@
+@@ -352,6 +360,8 @@
  
      public void func_72367_e(EntityPlayerMP p_72367_1_)
      {
@@ -81,7 +73,7 @@
          WorldServer worldserver = p_72367_1_.func_71121_q();
          p_72367_1_.func_71029_a(StatList.field_75947_j);
          this.func_72391_b(p_72367_1_);
-@@ -452,6 +458,11 @@
+@@ -452,6 +462,11 @@
  
          for (EntityPlayerMP entityplayermp1 : list)
          {
@@ -93,7 +85,7 @@
              entityplayermp1.field_71135_a.func_194028_b(new TextComponentTranslation("multiplayer.disconnect.duplicate_login", new Object[0]));
          }
  
-@@ -474,6 +485,7 @@
+@@ -474,6 +489,7 @@
          p_72368_1_.func_71121_q().func_73039_n().func_72787_a(p_72368_1_);
          p_72368_1_.func_71121_q().func_73039_n().func_72790_b(p_72368_1_);
          p_72368_1_.func_71121_q().func_184164_w().func_72695_c(p_72368_1_);
@@ -101,7 +93,7 @@
          this.field_72404_b.remove(p_72368_1_);
          this.field_72400_f.func_71218_a(p_72368_1_.field_71093_bK).func_72973_f(p_72368_1_);
          BlockPos blockpos = p_72368_1_.func_180470_cg();
-@@ -496,6 +508,7 @@
+@@ -496,6 +512,7 @@
          entityplayermp.func_145769_d(p_72368_1_.func_145782_y());
          entityplayermp.func_174817_o(p_72368_1_);
          entityplayermp.func_184819_a(p_72368_1_.func_184591_cq());
@@ -109,7 +101,7 @@
  
          for (String s : p_72368_1_.func_184216_O())
          {
-@@ -560,7 +573,11 @@
+@@ -560,7 +577,11 @@
          WorldServer worldserver1 = this.field_72400_f.func_71218_a(p_187242_1_.field_71093_bK);
          p_187242_1_.field_71135_a.func_147359_a(new SPacketRespawn(p_187242_1_.field_71093_bK, p_187242_1_.field_70170_p.func_175659_aa(), p_187242_1_.field_70170_p.func_72912_H().func_76067_t(), p_187242_1_.field_71134_c.func_73081_b()));
          this.func_187243_f(p_187242_1_);
@@ -122,7 +114,7 @@
          p_187242_1_.field_70128_L = false;
          this.func_82448_a(p_187242_1_, i, worldserver, worldserver1);
          this.func_72375_a(p_187242_1_, worldserver);
-@@ -630,6 +647,12 @@
+@@ -630,6 +651,12 @@
              }
          }
  
@@ -135,7 +127,7 @@
          p_82448_3_.field_72984_F.func_76319_b();
  
          if (p_82448_2_ != 1)
-@@ -1097,4 +1120,26 @@
+@@ -1097,4 +1124,26 @@
              playeradvancements.func_193766_b();
          }
      }
