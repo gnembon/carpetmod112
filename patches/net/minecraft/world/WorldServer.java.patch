@@ -322,9 +322,22 @@
          return this.field_73064_N.contains(nextticklistentry);
      }
  
-@@ -503,15 +642,22 @@
+@@ -501,17 +640,34 @@
+ 
+                     if (iblockstate.func_185904_a() != Material.field_151579_a && iblockstate.func_177230_c() == p_175654_2_)
                      {
-                         iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
+-                        iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
++                        try {
++                            iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
++                        } catch (Throwable throwable){
++                            if(CarpetSettings.instantSchedulingCrashFix){
++                                Messenger.print_server_message(this.func_73046_m(), "You just caused a server crash in update block tick.");
++                            } else {
++                                CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception updating block tick");
++                                this.func_72914_a(crashreport);
++                                throw new ReportedException(crashreport);
++                            }
++                        }
                      }
 +                    if(RandomTickOptimization.needsWorldGenFix) return;
                  }
@@ -347,7 +360,7 @@
  
          if (this.func_175667_e(p_175654_1_))
          {
-@@ -531,7 +677,13 @@
+@@ -531,7 +687,13 @@
  
      public void func_180497_b(BlockPos p_180497_1_, Block p_180497_2_, int p_180497_3_, int p_180497_4_)
      {
@@ -362,7 +375,7 @@
          nextticklistentry.func_82753_a(p_180497_4_);
          Material material = p_180497_2_.func_176223_P().func_185904_a();
  
-@@ -549,7 +701,8 @@
+@@ -549,7 +711,8 @@
  
      public void func_72939_s()
      {
@@ -372,7 +385,7 @@
          {
              if (this.field_80004_Q++ >= 300)
              {
-@@ -644,9 +797,18 @@
+@@ -644,9 +807,18 @@
              }
              else
              {
@@ -393,7 +406,7 @@
                  }
  
                  this.field_72984_F.func_76320_a("cleaning");
-@@ -677,6 +839,8 @@
+@@ -677,6 +849,8 @@
  
                      if (this.func_175707_a(nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0), nextticklistentry1.field_180282_a.func_177982_a(0, 0, 0)))
                      {
@@ -402,7 +415,7 @@
                          IBlockState iblockstate = this.func_180495_p(nextticklistentry1.field_180282_a);
  
                          if (iblockstate.func_185904_a() != Material.field_151579_a && Block.func_149680_a(iblockstate.func_177230_c(), nextticklistentry1.func_151351_a()))
-@@ -699,6 +863,7 @@
+@@ -699,6 +873,7 @@
                          this.func_175684_a(nextticklistentry1.field_180282_a, nextticklistentry1.func_151351_a(), 0);
                      }
                  }
@@ -410,7 +423,7 @@
  
                  this.field_72984_F.func_76319_b();
                  this.field_94579_S.clear();
-@@ -950,11 +1115,18 @@
+@@ -950,11 +1125,18 @@
  
              chunkproviderserver.func_186027_a(p_73044_1_);
  
@@ -430,7 +443,7 @@
                  }
              }
          }
-@@ -1033,9 +1205,15 @@
+@@ -1033,9 +1215,15 @@
                  }
                  else
                  {
@@ -446,7 +459,7 @@
                          return false;
                      }
  
-@@ -1055,6 +1233,7 @@
+@@ -1055,6 +1243,7 @@
          this.field_175729_l.func_76038_a(p_72923_1_.func_145782_y(), p_72923_1_);
          this.field_175741_N.put(p_72923_1_.func_110124_au(), p_72923_1_);
          Entity[] aentity = p_72923_1_.func_70021_al();
@@ -454,7 +467,7 @@
  
          if (aentity != null)
          {
-@@ -1139,6 +1318,7 @@
+@@ -1139,6 +1328,7 @@
          }
  
          this.field_147490_S[this.field_147489_T].add(blockeventdata);
@@ -462,7 +475,7 @@
      }
  
      private void func_147488_Z()
-@@ -1150,14 +1330,19 @@
+@@ -1150,14 +1340,19 @@
  
              for (BlockEventData blockeventdata : this.field_147490_S[i])
              {
@@ -482,7 +495,7 @@
      }
  
      private boolean func_147485_a(BlockEventData p_147485_1_)
-@@ -1299,4 +1484,19 @@
+@@ -1299,4 +1494,19 @@
              {
              }
          }
