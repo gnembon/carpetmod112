@@ -330,7 +330,7 @@
 +                        try {
 +                            iblockstate.func_177230_c().func_180650_b(this, p_175654_1_, iblockstate, this.field_73012_v);
 +                        } catch (Throwable throwable){
-+                            if(CarpetSettings.instantSchedulingCrashFix){
++                            if(CarpetSettings.updateSuppressionCrashFix){
 +                                Messenger.print_server_message(this.func_73046_m(), "You just caused a server crash in update block tick.");
 +                            } else {
 +                                CrashReport crashreport = CrashReport.func_85055_a(throwable, "Exception updating block tick");
