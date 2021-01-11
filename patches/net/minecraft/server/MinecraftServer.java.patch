@@ -293,7 +293,7 @@
                      CrashReport crashreport = CrashReport.func_85055_a(throwable1, "Exception ticking world");
                      worldserver.func_72914_a(crashreport);
 -                    throw new ReportedException(crashreport);
-+                    if(!CarpetSettings.updateSuppressionCrashFix || !(crashreport.func_71505_b() instanceof ThrowableSuppression) ) {
++                    if(!CarpetSettings.updateSuppressionCrashFix) {
 +                        throw new ReportedException(crashreport);
 +                    } else {
 +                        Messenger.print_server_message(this, "You just caused a server crash in world tick.");
@@ -313,7 +313,7 @@
                      CrashReport crashreport1 = CrashReport.func_85055_a(throwable, "Exception ticking world entities");
                      worldserver.func_72914_a(crashreport1);
 -                    throw new ReportedException(crashreport1);
-+                    if(!CarpetSettings.updateSuppressionCrashFix || !(crashreport1.func_71505_b() instanceof ThrowableSuppression) ) {
++                    if(!CarpetSettings.updateSuppressionCrashFix) {
 +                        throw new ReportedException(crashreport1);
 +                    } else {
 +                        Messenger.print_server_message(this, "You just caused a server crash in update entities.");
