@@ -1,6 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkProviderServer.java
-@@ -27,15 +27,26 @@
+@@ -2,6 +2,8 @@
+ 
+ import com.google.common.collect.Lists;
+ import com.google.common.collect.Sets;
++import it.unimi.dsi.fastutil.HashCommon;
++import it.unimi.dsi.fastutil.longs.Custom;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+ import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+ import it.unimi.dsi.fastutil.objects.ObjectIterator;
+@@ -11,6 +13,8 @@
+ import java.util.List;
+ import java.util.Set;
+ import javax.annotation.Nullable;
++
++import net.minecraft.block.BlockBeacon;
+ import net.minecraft.crash.CrashReport;
+ import net.minecraft.crash.CrashReportCategory;
+ import net.minecraft.entity.EnumCreatureType;
+@@ -27,22 +31,47 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -22,8 +40,9 @@
 +    public final Set<Long> field_73248_b = Sets.<Long>newHashSet();
 +    public final IChunkGenerator field_186029_c;
 +    public final IChunkLoader field_73247_e; // CM changed to public for ticking areas
-+    public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<Chunk>(8192); // CM changed to public for commandUnload
++    public final Long2ObjectMap<Chunk> field_73244_f = new Long2ObjectOpenHashMap<>(8192); // CM changed to public for commandUnload
      private final WorldServer field_73251_h;
++    public final Custom<Long> loadedChunksSpecial = new Custom<>(8192); // CM changed to public for commandUnload
  
 +    // CM: simulatePermaloader
 +    public boolean fakePermaloaderProtected = false;
@@ -31,7 +50,27 @@
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
          this.field_73251_h = p_i46838_1_;
-@@ -50,8 +61,18 @@
+         this.field_73247_e = p_i46838_2_;
+         this.field_186029_c = p_i46838_3_;
++//        insert();
+     }
+ 
++//    private void insert() {
++//        int sizeOfChunks = 4000;
++//        for(long i = 2; i < sizeOfChunks + 2; i++){
++//            loadedChunksSpecial.put(HashCommon.invMix(i), (Long)i);
++//        }
++//
++////        for(long l : loadedChunksSpecial.values()){
++////            System.out.println(l);
++////        }
++////        loadedChunksSpecial.printstuff();
++//    }
++
+     public Collection<Chunk> func_189548_a()
+     {
+         return this.field_73244_f.values();
+@@ -50,8 +79,18 @@
  
      public void func_189549_a(Chunk p_189549_1_)
      {
@@ -51,7 +90,7 @@
              this.field_73248_b.add(Long.valueOf(ChunkPos.func_77272_a(p_189549_1_.field_76635_g, p_189549_1_.field_76647_h)));
              p_189549_1_.field_189550_d = true;
          }
-@@ -59,6 +80,7 @@
+@@ -59,6 +98,7 @@
  
      public void func_73240_a()
      {
@@ -59,7 +98,20 @@
          ObjectIterator objectiterator = this.field_73244_f.values().iterator();
  
          while (objectiterator.hasNext())
-@@ -76,6 +98,11 @@
+@@ -68,14 +108,24 @@
+         }
+     }
+ 
++    public static ThreadLocal<Boolean> list = ThreadLocal.withInitial(() -> false);
++
+     @Nullable
+     public Chunk func_186026_b(int p_186026_1_, int p_186026_2_)
+     {
+         long i = ChunkPos.func_77272_a(p_186026_1_, p_186026_2_);
+         Chunk chunk = (Chunk)this.field_73244_f.get(i);
++        if(list.get().booleanValue()){
++            loadedChunksSpecial.get(ChunkPos.func_77272_a(74, -84));
++        }
  
          if (chunk != null)
          {
@@ -71,7 +123,7 @@
              chunk.field_189550_d = false;
          }
  
-@@ -93,9 +120,17 @@
+@@ -93,9 +143,17 @@
  
              if (chunk != null)
              {
@@ -89,7 +141,7 @@
              }
          }
  
-@@ -113,6 +148,11 @@
+@@ -113,6 +171,11 @@
              try
              {
                  chunk = this.field_186029_c.func_185932_a(p_186025_1_, p_186025_2_);
@@ -101,7 +153,7 @@
              }
              catch (Throwable throwable)
              {
-@@ -123,7 +163,7 @@
+@@ -123,7 +186,7 @@
                  crashreportcategory.func_71507_a("Generator", this.field_186029_c);
                  throw new ReportedException(crashreport);
              }
@@ -110,7 +162,7 @@
              this.field_73244_f.put(i, chunk);
              chunk.func_76631_c();
              chunk.func_186030_a(this, this.field_186029_c);
-@@ -185,6 +225,8 @@
+@@ -185,6 +248,8 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
@@ -119,8 +171,16 @@
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -222,8 +264,12 @@
+@@ -220,10 +285,20 @@
+ 
+     public boolean func_73156_b()
      {
++        if(BlockBeacon.working && BlockBeacon.job == 1) {
++            loadedChunksSpecial.put(ChunkPos.func_77272_a(21, -121), null);
++            loadedChunksSpecial.put(ChunkPos.func_77272_a(74, -84), null);
++            loadedChunksSpecial.remove(ChunkPos.func_77272_a(21, -121), true);
++            loadedChunksSpecial.remove(ChunkPos.func_77272_a(74, -84), false);
++        }
          if (!this.field_73251_h.field_73058_d)
          {
 -            if (!this.field_73248_b.isEmpty())
@@ -133,7 +193,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -231,16 +277,47 @@
+@@ -231,16 +306,47 @@
                      Long olong = iterator.next();
                      Chunk chunk = (Chunk)this.field_73244_f.get(olong);
  
@@ -182,7 +242,7 @@
  
              this.field_73247_e.func_75817_a();
          }
-@@ -283,9 +360,17 @@
+@@ -283,9 +389,17 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
      }
