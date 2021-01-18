@@ -1,8 +1,10 @@
 package carpet.helpers;
 
-import carpet.launch.MixinServiceCarpetMod;
 import carpet.utils.LRUCache;
+import net.fabricmc.loader.launch.knot.Knot;
 import org.apache.commons.lang3.tuple.Pair;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.*;
 import org.spongepowered.asm.mixin.transformer.meta.MixinMerged;
 import org.spongepowered.asm.util.Annotations;
@@ -310,7 +312,7 @@ public class StackTraceDeobfuscator {
         String fileName = elem.getFileName();
         int line = elem.getLineNumber();
         try {
-            ClassNode classNode = MixinServiceCarpetMod.getClass(elem.getClassName(), true);
+            ClassNode classNode = getClass(elem.getClassName(), true);
             if (classNode != null) {
                 MethodNode method = findMethod(classNode.methods, methodName, line);
                 if (method != null) {
@@ -383,7 +385,7 @@ public class StackTraceDeobfuscator {
         String mixinClassName = Annotations.getValue(merged, "mixin");
         String methodName = method.name.substring(method.name.lastIndexOf('$') + 1);
         try {
-            ClassNode mixinClass = MixinServiceCarpetMod.getClass(mixinClassName, false);
+            ClassNode mixinClass = getClass(mixinClassName, false);
             if (mixinClass == null) return null;
             for (MethodNode mixinMethod : mixinClass.methods) {
                 if (mixinMethod.name.equals(methodName) && mixinMethod.desc.equals(method.desc)) {
@@ -425,4 +427,17 @@ public class StackTraceDeobfuscator {
         }
     }
 
+    private static ClassNode getClass(String name, boolean transformed) throws IOException {
+        String className = name.replace('.', '/');
+        byte[] bytes = getClassBinary(className, transformed);
+        if (bytes == null) return null;
+        ClassReader reader = new ClassReader(bytes);
+        ClassNode node = new ClassNode(Opcodes.ASM5);
+        reader.accept(node, ClassReader.EXPAND_FRAMES);
+        return node;
+    }
+
+    private static byte[] getClassBinary(String name, boolean transformed) throws IOException {
+        return Knot.getLauncher().getClassByteArray(name, transformed);
+    }
 }

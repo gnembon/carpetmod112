@@ -37,6 +37,7 @@ public class CommandCloneMixin {
         WorldEditBridge.recordBlockEdit(worldEditPlayer, world, currentPos, Blocks.AIR.getDefaultState(), null);
     }
 
+    /*
     @Surrogate
     private void recordRemove(MinecraftServer server, ICommandSender sender, String[] args, CallbackInfo ci,
                               BlockPos pos1, BlockPos pos2, BlockPos pos3, StructureBoundingBox box1, StructureBoundingBox box2, int i, boolean flag, Block block, Predicate<IBlockState> predicate,
@@ -45,6 +46,7 @@ public class CommandCloneMixin {
         EntityPlayerMP worldEditPlayer = sender instanceof EntityPlayerMP ? (EntityPlayerMP) sender : null;
         WorldEditBridge.recordBlockEdit(worldEditPlayer, world, currentPos, Blocks.AIR.getDefaultState(), null);
     }
+     */
 
     @Inject(method = "execute", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getTileEntity(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/tileentity/TileEntity;", ordinal = 3), locals = LocalCapture.CAPTURE_FAILHARD)
     private void recordAdd(MinecraftServer server, ICommandSender sender, String[] args, CallbackInfo ci,

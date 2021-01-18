@@ -27,6 +27,7 @@ import carpet.patches.BlockWool;
 import carpet.utils.TickingArea;
 import carpet.utils.extensions.WorldWithBlockEventSerializer;
 import carpet.worldedit.WorldEditBridge;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.dedicated.DedicatedServer;
@@ -47,7 +48,7 @@ public final class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v20_12_12";
+    public static final String carpetVersion = FabricLoader.getInstance().getModContainer("carpetmod").get().getMetadata().getVersion().getFriendlyString();
     public static final String minecraftVersion = "1.12.2";
     public static final String mcpMappings = "39-1.12";
 

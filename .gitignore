@@ -11,33 +11,15 @@
 *.iml
 *.ipr
 *.iws
+/out/
+/buildSrc/out/
 
 # Gradle
-/build
+/build/
 /.gradle
-/buildSrc/build
-/buildSrc/.gradle
-
-# Patch rejects
-/patches-/
-*.patch.rej
+/*/build/
+/*/.gradle
 
 # MC stuff
-banned-ips.json
-banned-players.json
-eula.txt
-ops.json
-server.properties
-usercache.json
-whitelist.json
-/logs/
-/world/
-/crash-reports/
-/worldedit.properties
-/carpet/
-/buildSrc/out/
 /run/
-/.mixin.out/
 /test/
-/out/
-/server/

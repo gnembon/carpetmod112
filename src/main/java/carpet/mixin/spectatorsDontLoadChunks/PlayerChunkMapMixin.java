@@ -41,10 +41,12 @@ public abstract class PlayerChunkMapMixin {
         ChunkLoading.INITIAL_PLAYER_FOR_CHUNK_MAP_ENTRY.set(player);
     }
 
+    /*
     @Surrogate
     private void capturePlayer(int radius, CallbackInfo ci, int i, Iterator<EntityPlayerMP> iterator, EntityPlayerMP player) {
         ChunkLoading.INITIAL_PLAYER_FOR_CHUNK_MAP_ENTRY.set(player);
     }
+     */
 
     @Redirect(method = "setPlayerViewRadius", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/management/PlayerChunkMap;getOrCreateEntry(II)Lnet/minecraft/server/management/PlayerChunkMapEntry;"))
     private PlayerChunkMapEntry getOrCreateOnSetRadius(PlayerChunkMap map, int chunkX, int chunkZ) {

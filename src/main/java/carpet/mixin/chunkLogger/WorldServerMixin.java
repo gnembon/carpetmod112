@@ -22,11 +22,13 @@ public class WorldServerMixin {
         CarpetClientChunkLogger.setReason(() -> "Block update: " + Block.REGISTRY.getNameForObject(entry.getBlock()) + " at " + entry.position);
     }
 
+    /*
     // extra int i
     @Surrogate
     private void setChunkLoadingReason(boolean runAllPending, CallbackInfoReturnable<Boolean> cir, int listSize, Iterator<NextTickListEntry> iterator, NextTickListEntry entry) {
         setChunkLoadingReason(runAllPending, cir, iterator, entry, 0);
     }
+     */
 
     @Inject(method = "tickUpdates", at = @At("RETURN"))
     private void resetChunkLoadingReason(boolean runAllPending, CallbackInfoReturnable<Boolean> cir) {

@@ -118,7 +118,7 @@ public class CarpetProfiler
         }
         if (current_section == null)
         {
-            CarpetSettings.LOG.error("finishing section that hasn't started");
+            CarpetSettings.LOG.error(new IllegalStateException("finishing section that hasn't started"));
             return;
         }
         //CarpetSettings.LOG.error("finishing section "+current_section);
@@ -140,7 +140,7 @@ public class CarpetProfiler
         }
         if (current_section == null)
         {
-            CarpetSettings.LOG.error("finishing section that hasn't started");
+            CarpetSettings.LOG.error(new IllegalStateException("finishing section that hasn't started"));
             return;
         }
         //CarpetSettings.LOG.error("finishing section "+current_section);

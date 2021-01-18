@@ -1,80 +1,63 @@
-buildscript
-{
-	repositories
-	{
-		mavenCentral()
-		maven {url 'https://masa.dy.fi/maven/'}
-		maven {url 'https://files.minecraftforge.net/maven'}
-		maven {url 'https://plugins.gradle.org/m2/'}
-		maven {url "https://repo.spongepowered.org/maven"}
-	}
-	dependencies
-	{
-		classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-7764e3e'
-		classpath "org.spongepowered:mixingradle:0.6-SNAPSHOT"
-		classpath "com.github.jengelman.gradle.plugins:shadow:4.0.4"
-	}
-}
+import java.text.SimpleDateFormat
 
-apply plugin: "java"
-apply plugin: "net.minecraftforge.gradle.tweaker-server"
-apply plugin: "org.spongepowered.mixin"
-apply plugin: "com.github.johnrengelman.shadow"
+plugins {
+	id 'fabric-loom' version '0.4-SNAPSHOT'
+}
 
 group = name
-version = 'dev'
 archivesBaseName = name
 
-minecraft {
-	version = "1.12.2"
-	mappings = "stable_39"
-	runDir = "run"
-	tweakClass = "carpet.launch.ServerTweaker"
-	serverJvmArgs.addAll("-Dmixin.debug=true")
-	makeObfSourceJar = false
+def buildDate = new Date()
+if (project.mod_version.endsWith('-dev')) {
+	def df = new SimpleDateFormat(".yyyyMMdd.HHmmss")
+	df.setTimeZone(TimeZone.getTimeZone("UTC"))
+	project.mod_version += df.format(buildDate)
 }
-
-reobf {
-	jar {
-		mappingType = "NOTCH"
-	}
-	shadowJar {
-		mappingType = "NOTCH"
-	}
-}
-
-mixin {
-	defaultObfuscationEnv notch
-}
-
-sourceSets.main.ext.refMap = "${name}-refmap.json"
+version = project.mod_version
 
 repositories {
-	maven { url = "https://repo.spongepowered.org/maven" }
-	maven { url = "https://libraries.minecraft.net/" }
-	maven { url = "https://maven.sk89q.com/repo" }
+	maven {
+		name = 'Fabric'
+		url = 'http://maven.fabricmc.net/'
+	}
+	maven {
+		name = 'SpongePowered'
+		url = 'http://repo.spongepowered.org/maven/'
+	}
+	maven {
+		name = 'Mojang'
+		url = 'https://libraries.minecraft.net/'
+	}
+	maven {
+		name = 'legacy-fabric'
+		url = 'https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven'
+	}
+	maven {
+		name = 'skyrising'
+		url = 'https://maven.skyrising.xyz/'
+	}
+	maven {
+		name = 'sk89q'
+		url = 'https://maven.sk89q.com/repo/'
+	}
+	maven {
+		name = 'Jitpack'
+		url = 'https://jitpack.io/'
+	}
 }
 
-configurations {
-	shadowed
-	implementation.extendsFrom(shadowed)
+minecraft {
+	intermediaryUrl = { version ->
+		return "https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/intermediary/${version}/intermediary-${version}-v2.jar";
+	}
 }
-
 
 dependencies {
-	shadowed "org.spongepowered:mixin:0.8.2"
-	shadowed "org.ow2.asm:asm-debug-all:5.2"
-	provided "org.ow2.asm:asm-all:5.2"
-	shadowed("net.minecraft:launchwrapper:1.12") {
-		exclude group: "org.lwjgl.lwjgl"
-	}
-	shadowed "org.apache.logging.log4j:log4j-api:2.8.1"
-	shadowed "org.apache.logging.log4j:log4j-core:2.8.1"
-	implementation "com.eclipsesource.minimal-json:minimal-json:0.9.5"
-	implementation "com.google.guava:guava:21.0"
-	implementation "org.apache.commons:commons-lang3:3.5"
-	implementation "commons-io:commons-io:2.5"
-	implementation "com.google.code.gson:gson:2.8.0"
+	implementation "com.google.guava:guava:23.5-jre"
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "de.oceanlabs:mcp:${project.mcp_mappings}:v2"
+	// Fix for https://github.com/FabricMC/fabric-loader/issues/152
+	modImplementation "com.github.shedaniel:fabric-loader:e4a8c2f8b6"
 
 	// World Edit
 	implementation "com.sk89q.worldedit:worldedit-core:6.1"
@@ -83,25 +66,18 @@ dependencies {
 	implementation "com.sk89q.lib:jlibnoise:1.0.0"
 }
 
-jar {
-	manifest {
-		attributes(
-			'Main-Class': 'carpet.Main',
-			'Class-Path': 'minecraft_server.1.12.2.jar'
-		)
+processResources {
+	def properties = [
+			version: project.version
+	]
+	inputs.properties properties
+
+	from(sourceSets.main.resources.srcDirs) {
+		include "fabric.mod.json"
+		expand properties
+	}
+
+	from(sourceSets.main.resources.srcDirs) {
+		exclude "fabric.mod.json"
 	}
 }
-
-shadowJar {
-	classifier = ""
-	configurations = [project.configurations.shadowed]
-	exclude "META-INF/maven/**"
-	exclude "META-INF/DEPENDENCIES"
-	exclude "META-INF/fml_cache_*.json"
-	exclude "META-INF/LICENSE"
-	exclude "META-INF/log4j-provider.properties"
-	exclude "META-INF/NOTICE"
-	exclude "META-INF/web-fragment.xml"
-	exclude "LICENSE.txt"
-}
-tasks.build.dependsOn(shadowJar)

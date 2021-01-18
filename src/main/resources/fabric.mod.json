@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "id": "carpetmod",
+  "version": "${version}",
+  "name": "CarpetMod",
+  "description": "Take full control of what matters from the technical perspective in the game.",
+  "authors": [
+    "gnembon",
+    "Xcom",
+    "Earthcomputer",
+    "skyrising",
+    "2No2Name",
+    "DeadlyMC",
+    "masa"
+  ],
+  "contact": {
+    "homepage": "https://discord.gg/scicraft",
+    "sources": "https://github.com/gnembon/carpetmod112",
+    "issues": "https://github.com/gnembon/carpetmod112/issues"
+  },
+  "license": "LGPLv3",
+  "environment": "server",
+  "mixins": [
+    "carpetmod.mixins.json"
+  ],
+  "depends": {
+    "minecraft": "1.12.2"
+  }
+}

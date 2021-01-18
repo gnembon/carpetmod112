@@ -64,7 +64,7 @@ public class WorldMixin {
     }
 
     @Inject(method = "updateEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/profiler/Profiler;endSection()V"), slice = @Slice(
-        from = @At(value = "CONSTANT", args = "stringValue=remove"),
+        from = @At(value = "CONSTANT", args = "stringValue=remove", ordinal = 1),
         to = @At(value = "CONSTANT", args = "stringValue=blockEntities")
     ))
     private void endCurrentEntitySection(CallbackInfo ci) {
