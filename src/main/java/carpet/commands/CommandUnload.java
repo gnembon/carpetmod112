@@ -6,48 +6,45 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import carpet.utils.ChunkLoading;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
 
 public class CommandUnload extends CommandCarpetBase
 {
-    /**
-     * Gets the name of the command
-     */
-    public String getUsage(ICommandSender sender)
+    @Override
+    public String method_29275(class_2010 sender)
     {
         return "Usage: unload <brief|verbose|order> <X1> <Y1> <Z1> [<x2> <y2> <z2>]";
     }
 
-    public String getName()
+    @Override
+    public String method_29277()
     {
         return "unload";
     }
 
 
-    public void print_multi_message(List<String> messages, ICommandSender sender)
+    public void print_multi_message(List<String> messages, class_2010 sender)
     {
         for (String line: messages)
         {
-            notifyCommandListener(sender, this, line);
+            method_28710(sender, this, line);
         }
     }
 
-    /**
-     * Callback for when the command is executed
-     */
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    @Override
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandUnload", sender)) return;
         if (args.length != 0 && args.length != 1 && args.length != 2 && args.length != 4 && args.length != 7)
         {
-            throw new WrongUsageException(getUsage(sender));
+            throw new class_6182(method_29275(sender));
         }
-        BlockPos pos = sender.getPosition();
+        BlockPos pos = sender.method_29606();
         BlockPos pos2 = null;
         boolean verbose = false;
         boolean order = false;
@@ -64,11 +61,11 @@ public class CommandUnload extends CommandCarpetBase
 
         if (args.length >= 4)
         {
-            pos = parseBlockPos(sender, args, 1, false);
+            pos = method_28713(sender, args, 1, false);
         }
         if (args.length >= 7)
         {
-            pos2 = parseBlockPos(sender, args, 4, false);
+            pos2 = method_28713(sender, args, 4, false);
         }
         if (args.length > 0)
         {
@@ -98,38 +95,39 @@ public class CommandUnload extends CommandCarpetBase
 
         if (order)
         {
-            List<String> orders = ChunkLoading.check_unload_order((WorldServer)sender.getEntityWorld(), pos, pos2);
+            List<String> orders = ChunkLoading.check_unload_order((ServerWorld)sender.method_29608(), pos, pos2);
             print_multi_message(orders, sender);
             return;
         }
-        WorldServer world = (WorldServer) (custom_dim?server.getWorld(custom_dim_id):sender.getEntityWorld() );
-        notifyCommandListener(sender, this, "Chunk unloading report for "+world.provider.getDimensionType());
+        ServerWorld world = (ServerWorld) (custom_dim?server.getWorldById(custom_dim_id):sender.method_29608() );
+        method_28710(sender, this, "Chunk unloading report for "+world.dimension.getType());
         List<String> report = ChunkLoading.test_save_chunks(world, pos, verbose);
         print_multi_message(report, sender);
     }
 
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    @Override
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.commandUnload)
         {
-            return Collections.<String>emptyList();
+            return Collections.emptyList();
         }
         if (args.length == 1)
         {
-            return getListOfStringsMatchingLastWord(args, "verbose", "brief", "order", "nether", "overworld", "end");
+            return method_28732(args, "verbose", "brief", "order", "nether", "overworld", "end");
         }
         if (args.length == 2 && ( "nether".equalsIgnoreCase(args[0]) || "overworld".equalsIgnoreCase(args[0]) || "end".equalsIgnoreCase(args[0]) ))
         {
-            return getListOfStringsMatchingLastWord(args, "verbose");
+            return method_28732(args, "verbose");
         }
         if (args.length > 1 && args.length <= 4)
         {
-            return getTabCompletionCoordinate(args, 1, pos);
+            return method_28730(args, 1, pos);
         }
         if (args.length > 4 && args.length <= 7)
         {
-            return getTabCompletionCoordinate(args, 4, pos);
+            return method_28730(args, 4, pos);
         }
-        return Collections.<String>emptyList();
+        return Collections.emptyList();
     }
 }

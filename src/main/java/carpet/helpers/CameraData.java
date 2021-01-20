@@ -1,7 +1,7 @@
 package carpet.helpers;
 
 import carpet.CarpetSettings;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class CameraData {
     public double storeX;
@@ -16,13 +16,13 @@ public class CameraData {
 
     public CameraData() {}
 
-    public CameraData(EntityPlayerMP player, boolean hasNightvision, boolean gamemodeCamera) {
-        storeX = player.posX;
-        storeY = player.posY;
-        storeZ = player.posZ;
-        storeYaw = player.rotationYaw;
-        storePitch = player.rotationPitch;
-        storedDim = player.dimension;
+    public CameraData(ServerPlayerEntity player, boolean hasNightvision, boolean gamemodeCamera) {
+        storeX = player.field_33071;
+        storeY = player.field_33072;
+        storeZ = player.field_33073;
+        storeYaw = player.yaw;
+        storePitch = player.pitch;
+        storedDim = player.field_33045;
         disableSpectatePlayers = CarpetSettings.cameraModeDisableSpectatePlayers;
         nightvision = hasNightvision;
         this.gamemodeCamera = gamemodeCamera;

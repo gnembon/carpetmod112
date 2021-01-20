@@ -3,8 +3,7 @@ package narcolepticfrog.rsmm.network;
 import io.netty.buffer.Unpooled;
 import narcolepticfrog.rsmm.DimPos;
 import narcolepticfrog.rsmm.clock.SubtickTime;
-import net.minecraft.network.PacketBuffer;
-
+import net.minecraft.util.PacketByteBuf;
 import java.util.BitSet;
 
 public class RSMMCPacketMeter extends RSMMCPacket {
@@ -137,7 +136,7 @@ public class RSMMCPacketMeter extends RSMMCPacket {
         fields = new BitSet(NUM_FIELDS);
     }
 
-    public static RSMMCPacketMeter fromBuffer(PacketBuffer buffer) {
+    public static RSMMCPacketMeter fromBuffer(PacketByteBuf buffer) {
         RSMMCPacketMeter packet = new RSMMCPacketMeter();
 
         Byte messageId = buffer.readByte();
@@ -162,8 +161,8 @@ public class RSMMCPacketMeter extends RSMMCPacket {
     }
 
     @Override
-    public PacketBuffer toBuffer() {
-        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+    public PacketByteBuf toBuffer() {
+        PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
         buffer.writeByte(MESSAGE_ID);
         buffer.writeByte(fields.toByteArray()[0]);
 

@@ -1,16 +1,11 @@
 package carpet.helpers;
 
 import carpet.carpetclient.CarpetClientServer;
-import carpet.mixin.accessors.CraftingManagerAccessor;
+import carpet.mixin.accessors.RecipeManagerAccessor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.util.JsonUtils;
-import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,12 +21,17 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeManager;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 
 public class CustomCrafting {
     private static final Logger LOGGER = LogManager.getLogger();
     private static final String CARPET_DIRECTORY_RECIPES = "carpet/recipes";
     private static ArrayList<Pair<String, JsonObject>> recipeList = new ArrayList<>();
-    private static HashSet<IRecipe> recipes = new HashSet<IRecipe>();
+    private static HashSet<Recipe> recipes = new HashSet<Recipe>();
 
     public static boolean registerCustomRecipes(boolean result) throws IOException {
         if (!result) {
@@ -53,17 +53,17 @@ public class CustomCrafting {
             if ("json".equals(FilenameUtils.getExtension(path1.toString()))) {
                 Path path2 = path.relativize(path1);
                 String s = FilenameUtils.removeExtension(path2.toString()).replaceAll("\\\\", "/");
-                ResourceLocation resourcelocation = new ResourceLocation(s);
+                Identifier resourcelocation = new Identifier(s);
                 BufferedReader bufferedreader = null;
 
                 try {
                     try {
                         bufferedreader = Files.newBufferedReader(path1);
-                        JsonObject json = JsonUtils.fromJson(gson, bufferedreader, JsonObject.class);
+                        JsonObject json = JsonHelper.deserialize(gson, bufferedreader, JsonObject.class);
                         recipeList.add(Pair.of(s, json));
-                        IRecipe ir = CraftingManagerAccessor.invokeParseRecipeJson(json);
+                        Recipe ir = RecipeManagerAccessor.invokeParseRecipeJson(json);
                         recipes.add(ir);
-                        CraftingManager.register(s, ir);
+                        RecipeManager.register(s, ir);
                     } catch (JsonParseException jsonparseexception) {
                         LOGGER.error("Parsing error loading recipe " + resourcelocation, jsonparseexception);
                         return false;
@@ -84,7 +84,7 @@ public class CustomCrafting {
         return recipeList;
     }
 
-    public static boolean filterCustomRecipesForOnlyCarpetClientUsers(IRecipe recipe, EntityPlayerMP player){
+    public static boolean filterCustomRecipesForOnlyCarpetClientUsers(Recipe recipe, ServerPlayerEntity player){
         return !recipes.contains(recipe) || CarpetClientServer.isPlayerRegistered(player);
     }
 }

@@ -3,9 +3,9 @@ package carpet.logging;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import net.minecraft.util.IJsonSerializable;
+import net.minecraft.class_6405;
 
-public class LoggerOptions implements IJsonSerializable {
+public class LoggerOptions implements class_6405 {
     public String logger;
     public String option;
     public String handlerName;
@@ -21,7 +21,7 @@ public class LoggerOptions implements IJsonSerializable {
     }
 
     @Override
-    public void fromJson(JsonElement json) {
+    public void method_33883(JsonElement json) {
         JsonObject obj = (JsonObject)json;
 
         logger = obj.get("logger").getAsString();
@@ -38,7 +38,7 @@ public class LoggerOptions implements IJsonSerializable {
     }
 
     @Override
-    public JsonElement getSerializableElement() {
+    public JsonElement method_33882() {
         JsonObject entry = new JsonObject();
 
         entry.addProperty("logger", logger);

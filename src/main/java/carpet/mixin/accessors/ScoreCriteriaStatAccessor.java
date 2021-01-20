@@ -1,11 +1,11 @@
 package carpet.mixin.accessors;
 
-import net.minecraft.scoreboard.ScoreCriteriaStat;
-import net.minecraft.stats.StatBase;
+import net.minecraft.class_5569;
+import net.minecraft.stat.Stat;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
-@Mixin(ScoreCriteriaStat.class)
+@Mixin(class_5569.class)
 public interface ScoreCriteriaStatAccessor {
-    @Accessor StatBase getStat();
+    @Accessor("field_26767") Stat getStat();
 }

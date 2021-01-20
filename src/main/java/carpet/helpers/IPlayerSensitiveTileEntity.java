@@ -1,9 +1,9 @@
 package carpet.helpers;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public interface IPlayerSensitiveTileEntity
 {
-    SPacketUpdateTileEntity getUpdatePacketPlayerSensitive(EntityPlayerMP player);
+    BlockEntityUpdateS2CPacket getUpdatePacketPlayerSensitive(ServerPlayerEntity player);
 }

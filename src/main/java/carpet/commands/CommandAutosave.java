@@ -6,34 +6,34 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
 public class CommandAutosave extends CommandCarpetBase {
 
 	@Override
-	public String getName() {
+	public String method_29277() {
 		return "autosave";
 	}
 
 	@Override
-	public String getUsage(ICommandSender sender) {
+	public String method_29275(class_2010 sender) {
 		return "Usage: autosave info | autosave detect <range-start> <range-end> <quiet t| run <command>>";
 	}
 
 	@Override
-	public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+	public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
 		if (!command_enabled("commandAutosave", sender)) return;
 		
 		if(args.length < 1)
 		{
-			throw new WrongUsageException(getUsage(sender), new Object[0]);
+			throw new class_6182(method_29275(sender));
 		}
 		
-		int gametick = server.getTickCounter();
+		int gametick = server.getTicks();
 		
 		int afterAutosave = gametick%900;
 		
@@ -46,15 +46,15 @@ public class CommandAutosave extends CommandCarpetBase {
 			}
 			int next = 900 - previous;
 			int beforeAutosave = 900-previous;
-			notifyCommandListener(sender, this, String.format("Autosave (interval %d) %d gameticks ago - in %d ticks", interval, previous, next));
+			method_28710(sender, this, String.format("Autosave (interval %d) %d gameticks ago - in %d ticks", interval, previous, next));
 		}
 		else if("detect".equalsIgnoreCase(args[0])) {
 			if(args.length < 3) {
-				throw new WrongUsageException(getUsage(sender), new Object[0]);
+				throw new class_6182(method_29275(sender));
 			}
 			
-			int start = this.parseInt(args[1]);
-			int end = this.parseInt(args[2]);
+			int start = this.method_28715(args[1]);
+			int end = this.method_28715(args[2]);
 			boolean quiet = false;
 			String run = null;
 
@@ -63,16 +63,16 @@ public class CommandAutosave extends CommandCarpetBase {
 					quiet = true;
 				}
 				else {
-					throw new WrongUsageException(getUsage(sender), new Object[0]);
+					throw new class_6182(method_29275(sender));
 				}
 			}
 			else if(args.length > 4) {
 				if("run".equals(args[3])) {
-					run = buildString(args,4);
+					run = method_28729(args, 4);
 					quiet = true;
 				}
 				else {
-					throw new WrongUsageException(getUsage(sender), new Object[0]);
+					throw new class_6182(method_29275(sender));
 				}
 			}
 			
@@ -85,32 +85,33 @@ public class CommandAutosave extends CommandCarpetBase {
 			
 			if(pass) {
 				if(!quiet) {
-					notifyCommandListener(sender, this, String.format("gametick %d in interval %d %d",afterAutosave, start, end));
+					method_28710(sender, this, String.format("gametick %d in interval %d %d",afterAutosave, start, end));
 				}
 				if(run != null) {
-					server.getCommandManager().executeCommand(sender, run);
+					server.method_33193().method_29374(sender, run);
 				}
 			}
 			else {
-				throw new CommandException(String.format("gametick %d not in interval %d %d",afterAutosave, start, end));
+				throw new class_6175(String.format("gametick %d not in interval %d %d",afterAutosave, start, end));
 			}
 		}
 		else {
-			throw new WrongUsageException(getUsage(sender), new Object[0]);
+			throw new class_6182(method_29275(sender));
 		}
 	}
-	
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+
+	@Override
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.commandAutosave)
         {
             return Collections.<String>emptyList();
         }
         if(args.length == 1) {
-        	return getListOfStringsMatchingLastWord(args, "info", "detect");
+        	return method_28732(args, "info", "detect");
         }
         if(args.length == 4) {
-        	return getListOfStringsMatchingLastWord(args, "run", "quiet");
+        	return method_28732(args, "run", "quiet");
         }
 		return Collections.<String>emptyList();
     }

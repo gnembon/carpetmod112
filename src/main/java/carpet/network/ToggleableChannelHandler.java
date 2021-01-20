@@ -1,7 +1,7 @@
 package carpet.network;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.client.CPacketCustomPayload;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class ToggleableChannelHandler implements PluginChannelHandler {
     private final PluginChannelManager channelManager;
@@ -39,17 +39,17 @@ public class ToggleableChannelHandler implements PluginChannelHandler {
     }
 
     @Override
-    public void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player) {
+    public void onCustomPayload(CustomPayloadC2SPacket packet, ServerPlayerEntity player) {
         if (enabled) baseHandler.onCustomPayload(packet, player);
     }
 
     @Override
-    public boolean register(String channel, EntityPlayerMP player) {
+    public boolean register(String channel, ServerPlayerEntity player) {
         return enabled && baseHandler.register(channel, player);
     }
 
     @Override
-    public void unregister(String channel, EntityPlayerMP player) {
+    public void unregister(String channel, ServerPlayerEntity player) {
         baseHandler.unregister(channel, player);
     }
 }

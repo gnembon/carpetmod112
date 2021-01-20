@@ -2,10 +2,9 @@ package carpet.network;
 
 import com.google.common.collect.MultimapBuilder;
 import com.google.common.collect.SetMultimap;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.PlayerList;
-
+import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ServerPlayerEntity;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -25,15 +24,15 @@ public class PluginChannelTracker {
     /**
      * Returns the collection of channels {@code player} is registered to.
      */
-    public Set<String> getChannels(EntityPlayerMP player) {
-        return name2channels.get(player.getName());
+    public Set<String> getChannels(ServerPlayerEntity player) {
+        return name2channels.get(player.method_29611());
     }
 
     /**
      * Returns whether or not {@code player} is reigstered to {@code channel}.
      */
-    public boolean isRegistered(EntityPlayerMP player, String channel) {
-        return name2channels.containsEntry(player.getName(), channel);
+    public boolean isRegistered(ServerPlayerEntity player, String channel) {
+        return name2channels.containsEntry(player.method_29611(), channel);
     }
 
     /**
@@ -47,37 +46,37 @@ public class PluginChannelTracker {
      * Returns the collection of players registered to {@code channel}. The {@code server} is used to look players up
      * by their name.
      */
-    public Set<EntityPlayerMP> getPlayers(String channel) {
-        PlayerList pl = server.getPlayerList();
+    public Set<ServerPlayerEntity> getPlayers(String channel) {
+        PlayerManager pl = server.getPlayerManager();
         return channel2names.get(channel).stream()
-                .map(pl::getPlayerByUsername)
+                .map(pl::getPlayer)
                 .collect(Collectors.toSet());
     }
 
     /**
      * Registers {@code player} on {@code channel}.
      */
-    public void register(EntityPlayerMP player, String channel) {
-        name2channels.put(player.getName(), channel);
-        channel2names.put(channel, player.getName());
+    public void register(ServerPlayerEntity player, String channel) {
+        name2channels.put(player.method_29611(), channel);
+        channel2names.put(channel, player.method_29611());
     }
 
     /**
      * Unregisters {@code player} from {@code channel}.
      */
-    public void unregister(EntityPlayerMP player, String channel) {
-        name2channels.remove(player.getName(), channel);
-        channel2names.remove(channel, player.getName());
+    public void unregister(ServerPlayerEntity player, String channel) {
+        name2channels.remove(player.method_29611(), channel);
+        channel2names.remove(channel, player.method_29611());
     }
 
     /**
      * Unregisters {@code player} from all channels.
      */
-    public void unregisterAll(EntityPlayerMP player) {
+    public void unregisterAll(ServerPlayerEntity player) {
         for (String channel : getChannels(player)) {
-            channel2names.remove(channel, player.getName());
+            channel2names.remove(channel, player.method_29611());
         }
-        name2channels.removeAll(player.getName());
+        name2channels.removeAll(player.method_29611());
     }
 
 }

@@ -1,40 +1,40 @@
 package carpet.commands;
 
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
 
 public class CommandPing extends CommandCarpetBase
 {
 
     @Override
-    public String getName()
+    public String method_29277()
     {
         return "ping";
     }
 
     @Override
-    public String getUsage(ICommandSender sender)
+    public String method_29275(class_2010 sender)
     {
         return "/ping";
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandPing", sender))
             return;
 
-        if (sender instanceof EntityPlayerMP)
+        if (sender instanceof ServerPlayerEntity)
         {
-            int ping = ((EntityPlayerMP) sender).ping;
-            sender.sendMessage(new TextComponentString("Your ping is: " + ping + " ms"));
+            int ping = ((ServerPlayerEntity) sender).pingMilliseconds;
+            sender.sendMessage(new LiteralText("Your ping is: " + ping + " ms"));
         }
         else
         {
-            throw new CommandException("Only a player can have a ping!");
+            throw new class_6175("Only a player can have a ping!");
         }
     }
 

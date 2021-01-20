@@ -2,15 +2,14 @@ package carpet.commands;
 
 import carpet.helpers.LagSpikeHelper;
 import com.google.common.collect.Collections2;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.DimensionType;
-
+import net.minecraft.world.dimension.DimensionType;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,33 +21,33 @@ public class CommandLagSpike extends CommandCarpetBase {
     private static final long MAX_LAG_TIME = 60000;
 
     @Override
-    public String getName() {
+    public String method_29277() {
         return "lagspike";
     }
 
     @Override
-    public String getUsage(ICommandSender sender) {
+    public String method_29275(class_2010 sender) {
         return "/lagspike <seconds> [tick_phase] [sub_phase] [dimension]";
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
         if (!command_enabled("commandLagspike", sender)) {
             return;
         }
 
         if (args.length < 1) {
-            throw new WrongUsageException(getUsage(sender));
+            throw new class_6182(method_29275(sender));
         }
 
         // don't allow a lag spike which will trigger the watchdog
-        long maxMillis = (long) ((double)((DedicatedServer) server).getMaxTickTime() * 0.9);
+        long maxMillis = (long) ((double)((MinecraftDedicatedServer) server).method_33396() * 0.9);
         if (maxMillis <= 0) {
             maxMillis = MAX_LAG_TIME;
         } else if (maxMillis > MAX_LAG_TIME) {
             maxMillis = MAX_LAG_TIME;
         }
-        int seconds = parseInt(args[0], 1, MathHelper.ceil((double)maxMillis / 1000));
+        int seconds = method_28719(args[0], 1, MathHelper.ceil((double)maxMillis / 1000));
         long millis = (long)seconds * 1000;
         if (millis > maxMillis) {
             millis = maxMillis;
@@ -60,31 +59,31 @@ public class CommandLagSpike extends CommandCarpetBase {
         DimensionType dimension;
         if (phase.isDimensionApplicable()) {
             try {
-                dimension = args.length > 4 ? DimensionType.byName(args[3]) : DimensionType.OVERWORLD;
+                dimension = args.length > 4 ? DimensionType.method_27530(args[3]) : DimensionType.OVERWORLD;
             } catch (IllegalArgumentException e) {
-                throw new CommandException("Invalid dimension: " + args[3]);
+                throw new class_6175("Invalid dimension: " + args[3]);
             }
         } else {
             dimension = null;
         }
 
         LagSpikeHelper.addLagSpike(dimension, phase, subPhase, millis);
-        notifyCommandListener(sender, this, "Lagging the server for " + seconds + " seconds in phase " + phase.name().toLowerCase(Locale.ROOT) + "/" + subPhase.name().toLowerCase(Locale.ROOT));
+        method_28710(sender, this, "Lagging the server for " + seconds + " seconds in phase " + phase.name().toLowerCase(Locale.ROOT) + "/" + subPhase.name().toLowerCase(Locale.ROOT));
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Enum<T>> T parseEnumUnchecked(String arg, Class<? extends Enum<?>> clazz) throws CommandException {
+    private static <T extends Enum<T>> T parseEnumUnchecked(String arg, Class<? extends Enum<?>> clazz) throws class_6175 {
         return parseEnum(arg, (Class<T>) clazz);
     }
 
-    private static <T extends Enum<T>> T parseEnum(String arg, Class<T> clazz) throws CommandException {
+    private static <T extends Enum<T>> T parseEnum(String arg, Class<T> clazz) throws class_6175 {
         arg = arg.toUpperCase(Locale.ROOT);
         for (T val : clazz.getEnumConstants()) {
             if (val.name().equals(arg)) {
                 return val;
             }
         }
-        throw new CommandException("Invalid value: " + arg);
+        throw new class_6175("Invalid value: " + arg);
     }
 
     private static Collection<String> getEnumCompletions(Class<? extends Enum<?>> clazz) {
@@ -92,23 +91,23 @@ public class CommandLagSpike extends CommandCarpetBase {
     }
 
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 2) {
-            return getListOfStringsMatchingLastWord(args, getEnumCompletions(LagSpikeHelper.TickPhase.class));
+            return method_28731(args, getEnumCompletions(LagSpikeHelper.TickPhase.class));
         } else if (args.length >= 3) {
             LagSpikeHelper.TickPhase phase;
             try {
                 phase = parseEnum(args[1], LagSpikeHelper.TickPhase.class);
-            } catch (CommandException e) {
+            } catch (class_6175 e) {
                 return Collections.emptyList();
             }
 
             if (args.length == 3) {
-                return getListOfStringsMatchingLastWord(args, getEnumCompletions(phase.getSubPhaseClass()));
+                return method_28731(args, getEnumCompletions(phase.getSubPhaseClass()));
             }
 
             if (args.length == 4 && phase.isDimensionApplicable()) {
-                return getListOfStringsMatchingLastWord(args, Collections2.transform(Arrays.asList(DimensionType.values()), dimensionType -> dimensionType != null ? dimensionType.getName() : null));
+                return method_28731(args, Collections2.transform(Arrays.asList(DimensionType.values()), dimensionType -> dimensionType != null ? dimensionType.method_27531() : null));
             }
         }
 

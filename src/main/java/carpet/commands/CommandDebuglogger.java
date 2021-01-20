@@ -1,18 +1,18 @@
 package carpet.commands;
 
-import net.minecraft.command.ICommandSender;
+import net.minecraft.class_2010;
 
 public class CommandDebuglogger extends CommandLog {
 
     private final String USAGE = "/logdebug (interactive menu) OR /logdebug <logName> [?option] [player] [handler ...] OR /logdebug <logName> clear [player] OR /logdebug defaults (interactive menu) OR /logdebug setDefault <logName> [?option] [handler ...] OR /logdebug removeDefault <logName>";
 
     @Override
-    public String getName() {
+    public String method_29277() {
         return "logdebug";
     }
 
     @Override
-    public String getUsage(ICommandSender sender) {
+    public String method_29275(class_2010 sender) {
         return USAGE;
     }
 }

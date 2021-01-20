@@ -2,14 +2,13 @@ package carpet.carpetclient;
 
 import com.google.common.collect.Lists;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.EntityPlayerMP;
 import carpet.CarpetSettings;
 import carpet.utils.Messenger;
-import net.minecraft.network.PacketBuffer;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.PacketByteBuf;
 
 public class CarpetClientRuleChanger {
 
@@ -21,12 +20,12 @@ public class CarpetClientRuleChanger {
 
     private static Map<String, Integer> valueIndex = new HashMap<>();
 
-    static void ruleChanger(EntityPlayerMP sender, PacketBuffer data) {
+    static void ruleChanger(ServerPlayerEntity sender, PacketByteBuf data) {
         int type = data.readInt();
         String rule = data.readString(100);
 
         if (CHANGE_RULE == type) {
-            if (sender.canUseCommand(2, "carpet")) {
+            if (sender.method_29603(2, "carpet")) {
                 String[] options = CarpetSettings.getOptions(rule);
                 int index = valueIndex.getOrDefault(rule.toLowerCase(Locale.ENGLISH), -1);
                 if (index == -1) {
@@ -41,14 +40,14 @@ public class CarpetClientRuleChanger {
                 Messenger.m(sender, "r You do not have permissions to change the rules.");
             }
         } else if (CHANGE_TEXT_RULE == type) {
-            if (sender.canUseCommand(2, "carpet")) {
+            if (sender.method_29603(2, "carpet")) {
                 String value = data.readString(100);
                 ruleChangeLogic(sender, rule, value);
             } else {
                 Messenger.m(sender, "r You do not have permissions to change the rules.");
             }
         } else if (RESET_RULE == type) {
-            if (sender.canUseCommand(2, "carpet")) {
+            if (sender.method_29603(2, "carpet")) {
                 String value = CarpetSettings.getDefault(rule);
                 ruleChangeLogic(sender, rule, value);
                 valueIndex.put(rule.toLowerCase(Locale.ENGLISH), 0);
@@ -60,14 +59,14 @@ public class CarpetClientRuleChanger {
         }
     }
 
-    private static void ruleChangeLogic(EntityPlayerMP sender, String rule, String value) {
+    private static void ruleChangeLogic(ServerPlayerEntity sender, String rule, String value) {
         CarpetSettings.set(rule, value);
         String s = CarpetSettings.getDescription(rule) + " is set to: " + CarpetSettings.get(rule);
-        Messenger.print_server_message(sender.getEntityWorld().getMinecraftServer(), s);
+        Messenger.print_server_message(sender.method_29608().getServer(), s);
     }
 
     public static void updateCarpetClientsRule(String rule, String value) {
-        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
 
         data.writeInt(CarpetClientMessageHandler.RULE_REQUEST);
         data.writeString(rule);
@@ -77,8 +76,8 @@ public class CarpetClientRuleChanger {
         CarpetClientServer.sender(data);
     }
 
-    static void updatePlayerRuleInfo(EntityPlayerMP sender, String rule, String value) {
-        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+    static void updatePlayerRuleInfo(ServerPlayerEntity sender, String rule, String value) {
+        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
 
         data.writeInt(CarpetClientMessageHandler.RULE_REQUEST);
         data.writeString(rule);

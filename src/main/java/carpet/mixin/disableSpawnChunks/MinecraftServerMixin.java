@@ -10,12 +10,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
-    @Shadow protected abstract void clearCurrentTask();
+    @Shadow protected abstract void method_33282();
 
-    @Inject(method = "initialWorldChunkLoad", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V", remap = false), cancellable = true)
+    @Inject(method = "prepareStartRegion", at = @At(value = "INVOKE", target = "Lorg/apache/logging/log4j/Logger;info(Ljava/lang/String;)V", remap = false), cancellable = true)
     private void disableSpawnChunks(CallbackInfo ci) {
         if (CarpetSettings.disableSpawnChunks) {
-            clearCurrentTask();
+            method_33282();
             ci.cancel();
         }
     }

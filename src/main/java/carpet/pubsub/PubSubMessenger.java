@@ -4,15 +4,14 @@ import carpet.network.PacketSplitter;
 import carpet.network.PluginChannelHandler;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.client.CPacketCustomPayload;
-
 import java.io.IOException;
 import java.util.*;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtIo;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.PacketByteBuf;
 
 public class PubSubMessenger implements PluginChannelHandler {
     public static final String CHANNEL_NAME = "carpet:pubsub";
@@ -30,7 +29,7 @@ public class PubSubMessenger implements PluginChannelHandler {
     public static final int TYPE_DOUBLE = 5;
 
     private final PubSubManager pubSub;
-    private final Map<EntityPlayerMP, Map<PubSubNode, PubSubSubscriber>> subscriptions = new WeakHashMap<>();
+    private final Map<ServerPlayerEntity, Map<PubSubNode, PubSubSubscriber>> subscriptions = new WeakHashMap<>();
 
     public PubSubMessenger(PubSubManager pubSub) {
         this.pubSub = pubSub;
@@ -41,7 +40,7 @@ public class PubSubMessenger implements PluginChannelHandler {
         return new String[]{CHANNEL_NAME};
     }
 
-    public void subscribe(EntityPlayerMP player, Collection<String> nodes) {
+    public void subscribe(ServerPlayerEntity player, Collection<String> nodes) {
         Map<PubSubNode, PubSubSubscriber> playerSubscriptions = subscriptions.computeIfAbsent(player, p -> new HashMap<>());
         Set<PubSubNode> addedNodes = new HashSet<>();
         for (String nodeName : nodes) {
@@ -62,7 +61,7 @@ public class PubSubMessenger implements PluginChannelHandler {
         }
         if (deduplicatedNodes.isEmpty()) return;
         PubSubSubscriber subscriber = (node, value) -> {
-            PacketBuffer packet = makeUpdatePacket(Collections.singletonMap(node, value));
+            PacketByteBuf packet = makeUpdatePacket(Collections.singletonMap(node, value));
             PacketSplitter.send(player, CHANNEL_NAME, packet);
         };
         for (PubSubNode node : deduplicatedNodes) {
@@ -71,7 +70,7 @@ public class PubSubMessenger implements PluginChannelHandler {
         }
     }
 
-    private void unsubscribe(EntityPlayerMP player, Collection<String> nodes) {
+    private void unsubscribe(ServerPlayerEntity player, Collection<String> nodes) {
         Map<PubSubNode, PubSubSubscriber> playerSubscriptions = subscriptions.get(player);
         if (playerSubscriptions == null) return;
         for (String nodeName : nodes) {
@@ -92,20 +91,20 @@ public class PubSubMessenger implements PluginChannelHandler {
             value : type dependent
         }[size]
      */
-    private static PacketBuffer makeUpdatePacket(Map<PubSubNode, Object> updates) {
-        PacketBuffer buf = new PacketBuffer(Unpooled.buffer());
+    private static PacketByteBuf makeUpdatePacket(Map<PubSubNode, Object> updates) {
+        PacketByteBuf buf = new PacketByteBuf(Unpooled.buffer());
         buf.writeVarInt(PACKET_S2C_UPDATE);
         buf.writeVarInt(updates.size());
         for (Map.Entry<PubSubNode, Object> update : updates.entrySet()) {
             String nodeName = update.getKey().fullName;
             Object value = update.getValue();
             buf.writeString(nodeName);
-            if (value instanceof NBTBase) {
-                NBTTagCompound tag = makeCompound((NBTBase) value);
+            if (value instanceof Tag) {
+                CompoundTag tag = makeCompound((Tag) value);
                 buf.writeVarInt(TYPE_NBT);
                 ByteBufOutputStream out = new ByteBufOutputStream(buf);
                 try {
-                    CompressedStreamTools.write(tag, out);
+                    NbtIo.write(tag, out);
                 } catch (IOException ignored) {} // ByteBufOutputStream doesn't throw IOExceptions
             } else if (value instanceof String) {
                 buf.writeVarInt(TYPE_STRING);
@@ -129,14 +128,14 @@ public class PubSubMessenger implements PluginChannelHandler {
         return buf;
     }
 
-    private static NBTTagCompound makeCompound(NBTBase tag) {
-        if (tag instanceof NBTTagCompound) return (NBTTagCompound) tag;
-        NBTTagCompound compound = new NBTTagCompound();
-        compound.setTag("", tag);
+    private static CompoundTag makeCompound(Tag tag) {
+        if (tag instanceof CompoundTag) return (CompoundTag) tag;
+        CompoundTag compound = new CompoundTag();
+        compound.put("", tag);
         return compound;
     }
 
-    private static List<String> readNames(PacketBuffer buf) {
+    private static List<String> readNames(PacketByteBuf buf) {
         int count = buf.readVarInt();
         List<String> names = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
@@ -146,8 +145,8 @@ public class PubSubMessenger implements PluginChannelHandler {
     }
 
     @Override
-    public void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player) {
-        PacketBuffer payload = PacketSplitter.receive(player, packet);
+    public void onCustomPayload(CustomPayloadC2SPacket packet, ServerPlayerEntity player) {
+        PacketByteBuf payload = PacketSplitter.receive(player, packet);
         if (payload == null) return;
         int id = payload.readVarInt();
         switch (id) {
@@ -164,7 +163,7 @@ public class PubSubMessenger implements PluginChannelHandler {
     }
 
     @Override
-    public void unregister(String channel, EntityPlayerMP player) {
+    public void unregister(String channel, ServerPlayerEntity player) {
         if (!subscriptions.containsKey(player)) return;
         for (Map.Entry<PubSubNode, PubSubSubscriber> subscription : subscriptions.get(player).entrySet()) {
             subscription.getKey().unsubscribe(subscription.getValue());

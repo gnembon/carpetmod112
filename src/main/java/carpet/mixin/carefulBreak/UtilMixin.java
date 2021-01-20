@@ -12,7 +12,7 @@ import java.util.concurrent.FutureTask;
 
 @Mixin(Util.class)
 public class UtilMixin {
-    @Inject(method = "runTask", at = @At(value = "RETURN", ordinal = 1))
+    @Inject(method = "executeTask", at = @At(value = "RETURN", ordinal = 1))
     private static void clearPlayerMinedBlock(FutureTask<?> task, Logger logger, CallbackInfoReturnable<?> cir) {
         CarefulBreakHelper.miningPlayer = null;
     }

@@ -23,21 +23,20 @@ import carpet.helpers.RandomTickOptimization;
 import carpet.helpers.ScoreboardDelta;
 import carpet.mixin.accessors.BlockAccessor;
 import carpet.mixin.accessors.WorldAccessor;
-import carpet.patches.BlockWool;
+import carpet.patches.WoolBlock;
 import carpet.utils.TickingArea;
 import carpet.utils.extensions.WorldWithBlockEventSerializer;
 import carpet.worldedit.WorldEditBridge;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.BlockFalling;
-import net.minecraft.init.Blocks;
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import net.minecraft.block.Blocks;
+import net.minecraft.block.FallingBlock;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.MinecraftDedicatedServer;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.ColumnPos;
 
 import static carpet.CarpetSettings.RuleCategory.*;
 
@@ -162,9 +161,9 @@ public final class CarpetSettings
 
     private static boolean validateInstantFallingFlag(boolean value) {
         if (value) {
-            BlockFalling.fallInstantly = true;
+            FallingBlock.field_24383 = true;
         }else {
-            BlockFalling.fallInstantly = false;
+            FallingBlock.field_24383 = false;
         }
         return true;
     }
@@ -173,7 +172,7 @@ public final class CarpetSettings
     public static boolean instantScheduling = false;
     private static boolean validateInstantScheduling(boolean value) {
         for (int dim = 0; dim < 3; dim++) {
-            WorldServer world = CarpetServer.minecraft_server.worlds[dim];
+            ServerWorld world = CarpetServer.minecraft_server.worlds[dim];
             ((WorldAccessor) world).setScheduledUpdatesAreImmediate(value);
         }
         return true;
@@ -223,7 +222,7 @@ public final class CarpetSettings
 
     private static boolean validateWirelessRedstone(boolean value) {
         if (!value)
-            ((BlockWool) Blocks.WOOL).clearWirelessLocations();
+            ((WoolBlock) Blocks.WOOL).clearWirelessLocations();
         return true;
     }
 
@@ -319,9 +318,9 @@ public final class CarpetSettings
     public static boolean flyingMachineTransparent = false;
     private static boolean validateFlyingMachineTransparent(boolean value) {
         int newOpacity = value ? 0 : 255;
-        ((BlockAccessor) Blocks.OBSERVER).invokeSetLightOpacity(newOpacity);
-        ((BlockAccessor) Blocks.REDSTONE_BLOCK).invokeSetLightOpacity(newOpacity);
-        ((BlockAccessor) Blocks.TNT).invokeSetLightOpacity(newOpacity);
+        ((BlockAccessor) Blocks.OBSERVER).invokeSetOpacity(newOpacity);
+        ((BlockAccessor) Blocks.REDSTONE_BLOCK).invokeSetOpacity(newOpacity);
+        ((BlockAccessor) Blocks.TNT).invokeSetOpacity(newOpacity);
         return true;
     }
 
@@ -379,9 +378,9 @@ public final class CarpetSettings
         if (value != 0 && (value < 2 || value > 64))
             return false;
         if (value == 0)
-            value = ((DedicatedServer) CarpetServer.minecraft_server).getIntProperty("view-distance", 10);
-        if (value != CarpetServer.minecraft_server.getPlayerList().getViewDistance())
-            CarpetServer.minecraft_server.getPlayerList().setViewDistance(value);
+            value = ((MinecraftDedicatedServer) CarpetServer.minecraft_server).method_33353("view-distance", 10);
+        if (value != CarpetServer.minecraft_server.getPlayerManager().getViewDistance())
+            CarpetServer.minecraft_server.getPlayerManager().setViewDistance(value);
         return true;
     }
 
@@ -401,8 +400,8 @@ public final class CarpetSettings
     private static boolean validateDisableSpawnChunks(boolean value) {
         if (!value && CarpetServer.minecraft_server.worlds != null) {
             World overworld = CarpetServer.minecraft_server.worlds[0];
-            for (ChunkPos chunk : new TickingArea.SpawnChunks().listIncludedChunks(overworld))
-                overworld.getChunkProvider().provideChunk(chunk.x, chunk.z);
+            for (ColumnPos chunk : new TickingArea.SpawnChunks().listIncludedChunks(overworld))
+                overworld.getChunkManager().method_27347(chunk.x, chunk.z);
         }
         return true;
     }
@@ -470,7 +469,7 @@ public final class CarpetSettings
     private static boolean validateBlockEventSerializer(boolean value) {
         if (!value){
             for (int dim = 0; dim < 3; dim++) {
-                WorldServer world = CarpetServer.minecraft_server.worlds[dim];
+                ServerWorld world = CarpetServer.minecraft_server.worlds[dim];
                 ((WorldWithBlockEventSerializer) world).getBlockEventSerializer().markDirty();
             }
         }
@@ -1336,7 +1335,7 @@ public final class CarpetSettings
     {
         try
         {
-            File settings_file = server.getActiveAnvilConverter().getFile(server.getFolderName(), "carpet.conf");
+            File settings_file = server.getLevelStorage().method_28330(server.getLevelName(), "carpet.conf");
             BufferedReader b = new BufferedReader(new FileReader(settings_file));
             String line = "";
             Map<String,String> result = new HashMap<String, String>();
@@ -1377,7 +1376,7 @@ public final class CarpetSettings
         if (locked) return;
         try
         {
-            File settings_file = server.getActiveAnvilConverter().getFile(server.getFolderName(), "carpet.conf");
+            File settings_file = server.getLevelStorage().method_28330(server.getLevelName(), "carpet.conf");
             FileWriter fw = new FileWriter(settings_file);
             for (String key: values.keySet())
             {

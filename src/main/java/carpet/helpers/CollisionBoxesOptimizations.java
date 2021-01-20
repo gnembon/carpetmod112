@@ -6,31 +6,31 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.mixin.accessors.WorldAccessor;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.WorldChunk;
 
 public class CollisionBoxesOptimizations
 {
-    public static boolean optimizedGetCollisionBoxes(World world, @Nullable Entity entityIn, AxisAlignedBB aabb, boolean p_191504_3_, @Nullable List<AxisAlignedBB> outList)
+    public static boolean optimizedGetCollisionBoxes(World world, @Nullable Entity entityIn, Box aabb, boolean p_191504_3_, @Nullable List<Box> outList)
     {
-        final int startX = MathHelper.floor(aabb.minX) - 1;
-        final int endX = MathHelper.ceil(aabb.maxX) + 1;
-        final int startY = MathHelper.floor(aabb.minY) - 1;
-        final int endY = MathHelper.ceil(aabb.maxY) + 1;
-        final int startZ = MathHelper.floor(aabb.minZ) - 1;
-        final int endZ = MathHelper.ceil(aabb.maxZ) + 1;
+        final int startX = MathHelper.floor(aabb.x1) - 1;
+        final int endX = MathHelper.ceil(aabb.x2) + 1;
+        final int startY = MathHelper.floor(aabb.y1) - 1;
+        final int endY = MathHelper.ceil(aabb.y2) + 1;
+        final int startZ = MathHelper.floor(aabb.z1) - 1;
+        final int endZ = MathHelper.ceil(aabb.z2) + 1;
         WorldBorder worldborder = world.getWorldBorder();
-        boolean flag = entityIn != null && entityIn.isOutsideBorder();
-        boolean flag1 = entityIn != null && world.isInsideWorldBorder(entityIn);
-        IBlockState stateStone = Blocks.STONE.getDefaultState();
-        BlockPos.PooledMutableBlockPos posMutable = BlockPos.PooledMutableBlockPos.retain();
+        boolean flag = entityIn != null && entityIn.method_34519();
+        boolean flag1 = entityIn != null && world.method_26126(entityIn);
+        BlockState stateStone = Blocks.STONE.getDefaultState();
+        BlockPos.PooledMutable posMutable = BlockPos.PooledMutable.get();
 
         try
         {
@@ -46,12 +46,12 @@ public class CollisionBoxesOptimizations
                 {
                     if (((WorldAccessor) world).invokeIsChunkLoaded(cx, cz, false))
                     {
-                        Chunk chunk = world.getChunk(cx, cz);
+                        WorldChunk chunk = world.method_25975(cx, cz);
                         final int xMin = Math.max(cx << 4, startX);
                         final int zMin = Math.max(cz << 4, startZ);
                         final int xMax = Math.min((cx << 4) + 15, endX - 1);
                         final int zMax = Math.min((cz << 4) + 15, endZ - 1);
-                        final int yMax = Math.min(chunk.getTopFilledSegment() + 15, endY - 1);
+                        final int yMax = Math.min(chunk.method_27410() + 15, endY - 1);
 
                         for (int x = xMin; x <= xMax; ++x)
                         {
@@ -75,11 +75,11 @@ public class CollisionBoxesOptimizations
                                             }
                                             else if (entityIn != null && flag == flag1)
                                             {
-                                                entityIn.setOutsideBorder(! flag1);
+                                                entityIn.method_34565(! flag1);
                                             }
 
-                                            posMutable.setPos(x, y, z);
-                                            IBlockState state;
+                                            posMutable.set(x, y, z);
+                                            BlockState state;
 
                                             if (! p_191504_3_ && ! worldborder.contains(posMutable) && flag1)
                                             {
@@ -90,7 +90,7 @@ public class CollisionBoxesOptimizations
                                                 state = chunk.getBlockState(posMutable);
                                             }
 
-                                            state.addCollisionBoxToList(world, posMutable.toImmutable(), aabb, outList, entityIn, false);
+                                            state.method_27180(world, posMutable.toImmutable(), aabb, outList, entityIn, false);
 
                                             if (p_191504_3_ && ! outList.isEmpty())
                                             {
@@ -107,7 +107,7 @@ public class CollisionBoxesOptimizations
         }
         finally
         {
-            posMutable.release();
+            posMutable.method_31935();
         }
 
         return !outList.isEmpty();

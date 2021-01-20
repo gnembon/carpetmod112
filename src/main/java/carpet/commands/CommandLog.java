@@ -17,35 +17,34 @@ import carpet.logging.LogHandler;
 import carpet.logging.Logger;
 import carpet.logging.LoggerRegistry;
 import carpet.utils.Messenger;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
 public class CommandLog extends CommandCarpetBase {
-
     private final String USAGE = "/log (interactive menu) OR /log <logName> [?option] [player] [handler ...] OR /log <logName> clear [player] OR /log defaults (interactive menu) OR /log setDefault <logName> [?option] [handler ...] OR /log removeDefault <logName>";
 
     @Override
-    public String getName() {
+    public String method_29277() {
         return "log";
     }
 
     @Override
-    public String getUsage(ICommandSender sender) {
+    public String method_29275(class_2010 sender) {
         return USAGE;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandLog", sender)) return;
-        EntityPlayer player = null;
-        if (sender instanceof EntityPlayer)
+        PlayerEntity player = null;
+        if (sender instanceof PlayerEntity)
         {
-            player = (EntityPlayer)sender;
+            player = (PlayerEntity)sender;
         }
 
         if (args.length == 0)
@@ -54,7 +53,7 @@ public class CommandLog extends CommandCarpetBase {
             {
                 return;
             }
-            Map<String, LoggerOptions> subs = LoggerRegistry.getPlayerSubscriptions(player.getName());
+            Map<String, LoggerOptions> subs = LoggerRegistry.getPlayerSubscriptions(player.method_29611());
             if (subs == null)
             {
                 subs = new HashMap<>();
@@ -115,14 +114,14 @@ public class CommandLog extends CommandCarpetBase {
         {
             if (args.length > 1)
             {
-                player = server.getPlayerList().getPlayerByUsername(args[1]);
+                player = server.getPlayerManager().getPlayer(args[1]);
             }
             if (player == null)
             {
-                throw new WrongUsageException("No player specified");
+                throw new class_6182("No player specified");
             }
-            LoggerRegistry.resetSubscriptions(server, player.getName());
-            notifyCommandListener(sender, this, "Unsubscribed from all logs and restored default subscriptions");
+            LoggerRegistry.resetSubscriptions(server, player.method_29611());
+            method_28710(sender, this, "Unsubscribed from all logs and restored default subscriptions");
             return;
         }
 
@@ -198,7 +197,7 @@ public class CommandLog extends CommandCarpetBase {
                     if (args.length >= 4) {
                         handler = LogHandler.createHandler(args[3], ArrayUtils.subarray(args, 4, args.length));
                         if (handler == null) {
-                            throw new CommandException("Invalid handler");
+                            throw new class_6175("Invalid handler");
                         }
                     }
 
@@ -206,10 +205,10 @@ public class CommandLog extends CommandCarpetBase {
                     Messenger.m(player, "gi Added " + logger.getLogName() + " to default subscriptions.");
                     return;
                 } else {
-                    throw new WrongUsageException("No logger named " + args[1] + ".");
+                    throw new class_6182("No logger named " + args[1] + ".");
                 }
             } else {
-                throw new WrongUsageException("No logger specified.");
+                throw new class_6182("No logger specified.");
             }
         }
 
@@ -221,10 +220,10 @@ public class CommandLog extends CommandCarpetBase {
                     Messenger.m(player, "gi Removed " + logger.getLogName() + " from default subscriptions.");
                     return;
                 } else {
-                    throw new WrongUsageException("No logger named " + args[1] + ".");
+                    throw new class_6182("No logger named " + args[1] + ".");
                 }
             } else {
-                throw new WrongUsageException("No logger specified.");
+                throw new class_6182("No logger specified.");
             }
         }
 
@@ -238,11 +237,11 @@ public class CommandLog extends CommandCarpetBase {
             }
             if (args.length >= 3)
             {
-                player = server.getPlayerList().getPlayerByUsername(args[2]);
+                player = server.getPlayerManager().getPlayer(args[2]);
             }
             if (player == null)
             {
-                throw new WrongUsageException("No player specified");
+                throw new class_6182("No player specified");
             }
             LogHandler handler = null;
             if (args.length >= 4)
@@ -250,22 +249,22 @@ public class CommandLog extends CommandCarpetBase {
                 handler = LogHandler.createHandler(args[3], ArrayUtils.subarray(args, 4, args.length));
                 if (handler == null)
                 {
-                    throw new CommandException("Invalid handler");
+                    throw new class_6175("Invalid handler");
                 }
             }
             boolean subscribed = true;
             if (args.length >= 2 && "clear".equalsIgnoreCase(args[1]))
             {
-                LoggerRegistry.unsubscribePlayer(server, player.getName(), logger.getLogName());
+                LoggerRegistry.unsubscribePlayer(server, player.method_29611(), logger.getLogName());
                 subscribed = false;
             }
             else if (option == null)
             {
-                subscribed = LoggerRegistry.togglePlayerSubscription(server, player.getName(), logger.getLogName(), handler);
+                subscribed = LoggerRegistry.togglePlayerSubscription(server, player.method_29611(), logger.getLogName(), handler);
             }
             else
             {
-                LoggerRegistry.subscribePlayer(server, player.getName(), logger.getLogName(), option, handler);
+                LoggerRegistry.subscribePlayer(server, player.method_29611(), logger.getLogName(), option, handler);
             }
             if (subscribed)
             {
@@ -278,12 +277,12 @@ public class CommandLog extends CommandCarpetBase {
         }
         else
         {
-            throw new WrongUsageException("No logger named " + args[0] + ".");
+            throw new class_6182("No logger named " + args[0] + ".");
         }
     }
 
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, BlockPos targetPos)
     {
         if (!CarpetSettings.commandLog)
         {
@@ -296,20 +295,20 @@ public class CommandLog extends CommandCarpetBase {
             options.add("defaults");
             options.add("setDefault");
             options.add("removeDefault");
-            return getListOfStringsMatchingLastWord(args, options);
+            return method_28731(args, options);
         }
         else if (args.length == 2)
         {
             if ("clear".equalsIgnoreCase(args[0]))
             {
-                List<String> players = Arrays.asList(server.getOnlinePlayerNames());
-                return getListOfStringsMatchingLastWord(args, players.toArray(new String[0]));
+                List<String> players = Arrays.asList(server.getPlayerNames());
+                return method_28732(args, players.toArray(new String[0]));
             }
 
             if ("setDefault".equalsIgnoreCase(args[0]) || "removeDefault".equalsIgnoreCase(args[0]))
             {
                 Set<String> options = new HashSet<String>(Arrays.asList(LoggerRegistry.getLoggerNames(classType())));
-                return getListOfStringsMatchingLastWord(args, options);
+                return method_28731(args, options);
             }
 
             Logger logger = LoggerRegistry.getLogger(args[0]);
@@ -322,7 +321,7 @@ public class CommandLog extends CommandCarpetBase {
                     options.addAll(Arrays.asList(opts));
                 else
                     options.add("on");
-                return getListOfStringsMatchingLastWord(args, options.toArray(new String[0]));
+                return method_28732(args, options.toArray(new String[0]));
             }
         }
         else if (args.length == 3)
@@ -337,16 +336,16 @@ public class CommandLog extends CommandCarpetBase {
                     if (opts != null)
                         options.addAll(Arrays.asList(opts));
 
-                    return getListOfStringsMatchingLastWord(args, options.toArray(new String[0]));
+                    return method_28732(args, options.toArray(new String[0]));
                 }
             }
 
-            List<String> players = Arrays.asList(server.getOnlinePlayerNames());
-            return getListOfStringsMatchingLastWord(args, players.toArray(new String[0]));
+            List<String> players = Arrays.asList(server.getPlayerNames());
+            return method_28732(args, players.toArray(new String[0]));
         }
         else if (args.length == 4)
         {
-            return getListOfStringsMatchingLastWord(args, LogHandler.getHandlerNames());
+            return method_28731(args, LogHandler.getHandlerNames());
         }
 
         return Collections.<String>emptyList();

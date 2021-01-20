@@ -6,9 +6,9 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import carpet.utils.BlockInfo;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -19,12 +19,14 @@ public class CommandBlockInfo extends CommandCarpetBase
      * Gets the name of the command
      */
 
-    public String getUsage(ICommandSender sender)
+    @Override
+    public String method_29275(class_2010 sender)
     {
         return "Usage: blockinfo <X> <Y> <Z>";
     }
 
-    public String getName()
+    @Override
+    public String method_29277()
     {
         return "blockinfo";
     }
@@ -32,20 +34,22 @@ public class CommandBlockInfo extends CommandCarpetBase
     /**
      * Callback for when the command is executed
      */
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    @Override
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandBlockInfo", sender)) return;
 
         if (args.length != 3)
         {
-            throw new WrongUsageException(getUsage(sender), new Object[0]);
+            throw new class_6182(method_29275(sender));
         }
-        BlockPos blockpos = parseBlockPos(sender, args, 0, false);
-        World world = sender.getEntityWorld();
+        BlockPos blockpos = method_28713(sender, args, 0, false);
+        World world = sender.method_29608();
         msg(sender, BlockInfo.blockInfo(blockpos, world));
     }
 
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    @Override
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.commandBlockInfo)
         {
@@ -53,7 +57,7 @@ public class CommandBlockInfo extends CommandCarpetBase
         }
         if (args.length > 0 && args.length <= 3)
         {
-            return getTabCompletionCoordinate(args, 0, pos);
+            return method_28730(args, 0, pos);
         }
         return Collections.<String>emptyList();
     }

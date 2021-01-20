@@ -5,9 +5,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArraySet;
-
+import net.minecraft.server.network.ServerPlayerEntity;
 import carpet.CarpetServer;
-import net.minecraft.entity.player.EntityPlayerMP;
 
 /**
  * Caches data that cannot be accessed from another thread safely.
@@ -34,10 +33,10 @@ class ThreadSafeCache {
         if (now - lastRefresh > REFRESH_DELAY) {
             Set<UUID> onlineIds = new HashSet<UUID>();
 
-            for (Object object : CarpetServer.minecraft_server.getPlayerList().getPlayers()) {
+            for (Object object : CarpetServer.minecraft_server.getPlayerManager().getPlayerList()) {
                 if (object != null) {
-                    EntityPlayerMP player = (EntityPlayerMP) object;
-                    onlineIds.add(player.getUniqueID());
+                    ServerPlayerEntity player = (ServerPlayerEntity) object;
+                    onlineIds.add(player.getUuid());
                 }
             }
 

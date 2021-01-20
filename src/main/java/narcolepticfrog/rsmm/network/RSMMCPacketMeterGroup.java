@@ -1,7 +1,7 @@
 package narcolepticfrog.rsmm.network;
 
 import io.netty.buffer.Unpooled;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.PacketByteBuf;
 
 public class RSMMCPacketMeterGroup extends RSMMCPacket {
 
@@ -17,7 +17,7 @@ public class RSMMCPacketMeterGroup extends RSMMCPacket {
         return groupName;
     }
 
-    public static RSMMCPacketMeterGroup fromBuffer(PacketBuffer buffer) {
+    public static RSMMCPacketMeterGroup fromBuffer(PacketByteBuf buffer) {
         Byte messageId = buffer.readByte();
         assert messageId == MESSAGE_ID;
         String groupName = buffer.readString(100);
@@ -25,8 +25,8 @@ public class RSMMCPacketMeterGroup extends RSMMCPacket {
     }
 
     @Override
-    public PacketBuffer toBuffer() {
-        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+    public PacketByteBuf toBuffer() {
+        PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
         buffer.writeByte(MESSAGE_ID);
         buffer.writeString(groupName);
         return buffer;

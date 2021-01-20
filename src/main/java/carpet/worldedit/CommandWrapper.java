@@ -6,8 +6,8 @@ import java.util.List;
 import com.sk89q.worldedit.util.command.CommandMapping;
 
 import carpet.commands.CommandCarpetBase;
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.class_2010;
+import net.minecraft.class_5607;
 import net.minecraft.server.MinecraftServer;
 
 class CommandWrapper extends CommandCarpetBase {
@@ -18,35 +18,35 @@ class CommandWrapper extends CommandCarpetBase {
     }
 
     @Override
-    public String getName() {
+    public String method_29277() {
         return command.getPrimaryAlias();
     }
 
     @Override
-    public List<String> getAliases() {
+    public List<String> method_29274() {
         return Arrays.asList(command.getAllAliases());
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender var1, String[] var2) {}
+    public void method_29272(MinecraftServer server, class_2010 var1, String[] var2) {}
 
     @Override
-    public String getUsage(ICommandSender icommandsender) {
+    public String method_29275(class_2010 sender) {
         return "/" + command.getPrimaryAlias() + " " + command.getDescription().getUsage();
     }
 
     @Override
-    public int getRequiredPermissionLevel() {
+    public int method_28700() {
         return 0;
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+    public boolean method_29271(MinecraftServer server, class_2010 sender) {
         return command_enabled("worldEdit", sender); // Will send an extra vanilla permission message but that's the best we can do
     }
 
     @Override
-    public int compareTo(ICommand o) {
-        return super.compareTo((ICommand) o);
+    public int compareTo(class_5607 o) {
+        return super.compareTo(o);
     }
 }

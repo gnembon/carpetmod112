@@ -18,26 +18,25 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import carpet.mixin.accessors.TemplateManagerAccessor;
+import carpet.mixin.accessors.StructureManagerAccessor;
 import org.apache.logging.log4j.LogManager;
-
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.init.Blocks;
+import net.minecraft.SharedConstants;
+import net.minecraft.block.Blocks;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ChatAllowedCharacters;
-import net.minecraft.util.Mirror;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Rotation;
+import net.minecraft.structure.Structure;
+import net.minecraft.structure.StructureManager;
+import net.minecraft.structure.StructurePlacementData;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.BlockMirror;
+import net.minecraft.util.BlockRotation;
+import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
-import net.minecraft.world.gen.structure.template.PlacementSettings;
-import net.minecraft.world.gen.structure.template.Template;
-import net.minecraft.world.gen.structure.template.TemplateManager;
 
 public class CommandStructure extends CommandCarpetBase
 {
@@ -47,25 +46,25 @@ public class CommandStructure extends CommandCarpetBase
     private static final String USAGE_SAVE = "/structure save <name> <from: x y z> <to: x y z> [ignoreEntities]";
     
     @Override
-    public String getName()
+    public String method_29277()
     {
         return "structure";
     }
 
     @Override
-    public String getUsage(ICommandSender sender)
+    public String method_29275(class_2010 sender)
     {
         return USAGE;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandStructure", sender))
             return;
         
         if (args.length < 1)
-            throw new WrongUsageException(USAGE);
+            throw new class_6182(USAGE);
         
         switch (args[0])
         {
@@ -79,168 +78,168 @@ public class CommandStructure extends CommandCarpetBase
             listStructure(server, sender, args);
             break;
         default:
-            throw new WrongUsageException(USAGE);
+            throw new class_6182(USAGE);
         }
     }
     
-    private void loadStructure(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    private void loadStructure(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (args.length < 2)
-            throw new WrongUsageException(USAGE_LOAD);
+            throw new class_6182(USAGE_LOAD);
         
         args = replaceQuotes(args);
         
         String structureName = args[1];
 
-        for (char illegal : ChatAllowedCharacters.ILLEGAL_STRUCTURE_CHARACTERS)
+        for (char illegal : SharedConstants.field_30776)
             structureName = structureName.replace(illegal, '_');
-        TemplateManager manager = server.worlds[0].getStructureTemplateManager();
-        Template template = manager.get(server, new ResourceLocation(structureName));
+        StructureManager manager = server.worlds[0].getStructureManager();
+        Structure template = manager.method_27994(server, new Identifier(structureName));
         if (template == null)
-            throw new CommandException("Template \"" + args[1] + "\" doesn't exist");
+            throw new class_6175("Template \"" + args[1] + "\" doesn't exist");
         
-        BlockPos origin = sender.getPosition();
+        BlockPos origin = sender.method_29606();
         if (args.length >= 5)
         {
-            origin = parseBlockPos(sender, args, 2, false);
+            origin = method_28713(sender, args, 2, false);
         }
         
-        Mirror mirror = Mirror.NONE;
+        BlockMirror mirror = BlockMirror.NONE;
         if (args.length >= 6)
         {
             switch (args[5])
             {
             case "no_mirror":
-                mirror = Mirror.NONE;
+                mirror = BlockMirror.NONE;
                 break;
             case "mirror_left_right":
-                mirror = Mirror.LEFT_RIGHT;
+                mirror = BlockMirror.LEFT_RIGHT;
                 break;
             case "mirror_front_back":
-                mirror = Mirror.FRONT_BACK;
+                mirror = BlockMirror.FRONT_BACK;
                 break;
             default:
-                throw new CommandException("Unknown mirror: " + args[5]);
+                throw new class_6175("Unknown mirror: " + args[5]);
             }
         }
         
-        Rotation rotation = Rotation.NONE;
+        BlockRotation rotation = BlockRotation.NONE;
         if (args.length >= 7)
         {
             switch (args[6])
             {
             case "rotate_0":
-                rotation = Rotation.NONE;
+                rotation = BlockRotation.NONE;
                 break;
             case "rotate_90":
-                rotation = Rotation.CLOCKWISE_90;
+                rotation = BlockRotation.CLOCKWISE_90;
                 break;
             case "rotate_180":
-                rotation = Rotation.CLOCKWISE_180;
+                rotation = BlockRotation.CLOCKWISE_180;
                 break;
             case "rotate_270":
-                rotation = Rotation.COUNTERCLOCKWISE_90;
+                rotation = BlockRotation.COUNTERCLOCKWISE_90;
                 break;
             default:
-                throw new CommandException("Unknown rotation: " + args[6]);
+                throw new class_6175("Unknown rotation: " + args[6]);
             }
         }
         
         boolean ignoreEntities = true;
         if (args.length >= 8)
         {
-            ignoreEntities = parseBoolean(args[7]);
+            ignoreEntities = method_28744(args[7]);
         }
         
         float integrity = 1;
         if (args.length >= 9)
         {
-            integrity = (float) parseDouble(args[8], 0, 1);
+            integrity = (float) method_28717(args[8], 0, 1);
         }
         
         long seed;
         if (args.length >= 10)
         {
-            seed = parseLong(args[9]);
+            seed = method_28738(args[9]);
         }
         else
         {
             seed = new Random().nextLong();
         }
         
-        PlacementSettings settings = new PlacementSettings().setMirror(mirror).setRotation(rotation).setIgnoreEntities(ignoreEntities).setChunk(null).setReplacedBlock(null).setIgnoreStructureBlock(false);
+        StructurePlacementData settings = new StructurePlacementData().setMirrored(mirror).setRotation(rotation).setIgnoreEntities(ignoreEntities).method_28000(null).method_28001(null).method_28011(false);
         if (integrity < 1)
         {
-            settings.setIntegrity(integrity).setSeed(seed);
+            settings.method_27999(integrity).method_28006(seed);
         }
         
-        template.addBlocksToWorldChunk(sender.getEntityWorld(), origin, settings);
+        template.place(sender.method_29608(), origin, settings);
         
-        notifyCommandListener(sender, this, "Successfully loaded structure " + args[1]);
+        method_28710(sender, this, "Successfully loaded structure " + args[1]);
     }
     
-    private void saveStructure(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    private void saveStructure(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (args.length < 8)
-            throw new WrongUsageException(USAGE_SAVE);
+            throw new class_6182(USAGE_SAVE);
         
         args = replaceQuotes(args);
         
-        BlockPos pos1 = parseBlockPos(sender, args, 2, false);
-        BlockPos pos2 = parseBlockPos(sender, args, 5, false);
+        BlockPos pos1 = method_28713(sender, args, 2, false);
+        BlockPos pos2 = method_28713(sender, args, 5, false);
         
-        StructureBoundingBox bb = new StructureBoundingBox(pos1, pos2);
+        BlockBox bb = new BlockBox(pos1, pos2);
         BlockPos origin = new BlockPos(bb.minX, bb.minY, bb.minZ);
-        BlockPos size = new BlockPos(bb.getXSize(), bb.getYSize(), bb.getZSize());
+        BlockPos size = new BlockPos(bb.getBlockCountX(), bb.getBlockCountY(), bb.getBlockCountZ());
         
         boolean ignoreEntities = true;
         if (args.length >= 9)
         {
-            ignoreEntities = parseBoolean(args[8]);
+            ignoreEntities = method_28744(args[8]);
         }
         
         String structureName = args[1];
-        for (char illegal : ChatAllowedCharacters.ILLEGAL_STRUCTURE_CHARACTERS)
+        for (char illegal : SharedConstants.field_30776)
             structureName = structureName.replace(illegal, '_');
-        TemplateManager manager = server.worlds[0].getStructureTemplateManager();
-        Template template = manager.getTemplate(server, new ResourceLocation(structureName));
-        template.takeBlocksFromWorld(sender.getEntityWorld(), origin, size, !ignoreEntities, Blocks.STRUCTURE_VOID);
-        template.setAuthor(sender.getName());
-        manager.writeTemplate(server, new ResourceLocation(structureName));
+        StructureManager manager = server.worlds[0].getStructureManager();
+        Structure template = manager.method_27992(server, new Identifier(structureName));
+        template.method_28026(sender.method_29608(), origin, size, !ignoreEntities, Blocks.STRUCTURE_VOID);
+        template.setAuthor(sender.method_29611());
+        manager.method_27996(server, new Identifier(structureName));
         
-        notifyCommandListener(sender, this, "Successfully saved structure " + structureName);
+        method_28710(sender, this, "Successfully saved structure " + structureName);
     }
     
-    private void listStructure(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    private void listStructure(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
-        TemplateManager manager = server.worlds[0].getStructureTemplateManager();
+        StructureManager manager = server.worlds[0].getStructureManager();
         List<String> templates = listStructures(manager);
         
         if (templates.isEmpty())
         {
-            sender.sendMessage(new TextComponentString("There are no saved structures yet"));
+            sender.sendMessage(new LiteralText("There are no saved structures yet"));
         }
         else
         {
             final int PAGE_SIZE = 9;
             int pageCount = (templates.size() + PAGE_SIZE - 1) / PAGE_SIZE;
-            int page = args.length >= 2 ? parseInt(args[1]) - 1 : 0;
+            int page = args.length >= 2 ? method_28715(args[1]) - 1 : 0;
             page = MathHelper.clamp(page, 0, pageCount - 1);
             
-            sender.sendMessage(new TextComponentString(TextFormatting.GREEN + "Structure list page " + (page + 1) + " of " + pageCount + " (/structure list <page>)"));
+            sender.sendMessage(new LiteralText(Formatting.GREEN + "Structure list page " + (page + 1) + " of " + pageCount + " (/structure list <page>)"));
             for (int offset = 0; offset < PAGE_SIZE && page * PAGE_SIZE + offset < templates.size(); offset++)
             {
                 String template = templates.get(page * PAGE_SIZE + offset);
-                sender.sendMessage(new TextComponentString("- " + template + " by " + manager.get(server, new ResourceLocation(template)).getAuthor()));
+                sender.sendMessage(new LiteralText("- " + template + " by " + manager.method_27994(server, new Identifier(template)).getAuthor()));
             }
         }
     }
     
-    private static List<String> listStructures(TemplateManager manager)
+    private static List<String> listStructures(StructureManager manager)
     {
         List<String> templates = new ArrayList<>();
         
-        Path baseFolder = Paths.get(((TemplateManagerAccessor) manager).getBaseFolder());
+        Path baseFolder = Paths.get(((StructureManagerAccessor) manager).getBaseFolder());
         try
         {
             if (Files.exists(baseFolder))
@@ -298,7 +297,7 @@ public class CommandStructure extends CommandCarpetBase
     }
     
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, BlockPos targetPos)
     {
         if (args.length == 0)
         {
@@ -306,7 +305,7 @@ public class CommandStructure extends CommandCarpetBase
         }
         else if (args.length == 1)
         {
-            return getListOfStringsMatchingLastWord(args, "load", "save", "list");
+            return method_28732(args, "load", "save", "list");
         }
         else if ("load".equals(args[0]) || "save".equals(args[0]))
         {
@@ -321,42 +320,42 @@ public class CommandStructure extends CommandCarpetBase
                         replaced = true;
                     }
                 }
-                catch (CommandException e)
+                catch (class_6175 e)
                 {
                 }
                 if (!replaced)
                 {
                     String commonPrefix = Arrays.stream(args).skip(1).limit(args.length - 2).collect(Collectors.joining(" "));
-                    List<String> structs = listStructures(server.worlds[0].getStructureTemplateManager());
+                    List<String> structs = listStructures(server.worlds[0].getStructureManager());
                     structs = structs.stream().map(s -> "\"" + s + "\"").collect(Collectors.toList());
                     if (!commonPrefix.isEmpty())
                         structs = structs.stream().filter(s -> s.startsWith(commonPrefix + " ")).map(s -> s.substring(commonPrefix.length() + 1)).collect(Collectors.toList());
                     structs = structs.stream().map(s -> s.split(" ")[0]).collect(Collectors.toList());
-                    return getListOfStringsMatchingLastWord(args, structs);
+                    return method_28731(args, structs);
                 }
             }
             else if (args.length == 2)
             {
-                return getListOfStringsMatchingLastWord(args, listStructures(server.worlds[0].getStructureTemplateManager()).stream().filter(s -> !s.contains(" ")).collect(Collectors.toList()));
+                return method_28731(args, listStructures(server.worlds[0].getStructureManager()).stream().filter(s -> !s.contains(" ")).collect(Collectors.toList()));
             }
             
             if (args.length >= 3 && args.length <= 5)
             {
-                return getTabCompletionCoordinate(args, 2, targetPos);
+                return method_28730(args, 2, targetPos);
             }
             else if ("load".equals(args[0]))
             {
                 if (args.length == 6)
                 {
-                    return getListOfStringsMatchingLastWord(args, "no_mirror", "mirror_left_right", "mirror_front_back");
+                    return method_28732(args, "no_mirror", "mirror_left_right", "mirror_front_back");
                 }
                 else if (args.length == 7)
                 {
-                    return getListOfStringsMatchingLastWord(args, "rotate_0", "rotate_90", "rotate_180", "rotate_270");
+                    return method_28732(args, "rotate_0", "rotate_90", "rotate_180", "rotate_270");
                 }
                 else if (args.length == 8)
                 {
-                    return getListOfStringsMatchingLastWord(args, "true", "false");
+                    return method_28732(args, "true", "false");
                 }
                 else
                 {
@@ -367,11 +366,11 @@ public class CommandStructure extends CommandCarpetBase
             {
                 if (args.length >= 6 && args.length <= 8)
                 {
-                    return getTabCompletionCoordinate(args, 5, targetPos);
+                    return method_28730(args, 5, targetPos);
                 }
                 else if (args.length == 9)
                 {
-                    return getListOfStringsMatchingLastWord(args, "true", "false");
+                    return method_28732(args, "true", "false");
                 }
                 else
                 {
@@ -385,7 +384,7 @@ public class CommandStructure extends CommandCarpetBase
         }
     }
     
-    private static String[] replaceQuotes(String[] args) throws CommandException
+    private static String[] replaceQuotes(String[] args) throws class_6175
     {
         String structureName = args[1];
         if (structureName.startsWith("\""))
@@ -395,7 +394,7 @@ public class CommandStructure extends CommandCarpetBase
                 structureName += " " + args[i++];
             }
             if (!structureName.endsWith("\""))
-                throw new CommandException("Unbalanced \"\" quotes");
+                throw new class_6175("Unbalanced \"\" quotes");
             structureName = structureName.substring(1, structureName.length() - 1);
             String[] newArgs = new String[args.length - (i - 2)];
             newArgs[0] = args[0];

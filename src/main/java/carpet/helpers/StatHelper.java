@@ -7,20 +7,22 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.block.BlockState;
+import net.minecraft.class_1313;
+import net.minecraft.class_5569;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.*;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.PlayerList;
-import net.minecraft.server.management.PlayerProfileCache;
-import net.minecraft.stats.StatBase;
-import net.minecraft.stats.StatCrafting;
-import net.minecraft.stats.StatisticsManager;
-import net.minecraft.stats.StatisticsManagerServer;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentTranslation;
+import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.ServerStatHandler;
+import net.minecraft.stat.Stat;
+import net.minecraft.stat.StatHandler;
+import net.minecraft.class_2590;
+import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.UserCache;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,113 +35,113 @@ import java.util.function.Function;
 
 public class StatHelper {
     private static final Logger LOGGER = LogManager.getLogger();
-    private static Map<UUID, StatisticsManager> cache;
+    private static Map<UUID, StatHandler> cache;
     private static long cacheTime;
-    private static final StatBase[] BLOCK_STATE_STATS = new StatBase[256 * 16];
-    private static final Int2ObjectMap<StatBase> CRAFT_META_STATS = new Int2ObjectOpenHashMap<>();
-    private static final Int2ObjectMap<StatBase> OBJECT_USE_META_STATS = new Int2ObjectOpenHashMap<>();
-    private static final Int2ObjectMap<StatBase> OBJECTS_PICKED_UP_META_STATS = new Int2ObjectOpenHashMap<>();
-    private static final Int2ObjectMap<StatBase> OBJECTS_DROPPED_META_STATS = new Int2ObjectOpenHashMap<>();
+    private static final Stat[] BLOCK_STATE_STATS = new Stat[256 * 16];
+    private static final Int2ObjectMap<Stat> CRAFT_META_STATS = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<Stat> OBJECT_USE_META_STATS = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<Stat> OBJECTS_PICKED_UP_META_STATS = new Int2ObjectOpenHashMap<>();
+    private static final Int2ObjectMap<Stat> OBJECTS_DROPPED_META_STATS = new Int2ObjectOpenHashMap<>();
 
     public static File[] getStatFiles(MinecraftServer server) {
-        File statsDir = new File(server.getWorld(0).getSaveHandler().getWorldDirectory(), "stats");
+        File statsDir = new File(server.getWorldById(0).method_25960().method_28318(), "stats");
         return statsDir.listFiles((dir, name) -> name.endsWith(".json"));
     }
 
-    public static Map<UUID, StatisticsManager> getAllStatistics(MinecraftServer server) {
-        if (cache != null && server.getTickCounter() - cacheTime < 100) return cache;
+    public static Map<UUID, StatHandler> getAllStatistics(MinecraftServer server) {
+        if (cache != null && server.getTicks() - cacheTime < 100) return cache;
         File[] files = getStatFiles(server);
-        HashMap<UUID, StatisticsManager> stats = new HashMap<>();
-        PlayerList players = server.getPlayerList();
+        HashMap<UUID, StatHandler> stats = new HashMap<>();
+        PlayerManager players = server.getPlayerManager();
         for (File file : files) {
             String filename = file.getName();
             String uuidString = filename.substring(0, filename.lastIndexOf(".json"));
             try {
                 UUID uuid = UUID.fromString(uuidString);
-                EntityPlayerMP player = players.getPlayerByUUID(uuid);
+                ServerPlayerEntity player = players.getPlayer(uuid);
                 if (player != null) {
-                    stats.put(uuid, players.getPlayerStatsFile(player));
+                    stats.put(uuid, players.createStatHandler(player));
                 } else {
-                    StatisticsManagerServer manager = new StatisticsManagerServer(server, file);
-                    manager.readStatFile();
+                    ServerStatHandler manager = new ServerStatHandler(server, file);
+                    manager.method_33862();
                     stats.put(uuid, manager);
                 }
             } catch (IllegalArgumentException ignored) {}
         }
         cache = stats;
-        cacheTime = server.getTickCounter();
+        cacheTime = server.getTicks();
         return stats;
     }
 
     @Nullable
     public static String getUsername(MinecraftServer server, UUID uuid) {
-        PlayerProfileCache profileCache = server.getPlayerProfileCache();
-        GameProfile profile = profileCache.getProfileByUUID(uuid);
+        UserCache profileCache = server.getUserCache();
+        GameProfile profile = profileCache.getByUuid(uuid);
         if (profile != null) return profile.getName();
-        MinecraftSessionService sessionService = server.getMinecraftSessionService();
+        MinecraftSessionService sessionService = server.getSessionService();
         profile = sessionService.fillProfileProperties(new GameProfile(uuid, null), false);
         if (profile.isComplete()) return profile.getName();
         LOGGER.warn("Could not find name of user " + uuid);
         return null;
     }
 
-    public static void initialize(Scoreboard scoreboard, MinecraftServer server, ScoreObjective objective) {
+    public static void initialize(Scoreboard scoreboard, MinecraftServer server, ScoreboardObjective objective) {
         LOGGER.info("Initializing " + objective);
-        IScoreCriteria criteria = objective.getCriteria();
-        if (!(criteria instanceof ScoreCriteriaStat)) return;
-        StatBase stat = ((ScoreCriteriaStatAccessor) criteria).getStat();
-        for (Map.Entry<UUID, StatisticsManager> statEntry : getAllStatistics(server).entrySet()) {
-            StatisticsManager stats = statEntry.getValue();
-            int value = stats.readStat(stat);
+        class_1313 criteria = objective.getDisplayName();
+        if (!(criteria instanceof class_5569)) return;
+        Stat stat = ((ScoreCriteriaStatAccessor) criteria).getStat();
+        for (Map.Entry<UUID, StatHandler> statEntry : getAllStatistics(server).entrySet()) {
+            StatHandler stats = statEntry.getValue();
+            int value = stats.method_33903(stat);
             if (value == 0) continue;
             String username = getUsername(server, statEntry.getKey());
             if (username == null) continue;
-            Score score = scoreboard.getOrCreateScore(username, objective);
-            score.setScorePoints(value);
+            ScoreboardPlayerScore score = scoreboard.getPlayerScore(username, objective);
+            score.setScore(value);
             LOGGER.info("Initialized score " + objective.getName() + " of " + username + " to " + value);
         }
     }
 
-    public static StatBase getBlockStateStats(IBlockState state) {
+    public static Stat getBlockStateStats(BlockState state) {
         Block block = state.getBlock();
-        int id = Block.getIdFromBlock(block);
-        int meta = block.getMetaFromState(state);
+        int id = Block.getId(block);
+        int meta = block.getMeta(state);
         return BLOCK_STATE_STATS[(id << 4) | meta];
     }
 
-    public static StatBase getCraftStats(Item item, int meta) {
-        int id = Item.getIdFromItem(item);
+    public static Stat getCraftStats(Item item, int meta) {
+        int id = Item.getRawId(item);
         return CRAFT_META_STATS.get((id << 4) | (meta & 0xf));
     }
 
-    public static StatBase getObjectUseStats(Item item, int meta) {
-        int id = Item.getIdFromItem(item);
+    public static Stat getObjectUseStats(Item item, int meta) {
+        int id = Item.getRawId(item);
         return OBJECT_USE_META_STATS.get((id << 4) | (meta & 0xf));
     }
 
-    public static StatBase getObjectsPickedUpStats(Item item, int meta) {
-        int id = Item.getIdFromItem(item);
+    public static Stat getObjectsPickedUpStats(Item item, int meta) {
+        int id = Item.getRawId(item);
         return OBJECTS_PICKED_UP_META_STATS.get((id << 4) | (meta & 0xf));
     }
 
-    public static StatBase getDroppedObjectStats(Item item, int meta) {
-        int id = Item.getIdFromItem(item);
+    public static Stat getDroppedObjectStats(Item item, int meta) {
+        int id = Item.getRawId(item);
         return OBJECTS_DROPPED_META_STATS.get((id << 4) | (meta & 0xf));
     }
 
     private interface StatStorage {
-        void store(int stateId, StatBase stat);
+        void store(int stateId, Stat stat);
     }
 
-    private static void registerSubStats(StatCrafting baseStat, StatStorage storage, Function<ITextComponent, TextComponentTranslation> textFun) {
+    private static void registerSubStats(class_2590 baseStat, StatStorage storage, Function<Text, TranslatableText> textFun) {
         Item item = ((StatCraftingAccessor) baseStat).getItem();
-        int id = Item.getIdFromItem(item);
-        if (item.getHasSubtypes()) {
+        int id = Item.getRawId(item);
+        if (item.hasVariants()) {
             for (int meta = 0; meta < 16; meta++) {
                 int stateId = (id << 4) | meta;
                 ItemStack stackWithMeta = new ItemStack(item, 1, meta);
-                ITextComponent text = textFun.apply(stackWithMeta.getTextComponent());
-                StatSubItem statWithMeta = (StatSubItem) new StatSubItem(baseStat, meta, text).registerStat();
+                Text text = textFun.apply(stackWithMeta.toHoverableText());
+                StatSubItem statWithMeta = (StatSubItem) new StatSubItem(baseStat, meta, text).method_33869();
                 storage.store(stateId, statWithMeta);
             }
         } else {
@@ -150,23 +152,23 @@ public class StatHelper {
         }
     }
 
-    public static void addCraftStats(StatCrafting baseStat) {
-        registerSubStats(baseStat, CRAFT_META_STATS::put, text -> new TextComponentTranslation("stat.craftItem", text));
+    public static void addCraftStats(class_2590 baseStat) {
+        registerSubStats(baseStat, CRAFT_META_STATS::put, text -> new TranslatableText("stat.craftItem", text));
     }
 
-    public static void addMineStats(StatCrafting baseStat) {
-        registerSubStats(baseStat, (state, stat) -> BLOCK_STATE_STATS[state] = stat, text -> new TextComponentTranslation("stat.mineBlock", text));
+    public static void addMineStats(class_2590 baseStat) {
+        registerSubStats(baseStat, (state, stat) -> BLOCK_STATE_STATS[state] = stat, text -> new TranslatableText("stat.mineBlock", text));
     }
 
-    public static void addUseStats(StatCrafting baseStat) {
-        registerSubStats(baseStat, OBJECT_USE_META_STATS::put, text -> new TextComponentTranslation("stat.useItem", text));
+    public static void addUseStats(class_2590 baseStat) {
+        registerSubStats(baseStat, OBJECT_USE_META_STATS::put, text -> new TranslatableText("stat.useItem", text));
     }
 
-    public static void addPickedUpStats(StatCrafting baseStat) {
-        registerSubStats(baseStat, OBJECTS_PICKED_UP_META_STATS::put, text -> new TextComponentTranslation("stat.pickup", text));
+    public static void addPickedUpStats(class_2590 baseStat) {
+        registerSubStats(baseStat, OBJECTS_PICKED_UP_META_STATS::put, text -> new TranslatableText("stat.pickup", text));
     }
 
-    public static void addDroppedStats(StatCrafting baseStat) {
-        registerSubStats(baseStat, OBJECTS_DROPPED_META_STATS::put, text -> new TextComponentTranslation("stat.drop", text));
+    public static void addDroppedStats(class_2590 baseStat) {
+        registerSubStats(baseStat, OBJECTS_DROPPED_META_STATS::put, text -> new TranslatableText("stat.drop", text));
     }
 }

@@ -1,108 +1,108 @@
 package carpet.helpers;
 
 import carpet.CarpetSettings;
-import carpet.mixin.accessors.EntityLivingBaseAccessor;
+import carpet.mixin.accessors.LivingEntityAccessor;
+import net.minecraft.class_3092;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
-import net.minecraft.entity.ai.EntityMoveHelper;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityLargeFireball;
-import net.minecraft.init.Items;
+import net.minecraft.entity.ai.control.MoveControl;
+import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.mob.GhastEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.FireballEntity;
+import net.minecraft.item.Items;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 
 public class GhastHelper
 {
     /*target selector to make sure no player with names is chosen
      */
-    public static class GhastEntityAIFindEntityNearestPlayer extends EntityAIFindEntityNearestPlayer
+    public static class GhastEntityAIFindEntityNearestPlayer extends class_3092
     {
-        private EntityLiving entity;
-        public GhastEntityAIFindEntityNearestPlayer(EntityLiving entityLivingIn)
+        private MobEntity entity;
+        public GhastEntityAIFindEntityNearestPlayer(MobEntity entityLivingIn)
         {
             super(entityLivingIn);
             this.entity = entityLivingIn;
         }
 
         @Override
-        public boolean shouldExecute()
+        public boolean canStart()
         {
-            if (CarpetSettings.rideableGhasts && entity.hasCustomName())
+            if (CarpetSettings.rideableGhasts && entity.method_34200())
             {
                 return false;
             }
-            return super.shouldExecute();
+            return super.canStart();
         }
 
         @Override
-        public boolean shouldContinueExecuting()
+        public boolean shouldContinue()
         {
-            if (CarpetSettings.rideableGhasts && entity.hasCustomName())
+            if (CarpetSettings.rideableGhasts && entity.method_34200())
             {
                 return false;
             }
-            return super.shouldContinueExecuting();
+            return super.shouldContinue();
         }
 
     }
-    public static boolean is_yo_bro(EntityGhast ghast, EntityPlayer player)
+    public static boolean is_yo_bro(GhastEntity ghast, PlayerEntity player)
     {
-        return (ghast.hasCustomName() && player.getGameProfile().getName().equals(ghast.getCustomNameTag()));
+        return (ghast.method_34200() && player.getGameProfile().getName().equals(ghast.method_34510()));
     }
-    public static boolean holds_yo_tear(EntityPlayer player)
+    public static boolean holds_yo_tear(PlayerEntity player)
     {
         return (
-                (!player.getHeldItemMainhand().isEmpty() &&
-                        player.getHeldItemMainhand().getItem() == Items.GHAST_TEAR)
+                (!player.getMainHandStack().isEmpty() &&
+                        player.getMainHandStack().getItem() == Items.GHAST_TEAR)
                         ||
-                (!player.getHeldItemOffhand().isEmpty() &&
-                                player.getHeldItemOffhand().getItem() == Items.GHAST_TEAR)
+                (!player.getOffHandStack().isEmpty() &&
+                                player.getOffHandStack().getItem() == Items.GHAST_TEAR)
         );
     }
     /*sets off fireball on demand
      */
-    public static void set_off_fball(EntityGhast ghast, World world, EntityPlayer player)
+    public static void set_off_fball(GhastEntity ghast, World world, PlayerEntity player)
     {
-        world.playEvent((EntityPlayer)null, 1015, new BlockPos(ghast), 0);
-        Vec3d vec3d = player.getLook(1.0F);
-        world.playEvent((EntityPlayer)null, 1016, new BlockPos(ghast), 0);
-        EntityLargeFireball entitylargefireball = new EntityLargeFireball(world, player, 30.0*vec3d.x, 30.0*vec3d.y, 30.0*vec3d.z);
+        world.method_25985(null, 1015, new BlockPos(ghast), 0);
+        Vec3d vec3d = player.method_34535(1.0F);
+        world.method_25985(null, 1016, new BlockPos(ghast), 0);
+        FireballEntity entitylargefireball = new FireballEntity(world, player, 30.0*vec3d.x, 30.0*vec3d.y, 30.0*vec3d.z);
         entitylargefireball.explosionPower = ghast.getFireballStrength();
-        entitylargefireball.posX = ghast.posX + vec3d.x * 4.0D;
-        entitylargefireball.posY = ghast.posY + (double)(ghast.height / 2.0F) +vec3d.y * 4.0D+ 0.5D;
-        entitylargefireball.posZ = ghast.posZ + vec3d.z * 4.0D;
-        world.spawnEntity(entitylargefireball);
+        entitylargefireball.field_33071 = ghast.field_33071 + vec3d.x * 4.0D;
+        entitylargefireball.field_33072 = ghast.field_33072 + (double)(ghast.field_33002 / 2.0F) +vec3d.y * 4.0D+ 0.5D;
+        entitylargefireball.field_33073 = ghast.field_33073 + vec3d.z * 4.0D;
+        world.method_26040(entitylargefireball);
     }
 
     /*rided ghast follows rider's tear clues
     */
-    public static class AIFollowClues extends EntityAIBase
+    public static class AIFollowClues extends Goal
     {
-        private final EntityGhast parentEntity;
-        private EntityPlayer rider = null;
-        public AIFollowClues(EntityGhast ghast)
+        private final GhastEntity parentEntity;
+        private PlayerEntity rider = null;
+        public AIFollowClues(GhastEntity ghast)
         {
             this.parentEntity = ghast;
-            this.setMutexBits(1);
+            this.method_34938(1);
         }
-        public boolean shouldExecute()
+        public boolean canStart()
         {
             if (!CarpetSettings.rideableGhasts)
             {
                 return false;
             }
-            if (this.parentEntity.isBeingRidden())
+            if (this.parentEntity.hasPassengers())
             {
-                Entity p = this.parentEntity.getControllingPassenger();
-                if (p instanceof EntityPlayer)
+                Entity p = this.parentEntity.getPrimaryPassenger();
+                if (p instanceof PlayerEntity)
                 {
-                    if (holds_yo_tear((EntityPlayer)p))
+                    if (holds_yo_tear((PlayerEntity)p))
                     {
                         return true;
                     }
@@ -111,11 +111,11 @@ public class GhastHelper
             return false;
             //return (this.parentEntity.isBeingRidden() && this.parentEntity.getPassengers().get(0) instanceof EntityPlayer);
         }
-        public void startExecuting()
+        public void start()
         {
-            rider = (EntityPlayer)this.parentEntity.getControllingPassenger();
+            rider = (PlayerEntity)this.parentEntity.getPrimaryPassenger();
         }
-        public void resetTask()
+        public void stop()
         {
             this.rider = null;
         }
@@ -124,10 +124,10 @@ public class GhastHelper
             //return new Vec3d(v.zCoord+v.yCoord, -v.zCoord+v.xCoord, -v.yCoord-v.xCoord);
             //return new Vec3d(v.zCoord+v.yCoord, 0.0, -v.yCoord-v.xCoord);
         //}
-        public void updateTask()
+        public void tick()
         {
-            float strafe = rider.moveStrafing;
-            float forward = rider.moveForward;
+            float strafe = rider.sidewaysSpeed;
+            float forward = rider.forwardSpeed;
             if (forward <= 0.0F)
             {
                 forward *= 0.5F;
@@ -135,10 +135,10 @@ public class GhastHelper
             Vec3d vec3d = Vec3d.ZERO;
             if (forward != 0.0f)
             {
-                vec3d = rider.getLook(1.0F);
+                vec3d = rider.method_34535(1.0F);
                 if (forward < 0.0f)
                 {
-                    vec3d = vec3d.subtractReverse(Vec3d.ZERO);
+                    vec3d = vec3d.reverseSubtract(Vec3d.ZERO);
                 }
             }
             if (strafe != 0.0f)
@@ -148,47 +148,47 @@ public class GhastHelper
 
                 //strafe_vec = new Vec3d(strafe_vec.xCoord, 0.0f, strafe_vec.zCoord);
                 //vec3d = vec3d.add(strafe_vec);
-                float c = MathHelper.cos(rider.rotationYaw* 0.017453292F);
-                float s = MathHelper.sin(rider.rotationYaw* 0.017453292F);
+                float c = MathHelper.cos(rider.yaw* 0.017453292F);
+                float s = MathHelper.sin(rider.yaw* 0.017453292F);
                 vec3d = new Vec3d(vec3d.x+c*strafe,vec3d.y,vec3d.z+s*strafe);
             }
-            if (((EntityLivingBaseAccessor) rider).isJumping())
+            if (((LivingEntityAccessor) rider).isJumping())
             {
                 vec3d = new Vec3d(vec3d.x,vec3d.y+1.0D,vec3d.z);
             }
             if (!(vec3d.equals(Vec3d.ZERO)))
             {
-                this.parentEntity.getMoveHelper().setMoveTo(this.parentEntity.posX+vec3d.x, this.parentEntity.posY+vec3d.y,this.parentEntity.posZ+vec3d.z, 1.0D );
+                this.parentEntity.method_34810().moveTo(this.parentEntity.field_33071 + vec3d.x, this.parentEntity.field_33072 + vec3d.y,this.parentEntity.field_33073 + vec3d.z, 1.0D );
             }
             else
             {
-                this.parentEntity.getMoveHelper().action = EntityMoveHelper.Action.WAIT;
+                this.parentEntity.method_34810().state = MoveControl.State.WAIT;
             }
         }
     }
 
     /* homing abilities to find the player
     */
-    public static class AIFindOwner extends EntityAIBase
+    public static class AIFindOwner extends Goal
     {
-        private final EntityGhast parentEntity;
-        private EntityPlayer owner = null;
-        public AIFindOwner(EntityGhast ghast)
+        private final GhastEntity parentEntity;
+        private PlayerEntity owner = null;
+        public AIFindOwner(GhastEntity ghast)
         {
             this.parentEntity = ghast;
-            this.setMutexBits(1);
+            this.method_34938(1);
         }
 
-        private EntityPlayer findOwner()
+        private PlayerEntity findOwner()
         {
-            if (!this.parentEntity.isBeingRidden() && this.parentEntity.hasCustomName())
+            if (!this.parentEntity.hasPassengers() && this.parentEntity.method_34200())
             {
-                EntityPlayer player = ((WorldServer)this.parentEntity.getEntityWorld()).getMinecraftServer().getPlayerList().getPlayerByUsername(this.parentEntity.getCustomNameTag());
-                if (player != null && player.dimension == this.parentEntity.dimension && this.parentEntity.getDistanceSq(player) < 300.0D*300.0D)
+                PlayerEntity player = this.parentEntity.method_29608().getServer().getPlayerManager().getPlayer(this.parentEntity.method_34510());
+                if (player != null && player.field_33045 == this.parentEntity.field_33045 && this.parentEntity.method_34553(player) < 300.0D*300.0D)
                 {
-                    if (!(player.isRiding() && player.getRidingEntity() instanceof EntityGhast))
+                    if (!(player.hasVehicle() && player.getVehicle() instanceof GhastEntity))
                     {
-                        if (this.parentEntity.getDistanceSq(player) > 10.0D*10.0D && holds_yo_tear(player))
+                        if (this.parentEntity.method_34553(player) > 10.0D*10.0D && holds_yo_tear(player))
                         {
                             return player;
                         }
@@ -198,7 +198,7 @@ public class GhastHelper
             return null;
         }
 
-        public boolean shouldExecute()
+        public boolean canStart()
         {
             if (!CarpetSettings.rideableGhasts)
             {
@@ -209,7 +209,7 @@ public class GhastHelper
                 owner = null;
                 return false;
             }
-            if (this.parentEntity.getRNG().nextInt(5) != 0)
+            if (this.parentEntity.getRandom().nextInt(5) != 0)
             {
                 return false;
             }
@@ -221,22 +221,22 @@ public class GhastHelper
             }
             return true;
         }
-        public void startExecuting()
+        public void start()
         {
             continueExecuting();
         }
-        public void resetTask()
+        public void stop()
         {
             this.owner = null;
         }
         public boolean continueExecuting()
         {
-            if (owner != null && owner.dimension == this.parentEntity.dimension)
+            if (owner != null && owner.field_33045 == this.parentEntity.field_33045)
                 {
-                    if (this.parentEntity.getDistanceSq(owner) > 50D && holds_yo_tear(owner))
+                    if (this.parentEntity.method_34553(owner) > 50D && holds_yo_tear(owner))
                     {
-                        Vec3d target = new Vec3d(this.owner.posX-this.parentEntity.posX, this.owner.posY-this.parentEntity.posY,this.owner.posZ-this.parentEntity.posZ).normalize();
-                        this.parentEntity.getMoveHelper().setMoveTo((double)this.parentEntity.posX+target.x, (double)this.parentEntity.posY+target.y, (double)this.parentEntity.posZ+target.z, 1.0D);
+                        Vec3d target = new Vec3d(this.owner.field_33071 - this.parentEntity.field_33071, this.owner.field_33072 - this.parentEntity.field_33072,this.owner.field_33073 - this.parentEntity.field_33073).normalize();
+                        this.parentEntity.method_34810().moveTo(this.parentEntity.field_33071 + target.x, this.parentEntity.field_33072 + target.y, this.parentEntity.field_33073 + target.z, 1.0D);
                         return true;
                     }
                 }

@@ -7,14 +7,14 @@ import com.google.common.collect.Lists;
 
 import carpet.CarpetSettings;
 import carpet.utils.TickingArea;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.NumberInvalidException;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6178;
+import net.minecraft.class_6182;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.World;
 
 public class CommandTickingArea extends CommandCarpetBase
@@ -27,25 +27,25 @@ public class CommandTickingArea extends CommandCarpetBase
     private static final String USAGE_REMOVE = "/tickingarea remove <name|chunkPos: x z>";
     
     @Override
-    public String getName()
+    public String method_29277()
     {
         return "tickingarea";
     }
 
     @Override
-    public String getUsage(ICommandSender sender)
+    public String method_29275(class_2010 sender)
     {
         return USAGE;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("tickingAreas", sender))
             return;
         
         if (args.length < 1)
-            throw new WrongUsageException(USAGE);
+            throw new class_6182(USAGE);
         
         switch (args[0])
         {
@@ -62,21 +62,21 @@ public class CommandTickingArea extends CommandCarpetBase
             listTickingAreas(sender, args);
             break;
         default:
-            throw new WrongUsageException(USAGE);
+            throw new class_6182(USAGE);
         }
     }
     
-    private static ChunkPos parseChunkPos(ICommandSender sender, String[] args, int index) throws CommandException
+    private static ColumnPos parseChunkPos(class_2010 sender, String[] args, int index) throws class_6178
     {
-        int x = (int) Math.round(parseCoordinate(sender.getPosition().getX() >> 4, args[index], false).getResult());
-        int z = (int) Math.round(parseCoordinate(sender.getPosition().getZ() >> 4, args[index + 1], false).getResult());
-        return new ChunkPos(x, z);
+        int x = (int) Math.round(method_28702(sender.method_29606().getX() >> 4, args[index], false).method_28750());
+        int z = (int) Math.round(method_28702(sender.method_29606().getZ() >> 4, args[index + 1], false).method_28750());
+        return new ColumnPos(x, z);
     }
     
-    private void addTickingArea(ICommandSender sender, String[] args) throws CommandException
+    private void addTickingArea(class_2010 sender, String[] args) throws class_6175
     {
         if (args.length < 2)
-            throw new WrongUsageException(USAGE_ADD);
+            throw new class_6182(USAGE_ADD);
         
         int index = 2;
         TickingArea area;
@@ -84,10 +84,10 @@ public class CommandTickingArea extends CommandCarpetBase
         if ("circle".equals(args[1]))
         {
             if (args.length < 5)
-                throw new WrongUsageException(USAGE_ADD_CIRCLE);
-            ChunkPos center = parseChunkPos(sender, args, index);
+                throw new class_6182(USAGE_ADD_CIRCLE);
+            ColumnPos center = parseChunkPos(sender, args, index);
             index += 2;
-            double radius = parseDouble(args[index++], 0);
+            double radius = method_28716(args[index++], 0);
             area = new TickingArea.Circle(center, radius);
         }
         else if ("spawnChunks".equals(args[1]))
@@ -99,36 +99,36 @@ public class CommandTickingArea extends CommandCarpetBase
             if (!"square".equals(args[1]))
                 index = 1;
             if (args.length < index + 4)
-                throw new WrongUsageException(USAGE_ADD_SQUARE);
-            ChunkPos from = parseChunkPos(sender, args, index);
+                throw new class_6182(USAGE_ADD_SQUARE);
+            ColumnPos from = parseChunkPos(sender, args, index);
             index += 2;
-            ChunkPos to = parseChunkPos(sender, args, index);
+            ColumnPos to = parseChunkPos(sender, args, index);
             index += 2;
-            ChunkPos min = new ChunkPos(Math.min(from.x, to.x), Math.min(from.z, to.z));
-            ChunkPos max = new ChunkPos(Math.max(from.x, to.x), Math.max(from.z, to.z));
+            ColumnPos min = new ColumnPos(Math.min(from.x, to.x), Math.min(from.z, to.z));
+            ColumnPos max = new ColumnPos(Math.max(from.x, to.x), Math.max(from.z, to.z));
             area = new TickingArea.Square(min, max);
         }
         
         if (args.length > index)
         {
-            area.setName(buildString(args, index));
+            area.setName(method_28729(args, index));
         }
         
-        TickingArea.addTickingArea(sender.getEntityWorld(), area);
+        TickingArea.addTickingArea(sender.method_29608(), area);
         
-        for (ChunkPos chunk : area.listIncludedChunks(sender.getEntityWorld()))
+        for (ColumnPos chunk : area.listIncludedChunks(sender.method_29608()))
         {
             // Load chunk
-            sender.getEntityWorld().getChunk(chunk.x, chunk.z);
+            sender.method_29608().method_25975(chunk.x, chunk.z);
         }
         
-        notifyCommandListener(sender, this, "Added ticking area");
+        method_28710(sender, this, "Added ticking area");
     }
     
-    private void removeTickingArea(ICommandSender sender, String[] args) throws CommandException
+    private void removeTickingArea(class_2010 sender, String[] args) throws class_6175
     {
         if (args.length < 2)
-            throw new WrongUsageException(USAGE_REMOVE);
+            throw new class_6182(USAGE_REMOVE);
         
         boolean byName = false;
         boolean removed = false;
@@ -140,52 +140,52 @@ public class CommandTickingArea extends CommandCarpetBase
         {
             try
             {
-                ChunkPos pos = parseChunkPos(sender, args, 1);
-                removed = TickingArea.removeTickingAreas(sender.getEntityWorld(), pos.x, pos.z);
+                ColumnPos pos = parseChunkPos(sender, args, 1);
+                removed = TickingArea.removeTickingAreas(sender.method_29608(), pos.x, pos.z);
             }
-            catch (NumberInvalidException e)
+            catch (class_6175 e)
             {
                 byName = true;
             }
         }
         if (byName)
         {
-            removed = TickingArea.removeTickingAreas(sender.getEntityWorld(), buildString(args, 1));
+            removed = TickingArea.removeTickingAreas(sender.method_29608(), method_28729(args, 1));
         }
         
         if (removed)
-            notifyCommandListener(sender, this, "Removed ticking area");
+            method_28710(sender, this, "Removed ticking area");
         else
-            throw new CommandException("Couldn't remove ticking area");
+            throw new class_6175("Couldn't remove ticking area");
     }
     
-    private void removeAllTickingAreas(ICommandSender sender, String[] args) throws CommandException
+    private void removeAllTickingAreas(class_2010 sender, String[] args) throws class_6175
     {
-        TickingArea.removeAllTickingAreas(sender.getEntityWorld());
-        notifyCommandListener(sender, this, "Removed all ticking areas");
+        TickingArea.removeAllTickingAreas(sender.method_29608());
+        method_28710(sender, this, "Removed all ticking areas");
     }
     
-    private void listTickingAreas(ICommandSender sender, String[] args) throws CommandException
+    private void listTickingAreas(class_2010 sender, String[] args) throws class_6175
     {
         if (args.length > 1 && "all-dimensions".equals(args[1]))
         {
-            for (World world : sender.getServer().worlds)
+            for (World world : sender.method_29602().worlds)
             {
                 listAreas(sender, world);
             }
         }
         else
         {
-            listAreas(sender, sender.getEntityWorld());
+            listAreas(sender, sender.method_29608());
         }
     }
     
-    private void listAreas(ICommandSender sender, World world)
+    private void listAreas(class_2010 sender, World world)
     {
-        if (world.provider.isSurfaceWorld() && !CarpetSettings.disableSpawnChunks)
-            sender.sendMessage(new TextComponentString("Spawn chunks are enabled"));
+        if (world.dimension.hasVisibleSky() && !CarpetSettings.disableSpawnChunks)
+            sender.sendMessage(new LiteralText("Spawn chunks are enabled"));
         
-        sender.sendMessage(new TextComponentString("Ticking areas in " + world.provider.getDimensionType().getName() + ":"));
+        sender.sendMessage(new LiteralText("Ticking areas in " + world.dimension.getType().method_27531() + ":"));
         
         for (TickingArea area : TickingArea.getTickingAreas(world))
         {
@@ -195,11 +195,11 @@ public class CommandTickingArea extends CommandCarpetBase
             
             msg += area.format();
             
-            sender.sendMessage(new TextComponentString(msg));
+            sender.sendMessage(new LiteralText(msg));
         }
     }
     
-    private static List<String> tabCompleteChunkPos(ICommandSender sender, BlockPos targetPos, String[] args, int index)
+    private static List<String> tabCompleteChunkPos(class_2010 sender, BlockPos targetPos, String[] args, int index)
     {
         if (targetPos == null)
         {
@@ -209,19 +209,19 @@ public class CommandTickingArea extends CommandCarpetBase
         {
             if (index == args.length)
             {
-                int x = sender.getPosition().getX() / 16;
+                int x = sender.method_29606().getX() / 16;
                 return Lists.newArrayList(String.valueOf(x));
             }
             else
             {
-                int z = sender.getPosition().getZ() / 16;
+                int z = sender.method_29606().getZ() / 16;
                 return Lists.newArrayList(String.valueOf(z));
             }
         }
     }
 
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args,
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args,
             BlockPos targetPos)
     {
         if (args.length == 0)
@@ -230,7 +230,7 @@ public class CommandTickingArea extends CommandCarpetBase
         }
         else if (args.length == 1)
         {
-            return getListOfStringsMatchingLastWord(args, "add", "remove", "remove_all", "list");
+            return method_28732(args, "add", "remove", "remove_all", "list");
         }
         else if ("add".equals(args[0]))
         {
@@ -238,7 +238,7 @@ public class CommandTickingArea extends CommandCarpetBase
             {
                 List<String> completions = tabCompleteChunkPos(sender, targetPos, args, 2);
                 Collections.addAll(completions, "square", "circle", "spawnChunks");
-                return getListOfStringsMatchingLastWord(args, completions);
+                return method_28731(args, completions);
             }
             int index = "square".equals(args[1]) || "circle".equals(args[1]) ? 3 : 2;
             if (args.length >= index && args.length < index + 2)
@@ -259,9 +259,9 @@ public class CommandTickingArea extends CommandCarpetBase
             if (args.length == 2)
             {
                 List<String> completions = tabCompleteChunkPos(sender, targetPos, args, 2);
-                TickingArea.getTickingAreas(sender.getEntityWorld()).stream().filter(area -> area.getName() != null)
+                TickingArea.getTickingAreas(sender.method_29608()).stream().filter(area -> area.getName() != null)
                     .forEach(area -> completions.add(area.getName()));
-                return getListOfStringsMatchingLastWord(args, completions);
+                return method_28731(args, completions);
             }
             else if (args.length == 3)
             {
@@ -276,7 +276,7 @@ public class CommandTickingArea extends CommandCarpetBase
         {
             if (args.length == 2)
             {
-                return getListOfStringsMatchingLastWord(args, "all-dimensions");
+                return method_28732(args, "all-dimensions");
             }
             else
             {

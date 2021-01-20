@@ -2,8 +2,7 @@ package carpet.helpers;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.ItemEntity;
 
 /**
  * Class to work around the fact that blocks create EntityItems without returning them
@@ -11,7 +10,7 @@ import net.minecraft.entity.item.EntityItem;
 public class CapturedDrops
 {
     private static boolean isCapturingDrops = false;
-    private static List<EntityItem> lastCapturedDrops = new ArrayList<>();
+    private static List<ItemEntity> lastCapturedDrops = new ArrayList<>();
     
     public static void setCapturingDrops(boolean capturingDrops)
     {
@@ -28,12 +27,12 @@ public class CapturedDrops
         lastCapturedDrops.clear();
     }
     
-    public static List<EntityItem> getCapturedDrops()
+    public static List<ItemEntity> getCapturedDrops()
     {
         return lastCapturedDrops;
     }
     
-    public static void captureDrop(EntityItem item)
+    public static void captureDrop(ItemEntity item)
     {
         lastCapturedDrops.add(item);
     }

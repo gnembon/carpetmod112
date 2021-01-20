@@ -2,14 +2,13 @@ package carpet.commands;
 
 import carpet.mixin.accessors.WorldAccessor;
 import carpet.utils.extensions.RepopulatableChunk;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.chunk.Chunk;
-
+import net.minecraft.world.chunk.WorldChunk;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -18,47 +17,47 @@ public class CommandRepopulate extends CommandCarpetBase {
     public static final String USAGE = "/repopulate <chunk x> <chunk z>";
 
     @Override
-    public String getName()
+    public String method_29277()
     {
         return "repopulate";
     }
 
     @Override
-    public String getUsage(ICommandSender sender)
+    public String method_29275(class_2010 sender)
     {
         return USAGE;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandRepopulate", sender))
             return;
 
         if (args.length != 2) {
-            throw new WrongUsageException(USAGE);
+            throw new class_6182(USAGE);
         }
-        int chunkX = parseInt(args[0]);
-        int chunkZ = parseInt(args[1]);
-        boolean isloaded = ((WorldAccessor) sender.getEntityWorld()).invokeIsChunkLoaded(chunkX, chunkZ, false);
-        Chunk chunk = sender.getEntityWorld().getChunk(chunkX, chunkZ);
+        int chunkX = method_28715(args[0]);
+        int chunkZ = method_28715(args[1]);
+        boolean isloaded = ((WorldAccessor) sender.method_29608()).invokeIsChunkLoaded(chunkX, chunkZ, false);
+        WorldChunk chunk = sender.method_29608().method_25975(chunkX, chunkZ);
         ((RepopulatableChunk) chunk).setUnpopulated();
         if (isloaded){
-            sender.sendMessage(new TextComponentString("Marked currently loaded chunk " + chunkX + " " + chunkZ + " for repopulation!"));
+            sender.sendMessage(new LiteralText("Marked currently loaded chunk " + chunkX + " " + chunkZ + " for repopulation!"));
         } else {
-            sender.sendMessage(new TextComponentString("Marked chunk " + chunkX + " " + chunkZ + " for repopulation!"));
+            sender.sendMessage(new LiteralText("Marked chunk " + chunkX + " " + chunkZ + " for repopulation!"));
         }
     }
 
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-        int chunkX = sender.getPosition().getX() >> 4;
-        int chunkZ = sender.getPosition().getZ() >> 4;
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos) {
+        int chunkX = sender.method_29606().getX() >> 4;
+        int chunkZ = sender.method_29606().getZ() >> 4;
 
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, Integer.toString(chunkX));
+            return method_28732(args, Integer.toString(chunkX));
         } else if (args.length == 2) {
-            return getListOfStringsMatchingLastWord(args, Integer.toString(chunkZ));
+            return method_28732(args, Integer.toString(chunkZ));
         } else {
             return Collections.emptyList();
         }

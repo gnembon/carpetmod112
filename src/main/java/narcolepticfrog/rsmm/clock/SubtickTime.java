@@ -1,6 +1,6 @@
 package narcolepticfrog.rsmm.clock;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.PacketByteBuf;
 
 public class SubtickTime implements Comparable<SubtickTime> {
 
@@ -41,12 +41,12 @@ public class SubtickTime implements Comparable<SubtickTime> {
         return "SubtickTime[tick = " + tick + ", subtickIndex = " + subtickIndex + "]";
     }
 
-    public void writeToBuffer(PacketBuffer buffer) {
+    public void writeToBuffer(PacketByteBuf buffer) {
         buffer.writeVarLong(tick);
         buffer.writeInt(subtickIndex);
     }
 
-    public static SubtickTime readFromBuffer(PacketBuffer buffer) {
+    public static SubtickTime readFromBuffer(PacketByteBuf buffer) {
         long tick = buffer.readVarLong();
         int subtickIndex = buffer.readInt();
         return new SubtickTime(tick, subtickIndex);

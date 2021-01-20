@@ -4,48 +4,47 @@ import java.util.Collections;
 import java.util.List;
 
 import carpet.mixin.accessors.PlayerChunkMapEntryAccessor;
-import carpet.mixin.accessors.WorldServerAccessor;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.server.SPacketChunkData;
+import carpet.mixin.accessors.ServerWorldAccessor;
+import net.minecraft.class_2010;
+import net.minecraft.class_4615;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
+import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.PlayerChunkMapEntry;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.WorldChunk;
 
 public class CommandFillBiome extends CommandCarpetBase
 {
-
     @Override
-    public String getName()
+    public String method_29277()
     {
         return "fillbiome";
     }
 
     @Override
-    public String getUsage(ICommandSender sender)
+    public String method_29275(class_2010 sender)
     {
         return "/fillbiome <from: x z> <to: x z> <biome>";
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandFillBiome", sender))
             return;
         
         if (args.length < 5)
-            throw new WrongUsageException(getUsage(sender));
+            throw new class_6182(method_29275(sender));
         
-        int x1 = (int) Math.round(parseCoordinate(sender.getPosition().getX(), args[0], false).getResult());
-        int z1 = (int) Math.round(parseCoordinate(sender.getPosition().getZ(), args[1], false).getResult());
-        int x2 = (int) Math.round(parseCoordinate(sender.getPosition().getX(), args[2], false).getResult());
-        int z2 = (int) Math.round(parseCoordinate(sender.getPosition().getZ(), args[3], false).getResult());
+        int x1 = (int) Math.round(method_28702(sender.method_29606().getX(), args[0], false).method_28750());
+        int z1 = (int) Math.round(method_28702(sender.method_29606().getZ(), args[1], false).method_28750());
+        int x2 = (int) Math.round(method_28702(sender.method_29606().getX(), args[2], false).method_28750());
+        int z2 = (int) Math.round(method_28702(sender.method_29606().getZ(), args[3], false).method_28750());
         
         int minX = Math.min(x1, x2);
         int maxX = Math.max(x1, x2);
@@ -55,32 +54,32 @@ public class CommandFillBiome extends CommandCarpetBase
         Biome biome;
         try
         {
-            biome = Biome.getBiomeForId(Integer.parseInt(args[4]));
+            biome = Biome.method_26230(Integer.parseInt(args[4]));
         }
         catch (NumberFormatException e)
         {
-            biome = Biome.REGISTRY.getObject(new ResourceLocation(args[4]));
+            biome = Biome.field_23677.get(new Identifier(args[4]));
         }
         if (biome == null)
         {
-            throw new CommandException("Unknown biome " + args[4]);
+            throw new class_6175("Unknown biome " + args[4]);
         }
-        byte biomeId = (byte) (Biome.getIdForBiome(biome) & 255);
+        byte biomeId = (byte) (Biome.method_26235(biome) & 255);
         
-        WorldServer world = (WorldServer) sender.getEntityWorld();
-        if (!world.isAreaLoaded(new BlockPos(minX, 0, minZ), new BlockPos(maxX, 0, maxZ)))
+        ServerWorld world = (ServerWorld) sender.method_29608();
+        if (!world.setBlockState(new BlockPos(minX, 0, minZ), new BlockPos(maxX, 0, maxZ)))
         {
-            throw new CommandException("commands.fill.outOfWorld");
+            throw new class_6175("commands.fill.outOfWorld");
         }
         
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+        BlockPos.Mutable pos = new BlockPos.Mutable();
         
         for (int x = minX; x <= maxX; x++)
         {
             for (int z = minZ; z <= maxZ; z++)
             {
-                Chunk chunk = world.getChunk(pos.setPos(x, 0, z));
-                chunk.getBiomeArray()[(x & 15) | (z & 15) << 4] = biomeId;
+                WorldChunk chunk = world.getWorldChunk(pos.set(x, 0, z));
+                chunk.method_27418()[(x & 15) | (z & 15) << 4] = biomeId;
                 chunk.markDirty();
             }
         }
@@ -93,25 +92,25 @@ public class CommandFillBiome extends CommandCarpetBase
         {
             for (int chunkZ = minChunkZ; chunkZ <= maxChunkZ; chunkZ++)
             {
-                PlayerChunkMapEntry entry = ((WorldServerAccessor) world).getPlayerChunkMap().getEntry(chunkX, chunkZ);
+                class_4615 entry = ((ServerWorldAccessor) world).getPlayerChunkMap().method_33587(chunkX, chunkZ);
                 if (entry != null)
                 {
-                    Chunk chunk = entry.getChunk();
+                    WorldChunk chunk = entry.method_33575();
                     if (chunk != null)
                     {
-                        SPacketChunkData packet = new SPacketChunkData(chunk, 65535);
-                        for (EntityPlayerMP player : ((PlayerChunkMapEntryAccessor) entry).getPlayers())
-                            player.connection.sendPacket(packet);
+                        ChunkDataS2CPacket packet = new ChunkDataS2CPacket(chunk, 65535);
+                        for (ServerPlayerEntity player : ((PlayerChunkMapEntryAccessor) entry).getPlayers())
+                            player.networkHandler.method_33624(packet);
                     }
                 }
             }
         }
         
-        notifyCommandListener(sender, this, ((maxX - minX + 1) * (maxZ - minZ + 1)) + " biome blocks changed");
+        method_28710(sender, this, ((maxX - minX + 1) * (maxZ - minZ + 1)) + " biome blocks changed");
     }
 
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, BlockPos targetPos)
     {
         if (args.length == 0)
         {
@@ -120,25 +119,24 @@ public class CommandFillBiome extends CommandCarpetBase
         else if (args.length == 1 || args.length == 3)
         {
             if (targetPos == null)
-                return getListOfStringsMatchingLastWord(args, "~");
+                return method_28732(args, "~");
             else
-                return getListOfStringsMatchingLastWord(args, String.valueOf(targetPos.getX()));
+                return method_28732(args, String.valueOf(targetPos.getX()));
         }
         else if (args.length == 2 || args.length == 4)
         {
             if (targetPos == null)
-                return getListOfStringsMatchingLastWord(args, "~");
+                return method_28732(args, "~");
             else
-                return getListOfStringsMatchingLastWord(args, String.valueOf(targetPos.getZ()));
+                return method_28732(args, String.valueOf(targetPos.getZ()));
         }
         else if (args.length == 5)
         {
-            return getListOfStringsMatchingLastWord(args, Biome.REGISTRY.getKeys());
+            return method_28731(args, Biome.field_23677.getIds());
         }
         else
         {
             return Collections.emptyList();
         }
     }
-
 }

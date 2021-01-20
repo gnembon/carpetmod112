@@ -1,17 +1,17 @@
 package narcolepticfrog.rsmm.network;
 
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.PacketByteBuf;
 
 /**
  * Base class for all client-bound packets in the RSMM mod.
  */
 public abstract class RSMMCPacket {
 
-    public abstract PacketBuffer toBuffer();
+    public abstract PacketByteBuf toBuffer();
 
     public abstract void process(RSMMCPacketHandler handler);
 
-    public static RSMMCPacket fromBuffer(PacketBuffer buffer) {
+    public static RSMMCPacket fromBuffer(PacketByteBuf buffer) {
         byte messageId = buffer.getByte(0);
 
         switch(messageId) {

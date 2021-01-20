@@ -3,9 +3,8 @@ package carpet.logging.logHelpers;
 import carpet.logging.Logger;
 import carpet.logging.LoggerRegistry;
 import carpet.utils.Messenger;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class ItemLogHelper {
 
     private void sendUpdateLogs(boolean finished, String type) {
         logger.logNoCommand( (option) -> {
-            List<ITextComponent> comp = new ArrayList<>();
+            List<Text> comp = new ArrayList<>();
             switch (option)
             {
                 case "brief":
@@ -50,7 +49,7 @@ public class ItemLogHelper {
                         p = positions.get(positions.size() - 1);
                     }
                     comp.add(Messenger.m(null,"w ----" + type + "---- t: " + positions.size() + "  pos: ", Messenger.dblt("w",p.x, p.y, p.z)));
-                    return comp.toArray(new ITextComponent[0]);
+                    return comp.toArray(new Text[0]);
                 case "full":
                     comp.add(Messenger.m(null,"w ----" + type + "---- t: " + positions.size()));
                     for (int i = sentLogs; i < positions.size(); i++)
@@ -64,7 +63,7 @@ public class ItemLogHelper {
                     }
                     break;
             }
-            return comp.toArray(new ITextComponent[0]);
+            return comp.toArray(new Text[0]);
         });
     }
 }

@@ -4,25 +4,28 @@ import java.util.*;
 import javax.annotation.Nullable;
 
 import carpet.utils.Messenger;
-import net.minecraft.command.*;
-
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 
 import carpet.CarpetSettings;
-import net.minecraft.util.text.ITextComponent;
 
 public class CommandCarpet extends CommandCarpetBase
 {
     /**
      * Gets the name of the command
      */
-    public String getUsage(ICommandSender sender)
+    @Override
+    public String method_29275(class_2010 sender)
     {
         return "carpet <rule> <value>";
     }
-    public String getName()
+    @Override
+    public String method_29277()
     {
         return "carpet";
     }
@@ -30,16 +33,18 @@ public class CommandCarpet extends CommandCarpetBase
     /**
      * Return the required permission level for this command.
      */
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender)
+    @Override
+    public boolean method_29271(MinecraftServer server, class_2010 sender)
     {
-        return sender.canUseCommand(this.getRequiredPermissionLevel(), this.getName());
+        return sender.method_29603(this.method_28700(), this.method_29277());
     }
-    public int getRequiredPermissionLevel()
+    @Override
+    public int method_28700()
     {
         return 2;
     }
 
-    private ITextComponent displayInteractiveSetting(String ruleName)
+    private Text displayInteractiveSetting(String ruleName)
     {
         String def = CarpetSettings.getDefault(ruleName);
         String val = CarpetSettings.get(ruleName);
@@ -66,25 +71,26 @@ public class CommandCarpet extends CommandCarpetBase
         return Messenger.m(null, args.toArray(new Object[0]));
     }
 
-    public void list_settings(ICommandSender sender, String title, String[] settings_list)
+    public void list_settings(class_2010 sender, String title, String[] settings_list)
     {
-        if (sender instanceof EntityPlayer)
+        if (sender instanceof PlayerEntity)
         {
-            EntityPlayer player = (EntityPlayer) sender;
+            PlayerEntity player = (PlayerEntity) sender;
             Messenger.m(player,String.format("wb %s:",title));
             Arrays.stream(settings_list).forEach(e -> Messenger.m(player,displayInteractiveSetting(e)));
         }
         else
         {
-            notifyCommandListener(sender, this, String.format("%s:",title));
-            Arrays.stream(settings_list).forEach(e -> notifyCommandListener(sender, this, String.format(" - %s", e.toString())));
+            method_28710(sender, this, String.format("%s:",title));
+            Arrays.stream(settings_list).forEach(e -> method_28710(sender, this, String.format(" - %s", e.toString())));
         }
     }
 
     /**
      * Callback for when the command is executed
      */
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    @Override
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (CarpetSettings.locked)
         {
@@ -97,8 +103,8 @@ public class CommandCarpet extends CommandCarpetBase
             if (args.length == 0)
             {
                 list_settings(sender, "Current CarpetMod Settings", CarpetSettings.findNonDefault());
-                notifyCommandListener(sender, this, "Carpet Mod version: "+CarpetSettings.carpetVersion);
-                if (sender instanceof EntityPlayer)
+                method_28710(sender, this, "Carpet Mod version: "+CarpetSettings.carpetVersion);
+                if (sender instanceof PlayerEntity)
                 {
                     List<Object> tags = new ArrayList<>();
                     tags.add("w Browse Categories:\n");
@@ -111,20 +117,20 @@ public class CommandCarpet extends CommandCarpetBase
                         tags.add("w  ");
                     }
                     tags.remove(tags.size() - 1);
-                    Messenger.m((EntityPlayer)sender, tags.toArray(new Object[0]));
+                    Messenger.m((PlayerEntity)sender, tags.toArray(new Object[0]));
                 }
                 return;
             }
             if (args.length == 1 && "list".equalsIgnoreCase(args[0]))
             {
                 list_settings(sender, "All CarpetMod Settings", CarpetSettings.findAll(null));
-                notifyCommandListener(sender, this, "Carpet Mod version: "+CarpetSettings.carpetVersion);
+                method_28710(sender, this, "Carpet Mod version: "+CarpetSettings.carpetVersion);
                 return;
             }
             if ("defaults".equalsIgnoreCase(args[0])) // empty tag
             {
                 list_settings(sender, "Current CarpetMod Startup Settings from carpet.conf", CarpetSettings.findStartupOverrides(server));
-                notifyCommandListener(sender, this, "Carpet Mod version: "+CarpetSettings.carpetVersion);
+                method_28710(sender, this, "Carpet Mod version: "+CarpetSettings.carpetVersion);
                 return;
             }
             if ("use".equalsIgnoreCase(args[0])) // empty tag
@@ -154,7 +160,7 @@ public class CommandCarpet extends CommandCarpetBase
                     CarpetSettings.resetToBugFixes();
                     return;
                 }
-                throw new WrongUsageException(getUsage(sender), new Object[0]);
+                throw new class_6182(method_29275(sender), new Object[0]);
             }
 
             if (args.length >= 2 && "list".equalsIgnoreCase(args[0]))
@@ -172,17 +178,17 @@ public class CommandCarpet extends CommandCarpetBase
             {
                 if (args.length != 3)
                 {
-                    throw new WrongUsageException("/carpet setDefault <setting> <value>");
+                    throw new class_6182("/carpet setDefault <setting> <value>");
                 }
                 boolean success = CarpetSettings.addOrSetPermarule(server, args[1], args[2]);
                 if (success)
                 {
-                    notifyCommandListener(sender, this,
+                    method_28710(sender, this,
                         args[1] +" will default to: "+args[2]);
                 }
                 else
                 {
-                    throw new WrongUsageException("Unknown setting");
+                    throw new class_6182("Unknown setting");
                 }
                 return;
             }
@@ -190,46 +196,46 @@ public class CommandCarpet extends CommandCarpetBase
             {
                 if (args.length != 2)
                 {
-                    throw new WrongUsageException("/carpet removeDefault <setting>");
+                    throw new class_6182("/carpet removeDefault <setting>");
                 }
                 boolean success = CarpetSettings.removePermarule(server, args[1]);
                 if (success)
                 {
-                    notifyCommandListener(sender, this,
+                    method_28710(sender, this,
                         args[1] +" will not be set upon restart");
                 }
                 else
                 {
-                    throw new WrongUsageException("Unknown setting");
+                    throw new class_6182("Unknown setting");
                 }
                 return;
             }
             if (!CarpetSettings.hasRule(args[0]))
             {
-                throw new WrongUsageException("Unknown setting: "+args[0]);
+                throw new class_6182("Unknown setting: "+args[0]);
             }
             if (args.length == 2)
             {
                 boolean success = CarpetSettings.set(args[0], args[1]);
                 if (!success)
                 {
-                    throw new WrongUsageException(getUsage(sender));
+                    throw new class_6182(method_29275(sender));
                 }
                 msg(sender, Messenger.m(null, "w "+args[0]+": "+CarpetSettings.get(args[0])+", ", "c [change permanently?]",
                         "^w Click to keep the settings in carpet.conf to save across restarts",
                         "?/carpet setDefault "+args[0]+" "+CarpetSettings.get(args[0])));
                 return;
             }
-            if (sender instanceof EntityPlayer)
+            if (sender instanceof PlayerEntity)
             {
-                EntityPlayer player = (EntityPlayer)sender;
+                PlayerEntity player = (PlayerEntity)sender;
                 Messenger.s(player, "");
                 Messenger.m(player, "wb "+args[0],"!/carpet "+args[0],"^g refresh");
                 Messenger.s(player, CarpetSettings.getDescription(args[0]));
 
                 Arrays.stream(CarpetSettings.getExtraInfo(args[0])).forEach(s -> Messenger.s(player, " "+s,"g"));
 
-                List<ITextComponent> tags = new ArrayList<>();
+                List<Text> tags = new ArrayList<>();
                 tags.add(Messenger.m(null, "w Tags: "));
                 for (CarpetSettings.RuleCategory ctgy : CarpetSettings.RuleCategory.values())
                 {
@@ -241,7 +247,7 @@ public class CommandCarpet extends CommandCarpetBase
                 Messenger.m(player, tags.toArray(new Object[0]));
 //
                 Messenger.m(player, "w Current value: ",String.format("%s %s (%s value)",CarpetSettings.get(args[0]).equalsIgnoreCase("true")?"lb":"nb", CarpetSettings.get(args[0]),CarpetSettings.get(args[0]).equalsIgnoreCase(CarpetSettings.getDefault(args[0]))?"default":"modified"));
-                List<ITextComponent> options = new ArrayList<>();
+                List<Text> options = new ArrayList<>();
                 options.add(Messenger.m(null, "w Options: ", "y [ "));
                 for (String o: CarpetSettings.getOptions(args[0]))
                 {
@@ -257,22 +263,23 @@ public class CommandCarpet extends CommandCarpetBase
             }
             else
             {
-                notifyCommandListener(sender, this,
+                method_28710(sender, this,
                         args[0] +" is set to: "+CarpetSettings.get(args[0]));
             }
             // Updates the carpet client with the changed rule.
         }
-        catch(CommandException e)
+        catch(class_6175 e)
         {
-            if (e instanceof WrongUsageException)
+            if (e instanceof class_6182)
             {
                 throw e;
             }
-            throw new WrongUsageException(getUsage(sender));
+            throw new class_6182(method_29275(sender));
         }
     }
 
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    @Override
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
     {
         if (CarpetSettings.locked)
         {
@@ -280,11 +287,11 @@ public class CommandCarpet extends CommandCarpetBase
         }
         if (args.length == 2 && "list".equalsIgnoreCase(args[0]))
         {
-            return getListOfStringsMatchingLastWord(args, Arrays.stream(CarpetSettings.RuleCategory.values()).map(v -> v.name().toLowerCase(Locale.ENGLISH)).toArray(String[]::new));
+            return method_28732(args, Arrays.stream(CarpetSettings.RuleCategory.values()).map(v -> v.name().toLowerCase(Locale.ENGLISH)).toArray(String[]::new));
         }
         if (args.length == 2 && "use".equalsIgnoreCase(args[0]))
         {
-            return getListOfStringsMatchingLastWord(args, "creative", "survival", "default","vanilla", "bugfixes");
+            return method_28732(args, "creative", "survival", "default","vanilla", "bugfixes");
         }
         String tag = null;
         if (args.length > 2 && "list".equalsIgnoreCase(args[0]))
@@ -310,19 +317,19 @@ public class CommandCarpet extends CommandCarpetBase
                 lst.add("use");
                 lst.add("list");
             }
-            return getListOfStringsMatchingLastWord(args, lst.toArray(new String[0]));
+            return method_28732(args, lst.toArray(new String[0]));
         }
         if (args.length == 2)
         {
             if ("setDefault".equalsIgnoreCase(args[0]) || "removeDefault".equalsIgnoreCase(args[0]) )
             {
-                return getListOfStringsMatchingLastWord(args, CarpetSettings.findAll(tag));
+                return method_28732(args, CarpetSettings.findAll(tag));
             }
-            return getListOfStringsMatchingLastWord(args, CarpetSettings.getOptions(args[0]));
+            return method_28732(args, CarpetSettings.getOptions(args[0]));
         }
         if (args.length == 3 && "setDefault".equalsIgnoreCase(args[0]))
         {
-            return getListOfStringsMatchingLastWord(args, CarpetSettings.getOptions(args[1]));
+            return method_28732(args, CarpetSettings.getOptions(args[1]));
         }
         return Collections.<String>emptyList();
     }

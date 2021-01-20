@@ -1,7 +1,7 @@
 package carpet.mixin.optimizedTileEntityRemoval;
 
 import carpet.CarpetSettings;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,18 +17,18 @@ import java.util.Set;
 
 @Mixin(World.class)
 public class WorldMixin {
-    @Shadow @Final private List<TileEntity> tileEntitiesToBeRemoved;
-    @Shadow @Final public List<TileEntity> tickableTileEntities;
-    @Shadow @Final public List<TileEntity> loadedTileEntityList;
+    @Shadow @Final private List<BlockEntity> unloadedBlockEntities;
+    @Shadow @Final public List<BlockEntity> tickingBlockEntities;
+    @Shadow @Final public List<BlockEntity> blockEntities;
 
-    @Inject(method = "updateEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/world/World;tileEntitiesToBeRemoved:Ljava/util/List;", ordinal = 0))
+    @Inject(method = "tickBlockEntities", at = @At(value = "FIELD", target = "Lnet/minecraft/world/World;unloadedBlockEntities:Ljava/util/List;", ordinal = 0))
     private void optimizedTileEntityRemoval(CallbackInfo ci) {
-        if (!CarpetSettings.optimizedTileEntityRemoval || this.tileEntitiesToBeRemoved.isEmpty()) return;
+        if (!CarpetSettings.optimizedTileEntityRemoval || this.unloadedBlockEntities.isEmpty()) return;
 
-        Set<TileEntity> remove = Collections.newSetFromMap(new IdentityHashMap<>());
-        remove.addAll(this.tileEntitiesToBeRemoved);
-        this.tickableTileEntities.removeAll(remove);
-        this.loadedTileEntityList.removeAll(remove);
-        this.tileEntitiesToBeRemoved.clear();
+        Set<BlockEntity> remove = Collections.newSetFromMap(new IdentityHashMap<>());
+        remove.addAll(this.unloadedBlockEntities);
+        this.tickingBlockEntities.removeAll(remove);
+        this.blockEntities.removeAll(remove);
+        this.unloadedBlockEntities.clear();
     }
 }

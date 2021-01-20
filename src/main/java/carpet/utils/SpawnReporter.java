@@ -3,31 +3,27 @@ package carpet.utils;
 
 import java.util.*;
 
-import carpet.mixin.accessors.EntityLivingAccessor;
-import carpet.mixin.accessors.WeightedRandomItemAccessor;
+import carpet.mixin.accessors.MobEntityAccessor;
+import carpet.mixin.accessors.WeightedPickerEntryAccessor;
 import com.google.common.collect.AbstractIterator;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.math.ChunkPos;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.class_2245;
+import net.minecraft.class_2278;
+import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
+import net.minecraft.util.DyeColor;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
-
-import net.minecraft.item.EnumDyeColor;
-
-import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.biome.Biome;
+import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.gen.ChunkProviderServer;
-import net.minecraft.world.WorldEntitySpawner;
-import net.minecraft.entity.EntitySpawnPlacementRegistry;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityList;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.OcelotEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.text.Text;
 import net.minecraft.entity.Entity;
-
-import net.minecraft.entity.passive.EntityOcelot;
-
+import net.minecraft.entity.EntityCategory;
 import java.lang.Math;
 
 public class SpawnReporter
@@ -35,8 +31,8 @@ public class SpawnReporter
     public static boolean mock_spawns = false;
     
     public static Long track_spawns = 0L;
-    public static final HashMap<Integer, HashMap<EnumCreatureType, Tuple<Integer,Integer>>> mobcaps = new HashMap<>();
-    public static final HashMap<EnumCreatureType, HashMap<String,Long>> spawn_stats = new HashMap<>();
+    public static final HashMap<Integer, HashMap<EntityCategory, Pair<Integer,Integer>>> mobcaps = new HashMap<>();
+    public static final HashMap<EntityCategory, HashMap<String,Long>> spawn_stats = new HashMap<>();
     public static double mobcap_exponent = 0.0D;
     
     public static final HashMap<String, Long> spawn_attempts = new HashMap<String, Long>();
@@ -56,8 +52,8 @@ public class SpawnReporter
             this.pos = pos;
         }
     }
-    public static final HashMap<EnumCreatureType, EvictingQueue<SpawnPos, Integer>> spawned_mobs = new HashMap<>();
-    public static final HashMap<EnumCreatureType, Integer> spawn_tries = new HashMap<>();
+    public static final HashMap<EntityCategory, EvictingQueue<SpawnPos, Integer>> spawned_mobs = new HashMap<>();
+    public static final HashMap<EntityCategory, Integer> spawn_tries = new HashMap<>();
     public static BlockPos lower_spawning_limit = null;
     public static BlockPos upper_spawning_limit = null;
 
@@ -65,10 +61,10 @@ public class SpawnReporter
         reset_spawn_stats(true);
     }
 
-    public static void registerSpawn(EntityLiving el, EnumCreatureType type) {
-        registerSpawn(el, type, EntityList.getEntityString(el), 1L);
+    public static void registerSpawn(MobEntity el, EntityCategory type) {
+        registerSpawn(el, type, class_2245.method_34602(el), 1L);
     }
-    public static void registerSpawn(EntityLiving el, EnumCreatureType type, String mob, long value)
+    public static void registerSpawn(MobEntity el, EntityCategory type, String mob, long value)
     {
         BlockPos pos = new BlockPos(el);
         if (lower_spawning_limit != null)
@@ -88,16 +84,16 @@ public class SpawnReporter
     }
 
 
-    public static List<ITextComponent> printMobcapsForDimension(World world, int dim, String name)
+    public static List<Text> printMobcapsForDimension(World world, int dim, String name)
     {
-        List<ITextComponent> lst = new ArrayList<>();
+        List<Text> lst = new ArrayList<>();
         lst.add(Messenger.s(null, String.format("Mobcaps for %s:",name)));
-        for (EnumCreatureType enumcreaturetype : EnumCreatureType.values())
+        for (EntityCategory enumcreaturetype : EntityCategory.values())
         {
             String type_code = String.format("%s", enumcreaturetype);
-            Tuple<Integer, Integer> stat = mobcaps.get(dim).getOrDefault(enumcreaturetype, new Tuple<>(0,0));
-            int cur = stat.getFirst();
-            int max = stat.getSecond();
+            Pair<Integer, Integer> stat = mobcaps.get(dim).getOrDefault(enumcreaturetype, new Pair<>(0,0));
+            int cur = stat.getLeft();
+            int max = stat.getRight();
             int rounds = spawn_tries.getOrDefault(enumcreaturetype, 1);
             lst.add( Messenger.m(null,
                     String.format("w   %s: ",type_code),
@@ -107,18 +103,18 @@ public class SpawnReporter
         }
         return lst;
     }
-    public static List<ITextComponent> print_general_mobcaps(World world)
+    public static List<Text> print_general_mobcaps(World world)
     {
-        String name = world.provider.getDimensionType().getName();
-        int did = world.provider.getDimensionType().getId();
+        String name = world.dimension.getType().method_27531();
+        int did = world.dimension.getType().getRawId();
         return printMobcapsForDimension(world, did, name);
     }
     
-    public static List<ITextComponent> recent_spawns(World world, String creature_type_code)
+    public static List<Text> recent_spawns(World world, String creature_type_code)
     {
         
-        EnumCreatureType creature_type = get_creature_type_from_code(creature_type_code);
-        List<ITextComponent> lst = new ArrayList<>();
+        EntityCategory creature_type = get_creature_type_from_code(creature_type_code);
+        List<Text> lst = new ArrayList<>();
         if ((track_spawns == 0L))
         {
             lst.add(Messenger.s(null, "Spawn tracking not started"));
@@ -146,9 +142,9 @@ public class SpawnReporter
 
     }
     
-    public static List<ITextComponent> show_mobcaps(BlockPos pos, World worldIn)
+    public static List<Text> show_mobcaps(BlockPos pos, World worldIn)
     {
-        EnumDyeColor under = WoolTool.getWoolColorAtPosition(worldIn, pos.down());
+        DyeColor under = WoolTool.getWoolColorAtPosition(worldIn, pos.method_31898());
         if (under == null)
         {
             if (track_spawns > 0L)
@@ -185,7 +181,7 @@ public class SpawnReporter
         
     }
     
-    public static String get_type_code_from_wool_code(EnumDyeColor color)
+    public static String get_type_code_from_wool_code(DyeColor color)
     {
         switch (color)
         {
@@ -201,29 +197,29 @@ public class SpawnReporter
         return null;
     }
     
-    public static EnumCreatureType get_creature_type_from_code(String type_code)
+    public static EntityCategory get_creature_type_from_code(String type_code)
     {
         if ("hostile".equalsIgnoreCase(type_code))
         {
-            return EnumCreatureType.MONSTER;
+            return EntityCategory.MONSTER;
         }
         else if ("passive".equalsIgnoreCase(type_code))
         {
-            return EnumCreatureType.CREATURE;
+            return EntityCategory.CREATURE;
         }
         else if ("water".equalsIgnoreCase(type_code))
         {
-            return EnumCreatureType.WATER_CREATURE;
+            return EntityCategory.WATER_CREATURE;
         }
         else if ("ambient".equalsIgnoreCase(type_code))
         {
-            return EnumCreatureType.AMBIENT;
+            return EntityCategory.AMBIENT;
         }
         return null;
     }
     
     
-    public static String get_type_string(EnumCreatureType typ)
+    public static String get_type_string(EntityCategory typ)
     {
         return String.format("%s", typ);
     }
@@ -233,23 +229,23 @@ public class SpawnReporter
         return get_type_string(get_creature_type_from_code(str));
     }
     
-    public static List<ITextComponent> printEntitiesByType(String creature_type_code, World worldIn) //Class<?> entityType)
+    public static List<Text> printEntitiesByType(String creature_type_code, World worldIn) //Class<?> entityType)
     {
-        EnumCreatureType typ = get_creature_type_from_code(creature_type_code);
-        List<ITextComponent> lst = new ArrayList<>();
+        EntityCategory typ = get_creature_type_from_code(creature_type_code);
+        List<Text> lst = new ArrayList<>();
         if (typ == null)
         {
             lst.add(Messenger.m(null, String.format("r Incorrect creature type: %s",creature_type_code)));
             return lst;
         }
-        Class<?> cls = typ.getCreatureClass();
+        Class<?> cls = typ.method_34815();
         lst.add( Messenger.s(null, String.format("Loaded entities for %s class:", get_type_string(typ))));
-        for (Entity entity : worldIn.loadedEntityList)
+        for (Entity entity : worldIn.field_23572)
         {
-            if ((!(entity instanceof EntityLiving) || !((EntityLiving)entity).isNoDespawnRequired()) && cls.isAssignableFrom(entity.getClass()))
+            if ((!(entity instanceof MobEntity) || !((MobEntity)entity).isPersistent()) && cls.isAssignableFrom(entity.getClass()))
             {
                 lst.add(Messenger.m(null,
-                        "w  - ",Messenger.tp("w", entity.posX, entity.posY, entity.posZ),"w  : "+EntityList.getEntityString(entity)));
+                        "w  - ",Messenger.tp("w", entity.field_33071, entity.field_33072, entity.field_33073),"w  : " + class_2245.method_34602(entity)));
             }
         }
         if (lst.size()==1)
@@ -275,7 +271,7 @@ public class SpawnReporter
     {
         spawn_stats.clear();
         spawned_mobs.clear();
-        for (EnumCreatureType enumcreaturetype : EnumCreatureType.values())
+        for (EntityCategory enumcreaturetype : EntityCategory.values())
         {
             String type_code = String.format("%s", enumcreaturetype);
             if (full)
@@ -303,9 +299,9 @@ public class SpawnReporter
         track_spawns = 0L;
     }
     
-    public static List<ITextComponent> tracking_report(World worldIn)
+    public static List<Text> tracking_report(World worldIn)
     {
-        List<ITextComponent> report = new ArrayList<>();
+        List<Text> report = new ArrayList<>();
         if (track_spawns == 0L)
         {
             report.add(Messenger.m(null,
@@ -314,14 +310,14 @@ public class SpawnReporter
                     "w ' to enable"));
             return report;
         }
-        Long duration = (long) worldIn.getMinecraftServer().getTickCounter() - track_spawns;
+        Long duration = (long) worldIn.getServer().getTicks() - track_spawns;
         report.add(Messenger.m(null, "bw --------------------"));
         String simulated = mock_spawns?"[SIMULATED] ":"";
         String location = (lower_spawning_limit != null)?String.format("[in (%d, %d, %d)x(%d, %d, %d)]",
                 lower_spawning_limit.getX(),lower_spawning_limit.getY(),lower_spawning_limit.getZ(),
                 upper_spawning_limit.getX(),upper_spawning_limit.getY(),upper_spawning_limit.getZ() ):"";
         report.add(Messenger.s(null, String.format("%sSpawn statistics %s: for %.1f min", simulated, location, (duration/72000.0)*60)));
-        for (EnumCreatureType enumcreaturetype : EnumCreatureType.values())
+        for (EntityCategory enumcreaturetype : EntityCategory.values())
         {
             String type_code = String.format("%s", enumcreaturetype);
             boolean there_are_mobs_to_list = false;
@@ -359,56 +355,56 @@ public class SpawnReporter
 
     
     
-    public static void killEntity(EntityLiving entity)
+    public static void killEntity(MobEntity entity)
     {
-        if (entity.isRiding())
+        if (entity.hasVehicle())
         {
-            entity.getRidingEntity().setDead();
+            entity.getVehicle().remove();
         }
-        if (entity.isBeingRidden())
+        if (entity.hasPassengers())
         {
-            for (Entity e: entity.getPassengers())
+            for (Entity e: entity.getPassengerList())
             {
-                e.setDead();
+                e.remove();
             }
         }
-        if (entity instanceof EntityOcelot)
+        if (entity instanceof OcelotEntity)
         {
-            for (Entity e: entity.getEntityWorld().getEntitiesWithinAABB(EntityOcelot.class, entity.getEntityBoundingBox()))
+            for (Entity e: entity.method_29608().method_26031(OcelotEntity.class, entity.getBoundingBox()))
             {
-                e.setDead();
+                e.remove();
             }
         }
-        entity.setDead();
+        entity.remove();
     }
 
-    public static List<ITextComponent> report(BlockPos pos, World worldIn)
+    public static List<Text> report(BlockPos pos, World worldIn)
     {
-        List<ITextComponent> rep = new ArrayList<>();
+        List<Text> rep = new ArrayList<>();
         int x = pos.getX(); int y = pos.getY(); int z = pos.getZ();
-        Chunk chunk = worldIn.getChunk(pos);
-        int max_chunk = MathHelper.roundUp(chunk.getHeight(new BlockPos(x, 0, z)) + 1, 16);
-        int lc = max_chunk > 0 ? max_chunk : chunk.getTopFilledSegment() + 16 - 1;
+        WorldChunk chunk = worldIn.getWorldChunk(pos);
+        int max_chunk = MathHelper.roundUp(chunk.method_27405(new BlockPos(x, 0, z)) + 1, 16);
+        int lc = max_chunk > 0 ? max_chunk : chunk.method_27410() + 16 - 1;
         String where = (y >= lc) ? "above" : "below";
         rep.add(Messenger.s(null, String.format("Maximum spawn Y value for (%+d, %+d) is %d. You are %d blocks %s it", x, z, lc, MathHelper.abs(y-lc), where )));
         rep.add(Messenger.s(null, "Spawns:"));
-        for (EnumCreatureType enumcreaturetype : EnumCreatureType.values())
+        for (EntityCategory enumcreaturetype : EntityCategory.values())
         {
             String type_code = String.format("%s", enumcreaturetype).substring(0, 3);
-            List<Biome.SpawnListEntry> lst = ((ChunkProviderServer)worldIn.getChunkProvider()).getPossibleCreatures(enumcreaturetype, pos);
+            List<Biome.SpawnEntry> lst = ((ServerChunkManager)worldIn.getChunkManager()).method_33449(enumcreaturetype, pos);
             if (lst != null && !lst.isEmpty())
             {
-                for (Biome.SpawnListEntry animal : lst)
+                for (Biome.SpawnEntry animal : lst)
                 {
-                    boolean canspawn = WorldEntitySpawner.canCreatureTypeSpawnAtLocation(EntitySpawnPlacementRegistry.getPlacementForEntity(animal.entityClass), worldIn, pos);
+                    boolean canspawn = SpawnHelper.method_26213(class_2278.method_34819(animal.field_23703), worldIn, pos);
                     int will_spawn = -1;
                     boolean fits = false;
                     boolean fits1 = false;
                     
-                    EntityLiving entityliving;
+                    MobEntity entityliving;
                     try
                     {
-                        entityliving = (EntityLiving)animal.entityClass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {worldIn});
+                        entityliving = animal.field_23703.getConstructor(World.class).newInstance(worldIn);
                     }
                     catch (Exception exception)
                     {
@@ -426,19 +422,19 @@ public class SpawnReporter
                         {
                             float f = (float)x + 0.5F;
                             float f1 = (float)z + 0.5F;
-                            entityliving.setLocationAndAngles((double)f, (double)y, (double)f1, worldIn.rand.nextFloat() * 360.0F, 0.0F);
-                            fits1 = entityliving.isNotColliding();
+                            entityliving.refreshPositionAndAngles((double)f, (double)y, (double)f1, worldIn.random.nextFloat() * 360.0F, 0.0F);
+                            fits1 = entityliving.method_34766();
                             
                             for (int i = 0; i < 20; ++i)
                             {
-                                if (entityliving.getCanSpawnHere())
+                                if (entityliving.method_34765())
                                 {
                                     will_spawn += 1;
                                 }
                             }
-                            entityliving.onInitialSpawn(worldIn.getDifficultyForLocation(new BlockPos(entityliving)), null);
-                            // the code invokes onInitialSpawn after getCanSpawHere
-                            fits = fits1 && entityliving.isNotColliding();
+                            entityliving.initialize(worldIn.getLocalDifficulty(new BlockPos(entityliving)), null);
+                            // the code invokes onInitialSpawn after getCanSpawnHere
+                            fits = fits1 && entityliving.method_34766();
                             if (fits)
                             {
                                 fits_true = true;
@@ -452,7 +448,7 @@ public class SpawnReporter
                             
                             try
                             {
-                                entityliving = animal.entityClass.getConstructor(new Class[] {World.class}).newInstance(new Object[] {worldIn});
+                                entityliving = animal.field_23703.getConstructor(new Class[] {World.class}).newInstance(new Object[] {worldIn});
                             }
                             catch (Exception exception)
                             {
@@ -462,9 +458,9 @@ public class SpawnReporter
                         }
                     }
                     
-                    String creature_name = EntityList.getEntityString(entityliving);
-                    String pack_size = String.format("%d", entityliving.getMaxSpawnedInChunk());//String.format("%d-%d", animal.minGroupCount, animal.maxGroupCount);
-                    int weight = ((WeightedRandomItemAccessor) animal).getWeight();
+                    String creature_name = class_2245.method_34602(entityliving);
+                    String pack_size = String.format("%d", entityliving.getLimitPerChunk());//String.format("%d-%d", animal.minGroupCount, animal.maxGroupCount);
+                    int weight = ((WeightedPickerEntryAccessor) animal).getWeight();
                     if (canspawn)
                     {
                         String c = (fits_true && will_spawn>0)?"e":"gi";
@@ -489,16 +485,16 @@ public class SpawnReporter
     }
 
     // Added optimized despawn mobs causing netlag by Luflosi CARPET-XCOM
-    public static boolean willImmediatelyDespawn(EntityLiving entity) {
-        EntityLivingAccessor accessor = (EntityLivingAccessor) entity;
-        if (accessor.invokeCanDespawn() || accessor.getPersistenceRequired()) return false;
+    public static boolean willImmediatelyDespawn(MobEntity entity) {
+        MobEntityAccessor accessor = (MobEntityAccessor) entity;
+        if (accessor.invokeCanDespawn() || entity.isPersistent()) return false;
         World world = entity.world;
         boolean playerInDimension = false;
-        for (int i = 0; i < world.playerEntities.size(); i++) {
-            EntityPlayer entityplayer = world.playerEntities.get(i);
+        for (int i = 0; i < world.field_23576.size(); i++) {
+            PlayerEntity entityplayer = world.field_23576.get(i);
             if (!entityplayer.isSpectator()) {
                 playerInDimension = true;
-                double distanceSq = entityplayer.getDistanceSq(entity.posX, entity.posY, entity.posZ);
+                double distanceSq = entityplayer.method_34528(entity.field_33071, entity.field_33072, entity.field_33073);
                 if (distanceSq <= 16384.0D) {
                     return false;
                 }
@@ -507,12 +503,12 @@ public class SpawnReporter
         return playerInDimension;
     }
 
-    public static Iterator<ChunkPos> createChunkIterator(Set<ChunkPos> chunks, EnumCreatureType category, Runnable onEnd) {
-        return new AbstractIterator<ChunkPos>() {
+    public static Iterator<ColumnPos> createChunkIterator(Set<ColumnPos> chunks, EntityCategory category, Runnable onEnd) {
+        return new AbstractIterator<ColumnPos>() {
             int tries = spawn_tries.getOrDefault(category, 1);
-            Iterator<ChunkPos> orig;
+            Iterator<ColumnPos> orig;
             @Override
-            protected ChunkPos computeNext() {
+            protected ColumnPos computeNext() {
                 while (orig == null || !orig.hasNext()) {
                     if (tries-- == 0) {
                         onEnd.run();

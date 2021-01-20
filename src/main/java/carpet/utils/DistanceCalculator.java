@@ -1,19 +1,18 @@
 package carpet.utils;
 
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class DistanceCalculator
 {
-    public static final HashMap<EntityPlayer, BlockPos> dist_pos = new HashMap<>();
+    public static final HashMap<PlayerEntity, BlockPos> dist_pos = new HashMap<>();
 
-    public static List<ITextComponent> print_distance_two_points(BlockPos pos1, BlockPos pos2)
+    public static List<Text> print_distance_two_points(BlockPos pos1, BlockPos pos2)
     {
         int dx = MathHelper.abs(pos1.getX()-pos2.getX());
         int dy = MathHelper.abs(pos1.getY()-pos2.getY());
@@ -21,7 +20,7 @@ public class DistanceCalculator
         int manhattan = dx+dy+dz;
         double spherical = MathHelper.sqrt(dx*dx + dy*dy + dz*dz);
         double cylindrical = MathHelper.sqrt(dx*dx + dz*dz);
-        List<ITextComponent> res = new ArrayList<>();
+        List<Text> res = new ArrayList<>();
         res.add(Messenger.m(null,
                 "w Distance between ",Messenger.tp("b",pos1),"w and ",Messenger.tp("b",pos2),"w :"));
         res.add(Messenger.m(null, "w  - Manhattan: ", String.format("wb %d", manhattan)));
@@ -30,7 +29,7 @@ public class DistanceCalculator
         return res;
     }
 
-    public static void report_distance(EntityPlayer player, BlockPos pos)
+    public static void report_distance(PlayerEntity player, BlockPos pos)
     {
         if ( !(dist_pos.containsKey(player) ) )
         {

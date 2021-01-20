@@ -2,9 +2,8 @@ package carpet.logging;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 
 public class CommandLogHandler extends LogHandler
 {
@@ -17,14 +16,14 @@ public class CommandLogHandler extends LogHandler
     }
     
     @Override
-    public void handle(EntityPlayerMP player, ITextComponent[] message, Object[] commandParams)
+    public void handle(ServerPlayerEntity player, Text[] message, Object[] commandParams)
     {
         if (commandParams == null) return;
         Map<String, String> params = paramsToMap(commandParams);
         String command = String.join(" ", this.command);
         for (Map.Entry<String, String> param : params.entrySet())
             command = command.replace("$" + param.getKey(), param.getValue());
-        player.server.commandManager.executeCommand(player, command);
+        player.server.worldGenerationProgressListenerFactory.method_29374(player, command);
     }
     
     private static Map<String, String> paramsToMap(Object[] commandParams)

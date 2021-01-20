@@ -4,8 +4,8 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import carpet.utils.CarpetProfiler;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -15,19 +15,19 @@ import java.util.List;
 public class CommandProfile extends CommandCarpetBase
 {
     @Override
-    public String getName()
+    public String method_29277()
     {
         return "profile";
     }
 
     @Override
-    public String getUsage(ICommandSender sender)
+    public String method_29275(class_2010 sender)
     {
         return "Usage: /profile <entities>";
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandProfile", sender)) return;
         if (args.length > 0 && "entities".equalsIgnoreCase(args[0]))
@@ -40,7 +40,9 @@ public class CommandProfile extends CommandCarpetBase
         }
 
     }
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+
+    @Override
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.commandProfile)
         {
@@ -48,7 +50,7 @@ public class CommandProfile extends CommandCarpetBase
         }
         if (args.length == 1)
         {
-            return getListOfStringsMatchingLastWord(args, "entities");
+            return method_28732(args, "entities");
         }
         return Collections.<String>emptyList();
     }

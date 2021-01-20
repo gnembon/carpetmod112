@@ -1,14 +1,14 @@
 package carpet.mixin.accessors;
 
-import net.minecraft.server.management.PlayerChunkMap;
-import net.minecraft.server.management.PlayerChunkMapEntry;
+import net.minecraft.class_4615;
+import net.minecraft.class_6380;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.List;
 
-@Mixin(PlayerChunkMap.class)
+@Mixin(class_6380.class)
 public interface PlayerChunkMapAccessor {
-    @Accessor List<PlayerChunkMapEntry> getEntries();
-    @Accessor List<PlayerChunkMapEntry> getEntriesWithoutChunks();
+    @Accessor("field_31809") List<class_4615> getEntries();
+    @Accessor("field_31808") List<class_4615> getEntriesWithoutChunks();
 }

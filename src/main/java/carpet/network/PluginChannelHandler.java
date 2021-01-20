@@ -1,18 +1,18 @@
 package carpet.network;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.client.CPacketCustomPayload;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public interface PluginChannelHandler {
     String[] getChannels();
 
-    default boolean register(String channel, EntityPlayerMP player) {
+    default boolean register(String channel, ServerPlayerEntity player) {
         return true;
     }
 
-    default void unregister(String channel, EntityPlayerMP player) {
+    default void unregister(String channel, ServerPlayerEntity player) {
 
     }
 
-    void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player);
+    void onCustomPayload(CustomPayloadC2SPacket packet, ServerPlayerEntity player);
 }

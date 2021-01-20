@@ -1,10 +1,10 @@
 package carpet.patches;
 
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.EnumPacketDirection;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.network.NetworkSide;
 
-public class NetworkManagerFake extends NetworkManager {
-    public NetworkManagerFake(EnumPacketDirection p) {
+public class NetworkManagerFake extends ClientConnection {
+    public NetworkManagerFake(NetworkSide p) {
         super(p);
     }
 
@@ -13,7 +13,7 @@ public class NetworkManagerFake extends NetworkManager {
     }
 
     @Override
-    public boolean isChannelOpen() {
+    public boolean isOpen() {
         return true;
     }
 

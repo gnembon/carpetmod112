@@ -3,7 +3,7 @@ package carpet;
 import carpet.helpers.StackTraceDeobfuscator;
 import carpet.network.PluginChannelManager;
 import carpet.network.ToggleableChannelHandler;
-import carpet.patches.EntityPlayerMPFake;
+import carpet.patches.FakeServerPlayerEntity;
 import carpet.pubsub.*;
 import carpet.utils.*;
 import carpet.utils.extensions.WaypointContainer;
@@ -18,12 +18,12 @@ import narcolepticfrog.rsmm.server.RSMMServer;
 import carpet.carpetclient.CarpetClientServer;
 
 import carpet.helpers.TickSpeed;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.player.EntityPlayerMP;
 import carpet.logging.LoggerRegistry;
+import net.minecraft.entity.EntityCategory;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Tuple;
-import net.minecraft.world.WorldServer;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Pair;
 
 public class CarpetServer // static for now - easier to handle all around the code, its one anyways
 {
@@ -70,28 +70,28 @@ public class CarpetServer // static for now - easier to handle all around the co
     public static void onLoadAllWorlds(MinecraftServer server)
     {
         TickingArea.loadConfig(server);
-        for (WorldServer world : server.worlds) {
-            int dim = world.provider.getDimensionType().getId();
+        for (ServerWorld world : server.worlds) {
+            int dim = world.dimension.getType().getRawId();
             try {
                 ((WaypointContainer) world).setWaypoints(Waypoint.loadWaypoints(world));
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
 
-            String prefix = "minecraft." + world.provider.getDimensionType().getName();
+            String prefix = "minecraft." + world.dimension.getType().method_27531();
             new PubSubInfoProvider<>(PUBSUB,prefix + ".chunk_loading.dropped_chunks.hash_size",20,
                     () -> ChunkLoading.getCurrentHashSize(world));
-            for (EnumCreatureType creatureType : EnumCreatureType.values()) {
+            for (EntityCategory creatureType : EntityCategory.values()) {
                 String mobCapPrefix = prefix + ".mob_cap." + creatureType.name().toLowerCase(Locale.ROOT);
                 new PubSubInfoProvider<>(PUBSUB, mobCapPrefix + ".filled", 20, () -> {
-                    Tuple<Integer, Integer> mobCap = SpawnReporter.mobcaps.get(dim).get(creatureType);
+                    Pair<Integer, Integer> mobCap = SpawnReporter.mobcaps.get(dim).get(creatureType);
                     if (mobCap == null) return 0;
-                    return mobCap.getFirst();
+                    return mobCap.getLeft();
                 });
                 new PubSubInfoProvider<>(PUBSUB, mobCapPrefix + ".total", 20, () -> {
-                    Tuple<Integer, Integer> mobCap = SpawnReporter.mobcaps.get(dim).get(creatureType);
+                    Pair<Integer, Integer> mobCap = SpawnReporter.mobcaps.get(dim).get(creatureType);
                     if (mobCap == null) return 0;
-                    return mobCap.getSecond();
+                    return mobCap.getRight();
                 });
             }
         }
@@ -99,7 +99,7 @@ public class CarpetServer // static for now - easier to handle all around the co
     public static void onWorldsSaved(MinecraftServer server)
     {
         TickingArea.saveConfig(server);
-        for (WorldServer world : server.worlds) {
+        for (ServerWorld world : server.worlds) {
             try {
                 Waypoint.saveWaypoints(world, ((WaypointContainer) world).getWaypoints());
             } catch (IOException e) {
@@ -113,19 +113,19 @@ public class CarpetServer // static for now - easier to handle all around the co
         TickSpeed.tick(server);
         if (CarpetSettings.redstoneMultimeter)
         {
-            TickStartEventDispatcher.dispatchEvent(server.getTickCounter());
+            TickStartEventDispatcher.dispatchEvent(server.getTicks());
         }
         HUDController.update_hud(server);
         WorldEditBridge.onStartTick();
-        PUBSUB.update(server.getTickCounter());
+        PUBSUB.update(server.getTicks());
     }
-    public static void playerConnected(EntityPlayerMP player)
+    public static void playerConnected(ServerPlayerEntity player)
     {
         pluginChannels.onPlayerConnected(player);
         LoggerRegistry.playerConnected(player);
     }
 
-    public static void playerDisconnected(EntityPlayerMP player)
+    public static void playerDisconnected(ServerPlayerEntity player)
     {
         pluginChannels.onPlayerDisconnected(player);
         LoggerRegistry.playerDisconnected(player);
@@ -133,7 +133,7 @@ public class CarpetServer // static for now - easier to handle all around the co
     
     public static Random setRandomSeed(int p_72843_1_, int p_72843_2_, int p_72843_3_)
     {
-        long i = (long)p_72843_1_ * 341873128712L + (long)p_72843_2_ * 132897987541L + CCServer.getMinecraftServer().worlds[0].getWorldInfo().getSeed() + (long)p_72843_3_;
+        long i = (long)p_72843_1_ * 341873128712L + (long)p_72843_2_ * 132897987541L + CCServer.getMinecraftServer().worlds[0].getLevelProperties().method_28225() + (long)p_72843_3_;
         rand.setSeed(i);
         return rand;
     }
@@ -141,14 +141,14 @@ public class CarpetServer // static for now - easier to handle all around the co
     public static void loadBots(MinecraftServer server) {
         try
         {
-            File settings_file = server.getActiveAnvilConverter().getFile(server.getFolderName(), "bot.conf");
+            File settings_file = server.getLevelStorage().method_28330(server.getLevelName(), "bot.conf");
             BufferedReader b = new BufferedReader(new FileReader(settings_file));
             String line = "";
             boolean temp = CarpetSettings.removeFakePlayerSkins;
             CarpetSettings.removeFakePlayerSkins = true;
             while ((line = b.readLine()) != null)
             {
-                EntityPlayerMPFake.create(line, server);
+                FakeServerPlayerEntity.create(line, server);
             }
             b.close();
             CarpetSettings.removeFakePlayerSkins = temp;
@@ -167,7 +167,7 @@ public class CarpetServer // static for now - easier to handle all around the co
     {
         try
         {
-            File settings_file = server.getActiveAnvilConverter().getFile(server.getFolderName(), "bot.conf");
+            File settings_file = server.getLevelStorage().method_28330(server.getLevelName(), "bot.conf");
             if(names != null) {
                 FileWriter fw = new FileWriter(settings_file);
                 for (String name : names) {

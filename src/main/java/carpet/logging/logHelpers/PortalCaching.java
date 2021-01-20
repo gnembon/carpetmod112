@@ -2,8 +2,8 @@ package carpet.logging.logHelpers;
 
 import carpet.logging.LoggerRegistry;
 import carpet.utils.Messenger;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -14,27 +14,27 @@ public class PortalCaching {
     public static void portalCachingCleared(World world, int cachedCount, ArrayList<Vec3d> uncacheCount) {
         if(cachedCount == 0 && uncacheCount.size() == 0) return;
         final int count = uncacheCount.size();
-        List<ITextComponent> comp = new ArrayList<>();
+        List<Text> comp = new ArrayList<>();
         LoggerRegistry.getLogger("portalCaching").log( (option) -> {
-            comp.add(Messenger.s(null, String.format("%s Portals cached %d, Portal caches removed %d", world.provider.getDimensionType(), cachedCount, count)));
+            comp.add(Messenger.s(null, String.format("%s Portals cached %d, Portal caches removed %d", world.dimension.getType(), cachedCount, count)));
             switch (option) {
                 case "brief":
-                    return comp.toArray(new ITextComponent[0]);
+                    return comp.toArray(new Text[0]);
                 case "full":
-                    return finalReport(world, comp, uncacheCount).toArray(new ITextComponent[0]);
+                    return finalReport(world, comp, uncacheCount).toArray(new Text[0]);
                 default:
                     return null;
             }
         });
     }
 
-    private static List<ITextComponent> finalReport(World world, List<ITextComponent> comp, ArrayList<Vec3d> uncacheCount){
+    private static List<Text> finalReport(World world, List<Text> comp, ArrayList<Vec3d> uncacheCount){
         List<String> line = new ArrayList<>();
         for (int i = 0; i < uncacheCount.size(); i++)
         {
             Vec3d p = uncacheCount.get(i);
             Vec3d pos, tp, mot;
-            if(world.provider.getDimensionType().getId() == -1){
+            if(world.dimension.getType().getRawId() == -1){
                 pos = new Vec3d(p.x * 8, p.y, p.z * 8);
                 tp = pos.add(4, 0, 4);
                 mot = pos.add(8, 0, 8);

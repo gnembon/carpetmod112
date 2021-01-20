@@ -4,17 +4,16 @@ import carpet.helpers.HopperCounter;
 import carpet.helpers.TickSpeed;
 import carpet.logging.LoggerRegistry;
 import carpet.logging.logHelpers.PacketCounter;
-import carpet.mixin.accessors.SPacketPlayerListHeaderFooterAccessor;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.play.server.SPacketPlayerListHeaderFooter;
+import carpet.mixin.accessors.PlayerListHeaderS2CPacketAccessor;
+import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.PlayerListHeaderS2CPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Tuple;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,9 +23,9 @@ import java.util.Map;
 
 public class HUDController
 {
-    public static Map<EntityPlayer, List<ITextComponent>> player_huds = new HashMap<>();
+    public static Map<PlayerEntity, List<Text>> player_huds = new HashMap<>();
 
-    public static void addMessage(EntityPlayer player, ITextComponent hudMessage)
+    public static void addMessage(PlayerEntity player, Text hudMessage)
     {
         if (!player_huds.containsKey(player))
         {
@@ -34,23 +33,23 @@ public class HUDController
         }
         else
         {
-            player_huds.get(player).add(new TextComponentString("\n"));
+            player_huds.get(player).add(new LiteralText("\n"));
         }
         player_huds.get(player).add(hudMessage);
     }
-    public static void clear_player(EntityPlayer player)
+    public static void clear_player(PlayerEntity player)
     {
-        SPacketPlayerListHeaderFooter packet = new SPacketPlayerListHeaderFooter();
-        SPacketPlayerListHeaderFooterAccessor acc = (SPacketPlayerListHeaderFooterAccessor) packet;
-        acc.setHeader(new TextComponentString(""));
-        acc.setFooter(new TextComponentString(""));
-        ((EntityPlayerMP)player).connection.sendPacket(packet);
+        PlayerListHeaderS2CPacket packet = new PlayerListHeaderS2CPacket();
+        PlayerListHeaderS2CPacketAccessor acc = (PlayerListHeaderS2CPacketAccessor) packet;
+        acc.setHeader(new LiteralText(""));
+        acc.setFooter(new LiteralText(""));
+        ((ServerPlayerEntity)player).networkHandler.method_33624(packet);
     }
 
 
     public static void update_hud(MinecraftServer server)
     {
-        if(server.getTickCounter() % 20 != 0)
+        if(server.getTicks() % 20 != 0)
             return;
 
         player_huds.clear();
@@ -69,21 +68,21 @@ public class HUDController
                     "TOTAL_IN", PacketCounter.totalIn,
                     "TOTAL_OUT", PacketCounter.totalOut);
 
-        for (EntityPlayer player: player_huds.keySet())
+        for (PlayerEntity player: player_huds.keySet())
         {
-            SPacketPlayerListHeaderFooter packet = new SPacketPlayerListHeaderFooter();
-            SPacketPlayerListHeaderFooterAccessor acc = (SPacketPlayerListHeaderFooterAccessor) packet;
-            acc.setHeader(new TextComponentString(""));
+            PlayerListHeaderS2CPacket packet = new PlayerListHeaderS2CPacket();
+            PlayerListHeaderS2CPacketAccessor acc = (PlayerListHeaderS2CPacketAccessor) packet;
+            acc.setHeader(new LiteralText(""));
             acc.setFooter(Messenger.m(null, player_huds.get(player).toArray(new Object[0])));
-            ((EntityPlayerMP)player).connection.sendPacket(packet);
+            ((ServerPlayerEntity)player).networkHandler.method_33624(packet);
         }
     }
     private static void log_tps(MinecraftServer server)
     {
-        double MSPT = MathHelper.average(server.tickTimeArray) * 1.0E-6D;
+        double MSPT = MathHelper.average(server.lastTickLengths) * 1.0E-6D;
         double TPS = 1000.0D / Math.max((TickSpeed.time_warp_start_time != 0)?0.0:TickSpeed.mspt, MSPT);
         String color = Messenger.heatmap_color(MSPT,TickSpeed.mspt);
-        ITextComponent[] message = new ITextComponent[]{Messenger.m(null,
+        Text[] message = new Text[]{Messenger.m(null,
                 "g TPS: ", String.format(Locale.US, "%s %.1f",color, TPS),
                 "g  MSPT: ", String.format(Locale.US,"%s %.1f", color, MSPT))};
         LoggerRegistry.getLogger("tps").log(() -> message, "MSPT", MSPT, "TPS", TPS);
@@ -94,15 +93,15 @@ public class HUDController
         List<Object> commandParams = new ArrayList<>();
         for (int dim = -1; dim <= 1; dim++)
         {
-            for (EnumCreatureType type : EnumCreatureType.values())
+            for (EntityCategory type : EntityCategory.values())
             {
-                Tuple<Integer, Integer> counts = SpawnReporter.mobcaps.get(dim).getOrDefault(type, new Tuple<>(0, 0));
-                int actual = counts.getFirst(), limit = counts.getSecond();
+                Pair<Integer, Integer> counts = SpawnReporter.mobcaps.get(dim).getOrDefault(type, new Pair<>(0, 0));
+                int actual = counts.getLeft(), limit = counts.getRight();
                 Collections.addAll(commandParams, type.name() + "_ACTUAL_DIM_" + dim, actual, type.name() + "_ACTUAL_LIMIT_" + dim, limit);
             }
         }
         LoggerRegistry.getLogger("mobcaps").log((option, player) -> {
-            int dim = player.dimension;
+            int dim = player.field_33045;
             switch (option)
             {
                 case "overworld":
@@ -119,13 +118,13 @@ public class HUDController
         }, commandParams.toArray());
     }
 
-    private static ITextComponent [] send_mobcap_display(int dim)
+    private static Text [] send_mobcap_display(int dim)
     {
-        List<ITextComponent> components = new ArrayList<>();
-        for (EnumCreatureType type:EnumCreatureType.values())
+        List<Text> components = new ArrayList<>();
+        for (EntityCategory type:EntityCategory.values())
         {
-            Tuple<Integer,Integer> counts = SpawnReporter.mobcaps.get(dim).getOrDefault(type, new Tuple<>(0,0));
-            int actual = counts.getFirst(); int limit = counts.getSecond();
+            Pair<Integer,Integer> counts = SpawnReporter.mobcaps.get(dim).getOrDefault(type, new Pair<>(0,0));
+            int actual = counts.getLeft(); int limit = counts.getRight();
             components.add(Messenger.m(null,
                     (actual+limit == 0)?"g -":Messenger.heatmap_color(actual,limit)+" "+actual,
                     Messenger.creatureTypeColor(type)+" /"+((actual+limit == 0)?"-":limit)
@@ -133,7 +132,7 @@ public class HUDController
             components.add(Messenger.m(null, "w  "));
         }
         components.remove(components.size()-1);
-        return new ITextComponent[]{Messenger.m(null, components.toArray(new Object[0]))};
+        return new Text[]{Messenger.m(null, components.toArray(new Object[0]))};
     }
     
     private static void log_counter(MinecraftServer server)
@@ -144,15 +143,15 @@ public class HUDController
         LoggerRegistry.getLogger("counter").log((option) -> send_counter_info(server, option), commandParams);
     }
 
-    private static ITextComponent [] send_counter_info(MinecraftServer server, String color)
+    private static Text [] send_counter_info(MinecraftServer server, String color)
     {
         HopperCounter counter = HopperCounter.getCounter(color);
-        List<ITextComponent> res = counter == null ? Collections.emptyList() : counter.format(server, false, true);
-        return new ITextComponent[]{ Messenger.m(null, res.toArray(new Object[0]))};
+        List<Text> res = counter == null ? Collections.emptyList() : counter.format(server, false, true);
+        return new Text[]{ Messenger.m(null, res.toArray(new Object[0]))};
     }
-    private static ITextComponent [] packetCounter()
+    private static Text [] packetCounter()
     {
-        ITextComponent [] ret =  new ITextComponent[]{
+        Text [] ret =  new Text[]{
                 Messenger.m(null, "w I/" + PacketCounter.totalIn + " O/" + PacketCounter.totalOut),
         };
         PacketCounter.reset();

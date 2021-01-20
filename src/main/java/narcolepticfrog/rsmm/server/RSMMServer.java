@@ -6,15 +6,15 @@ import narcolepticfrog.rsmm.MeterCommand;
 import narcolepticfrog.rsmm.events.*;
 import narcolepticfrog.rsmm.network.RSMMCPacket;
 import narcolepticfrog.rsmm.network.RSMMSPacket;
-import net.minecraft.command.ServerCommandManager;
-import net.minecraft.entity.player.EntityPlayerMP;
 import carpet.CarpetSettings;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.client.CPacketCustomPayload;
-import net.minecraft.network.play.server.SPacketCustomPayload;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.*;
@@ -55,10 +55,10 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
      * @param player The player entity.
      * @return The meter group that {@code player} is subscribed to.
      */
-    private MeterGroup getOrCreateMeterGroup(EntityPlayerMP player) {
-        UUID playerUUID = player.getUniqueID();
+    private MeterGroup getOrCreateMeterGroup(ServerPlayerEntity player) {
+        UUID playerUUID = player.getUuid();
         if (!playerSubscriptions.containsKey(playerUUID)) {
-            playerSubscriptions.put(playerUUID, player.getName());
+            playerSubscriptions.put(playerUUID, player.method_29611());
         }
         String groupName = playerSubscriptions.get(playerUUID);
         if (!meterGroups.containsKey(groupName)) {
@@ -71,8 +71,8 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
      * The same as {@code getOrCreateMeterGroup}, except it returns {@code null} if either the player
      * is not subscribed to a meter group, or if the meter group they subscribe to is null.
      */
-    private MeterGroup getMeterGroup(EntityPlayerMP player) {
-        UUID playerUUID = player.getUniqueID();
+    private MeterGroup getMeterGroup(ServerPlayerEntity player) {
+        UUID playerUUID = player.getUuid();
         if (!playerSubscriptions.containsKey(playerUUID)) {
             return null;
         }
@@ -104,21 +104,21 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
      * @param player The player to receieve the packet.
      * @param packet The packet to be sent.
      */
-    public void sendToPlayer(EntityPlayerMP player, RSMMCPacket packet) {
+    public void sendToPlayer(ServerPlayerEntity player, RSMMCPacket packet) {
         if (CarpetServer.pluginChannels.tracker.isRegistered(player, "RSMM")) {
-            player.connection.sendPacket(new SPacketCustomPayload("RSMM", packet.toBuffer()));
+            player.networkHandler.method_33624(new CustomPayloadS2CPacket("RSMM", packet.toBuffer()));
         }
     }
 
     /**
      * Unsubscribes {@code player} from their current meter group and subscribes them to {@code groupName}.
      */
-    public void subscribePlayerToGroup(EntityPlayerMP player, String groupName) {
-        playerSubscriptions.put(player.getUniqueID(), groupName);
+    public void subscribePlayerToGroup(ServerPlayerEntity player, String groupName) {
+        playerSubscriptions.put(player.getUuid(), groupName);
         getOrCreateMeterGroup(player).addPlayer(player);
     }
 
-    public void unsubscribePlayerFromGroup(EntityPlayerMP player) {
+    public void unsubscribePlayerFromGroup(ServerPlayerEntity player) {
         MeterGroup oldGroup = getMeterGroup(player);
         if (oldGroup != null) {
             oldGroup.removePlayer(player);
@@ -131,12 +131,12 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
 
     /* ----- Meter Command Support ----- */
 
-    public void changePlayerSubscription(EntityPlayerMP player, String groupName) {
+    public void changePlayerSubscription(ServerPlayerEntity player, String groupName) {
         unsubscribePlayerFromGroup(player);
         subscribePlayerToGroup(player, groupName);
     }
 
-    public int getNumMeters(EntityPlayerMP player) {
+    public int getNumMeters(ServerPlayerEntity player) {
         MeterGroup mg = getMeterGroup(player);
         if (mg == null) {
             return 0;
@@ -145,35 +145,35 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
         }
     }
 
-    public void renameMeter(EntityPlayerMP player, int meterId, String name) {
+    public void renameMeter(ServerPlayerEntity player, int meterId, String name) {
         MeterGroup mg = getMeterGroup(player);
         if (mg != null) {
             mg.renameMeter(meterId, name);
         }
     }
 
-    public void renameLastMeter(EntityPlayerMP player, String name) {
+    public void renameLastMeter(ServerPlayerEntity player, String name) {
         MeterGroup mg = getMeterGroup(player);
         if (mg != null) {
             mg.renameLastMeter(name);
         }
     }
 
-    public void recolorMeter(EntityPlayerMP player, int meterId, int color) {
+    public void recolorMeter(ServerPlayerEntity player, int meterId, int color) {
         MeterGroup mg = getMeterGroup(player);
         if (mg != null) {
             mg.recolorMeter(meterId, color);
         }
     }
 
-    public void recolorLastMeter(EntityPlayerMP player, int color) {
+    public void recolorLastMeter(ServerPlayerEntity player, int color) {
         MeterGroup mg = getMeterGroup(player);
         if (mg != null) {
             mg.recolorLastMeter(color);
         }
     }
 
-    public void removeAllMeters(EntityPlayerMP player) {
+    public void removeAllMeters(ServerPlayerEntity player) {
         MeterGroup mg = getMeterGroup(player);
         if (mg != null) {
             mg.removeAllMeters();
@@ -183,7 +183,7 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
     /* ----- Event Handlers ----- */
 
     @Override
-    public void onPistonPush(World w, BlockPos pos, EnumFacing direction) {
+    public void onPistonPush(World w, BlockPos pos, Direction direction) {
         // Forward PistonPush events to each meter group
         for (MeterGroup mg : meterGroups.values()) {
             mg.onPistonPush(w, pos, direction);
@@ -207,19 +207,19 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
     }
 
     @Override
-    public void onPlayerConnect(EntityPlayerMP player) {
+    public void onPlayerConnect(ServerPlayerEntity player) {
         // Register the RSMM plugin channel with the player.
         // Handled by PluginChannelManager
         // player.connection.sendPacket(new SPacketCustomPayload("REGISTER", new PacketBuffer(Unpooled.wrappedBuffer("RSMM".getBytes(Charsets.UTF_8)))));
     }
 
     @Override
-    public void onPlayerDisconnect(EntityPlayerMP player) {
+    public void onPlayerDisconnect(ServerPlayerEntity player) {
         unsubscribePlayerFromGroup(player);
     }
 
     @Override
-    public void onCustomPayload(EntityPlayerMP sender, String channel, PacketBuffer data) {
+    public void onCustomPayload(ServerPlayerEntity sender, String channel, PacketByteBuf data) {
         if (CarpetSettings.redstoneMultimeter && "RSMM".equals(channel)) {
             RSMMSPacket packet = RSMMSPacket.fromBuffer(data);
             if (packet == null) return;
@@ -228,7 +228,7 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
     }
 
     @Override
-    public void onChannelRegister(EntityPlayerMP sender, List<String> channels) {
+    public void onChannelRegister(ServerPlayerEntity sender, List<String> channels) {
         // Once the client has registered that it is on the RSMM channel, add them to their subscribed meter group.
         if (channels.contains("RSMM")) {
             getOrCreateMeterGroup(sender).addPlayer(sender);
@@ -236,7 +236,7 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
     }
 
     @Override
-    public void onChannelUnregister(EntityPlayerMP sender, List<String> channels) {}
+    public void onChannelUnregister(ServerPlayerEntity sender, List<String> channels) {}
 
     public PluginChannelHandler createChannelHandler() {
         return new PluginChannelHandler() {
@@ -246,26 +246,26 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
             }
 
             @Override
-            public boolean register(String channel, EntityPlayerMP player) {
+            public boolean register(String channel, ServerPlayerEntity player) {
                 PlayerConnectionEventDispatcher.dispatchPlayerDisconnectEvent(player);
                 ServerPacketEventDispatcher.dispatchChannelRegister(player, Collections.singletonList(channel));
                 return true;
             }
 
             @Override
-            public void unregister(String channel, EntityPlayerMP player) {
+            public void unregister(String channel, ServerPlayerEntity player) {
                 ServerPacketEventDispatcher.dispatchChannelUnregister(player, Collections.singletonList(channel));
                 PlayerConnectionEventDispatcher.dispatchPlayerDisconnectEvent(player);
             }
 
             @Override
-            public void onCustomPayload(CPacketCustomPayload packet, EntityPlayerMP player) {
-                ServerPacketEventDispatcher.dispatchCustomPayload(player, packet.getChannelName(), packet.getBufferData());
+            public void onCustomPayload(CustomPayloadC2SPacket packet, ServerPlayerEntity player) {
+                ServerPacketEventDispatcher.dispatchCustomPayload(player, packet.method_32939(), packet.method_32941());
             }
         };
     }
 
-    public void registerCommands(ServerCommandManager mgr) {
-        mgr.registerCommand(new MeterCommand(this));
+    public void registerCommands(CommandManager mgr) {
+        mgr.method_29056(new MeterCommand(this));
     }
 }

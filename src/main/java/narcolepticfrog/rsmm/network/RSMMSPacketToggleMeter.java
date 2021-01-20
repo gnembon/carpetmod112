@@ -2,7 +2,7 @@ package narcolepticfrog.rsmm.network;
 
 import io.netty.buffer.Unpooled;
 import narcolepticfrog.rsmm.DimPos;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.PacketByteBuf;
 
 /**
  * This packet is sent from the client to the server indicating that a meter should be toggled
@@ -28,7 +28,7 @@ public class RSMMSPacketToggleMeter extends RSMMSPacket {
         return movable;
     }
 
-    public static RSMMSPacketToggleMeter fromBuffer(PacketBuffer buffer) {
+    public static RSMMSPacketToggleMeter fromBuffer(PacketByteBuf buffer) {
         Byte messageId = buffer.readByte();
         assert messageId == MESSAGE_ID;
         DimPos dimpos = DimPos.readFromBuffer(buffer);
@@ -37,8 +37,8 @@ public class RSMMSPacketToggleMeter extends RSMMSPacket {
     }
 
     @Override
-    public PacketBuffer toBuffer() {
-        PacketBuffer buffer = new PacketBuffer(Unpooled.buffer());
+    public PacketByteBuf toBuffer() {
+        PacketByteBuf buffer = new PacketByteBuf(Unpooled.buffer());
         buffer.writeByte(MESSAGE_ID);
         dimpos.writeToBuffer(buffer);
         buffer.writeBoolean(movable);

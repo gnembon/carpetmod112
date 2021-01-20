@@ -10,42 +10,34 @@ import carpet.CarpetSettings;
 import carpet.utils.EntityInfo;
 import carpet.utils.extensions.ActionPackOwner;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.util.math.RayTraceResult;
-
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 
 public class CommandEntityInfo extends CommandCarpetBase
 {
-    /**
-     * Gets the name of the command
-     */
-    public String getName()
+    @Override
+    public String method_29277()
     {
         return "entityinfo";
     }
 
-    /**
-     * Gets the usage string for the command.
-     *  
-     * @param sender The ICommandSender who is requesting usage details
-     */
-    public String getUsage(ICommandSender sender)
+    @Override
+    public String method_29275(class_2010 sender)
     {
         return "Usage: entityinfo <entity_selector>";
     }
 
 
-    public void print_multi_message(List<String> messages, ICommandSender sender, String grep)
+    public void print_multi_message(List<String> messages, class_2010 sender, String grep)
     {
-        List<String> actual = new ArrayList<String>();
+        List<String> actual = new ArrayList<>();
         if (grep != null)
         {
             Pattern p = Pattern.compile(grep);
@@ -70,21 +62,15 @@ public class CommandEntityInfo extends CommandCarpetBase
         {
             actual = messages;
         }
-        notifyCommandListener(sender, this, "");
+        method_28710(sender, this, "");
         for (String lline: actual)
         {
-            notifyCommandListener(sender, this, lline);
+            method_28710(sender, this, lline);
         }
     }
 
-    /**
-     * Callback for when the command is executed
-     *
-     * @param server The server instance
-     * @param sender The sender who executed the command
-     * @param args The arguments that were passed
-     */
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    @Override
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandEntityInfo", sender)) return;
         if (args.length == 0 || "grep".equalsIgnoreCase(args[0]))
@@ -94,15 +80,15 @@ public class CommandEntityInfo extends CommandCarpetBase
             {
                 grep = args[1];
             }
-            EntityPlayer entityplayer = getCommandSenderAsPlayer(sender);
-            List<String> report = EntityInfo.entityInfo(entityplayer, sender.getEntityWorld());
+            PlayerEntity entityplayer = method_28708(sender);
+            List<String> report = EntityInfo.entityInfo(entityplayer, sender.method_29608());
             print_multi_message(report, sender, grep);
         }
         else
         {
-            Entity entity = getEntity(server, sender, args[0]);
-            //LOG.error("SENDER dimension "+ sender.getEntityWorld().provider.getDimensionType().getId());
-            List<String> report = EntityInfo.entityInfo(entity, sender.getEntityWorld());
+            Entity entity = method_28743(server, sender, args[0]);
+            //LOG.error("SENDER dimension "+ sender.method_29608().provider.getDimensionType().getId());
+            List<String> report = EntityInfo.entityInfo(entity, sender.method_29608());
             String grep = null;
             if (args.length >= 3 && "grep".equalsIgnoreCase(args[1]))
             {
@@ -112,27 +98,23 @@ public class CommandEntityInfo extends CommandCarpetBase
         }
     }
 
-    /**
-     * Return whether the specified command parameter index is a username parameter.
-     *  
-     * @param args The arguments of the command invocation
-     * @param index The index
-     */
-    public boolean isUsernameIndex(String[] args, int index)
+    @Override
+    public boolean method_29276(String[] args, int index)
     {
         return index == 0;
     }
 
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    @Override
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos)
     {
         if (!CarpetSettings.commandEntityInfo)
         {
-            notifyCommandListener(sender, this, "Command is disabled in carpet settings");
+            method_28710(sender, this, "Command is disabled in carpet settings");
         }
-        List<String> list = getListOfStringsMatchingLastWord(args, server.getOnlinePlayerNames());
-        RayTraceResult result = ((ActionPackOwner) sender).getActionPack().mouseOver();
-        if (result != null && result.typeOfHit == RayTraceResult.Type.ENTITY) {
-            list.add(result.entityHit.getUniqueID().toString());
+        List<String> list = method_28732(args, server.getPlayerNames());
+        BlockHitResult result = ((ActionPackOwner) sender).getActionPack().mouseOver();
+        if (result != null && result.field_26673 == BlockHitResult.Type.ENTITY) {
+            list.add(result.field_26676.getUuid().toString());
         }
         return args.length == 1 ? list : Collections.emptyList();
     }

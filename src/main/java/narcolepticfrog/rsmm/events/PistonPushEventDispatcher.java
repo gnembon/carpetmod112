@@ -1,7 +1,7 @@
 package narcolepticfrog.rsmm.events;
 
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ public class PistonPushEventDispatcher {
         listeners.add(l);
     }
 
-    public static void dispatchEvent(World w, BlockPos p, EnumFacing dir) {
+    public static void dispatchEvent(World w, BlockPos p, Direction dir) {
         for (PistonPushListener listener : listeners) {
             listener.onPistonPush(w, p, dir);
         }

@@ -1,16 +1,16 @@
 package carpet.mixin.accessors;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.management.PlayerChunkMapEntry;
-import net.minecraft.world.chunk.Chunk;
+import net.minecraft.class_4615;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.world.chunk.WorldChunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
 
 import java.util.List;
 
-@Mixin(PlayerChunkMapEntry.class)
+@Mixin(class_4615.class)
 public interface PlayerChunkMapEntryAccessor {
-    @Accessor List<EntityPlayerMP> getPlayers();
-    @Accessor void setChunk(Chunk chunk);
-    @Accessor void setSentToPlayers(boolean sent);
+    @Accessor("field_31793") List<ServerPlayerEntity> getPlayers();
+    @Accessor("field_31796") void setChunk(WorldChunk chunk);
+    @Accessor("field_31800") void setSentToPlayers(boolean sent);
 }

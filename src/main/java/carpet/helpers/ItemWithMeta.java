@@ -13,11 +13,11 @@ public class ItemWithMeta {
 
     public ItemWithMeta(Item item, int metadata) {
         this.item = item;
-        this.metadata = item.getHasSubtypes() ? metadata : 0;
+        this.metadata = item.hasVariants() ? metadata : 0;
     }
 
     public String getDisplayName() {
-        return new ItemStack(item, 1, metadata).getDisplayName();
+        return new ItemStack(item, 1, metadata).getName();
     }
 
     @Override

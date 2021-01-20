@@ -4,11 +4,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.Text;
 
 public class Logger
 {
@@ -124,16 +123,16 @@ public class Logger
      * will repeat invocation for players that share the same option
      */
     @FunctionalInterface
-    public interface lMessage { ITextComponent [] get(String playerOption, EntityPlayer player);}
+    public interface lMessage { Text [] get(String playerOption, PlayerEntity player);}
     public void logNoCommand(lMessage messagePromise) {log(messagePromise, (Object[])null);}
     public void log(lMessage messagePromise, Object... commandParams)
     {
         for (Map.Entry<String,String> en : subscribedPlayers.entrySet())
         {
-            EntityPlayerMP player = playerFromName(en.getKey());
+            ServerPlayerEntity player = playerFromName(en.getKey());
             if (player != null)
             {
-                ITextComponent [] messages = messagePromise.get(en.getValue(),player);
+                Text [] messages = messagePromise.get(en.getValue(),player);
                 if (messages != null)
                     sendPlayerMessage(en.getKey(), player, messages, commandParams);
             }
@@ -145,14 +144,14 @@ public class Logger
      * and served the same way to all other players subscribed to the same option
      */
     @FunctionalInterface
-    public interface lMessageIgnorePlayer { ITextComponent [] get(String playerOption);}
+    public interface lMessageIgnorePlayer { Text [] get(String playerOption);}
     public void logNoCommand(lMessageIgnorePlayer messagePromise) {log(messagePromise, (Object[])null);}
     public void log(lMessageIgnorePlayer messagePromise, Object... commandParams)
     {
-        Map<String, ITextComponent[]> cannedMessages = new HashMap<>();
+        Map<String, Text[]> cannedMessages = new HashMap<>();
         for (Map.Entry<String,String> en : subscribedPlayers.entrySet())
         {
-            EntityPlayerMP player = playerFromName(en.getKey());
+            ServerPlayerEntity player = playerFromName(en.getKey());
             if (player != null)
             {
                 String option = en.getValue();
@@ -160,7 +159,7 @@ public class Logger
                 {
                     cannedMessages.put(option,messagePromise.get(option));
                 }
-                ITextComponent [] messages = cannedMessages.get(option);
+                Text [] messages = cannedMessages.get(option);
                 if (messages != null)
                     sendPlayerMessage(en.getKey(), player, messages, commandParams);
             }
@@ -169,13 +168,13 @@ public class Logger
     /**
      * guarantees that message is evaluated once, so independent from the player and chosen option
      */
-    public void logNoCommand(Supplier<ITextComponent[]> messagePromise) {log(messagePromise, (Object[])null);}
-    public void log(Supplier<ITextComponent[]> messagePromise, Object... commandParams)
+    public void logNoCommand(Supplier<Text[]> messagePromise) {log(messagePromise, (Object[])null);}
+    public void log(Supplier<Text[]> messagePromise, Object... commandParams)
     {
-        ITextComponent [] cannedMessages = null;
+        Text [] cannedMessages = null;
         for (Map.Entry<String,String> en : subscribedPlayers.entrySet())
         {
-            EntityPlayerMP player = playerFromName(en.getKey());
+            ServerPlayerEntity player = playerFromName(en.getKey());
             if (player != null)
             {
                 if (cannedMessages == null) cannedMessages = messagePromise.get();
@@ -184,11 +183,11 @@ public class Logger
         }
     }
 
-    public boolean subscribed(EntityPlayerMP player)
+    public boolean subscribed(ServerPlayerEntity player)
     {
         for (Map.Entry<String,String> en : subscribedPlayers.entrySet())
         {
-            EntityPlayerMP p = playerFromName(en.getKey());
+            ServerPlayerEntity p = playerFromName(en.getKey());
             if (p != null && player.equals(p))
             {
                 return true;
@@ -197,7 +196,7 @@ public class Logger
         return false;
     }
 
-    public void sendPlayerMessage(String playerName, EntityPlayerMP player, ITextComponent[] messages, Object[] commandParams)
+    public void sendPlayerMessage(String playerName, ServerPlayerEntity player, Text[] messages, Object[] commandParams)
     {
         handlers.getOrDefault(playerName, defaultHandler).handle(player, messages, commandParams);
     }
@@ -205,9 +204,9 @@ public class Logger
     /**
      * Gets the {@code EntityPlayer} instance for a player given their UUID. Returns null if they are offline.
      */
-    protected EntityPlayerMP playerFromName(String name)
+    protected ServerPlayerEntity playerFromName(String name)
     {
-        return server.getPlayerList().getPlayerByUsername(name);
+        return server.getPlayerManager().getPlayer(name);
     }
 
     // ----- Event Handlers ----- //

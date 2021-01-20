@@ -4,40 +4,40 @@ import carpet.CarpetSettings;
 import carpet.helpers.ThrowableSuppression;
 import carpet.utils.Messenger;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ReportedException;
-import net.minecraft.world.WorldServer;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.crash.CrashException;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
-    @Redirect(method = "updateTimeLightAndEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;tick()V"))
-    private void fixUpdateSuppressionCrashTick(WorldServer worldServer) {
+    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;tickTime()V"))
+    private void fixUpdateSuppressionCrashTick(ServerWorld worldServer) {
         if (!CarpetSettings.updateSuppressionCrashFix) {
-            worldServer.tick();
+            worldServer.tickTime();
             return;
         }
         try {
-            worldServer.tick();
-        } catch (ReportedException e) {
-            if (!(e.getCrashReport().getCrashCause() instanceof ThrowableSuppression)) throw e;
+            worldServer.tickTime();
+        } catch (CrashException e) {
+            if (!(e.getReport().getCause() instanceof ThrowableSuppression)) throw e;
             logUpdateSuppression("world tick");
         } catch (ThrowableSuppression ignored) {
             logUpdateSuppression("world tick");
         }
     }
 
-    @Redirect(method = "updateTimeLightAndEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/WorldServer;updateEntities()V"))
-    private void fixUpdateSuppressionCrashTickEntities(WorldServer worldServer) {
+    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;tickBlockEntities()V"))
+    private void fixUpdateSuppressionCrashTickEntities(ServerWorld worldServer) {
         if (!CarpetSettings.updateSuppressionCrashFix) {
-            worldServer.updateEntities();
+            worldServer.tickBlockEntities();
             return;
         }
         try {
-            worldServer.updateEntities();
-        } catch (ReportedException e) {
-            if (!(e.getCrashReport().getCrashCause() instanceof ThrowableSuppression)) throw e;
+            worldServer.tickBlockEntities();
+        } catch (CrashException e) {
+            if (!(e.getReport().getCause() instanceof ThrowableSuppression)) throw e;
             logUpdateSuppression("update entities");
         } catch (ThrowableSuppression ignored) {
             logUpdateSuppression("update entities");

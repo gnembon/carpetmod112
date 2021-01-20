@@ -4,12 +4,12 @@ import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.client.CPacketCustomPayload;
-import net.minecraft.network.play.server.SPacketCustomPayload;
+import net.minecraft.network.packet.c2s.play.CustomPayloadC2SPacket;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.PlayerList;
+import net.minecraft.server.PlayerManager;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.PacketByteBuf;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -32,28 +32,28 @@ public class PluginChannelManager {
         for (String channel : channels) {
             channelHandlers.put(channel, handler);
         }
-        PlayerList playerList = server.getPlayerList();
+        PlayerManager playerList = server.getPlayerManager();
         // make sure server started up
         if (playerList != null) {
-            sendChannelUpdate(playerList.getPlayers(), "REGISTER", Arrays.asList(channels));
+            sendChannelUpdate(playerList.getPlayerList(), "REGISTER", Arrays.asList(channels));
         }
     }
 
     public void unregister(PluginChannelHandler handler) {
         String[] channels = handler.getChannels();
         for (String channel : channels) {
-            for (EntityPlayerMP player : tracker.getPlayers(channel)) {
+            for (ServerPlayerEntity player : tracker.getPlayers(channel)) {
                 handler.unregister(channel, player);
                 tracker.unregister(player, channel);
             }
             channelHandlers.remove(channel);
         }
-        sendChannelUpdate(server.getPlayerList().getPlayers(), "UNREGISTER", Arrays.asList(channels));
+        sendChannelUpdate(server.getPlayerManager().getPlayerList(), "UNREGISTER", Arrays.asList(channels));
     }
 
-    public void process(EntityPlayerMP player, CPacketCustomPayload packet) {
-        String channel = packet.getChannelName();
-        PacketBuffer payload = packet.getBufferData();
+    public void process(ServerPlayerEntity player, CustomPayloadC2SPacket packet) {
+        String channel = packet.method_32939();
+        PacketByteBuf payload = packet.method_32941();
         switch(channel) {
             case "REGISTER": {
                 this.processRegister(player, payload);
@@ -70,7 +70,7 @@ public class PluginChannelManager {
         }
     }
 
-    private void processRegister(EntityPlayerMP player, PacketBuffer payload) {
+    private void processRegister(ServerPlayerEntity player, PacketByteBuf payload) {
         List<String> channels = getChannels(payload);
         for (String channel : channels) {
             PluginChannelHandler handler = channelHandlers.get(channel);
@@ -80,7 +80,7 @@ public class PluginChannelManager {
         }
     }
 
-    private void processUnregister(EntityPlayerMP player, PacketBuffer payload) {
+    private void processUnregister(ServerPlayerEntity player, PacketByteBuf payload) {
         List<String> channels = getChannels(payload);
         for (String channel : channels) {
             if (!tracker.isRegistered(player, channel)) continue;
@@ -90,28 +90,28 @@ public class PluginChannelManager {
         }
     }
 
-    public void onPlayerConnected(EntityPlayerMP player) {
+    public void onPlayerConnected(ServerPlayerEntity player) {
         sendChannelUpdate(Collections.singleton(player), "REGISTER", channelHandlers.keySet());
     }
 
-    public void onPlayerDisconnected(EntityPlayerMP player) {
+    public void onPlayerDisconnected(ServerPlayerEntity player) {
         for (Map.Entry<String, PluginChannelHandler> handler : channelHandlers.entrySet()) {
             handler.getValue().unregister(handler.getKey(), player);
         }
         tracker.unregisterAll(player);
     }
 
-    private void sendChannelUpdate(Collection<EntityPlayerMP> players, String updateType, Collection<String> channels) {
+    private void sendChannelUpdate(Collection<ServerPlayerEntity> players, String updateType, Collection<String> channels) {
         if (players.isEmpty()) return;
         String joinedChannels = String.join("\0", channels);
         ByteBuf payload = Unpooled.wrappedBuffer(joinedChannels.getBytes(Charsets.UTF_8));
-        SPacketCustomPayload packet = new SPacketCustomPayload(updateType, new PacketBuffer(payload));
-        for (EntityPlayerMP player : players) {
-            player.connection.sendPacket(packet);
+        CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(updateType, new PacketByteBuf(payload));
+        for (ServerPlayerEntity player : players) {
+            player.networkHandler.method_33624(packet);
         }
     }
 
-    private static List<String> getChannels(PacketBuffer buff) {
+    private static List<String> getChannels(PacketByteBuf buff) {
         buff.resetReaderIndex();
         byte[] bytes = new byte[buff.readableBytes()];
         buff.readBytes(bytes);

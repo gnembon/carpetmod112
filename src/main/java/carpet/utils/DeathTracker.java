@@ -1,9 +1,8 @@
 package carpet.utils;
 
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,24 +35,24 @@ public class DeathTracker
     public static void start(MinecraftServer server)
     {
         clean_results();
-        start_tick = server.getTickCounter();
+        start_tick = server.getTicks();
         active = true;
     }
-    public static List<ITextComponent> query_summary(MinecraftServer server)
+    public static List<Text> query_summary(MinecraftServer server)
     {
-        return new ArrayList<ITextComponent>();
+        return new ArrayList<Text>();
     }
 
-    public static List<ITextComponent> stop(MinecraftServer server)
+    public static List<Text> stop(MinecraftServer server)
     {
-        List<ITextComponent> res = query_summary(server);
+        List<Text> res = query_summary(server);
         clean_results();
         active = false;
         start_tick = 0L;
         return res;
     }
-    public static List<ITextComponent> query_moblist(MinecraftServer server)
+    public static List<Text> query_moblist(MinecraftServer server)
     {
-        return new ArrayList<ITextComponent>();
+        return new ArrayList<Text>();
     }
 }

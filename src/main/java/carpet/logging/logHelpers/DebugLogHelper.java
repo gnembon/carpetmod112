@@ -1,10 +1,9 @@
 package carpet.logging.logHelpers;
 
 import carpet.logging.LoggerRegistry;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-
 import java.util.function.Supplier;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 
 public final class DebugLogHelper {
     private DebugLogHelper() {}
@@ -21,13 +20,13 @@ public final class DebugLogHelper {
             for(int i = 2; i < trace.length; i++){
                 s.append(trace[i].toString()).append('\n');
             }
-            invisDebug(new TextComponentString(info.get() + " " + s.toString()));
+            invisDebug(new LiteralText(info.get() + " " + s.toString()));
         } else {
-            invisDebug(new TextComponentString(info.get()));
+            invisDebug(new LiteralText(info.get()));
         }
     }
 
-    public static void invisDebug(ITextComponent ...texts) {
+    public static void invisDebug(Text ...texts) {
         if (!LoggerRegistry.__invisDebug) return;
         LoggerRegistry.getLogger("invisDebug").log(()-> texts);
     }

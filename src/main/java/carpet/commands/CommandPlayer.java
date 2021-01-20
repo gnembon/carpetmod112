@@ -2,14 +2,14 @@ package carpet.commands;
 
 import carpet.CarpetSettings;
 import carpet.helpers.EntityPlayerActionPack;
-import carpet.patches.EntityPlayerMPFake;
+import carpet.patches.FakeServerPlayerEntity;
 import carpet.utils.extensions.ActionPackOwner;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
@@ -25,49 +25,43 @@ import net.minecraft.world.World;
 
 public class CommandPlayer extends CommandCarpetBase
 {
-    /**
-     * Gets the name of the command
-     */
-    public String getName()
+    @Override
+    public String method_29277()
     {
         return "player";
     }
 
-
-    /**
-     * Gets the usage string for the command.
-     *
-     * @param sender The ICommandSender who is requesting usage details
-     */
-    public String getUsage(ICommandSender sender)
+    @Override
+    public String method_29275(class_2010 sender)
     {
         return "player <spawn|kill|stop|drop|swapHands|mount|dismount> <player_name>  OR /player <use|attack|jump> <player_name> <once|continuous|interval.. ticks>";
     }
 
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    @Override
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandPlayer", sender)) return;
         if (args.length < 2)
         {
-            throw new WrongUsageException("player <x> action");
+            throw new class_6182("player <x> action");
         }
         String playerName = args[0];
         String action = args[1];
-        EntityPlayerMP player = server.getPlayerList().getPlayerByUsername(playerName);
-        if (sender instanceof EntityPlayer)
+        ServerPlayerEntity player = server.getPlayerManager().getPlayer(playerName);
+        if (sender instanceof PlayerEntity)
         {
-            EntityPlayer sendingPlayer = getCommandSenderAsPlayer(sender);
-            if (!(server.getPlayerList().canSendCommands(sendingPlayer.getGameProfile())))
+            PlayerEntity sendingPlayer = method_28708(sender);
+            if (!(server.getPlayerManager().isOperator(sendingPlayer.getGameProfile())))
             {
-                if (!(sendingPlayer == player || player == null || player instanceof EntityPlayerMPFake))
+                if (!(sendingPlayer == player || player == null || player instanceof FakeServerPlayerEntity))
                 {
-                    throw new WrongUsageException("Non OP players can't control other players");
+                    throw new class_6182("Non OP players can't control other players");
                 }
             }
         }
         if (player == null && !action.equalsIgnoreCase("spawn") && !action.equalsIgnoreCase("respawn"))
         {
-            throw new WrongUsageException("player doesn't exist");
+            throw new class_6182("player doesn't exist");
         }
         EntityPlayerActionPack actionPack = player == null ? null : ((ActionPackOwner) player).getActionPack();
         if ("use".equalsIgnoreCase(action) || "attack".equalsIgnoreCase(action) || "jump".equalsIgnoreCase(action))
@@ -79,7 +73,7 @@ public class CommandPlayer extends CommandCarpetBase
                 option = args[2];
                 if (args.length > 3 && option.equalsIgnoreCase("interval"))
                 {
-                    interval = parseInt(args[3],2,72000);
+                    interval = method_28719(args[3],2,72000);
                 }
             }
             if (action.equalsIgnoreCase("use"))
@@ -130,39 +124,39 @@ public class CommandPlayer extends CommandCarpetBase
         {
             if (player != null)
             {
-                throw new WrongUsageException("player "+playerName+" already exists");
+                throw new class_6182("player "+playerName+" already exists");
             }
             if (playerName.length() < 3 || playerName.length() > 16)
             {
-                throw new WrongUsageException("player names can only be 3 to 16 chars long");
+                throw new class_6182("player names can only be 3 to 16 chars long");
             }
-            if (isWhitelistedPlayer(server, playerName) && !sender.canUseCommand(2, "gamemode")) {
-                throw new CommandException("You are not allowed to spawn a whitelisted player");
+            if (isWhitelistedPlayer(server, playerName) && !sender.method_29603(2, "gamemode")) {
+                throw new class_6175("You are not allowed to spawn a whitelisted player");
             }
-            Vec3d vec3d = sender.getPositionVector();
+            Vec3d vec3d = sender.method_29607();
             double d0 = vec3d.x;
             double d1 = vec3d.y;
             double d2 = vec3d.z;
             double yaw = 0.0D;
             double pitch = 0.0D;
-            World world = sender.getEntityWorld();
-            int dimension = world.provider.getDimensionType().getId();
-            int gamemode = server.getGameType().getID();
+            World world = sender.method_29608();
+            int dimension = world.dimension.getType().getRawId();
+            int gamemode = server.getDefaultGameMode().getId();
 
-            if (sender instanceof EntityPlayerMP)
+            if (sender instanceof ServerPlayerEntity)
             {
-                EntityPlayerMP entity = getCommandSenderAsPlayer(sender);
-                yaw = (double)entity.rotationYaw;
-                pitch = (double)entity.rotationPitch;
-                gamemode = entity.interactionManager.getGameType().getID();
+                ServerPlayerEntity entity = method_28708(sender);
+                yaw = (double)entity.yaw;
+                pitch = (double)entity.pitch;
+                gamemode = entity.interactionManager.getGameMode().getId();
             }
             if (args.length >= 5)
             {
-                d0 = parseCoordinate(d0, args[2], true).getResult();
-                d1 = parseCoordinate(d1, args[3], -4096, 4096, false).getResult();
-                d2 = parseCoordinate(d2, args[4], true).getResult();
-                yaw = parseCoordinate(yaw, args.length > 5 ? args[5] : "~", false).getResult();
-                pitch = parseCoordinate(pitch, args.length > 6 ? args[6] : "~", false).getResult();
+                d0 = method_28702(d0, args[2], true).method_28750();
+                d1 = method_28701(d1, args[3], -4096, 4096, false).method_28750();
+                d2 = method_28702(d2, args[4], true).method_28750();
+                yaw = method_28702(yaw, args.length > 5 ? args[5] : "~", false).method_28750();
+                pitch = method_28702(pitch, args.length > 6 ? args[6] : "~", false).method_28750();
             }
             if (args.length >= 8)
             {
@@ -179,30 +173,30 @@ public class CommandPlayer extends CommandCarpetBase
             }
             if (args.length >= 9)
             {
-                gamemode = parseInt(args[8],0,3);
-                if (gamemode == 1 && !sender.canUseCommand(2, "gamemode")) {
-                    throw new CommandException("You are not allowed to spawn a creative player");
+                gamemode = method_28719(args[8],0,3);
+                if (gamemode == 1 && !sender.method_29603(2, "gamemode")) {
+                    throw new class_6175("You are not allowed to spawn a creative player");
                 }
             }
-            EntityPlayerMPFake.createFake(playerName, server, d0, d1, d2, yaw, pitch, dimension, gamemode );
+            FakeServerPlayerEntity.createFake(playerName, server, d0, d1, d2, yaw, pitch, dimension, gamemode );
             return;
         }
         if ("kill".equalsIgnoreCase(action))
         {
-            if (!(player instanceof EntityPlayerMPFake))
+            if (!(player instanceof FakeServerPlayerEntity))
             {
-                throw new WrongUsageException("use /kill or /kick on regular players");
+                throw new class_6182("use /kill or /kick on regular players");
             }
-            player.onKillCommand();
+            player.kill();
             return;
         }
         if ("shadow".equalsIgnoreCase(action))
         {
-            if (player instanceof EntityPlayerMPFake)
+            if (player instanceof FakeServerPlayerEntity)
             {
-                throw new WrongUsageException("cannot shadow server side players");
+                throw new class_6182("cannot shadow server side players");
             }
-            EntityPlayerMPFake.createShadow(server, player);
+            FakeServerPlayerEntity.createShadow(server, player);
             return;
         }
         if ("mount".equalsIgnoreCase(action))
@@ -218,13 +212,13 @@ public class CommandPlayer extends CommandCarpetBase
         //FP only
         if (action.matches("^(?:move|sneak|sprint|look)$"))
         {
-            if (player != null && !(player instanceof EntityPlayerMPFake))
-                throw new WrongUsageException(action+" action could only be run on existing fake players");
+            if (player != null && !(player instanceof FakeServerPlayerEntity))
+                throw new class_6182(action+" action could only be run on existing fake players");
 
             if ("move".equalsIgnoreCase(action))
             {
                 if (args.length < 3)
-                    throw new WrongUsageException("/player "+playerName+" go <forward|backward|left|right>");
+                    throw new class_6182("/player "+playerName+" go <forward|backward|left|right>");
                 String where = args[2];
                 if ("forward".equalsIgnoreCase(where))
                 {
@@ -246,7 +240,7 @@ public class CommandPlayer extends CommandCarpetBase
                     actionPack.setStrafing(1.0F);
                     return;
                 }
-                throw new WrongUsageException("/player "+playerName+" go <forward|backward|left|right>");
+                throw new class_6182("/player "+playerName+" go <forward|backward|left|right>");
             }
             if ("sneak".equalsIgnoreCase(action))
             {
@@ -261,63 +255,64 @@ public class CommandPlayer extends CommandCarpetBase
             if ("look".equalsIgnoreCase(action))
             {
                 if (args.length < 3)
-                    throw new WrongUsageException("/player "+playerName+" look <left|right|north|south|east|west|up|down| yaw .. pitch>");
+                    throw new class_6182("/player "+playerName+" look <left|right|north|south|east|west|up|down| yaw .. pitch>");
                 if (args[2].charAt(0)>='A' && args[2].charAt(0)<='z')
                 {
                     if(!actionPack.look(args[2].toLowerCase()))
                     {
-                        throw new WrongUsageException("look direction is north, south, east, west, up or down");
+                        throw new class_6182("look direction is north, south, east, west, up or down");
                     }
                 }
                 else if (args.length > 3)
                 {
-                    float yaw = (float) parseCoordinate(player.rotationYaw, args[2], false).getResult();
-                    float pitch = (float) parseCoordinate(player.rotationPitch, args[3], false).getResult();
+                    float yaw = (float) method_28702(player.yaw, args[2], false).method_28750();
+                    float pitch = (float) method_28702(player.pitch, args[3], false).method_28750();
                     actionPack.look(yaw,pitch);
                 }
                 else
                 {
-                    throw new WrongUsageException("/player "+playerName+" look <north|south|east|west|up|down| yaw .. pitch>");
+                    throw new class_6182("/player "+playerName+" look <north|south|east|west|up|down| yaw .. pitch>");
                 }
                 return;
             }
         }
         if ("despawn".equalsIgnoreCase(action))
         {
-            if (!(player instanceof EntityPlayerMPFake))
+            if (!(player instanceof FakeServerPlayerEntity))
             {
-                throw new WrongUsageException("this is a bot only command");
+                throw new class_6182("this is a bot only command");
             }
-            ((EntityPlayerMPFake)player).despawn();
+            ((FakeServerPlayerEntity)player).despawn();
             return;
         }
         if ("respawn".equalsIgnoreCase(action))
         {
             if (player != null)
             {
-                throw new WrongUsageException("player "+playerName+" already exists");
+                throw new class_6182("player "+playerName+" already exists");
             }
             if (playerName.length() < 3 || playerName.length() > 16)
             {
-                throw new WrongUsageException("player names can only be 3 to 16 chars long");
+                throw new class_6182("player names can only be 3 to 16 chars long");
             }
-            if (isWhitelistedPlayer(server, playerName) && !sender.canUseCommand(2, "gamemode")) {
-                throw new CommandException("You are not allowed to spawn a whitelisted player");
+            if (isWhitelistedPlayer(server, playerName) && !sender.method_29603(2, "gamemode")) {
+                throw new class_6175("You are not allowed to spawn a whitelisted player");
             }
-            EntityPlayerMPFake.create(playerName, server);
+            FakeServerPlayerEntity.create(playerName, server);
             return;
         }
-        throw new WrongUsageException("unknown action: "+action);
+        throw new class_6182("unknown action: "+action);
     }
 
     private boolean isWhitelistedPlayer(MinecraftServer server, String playerName) {
-        for(String s : server.getPlayerList().getWhitelistedPlayerNames()){
+        for(String s : server.getPlayerManager().getWhitelistedNames()){
             if(s.toLowerCase().equals(playerName.toLowerCase())) return true;
         }
         return false;
     }
 
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    @Override
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos)
     {
         if (!CarpetSettings.commandPlayer)
         {
@@ -325,15 +320,15 @@ public class CommandPlayer extends CommandCarpetBase
         }
         if (args.length == 1)
         {
-            Set<String> players = new HashSet<>(Arrays.asList(server.getOnlinePlayerNames()));
+            Set<String> players = new HashSet<>(Arrays.asList(server.getPlayerNames()));
             players.add("Steve");
             players.add("Alex");
-            return getListOfStringsMatchingLastWord(args, players.toArray(new String[0]));
+            return method_28732(args, players.toArray(new String[0]));
         }
         if (args.length == 2)
         {
             //currently for all, needs to be restricted for Fake plaeyrs
-            return getListOfStringsMatchingLastWord(args,
+            return method_28732(args,
                     "spawn","kill","attack","use","jump","stop","shadow",
                     "swapHands","drop","mount","dismount",
                     "move","sneak","sprint","look", "despawn", "respawn");
@@ -341,38 +336,38 @@ public class CommandPlayer extends CommandCarpetBase
         if (args.length == 3 && (args[1].matches("^(?:use|attack|jump)$")))
         {
             //currently for all, needs to be restricted for Fake plaeyrs
-            return getListOfStringsMatchingLastWord(args, "once","continuous","interval");
+            return method_28732(args, "once","continuous","interval");
         }
         if (args.length == 4 && (args[1].equalsIgnoreCase("interval")))
         {
             //currently for all, needs to be restricted for Fake plaeyrs
-            return getListOfStringsMatchingLastWord(args, "20");
+            return method_28732(args, "20");
         }
         if (args.length == 3 && (args[1].equalsIgnoreCase("move")))
         {
-            return getListOfStringsMatchingLastWord(args, "left", "right","forward","backward");
+            return method_28732(args, "left", "right","forward","backward");
         }
         if (args.length == 3 && (args[1].equalsIgnoreCase("look")))
         {
-            return getListOfStringsMatchingLastWord(args, "left", "right","north","south","east","west","up","down");
+            return method_28732(args, "left", "right","north","south","east","west","up","down");
         }
         if (args.length > 2 && (args[1].equalsIgnoreCase("spawn") ))
         {
             if (args.length <= 5)
             {
-                return getTabCompletionCoordinate(args, 2, targetPos);
+                return method_28730(args, 2, targetPos);
             }
             else if (args.length <= 7)
             {
-                return getListOfStringsMatchingLastWord(args, "0.0");
+                return method_28732(args, "0.0");
             }
             else if (args.length == 8)
             {
-                return getListOfStringsMatchingLastWord(args, "overworld", "end", "nether");
+                return method_28732(args, "overworld", "end", "nether");
             }
             else if (args.length == 9)
             {
-                return getListOfStringsMatchingLastWord(args, "0", "1", "2", "3");
+                return method_28732(args, "0", "1", "2", "3");
             }
         }
         return Collections.emptyList();

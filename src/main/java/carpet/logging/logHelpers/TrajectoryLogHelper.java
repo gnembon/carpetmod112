@@ -3,9 +3,8 @@ package carpet.logging.logHelpers;
 import carpet.logging.Logger;
 import carpet.logging.LoggerRegistry;
 import carpet.utils.Messenger;
+import net.minecraft.text.Text;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.text.ITextComponent;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,14 +47,14 @@ public class TrajectoryLogHelper
 
     private void sendUpdateLogs(boolean finished) {
         logger.logNoCommand( (option) -> {
-            List<ITextComponent> comp = new ArrayList<>();
+            List<Text> comp = new ArrayList<>();
             switch (option)
             {
                 case "brief":
                     if(!finished)  return null;
-                    return finalReport(comp).toArray(new ITextComponent[0]);
+                    return finalReport(comp).toArray(new Text[0]);
                 case "full":
-                    if(finished) return finalReport(comp).toArray(new ITextComponent[0]);
+                    if(finished) return finalReport(comp).toArray(new Text[0]);
                     for (int i = sentLogs; i < positions.size(); i++)
                     {
                         sentLogs++;
@@ -67,11 +66,11 @@ public class TrajectoryLogHelper
                     }
                     break;
             }
-            return comp.toArray(new ITextComponent[0]);
+            return comp.toArray(new Text[0]);
         });
     }
 
-    private List<ITextComponent> finalReport(List<ITextComponent> comp){
+    private List<Text> finalReport(List<Text> comp){
         comp.add(Messenger.m(null,"w ---------"));
         List<String> line = new ArrayList<>();
         for (int i = sentLogs; i < positions.size(); i++)

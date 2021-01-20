@@ -8,6 +8,6 @@ public interface ExtendedAITask extends ChunkLoadingReason {
     String getTask();
 
     default String getDescription() {
-        return "Entity: " + getEntity().getName() + ", Task: " + getTask();
+        return "Entity: " + getEntity().method_29611() + ", Task: " + getTask();
     }
 }

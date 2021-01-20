@@ -17,37 +17,37 @@ import com.sk89q.worldedit.util.Location;
 
 import carpet.CarpetServer;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.network.play.server.SPacketCustomPayload;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.network.packet.s2c.play.CustomPayloadS2CPacket;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.PacketByteBuf;
 
 @SuppressWarnings("deprecation")
 class CarpetPlayer extends AbstractPlayerActor {
 
-    private final EntityPlayerMP player;
+    private final ServerPlayerEntity player;
 
-    protected CarpetPlayer(EntityPlayerMP player) {
+    protected CarpetPlayer(ServerPlayerEntity player) {
         this.player = player;
         ThreadSafeCache.getInstance().getOnlineIds().add(getUniqueId());
     }
 
     @Override
     public UUID getUniqueId() {
-        return player.getUniqueID();
+        return player.getUuid();
     }
 
     @Override
     public int getItemInHand() {
-        ItemStack is = this.player.getHeldItemMainhand();
-        return is == null ? 0 : Item.getIdFromItem(is.getItem());
+        ItemStack is = this.player.getMainHandStack();
+        return is == null ? 0 : Item.getRawId(is.getItem());
     }
 
     @Override
     public String getName() {
-        return this.player.getName();
+        return this.player.method_29611();
     }
 
     @Override
@@ -57,17 +57,17 @@ class CarpetPlayer extends AbstractPlayerActor {
 
     @Override
     public Location getLocation() {
-        Vector position = new Vector(this.player.posX, this.player.posY, this.player.posZ);
+        Vector position = new Vector(this.player.field_33071, this.player.field_33072, this.player.field_33073);
         return new Location(
                 CarpetWorldEdit.inst.getWorld(this.player.world),
                 position,
-                this.player.cameraYaw,
-                this.player.cameraPitch);
+                this.player.field_22511,
+                this.player.field_33149);
     }
 
     @Override
     public WorldVector getPosition() {
-        return new WorldVector(LocalWorldAdapter.adapt(CarpetWorldEdit.inst.getWorld(this.player.world)), this.player.posX, this.player.posY, this.player.posZ);
+        return new WorldVector(LocalWorldAdapter.adapt(CarpetWorldEdit.inst.getWorld(this.player.world)), this.player.field_33071, this.player.field_33072, this.player.field_33073);
     }
 
     @Override
@@ -77,17 +77,17 @@ class CarpetPlayer extends AbstractPlayerActor {
 
     @Override
     public double getPitch() {
-        return this.player.rotationPitch;
+        return this.player.pitch;
     }
 
     @Override
     public double getYaw() {
-        return this.player.rotationYaw;
+        return this.player.yaw;
     }
 
     @Override
     public void giveItem(int type, int amt) {
-        this.player.inventory.addItemStackToInventory(new ItemStack(Item.getItemById(type), amt, 0));
+        this.player.inventory.insertStack(new ItemStack(Item.byRawId(type), amt, 0));
     }
 
     @Override
@@ -97,42 +97,42 @@ class CarpetPlayer extends AbstractPlayerActor {
         if (params.length > 0) {
             send = send + "|" + StringUtil.joinString(params, "|");
         }
-        PacketBuffer pb = new PacketBuffer(Unpooled.wrappedBuffer(send.getBytes(WECUIPacketHandler.UTF_8_CHARSET)));
-        SPacketCustomPayload packet = new SPacketCustomPayload(CarpetWorldEdit.CUI_PLUGIN_CHANNEL, pb);
-        this.player.connection.sendPacket(packet);
+        PacketByteBuf pb = new PacketByteBuf(Unpooled.wrappedBuffer(send.getBytes(WECUIPacketHandler.UTF_8_CHARSET)));
+        CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(CarpetWorldEdit.CUI_PLUGIN_CHANNEL, pb);
+        this.player.networkHandler.method_33624(packet);
     }
 
     @Override
     public void printRaw(String msg) {
         for (String part : msg.split("\n")) {
-            this.player.sendMessage(new TextComponentString(part));
+            this.player.sendMessage(new LiteralText(part));
         }
     }
 
     @Override
     public void printDebug(String msg) {
         for (String part : msg.split("\n")) {
-            this.player.sendMessage(new TextComponentString("\u00a77" + part));
+            this.player.sendMessage(new LiteralText("\u00a77" + part));
         }
     }
 
     @Override
     public void print(String msg) {
         for (String part : msg.split("\n")) {
-            this.player.sendMessage(new TextComponentString("\u00a7d" + part));
+            this.player.sendMessage(new LiteralText("\u00a7d" + part));
         }
     }
 
     @Override
     public void printError(String msg) {
         for (String part : msg.split("\n")) {
-            this.player.sendMessage(new TextComponentString("\u00a7c" + part));
+            this.player.sendMessage(new LiteralText("\u00a7c" + part));
         }
     }
 
     @Override
     public void setPosition(Vector pos, float pitch, float yaw) {
-        this.player.connection.setPlayerLocation(pos.getX(), pos.getY(), pos.getZ(), pitch, yaw);
+        this.player.networkHandler.requestTeleport(pos.getX(), pos.getY(), pos.getZ(), pitch, yaw);
     }
 
     @Override
@@ -147,7 +147,7 @@ class CarpetPlayer extends AbstractPlayerActor {
 
     @Override
     public boolean hasPermission(String perm) {
-        int opLevel = CarpetServer.minecraft_server.getPlayerList().getOppedPlayers().getPermissionLevel(player.getGameProfile());
+        int opLevel = CarpetServer.minecraft_server.getPlayerManager().getOpList().method_33753(player.getGameProfile());
         int requiredOpLevel = CarpetWorldEdit.inst.getConfig().getPermissionLevel(perm);
         return opLevel >= requiredOpLevel;
     }
@@ -160,7 +160,7 @@ class CarpetPlayer extends AbstractPlayerActor {
 
     @Override
     public SessionKey getSessionKey() {
-        return new SessionKeyImpl(player.getUniqueID(), player.getName());
+        return new SessionKeyImpl(player.getUuid(), player.method_29611());
     }
 
     private static class SessionKeyImpl implements SessionKey {

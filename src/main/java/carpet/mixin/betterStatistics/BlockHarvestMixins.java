@@ -2,9 +2,8 @@ package carpet.mixin.betterStatistics;
 
 import carpet.helpers.StatHelper;
 import net.minecraft.block.*;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.stats.StatBase;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.stat.Stat;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,19 +12,19 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin({
     Block.class,
-    BlockContainer.class,
-    BlockDeadBush.class,
-    BlockIce.class,
-    BlockNewLeaf.class,
-    BlockOldLeaf.class,
-    BlockSnow.class,
-    BlockTallGrass.class,
-    BlockVine.class,
-    BlockWeb.class
+    BlockWithEntity.class,
+    DeadBushBlock.class,
+    IceBlock.class,
+    Leaves2Block.class,
+    LeavesBlock.class,
+    SnowLayerBlock.class,
+    TallGrassBlock.class,
+    VineBlock.class,
+    CobwebBlock.class
 })
 public class BlockHarvestMixins {
-    @Redirect(method = "harvestBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/stats/StatList;getBlockStats(Lnet/minecraft/block/Block;)Lnet/minecraft/stats/StatBase;"))
-    private StatBase addBlockMeta(Block blockIn, World worldIn, EntityPlayer player, BlockPos pos, IBlockState state) {
+    @Redirect(method = "afterBreak", at = @At(value = "INVOKE", target = "Lnet/minecraft/stats/Stats;method_33886(Lnet/minecraft/block/Block;)Lnet/minecraft/stat/Stat;"))
+    private Stat addBlockMeta(Block blockIn, World worldIn, PlayerEntity player, BlockPos pos, BlockState state) {
         return StatHelper.getBlockStateStats(state);
     }
 }

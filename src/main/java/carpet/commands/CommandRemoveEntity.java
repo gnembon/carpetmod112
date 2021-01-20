@@ -1,40 +1,42 @@
 package carpet.commands;
 
 import carpet.worldedit.WorldEditBridge;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.CommandKill;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.KillCommand;
+import net.minecraft.server.network.ServerPlayerEntity;
 
-public class CommandRemoveEntity extends CommandKill {
-    public String getName()
+public class CommandRemoveEntity extends KillCommand {
+    @Override
+    public String method_29277()
     {
         return "removeEntity";
     }
 
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    @Override
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (args.length == 0)
         {
-            EntityPlayer entityplayer = getCommandSenderAsPlayer(sender);
-            entityplayer.onKillCommand();
-            notifyCommandListener(sender, this, "commands.kill.successful", new Object[] {entityplayer.getDisplayName()});
+            PlayerEntity entityplayer = method_28708(sender);
+            entityplayer.kill();
+            method_28710(sender, this, "commands.kill.successful", entityplayer.getDisplayName());
         }
         else
         {
-            Entity entity = getEntity(server, sender, args[0]);
-            entity.setDead();
+            Entity entity = method_28743(server, sender, args[0]);
+            entity.remove();
 
-            if (!(entity instanceof EntityPlayerMP))
+            if (!(entity instanceof ServerPlayerEntity))
             {
-                EntityPlayerMP worldEditPlayer = sender instanceof EntityPlayerMP ? (EntityPlayerMP) sender : null;
-                WorldEditBridge.recordEntityRemoval(worldEditPlayer, sender.getEntityWorld(), entity);
+                ServerPlayerEntity worldEditPlayer = sender instanceof ServerPlayerEntity ? (ServerPlayerEntity) sender : null;
+                WorldEditBridge.recordEntityRemoval(worldEditPlayer, sender.method_29608(), entity);
             }
 
-            notifyCommandListener(sender, this, "commands.kill.successful", new Object[] {entity.getDisplayName()});
+            method_28710(sender, this, "commands.kill.successful", entity.getDisplayName());
         }
     }
 

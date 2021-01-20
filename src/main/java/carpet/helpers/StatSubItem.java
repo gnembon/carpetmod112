@@ -1,18 +1,18 @@
 package carpet.helpers;
 
 import carpet.mixin.accessors.StatCraftingAccessor;
-import net.minecraft.stats.StatCrafting;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.class_2590;
+import net.minecraft.text.Text;
 
-public class StatSubItem extends StatCrafting {
-    private final StatCrafting base;
+public class StatSubItem extends class_2590 {
+    private final class_2590 base;
 
-    public StatSubItem(StatCrafting base, int meta, ITextComponent translation) {
-        super(base.statId, "." + meta, translation, ((StatCraftingAccessor) base).getItem());
+    public StatSubItem(class_2590 base, int meta, Text translation) {
+        super(base.field_32604, "." + meta, translation, ((StatCraftingAccessor) base).getItem());
         this.base = base;
     }
 
-    public StatCrafting getBase() {
+    public class_2590 getBase() {
         return this.base;
     }
 }

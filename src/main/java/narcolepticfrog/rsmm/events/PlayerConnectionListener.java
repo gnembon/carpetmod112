@@ -1,11 +1,11 @@
 package narcolepticfrog.rsmm.events;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public interface PlayerConnectionListener {
 
-    public void onPlayerConnect(EntityPlayerMP player);
+    public void onPlayerConnect(ServerPlayerEntity player);
 
-    public void onPlayerDisconnect(EntityPlayerMP player);
+    public void onPlayerDisconnect(ServerPlayerEntity player);
 
 }

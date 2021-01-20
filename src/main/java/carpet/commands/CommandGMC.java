@@ -7,87 +7,71 @@ import javax.annotation.Nullable;
 import carpet.CarpetSettings;
 import carpet.mixin.accessors.EntityAccessor;
 import carpet.utils.extensions.CameraPlayer;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameType;
-
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.NumberInvalidException;
-
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.math.Box;
+import net.minecraft.world.GameMode;
+import net.minecraft.class_6182;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
 
 public class CommandGMC extends CommandCarpetBase
 {
-    /**
-     * Gets the name of the command
-     */
-    public String getName()
+    @Override
+    public String method_29277()
     {
         return "c";
     }
 
-    /**
-     * Gets the usage string for the command.
-     *  
-     * @param sender The ICommandSender who is requesting usage details
-     */
-    public String getUsage(ICommandSender sender)
+    @Override
+    public String method_29275(class_2010 sender)
     {
         return "commands.gamemode.usage";
     }
 
-    /**
-     * Callback for when the command is executed
-     *  
-     * @param server The server instance
-     * @param sender The sender who executed the command
-     * @param args The arguments that were passed
-     */
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException, NumberInvalidException
-    {
+    @Override
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
         if (!command_enabled("commandCameramode", sender)) return;
         if (args.length > 0)
         {
-            throw new WrongUsageException(getUsage(sender), new Object[0]);
+            throw new class_6182(method_29275(sender));
         }
         else
         {
             if (!CarpetSettings.commandCameramode)
             {
-                notifyCommandListener(sender, this, "Quick gamemode switching is disabled");
+                method_28710(sender, this, "Quick gamemode switching is disabled");
             }
-            EntityPlayerMP entityplayer = getCommandSenderAsPlayer(sender);
+            ServerPlayerEntity entityplayer = method_28708(sender);
             if(entityplayer.isSpectator()) return;
-            if(CarpetSettings.cameraModeSurvivalRestrictions && entityplayer.interactionManager.getGameType() == GameType.SURVIVAL) {
-                List<EntityMob> hostiles = sender.getEntityWorld().getEntitiesWithinAABB(EntityMob.class, new AxisAlignedBB(entityplayer.posX - 8.0D, entityplayer.posY - 5.0D, entityplayer.posZ - 8.0D, entityplayer.posX + 8.0D, entityplayer.posY + 5.0D, entityplayer.posZ + 8.0D), mob -> mob.isPreventingPlayerRest(entityplayer));
-                PotionEffect fireresist = entityplayer.getActivePotionEffect(Potion.getPotionFromResourceLocation("fire_resistance"));
-                if(!entityplayer.onGround || entityplayer.isElytraFlying() || (((EntityAccessor) entityplayer).getFire() > 0 && (fireresist == null || fireresist.getDuration() < ((EntityAccessor) entityplayer).getFire())) || entityplayer.getAir() != 300 || !hostiles.isEmpty()){
-                    notifyCommandListener(sender, this, "Restricted use to: on ground, not in water, not on fire, not flying/falling, not near hostile mobs.");
+            if(CarpetSettings.cameraModeSurvivalRestrictions && entityplayer.interactionManager.getGameMode() == GameMode.SURVIVAL) {
+                List<HostileEntity> hostiles = sender.method_29608().getEntities(HostileEntity.class, new Box(entityplayer.field_33071 - 8.0D, entityplayer.field_33072 - 5.0D, entityplayer.field_33073 - 8.0D, entityplayer.field_33071 + 8.0D, entityplayer.field_33072 + 5.0D, entityplayer.field_33073 + 8.0D), mob -> mob.isAngryAt(entityplayer));
+                StatusEffectInstance fireresist = entityplayer.getStatusEffect(StatusEffect.method_34297("fire_resistance"));
+                if(!entityplayer.onGround || entityplayer.isFallFlying() || (((EntityAccessor) entityplayer).getFireTicks() > 0 && (fireresist == null || fireresist.getDuration() < ((EntityAccessor) entityplayer).getFireTicks())) || entityplayer.getAir() != 300 || !hostiles.isEmpty()){
+                    method_28710(sender, this, "Restricted use to: on ground, not in water, not on fire, not flying/falling, not near hostile mobs.");
                     return;
                 }
             }
-            Potion nightvision = Potion.getPotionFromResourceLocation("night_vision");
-            boolean hasNightvision = entityplayer.getActivePotionEffect(nightvision) != null;
+            StatusEffect nightvision = StatusEffect.method_34297("night_vision");
+            boolean hasNightvision = entityplayer.getStatusEffect(nightvision) != null;
             ((CameraPlayer) entityplayer).storeCameraData(hasNightvision);
-            GameType gametype = GameType.parseGameTypeWithDefault("spectator", GameType.NOT_SET);
-            entityplayer.setGameType(gametype);
+            GameMode gametype = GameMode.byName("spectator", GameMode.NOT_SET);
+            entityplayer.setGameMode(gametype);
             if(!hasNightvision) {
-                PotionEffect potioneffect = new PotionEffect(nightvision, 999999, 0, false, false);
-                entityplayer.addPotionEffect(potioneffect);
+                StatusEffectInstance potioneffect = new StatusEffectInstance(nightvision, 999999, 0, false, false);
+                entityplayer.addStatusEffect(potioneffect);
             }
             ((CameraPlayer) entityplayer).setGamemodeCamera();
         }
     }
 
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos)
     {
-        return Collections.<String>emptyList();
+        return Collections.emptyList();
     }
 
 }

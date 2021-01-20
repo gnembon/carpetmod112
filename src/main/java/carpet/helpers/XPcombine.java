@@ -1,49 +1,49 @@
 package carpet.helpers;
 //Author: xcom
 
-import carpet.mixin.accessors.EntityXPOrbAccessor;
-import carpet.utils.extensions.ExtendedEntityXPOrb;
-import net.minecraft.entity.item.EntityXPOrb;
+import carpet.mixin.accessors.ExperienceOrbEntityAccessor;
+import carpet.utils.extensions.ExtendedExperienceOrbEntity;
+import net.minecraft.entity.ExperienceOrbEntity;
 import net.minecraft.world.World;
 
 public class XPcombine {
 
-    public static void searchForOtherXPNearbyCarpet(EntityXPOrb first)
+    public static void searchForOtherXPNearbyCarpet(ExperienceOrbEntity first)
     {
-        for (EntityXPOrb entityxp : first.world.getEntitiesWithinAABB(EntityXPOrb.class,
-                first.getEntityBoundingBox().expand(0.5D, 0.0D, 0.5D)))
+        for (ExperienceOrbEntity entityxp : first.world.method_26031(ExperienceOrbEntity.class,
+                first.getBoundingBox().stretch(0.5D, 0.0D, 0.5D)))
         {
             combineItems(first, entityxp);
         }
     }
 
-    private static boolean combineItems(EntityXPOrb first, EntityXPOrb other)
+    private static boolean combineItems(ExperienceOrbEntity first, ExperienceOrbEntity other)
     {
         if (other == first)
         {
             return false;
         }
-        else if (other.isEntityAlive() && first.isEntityAlive())
+        else if (other.isAlive() && first.isAlive())
         {
-            if (first.delayBeforeCanPickup != 32767 && other.delayBeforeCanPickup != 32767)
+            if (first.pickupDelay != 32767 && other.pickupDelay != 32767)
             {
-                if (first.xpOrbAge != -32768 && other.xpOrbAge != -32768
-                        && ((ExtendedEntityXPOrb) first).getDelayBeforeCombine() == 0 && ((ExtendedEntityXPOrb) other).getDelayBeforeCombine() == 0)
+                if (first.orbAge != -32768 && other.orbAge != -32768
+                        && ((ExtendedExperienceOrbEntity) first).getDelayBeforeCombine() == 0 && ((ExtendedExperienceOrbEntity) other).getDelayBeforeCombine() == 0)
                 {
-                    int size = getTextureByXP(other.getXpValue() );
-                    ((EntityXPOrbAccessor) other).setXpValue(other.getXpValue() + first.getXpValue());
-                    other.delayBeforeCanPickup = Math.max(other.delayBeforeCanPickup, first.delayBeforeCanPickup);
-                    other.xpOrbAge = Math.min(other.xpOrbAge, first.xpOrbAge);
-                    if (getTextureByXP(other.getXpValue() ) != size)
+                    int size = getTextureByXP(other.getExperienceAmount() );
+                    ((ExperienceOrbEntityAccessor) other).setAmount(other.getExperienceAmount() + first.getExperienceAmount());
+                    other.pickupDelay = Math.max(other.pickupDelay, first.pickupDelay);
+                    other.orbAge = Math.min(other.orbAge, first.orbAge);
+                    if (getTextureByXP(other.getExperienceAmount() ) != size)
                     {
-                        other.setDead();
-                        first.world.spawnEntity(newXPOrb(other.world, other.getXpValue(), other));
+                        other.remove();
+                        first.world.method_26040(newXPOrb(other.world, other.getExperienceAmount(), other));
                     }
                     else
                     {
-                        ((ExtendedEntityXPOrb) other).setDelayBeforeCombine(50);
+                        ((ExtendedExperienceOrbEntity) other).setDelayBeforeCombine(50);
                     }
-                    first.setDead();
+                    first.remove();
                     return true;
                 }
                 else
@@ -62,12 +62,12 @@ public class XPcombine {
         }
     }
 
-    private static EntityXPOrb newXPOrb(World world, int expValue, EntityXPOrb old) {
-        EntityXPOrb orb = new EntityXPOrb(world, old.posX, old.posY, old.posZ, expValue);
-        orb.rotationYaw = old.rotationYaw;
-        orb.motionX = old.motionX;
-        orb.motionY = old.motionY;
-        orb.motionZ = old.motionZ;
+    private static ExperienceOrbEntity newXPOrb(World world, int expValue, ExperienceOrbEntity old) {
+        ExperienceOrbEntity orb = new ExperienceOrbEntity(world, old.field_33071, old.field_33072, old.field_33073, expValue);
+        orb.yaw = old.yaw;
+        orb.field_33074 = old.field_33074;
+        orb.field_33075 = old.field_33075;
+        orb.field_33076 = old.field_33076;
         return orb;
     }
 

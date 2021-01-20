@@ -3,7 +3,7 @@ package carpet.mixin.redstoneMultimeter;
 import carpet.CarpetSettings;
 import narcolepticfrog.rsmm.events.StateChangeEventDispatcher;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
+import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Final;
@@ -15,21 +15,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(World.class)
 public abstract class WorldMixin {
-    @Shadow @Final public boolean isRemote;
+    @Shadow @Final public boolean isClient;
 
-    @Shadow public abstract IBlockState getBlockState(BlockPos pos);
+    @Shadow public abstract BlockState getBlockState(BlockPos pos);
 
-    @Inject(method = "neighborChanged", at = @At("RETURN"))
+    @Inject(method = "updateNeighbor", at = @At("RETURN"))
     private void onNeighborChanged(BlockPos pos, Block blockIn, BlockPos fromPos, CallbackInfo ci) {
-        if (CarpetSettings.redstoneMultimeter && !isRemote) StateChangeEventDispatcher.dispatchEvent((World) (Object) this, pos);
+        if (CarpetSettings.redstoneMultimeter && !isClient) StateChangeEventDispatcher.dispatchEvent((World) (Object) this, pos);
     }
 
-    @Inject(method = "observedNeighborChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockObserver;observedNeighborChanged(Lnet/minecraft/block/state/IBlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/Block;Lnet/minecraft/util/math/BlockPos;)V", shift = At.Shift.AFTER))
+    @Inject(method = "onBlockChanged", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/ObserverBlock;method_26711(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/Block;Lnet/minecraft/util/math/BlockPos;)V", shift = At.Shift.AFTER))
     private void onObservedNeighborChanged(BlockPos pos, Block blockIn, BlockPos fromPos, CallbackInfo ci) {
         if (CarpetSettings.redstoneMultimeter) StateChangeEventDispatcher.dispatchEvent((World) (Object) this, pos);
     }
 
-    @Inject(method = "updateComparatorOutputLevel", at = @At("RETURN"))
+    @Inject(method = "updateHorizontalAdjacent", at = @At("RETURN"))
     private void onComparatorUpdate(BlockPos pos, Block blockIn, CallbackInfo ci) {
         if (CarpetSettings.redstoneMultimeter) StateChangeEventDispatcher.dispatchEvent((World) (Object) this, pos);
     }

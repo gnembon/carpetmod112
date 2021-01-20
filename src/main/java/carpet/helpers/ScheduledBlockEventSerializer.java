@@ -1,23 +1,22 @@
 package carpet.helpers;
 
 import carpet.CarpetSettings;
-import carpet.mixin.accessors.WorldServerAccessor;
+import carpet.mixin.accessors.ServerWorldAccessor;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockEventData;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.server.world.BlockAction;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.storage.WorldSavedData;
-
+import net.minecraft.world.PersistentState;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-public class ScheduledBlockEventSerializer extends WorldSavedData {
-    private final ArrayList<BlockEventData> list = new ArrayList<>();
-    private WorldServer world;
+public class ScheduledBlockEventSerializer extends PersistentState {
+    private final ArrayList<BlockAction> list = new ArrayList<>();
+    private ServerWorld world;
 
     public ScheduledBlockEventSerializer() {
         this("blockEvents");
@@ -27,40 +26,40 @@ public class ScheduledBlockEventSerializer extends WorldSavedData {
         super(name);
     }
 
-    public void readFromNBT(NBTTagCompound nbt) {
-        NBTTagList nbttaglist = nbt.getTagList("blockEvents", 10);
-        for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-            NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
-            BlockEventData blockeventdata = new BlockEventData(new BlockPos(nbttagcompound.getInteger("X"), nbttagcompound.getInteger("Y"), nbttagcompound.getInteger("Z")), Block.getBlockById(nbttagcompound.getInteger("B") & 4095), nbttagcompound.getInteger("ID"), nbttagcompound.getInteger("P"));
+    public void fromTag(CompoundTag nbt) {
+        ListTag nbttaglist = nbt.getList("blockEvents", 10);
+        for (int i = 0; i < nbttaglist.size(); ++i) {
+            CompoundTag nbttagcompound = nbttaglist.getCompound(i);
+            BlockAction blockeventdata = new BlockAction(new BlockPos(nbttagcompound.getInt("X"), nbttagcompound.getInt("Y"), nbttagcompound.getInt("Z")), Block.getBlockFromRawId(nbttagcompound.getInt("B") & 4095), nbttagcompound.getInt("ID"), nbttagcompound.getInt("P"));
             list.add(blockeventdata);
         }
     }
 
-    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        NBTTagList nbttaglist = new NBTTagList();
+    public CompoundTag toTag(CompoundTag compound) {
+        ListTag nbttaglist = new ListTag();
         if(CarpetSettings.blockEventSerializer) {
-            for (BlockEventData blockeventdata : getBlockEventQueue(world)) {
-                NBTTagCompound nbttagcompound = new NBTTagCompound();
-                nbttagcompound.setInteger("X", blockeventdata.getPosition().getX());
-                nbttagcompound.setInteger("Y", blockeventdata.getPosition().getY());
-                nbttagcompound.setInteger("Z", blockeventdata.getPosition().getZ());
-                nbttagcompound.setInteger("B", Block.getIdFromBlock(blockeventdata.getBlock()) & 4095);
-                nbttagcompound.setInteger("ID", blockeventdata.getEventID());
-                nbttagcompound.setInteger("P", blockeventdata.getEventParameter());
-                nbttaglist.appendTag(nbttagcompound);
+            for (BlockAction blockeventdata : getBlockEventQueue(world)) {
+                CompoundTag nbttagcompound = new CompoundTag();
+                nbttagcompound.putInt("X", blockeventdata.getPos().getX());
+                nbttagcompound.putInt("Y", blockeventdata.getPos().getY());
+                nbttagcompound.putInt("Z", blockeventdata.getPos().getZ());
+                nbttagcompound.putInt("B", Block.getId(blockeventdata.getBlock()) & 4095);
+                nbttagcompound.putInt("ID", blockeventdata.getType());
+                nbttagcompound.putInt("P", blockeventdata.getData());
+                nbttaglist.add(nbttagcompound);
             }
         }
-        compound.setTag("blockEvents", nbttaglist);
+        compound.put("blockEvents", nbttaglist);
         return compound;
     }
 
-    public void setBlockEvents(WorldServer world) {
+    public void setBlockEvents(ServerWorld world) {
         this.world = world;
         getBlockEventQueue(world).addAll(list);
     }
 
-    private static ArrayList<BlockEventData> getBlockEventQueue(WorldServer world) {
-        return BlockEventQueueGetter.getBlockEventQueue(world)[((WorldServerAccessor) world).getBlockEventCacheIndex()];
+    private static ArrayList<BlockAction> getBlockEventQueue(ServerWorld world) {
+        return BlockEventQueueGetter.getBlockEventQueue(world)[((ServerWorldAccessor) world).getBlockEventCacheIndex()];
     }
 
     /**
@@ -70,10 +69,10 @@ public class ScheduledBlockEventSerializer extends WorldSavedData {
     private static final class BlockEventQueueGetter {
         static MethodHandle handle = getMethodHandle();
 
-        static ArrayList<BlockEventData>[] getBlockEventQueue(WorldServer world) {
+        static ArrayList<BlockAction>[] getBlockEventQueue(ServerWorld world) {
             try {
                 //noinspection unchecked
-                return (ArrayList<BlockEventData>[]) handle.invoke(world);
+                return (ArrayList<BlockAction>[]) handle.invoke(world);
             } catch (Throwable t) {
                 throw new RuntimeException(t);
             }
@@ -85,7 +84,7 @@ public class ScheduledBlockEventSerializer extends WorldSavedData {
          */
         private static MethodHandle getMethodHandle() {
             MethodHandles.Lookup lookup = MethodHandles.lookup();
-            Class<?> worldServerCls = WorldServer.class;
+            Class<?> worldServerCls = ServerWorld.class;
             for (Field f : worldServerCls.getDeclaredFields()) {
                 Class<?> type = f.getType();
                 // We're looking for WorldServer.ServerBlockEventList[] which is an array

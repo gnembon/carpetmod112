@@ -1,11 +1,11 @@
 package carpet.carpetclient;
 
 import carpet.CarpetSettings;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class CarpetClientRuleTips {
 
-    public static void getInfoRuleTip(EntityPlayerMP sender, String rule) {
+    public static void getInfoRuleTip(ServerPlayerEntity sender, String rule) {
         String value = getRuleTip(rule);
 
         if (value != null) {
@@ -13,7 +13,7 @@ public class CarpetClientRuleTips {
         }
     }
 
-    public static void sendRuleTip(EntityPlayerMP sender, String rule, String value) {
+    public static void sendRuleTip(ServerPlayerEntity sender, String rule, String value) {
         CarpetClientRuleChanger.updatePlayerRuleInfo(sender, rule, value);
     }
 

@@ -1,13 +1,13 @@
 package carpet.commands;
 
 import carpet.CarpetSettings;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.command.server.CommandScoreboard;
-import net.minecraft.scoreboard.IScoreCriteria;
+import net.minecraft.class_1313;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.command.ScoreboardCommand;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
@@ -15,100 +15,100 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-public class CommandScoreboardPublic extends CommandScoreboard {
+public class CommandScoreboardPublic extends ScoreboardCommand {
     @Override
-    public String getName() {
+    public String method_29277() {
         return "scoreboardPublic";
     }
 
     @Override
-    public String getUsage(ICommandSender sender) {
+    public String method_29275(class_2010 sender) {
         return "/scoreboardPublic objectives <list|add|remove|setdisplay> [objective]";
     }
 
     @Override
-    public int getRequiredPermissionLevel() {
+    public int method_28700() {
         return 0;
     }
 
     @Override
-    public boolean checkPermission(MinecraftServer server, ICommandSender sender) {
+    public boolean method_29271(MinecraftServer server, class_2010 sender) {
         return true;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
         if (!CarpetSettings.commandPublicScoreboard) return;
 
         if (args.length < 1) {
-            throw new WrongUsageException("commands.scoreboard.usage", new Object[0]);
+            throw new class_6182("commands.scoreboard.usage");
         } else {
             if ("objectives".equalsIgnoreCase(args[0])) {
                 if (args.length == 1) {
-                    throw new WrongUsageException("/scoreboardPublic objectives <list|add|remove|setdisplay> [objective]");
+                    throw new class_6182("/scoreboardPublic objectives <list|add|remove|setdisplay> [objective]");
                 }
 
                 if ("list".equalsIgnoreCase(args[1])) {
-                    this.listObjectives(sender, server);
+                    this.method_31844(sender, server);
                 } else if ("add".equalsIgnoreCase(args[1])) {
                     if (args.length < 4) {
-                        throw new WrongUsageException("/scoreboardPublic objectives add [objective]");
+                        throw new class_6182("/scoreboardPublic objectives add [objective]");
                     }
 
-                    this.addObjective(sender, args, 2, server);
+                    this.method_31845(sender, args, 2, server);
                 } else if ("remove".equalsIgnoreCase(args[1])) {
                     if (args.length != 3) {
-                        throw new WrongUsageException("/scoreboardPublic objectives remove [objective]");
+                        throw new class_6182("/scoreboardPublic objectives remove [objective]");
                     }
 
-                    this.removeObjective(sender, args[2], server);
+                    this.method_31843(sender, args[2], server);
                 } else {
                     if (!"setdisplay".equalsIgnoreCase(args[1])) {
-                        throw new WrongUsageException("/scoreboardPublic objectives setdisplay [objective]");
+                        throw new class_6182("/scoreboardPublic objectives setdisplay [objective]");
                     }
 
                     if (args.length != 3 && args.length != 4) {
-                        throw new WrongUsageException("/scoreboardPublic objectives setdisplay <slot> [objective]");
+                        throw new class_6182("/scoreboardPublic objectives setdisplay <slot> [objective]");
                     }
 
-                    this.setDisplayObjective(sender, args, 2, server);
+                    this.method_31860(sender, args, 2, server);
                 }
             }
         }
     }
 
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-        if (!CarpetSettings.commandPublicScoreboard) return Collections.<String>emptyList();
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos) {
+        if (!CarpetSettings.commandPublicScoreboard) return Collections.emptyList();
 
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, new String[]{"objectives"});
+            return method_28732(args, "objectives");
         } else {
             if ("objectives".equalsIgnoreCase(args[0])) {
                 if (args.length == 2) {
-                    return getListOfStringsMatchingLastWord(args, new String[]{"list", "add", "remove", "setdisplay"});
+                    return method_28732(args, "list", "add", "remove", "setdisplay");
                 }
 
                 if ("add".equalsIgnoreCase(args[1])) {
                     if (args.length == 4) {
-                        Set<String> set = IScoreCriteria.INSTANCES.keySet();
-                        return getListOfStringsMatchingLastWord(args, set);
+                        Set<String> set = class_1313.field_26748.keySet();
+                        return method_28731(args, set);
                     }
                 } else if ("remove".equalsIgnoreCase(args[1])) {
                     if (args.length == 3) {
-                        return getListOfStringsMatchingLastWord(args, this.getObjectiveNames(false, server));
+                        return method_28731(args, this.method_31850(false, server));
                     }
                 } else if ("setdisplay".equalsIgnoreCase(args[1])) {
                     if (args.length == 3) {
-                        return getListOfStringsMatchingLastWord(args, Scoreboard.getDisplaySlotStrings());
+                        return method_28732(args, Scoreboard.getDisplaySlotNames());
                     }
 
                     if (args.length == 4) {
-                        return getListOfStringsMatchingLastWord(args, this.getObjectiveNames(false, server));
+                        return method_28731(args, this.method_31850(false, server));
                     }
                 }
             }
         }
-        return Collections.<String>emptyList();
+        return Collections.emptyList();
     }
 }

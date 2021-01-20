@@ -1,8 +1,8 @@
 package carpet.utils;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.inventory.IInventory;
+import net.minecraft.container.Container;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.inventory.Inventory;
 
 public class VoidContainer extends Container
 {
@@ -12,13 +12,13 @@ public class VoidContainer extends Container
     }
     
     @Override
-    public boolean canInteractWith(EntityPlayer player)
+    public boolean canUse(PlayerEntity player)
     {
         return false;
     }
     
     @Override
-    public void onCraftMatrixChanged(IInventory inv)
+    public void onContentChanged(Inventory inv)
     {
     
     }

@@ -7,10 +7,9 @@ import java.lang.reflect.Constructor;
 import javax.annotation.Nullable;
 
 import com.sk89q.worldedit.Vector;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagInt;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.IntTag;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -29,13 +28,13 @@ final class TileEntityUtils {
      * @param position the position
      * @return a tag compound
      */
-    private static NBTTagCompound updateForSet(NBTTagCompound tag, Vector position) {
+    private static CompoundTag updateForSet(CompoundTag tag, Vector position) {
         checkNotNull(tag);
         checkNotNull(position);
 
-        tag.setTag("x", new NBTTagInt(position.getBlockX()));
-        tag.setTag("y", new NBTTagInt(position.getBlockY()));
-        tag.setTag("z", new NBTTagInt(position.getBlockZ()));
+        tag.put("x", new IntTag(position.getBlockX()));
+        tag.put("y", new IntTag(position.getBlockY()));
+        tag.put("z", new IntTag(position.getBlockZ()));
 
         return tag;
     }
@@ -48,12 +47,12 @@ final class TileEntityUtils {
      * @param clazz the tile entity class
      * @param tag the tag for the tile entity (may be null to not set NBT data)
      */
-    static void setTileEntity(World world, Vector position, Class<? extends TileEntity> clazz, @Nullable NBTTagCompound tag) {
+    static void setTileEntity(World world, Vector position, Class<? extends BlockEntity> clazz, @Nullable CompoundTag tag) {
         checkNotNull(world);
         checkNotNull(position);
         checkNotNull(clazz);
 
-        TileEntity tileEntity = constructTileEntity(world, position, clazz);
+        BlockEntity tileEntity = constructTileEntity(world, position, clazz);
 
         if (tileEntity == null) {
             return;
@@ -62,10 +61,10 @@ final class TileEntityUtils {
         if (tag != null) {
             // Set X, Y, Z
             updateForSet(tag, position);
-            tileEntity.readFromNBT(tag);
+            tileEntity.fromTag(tag);
         }
 
-        world.setTileEntity(new BlockPos(position.getBlockX(), position.getBlockY(), position.getBlockZ()), tileEntity);
+        world.setBlockEntity(new BlockPos(position.getBlockX(), position.getBlockY(), position.getBlockZ()), tileEntity);
     }
 
     /**
@@ -76,12 +75,12 @@ final class TileEntityUtils {
      * @param position the position
      * @param tag the tag for the tile entity (may be null to do nothing)
      */
-    static void setTileEntity(World world, Vector position, @Nullable NBTTagCompound tag) {
+    static void setTileEntity(World world, Vector position, @Nullable CompoundTag tag) {
         if (tag != null) {
             updateForSet(tag, position);
-            TileEntity tileEntity = TileEntity.create(world, tag);
+            BlockEntity tileEntity = BlockEntity.method_26922(world, tag);
             if (tileEntity != null) {
-                world.setTileEntity(new BlockPos(position.getBlockX(), position.getBlockY(), position.getBlockZ()), tileEntity);
+                world.setBlockEntity(new BlockPos(position.getBlockX(), position.getBlockY(), position.getBlockZ()), tileEntity);
             }
         }
     }
@@ -95,18 +94,18 @@ final class TileEntityUtils {
      * @return a tile entity (may be null if it failed)
      */
     @Nullable
-    static TileEntity constructTileEntity(World world, Vector position, Class<? extends TileEntity> clazz) {
-        Constructor<? extends TileEntity> baseConstructor;
+    static BlockEntity constructTileEntity(World world, Vector position, Class<? extends BlockEntity> clazz) {
+        Constructor<? extends BlockEntity> baseConstructor;
         try {
             baseConstructor = clazz.getConstructor(); // creates "blank" TE
         } catch (Throwable e) {
             return null; // every TE *should* have this constructor, so this isn't necessary
         }
 
-        TileEntity genericTE;
+        BlockEntity genericTE;
         try {
             // Downcast here for return while retaining the type
-            genericTE = (TileEntity) baseConstructor.newInstance();
+            genericTE = (BlockEntity) baseConstructor.newInstance();
         } catch (Throwable e) {
             return null;
         }

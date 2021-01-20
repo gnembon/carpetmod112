@@ -1,16 +1,15 @@
 package narcolepticfrog.rsmm.events;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.PacketBuffer;
-
 import java.util.List;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.PacketByteBuf;
 
 public interface ServerPacketListener {
 
-    void onCustomPayload(EntityPlayerMP sender, String channel, PacketBuffer data);
+    void onCustomPayload(ServerPlayerEntity sender, String channel, PacketByteBuf data);
 
-    void onChannelRegister(EntityPlayerMP sender, List<String> channels);
+    void onChannelRegister(ServerPlayerEntity sender, List<String> channels);
 
-    void onChannelUnregister(EntityPlayerMP sender, List<String> channels);
+    void onChannelUnregister(ServerPlayerEntity sender, List<String> channels);
 
 }

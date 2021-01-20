@@ -7,9 +7,8 @@ import com.sk89q.worldedit.entity.metadata.EntityType;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.NullWorld;
-import net.minecraft.entity.EntityList;
-import net.minecraft.nbt.NBTTagCompound;
-
+import net.minecraft.class_2245;
+import net.minecraft.nbt.CompoundTag;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
 
@@ -28,10 +27,10 @@ class CarpetEntity implements Entity {
     public BaseEntity getState() {
         net.minecraft.entity.Entity entity = entityRef.get();
         if (entity != null) {
-            String id = EntityList.getEntityString(entity);
+            String id = class_2245.method_34602(entity);
             if (id != null) {
-                NBTTagCompound tag = new NBTTagCompound();
-                entity.writeToNBT(tag);
+                CompoundTag tag = new CompoundTag();
+                entity.toTag(tag);
                 return new BaseEntity(id, NBTConverter.fromNative(tag));
             } else {
                 return null;
@@ -45,9 +44,9 @@ class CarpetEntity implements Entity {
     public Location getLocation() {
         net.minecraft.entity.Entity entity = entityRef.get();
         if (entity != null) {
-            Vector position = new Vector(entity.posX, entity.posY, entity.posZ);
-            float yaw = entity.rotationYaw;
-            float pitch = entity.rotationPitch;
+            Vector position = new Vector(entity.field_33071, entity.field_33072, entity.field_33073);
+            float yaw = entity.yaw;
+            float pitch = entity.pitch;
 
             return new Location(CarpetAdapter.adapt(entity.world), position, yaw, pitch);
         } else {
@@ -69,7 +68,7 @@ class CarpetEntity implements Entity {
     public boolean remove() {
         net.minecraft.entity.Entity entity = entityRef.get();
         if (entity != null) {
-            entity.setDead();
+            entity.remove();
         }
         return true;
     }

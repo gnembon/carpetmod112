@@ -6,83 +6,67 @@ import javax.annotation.Nullable;
 
 import carpet.logging.logHelpers.DebugLogHelper;
 import carpet.utils.extensions.CameraPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameType;
-
-import net.minecraft.command.WrongUsageException;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.NumberInvalidException;
-
-import net.minecraft.potion.Potion;
+import net.minecraft.world.GameMode;
+import net.minecraft.class_6182;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
 
 public class CommandGMS extends CommandCarpetBase
 {
-    /**
-     * Gets the name of the command
-     */
-    public String getName()
+    @Override
+    public String method_29277()
     {
         return "s";
     }
 
-    /**
-     * Gets the usage string for the command.
-     *  
-     * @param sender The ICommandSender who is requesting usage details
-     */
-    public String getUsage(ICommandSender sender)
+    @Override
+    public String method_29275(class_2010 sender)
     {
         return "commands.gamemode.usage";
     }
 
-    /**
-     * Callback for when the command is executed
-     *  
-     * @param server The server instance
-     * @param sender The sender who executed the command
-     * @param args The arguments that were passed
-     */
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException, NumberInvalidException
+    @Override
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandCameramode", sender)) return;
         if (args.length > 0)
         {
-            throw new WrongUsageException(getUsage(sender), new Object[0]);
+            throw new class_6182(method_29275(sender));
         }
         else
         {
-            EntityPlayerMP entityplayer = getCommandSenderAsPlayer(sender);
+            ServerPlayerEntity entityplayer = method_28708(sender);
             setPlayerToSurvival(server, entityplayer,false);
         }
     }
 
-    public static void setPlayerToSurvival(MinecraftServer server, EntityPlayerMP entityplayer, boolean alwaysPutPlayerInSurvival) {
-        GameType gametype = server.getGameType();
-        if(entityplayer.interactionManager.getGameType() != GameType.SURVIVAL) {
-            DebugLogHelper.invisDebug(() -> "s1: " + entityplayer.world.loadedEntityList.contains(entityplayer));
+    public static void setPlayerToSurvival(MinecraftServer server, ServerPlayerEntity entityplayer, boolean alwaysPutPlayerInSurvival) {
+        GameMode gametype = server.getDefaultGameMode();
+        if(entityplayer.interactionManager.getGameMode() != GameMode.SURVIVAL) {
+            DebugLogHelper.invisDebug(() -> "s1: " + entityplayer.world.field_23572.contains(entityplayer));
             if(((CameraPlayer) entityplayer).moveToStoredCameraData() &&  !alwaysPutPlayerInSurvival) {
-                DebugLogHelper.invisDebug(() -> "s7: " + entityplayer.world.loadedEntityList.contains(entityplayer));
+                DebugLogHelper.invisDebug(() -> "s7: " + entityplayer.world.field_23572.contains(entityplayer));
                 return;
             }
             entityplayer.fallDistance = 0;
-            DebugLogHelper.invisDebug(() -> "s5: " + entityplayer.world.loadedEntityList.contains(entityplayer));
-            if(gametype != GameType.SPECTATOR) {
-                entityplayer.setGameType(gametype);
+            DebugLogHelper.invisDebug(() -> "s5: " + entityplayer.world.field_23572.contains(entityplayer));
+            if(gametype != GameMode.SPECTATOR) {
+                entityplayer.setGameMode(gametype);
             } else {
-                entityplayer.setGameType(GameType.SURVIVAL);
+                entityplayer.setGameMode(GameMode.SURVIVAL);
             }
-            if(!((CameraPlayer) entityplayer).hadNightvision()) entityplayer.removePotionEffect(Potion.getPotionFromResourceLocation("night_vision"));
-            DebugLogHelper.invisDebug(() -> "s6: " + entityplayer.world.loadedEntityList.contains(entityplayer));
+            if(!((CameraPlayer) entityplayer).hadNightvision()) entityplayer.removeStatusEffect(StatusEffect.method_34297("night_vision"));
+            DebugLogHelper.invisDebug(() -> "s6: " + entityplayer.world.field_23572.contains(entityplayer));
         }
     }
 
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
+    @Override
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos)
     {
-        return Collections.<String>emptyList();
+        return Collections.emptyList();
     }
-
-
 }

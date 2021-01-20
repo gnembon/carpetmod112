@@ -3,81 +3,80 @@ package carpet.commands;
 import javax.annotation.Nullable;
 
 import carpet.mixin.accessors.EntityTrackerAccessor;
-import carpet.mixin.accessors.WorldServerAccessor;
+import carpet.mixin.accessors.ServerWorldAccessor;
 import carpet.utils.Messenger;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityTrackerEntry;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.server.network.EntityTrackerEntry;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.NextTickListEntry;
-import net.minecraft.world.WorldServer;
-
+import net.minecraft.world.ScheduledTick;
 import java.util.Collections;
 import java.util.List;
 
 public class CommandDebugCarpet extends CommandCarpetBase {
-
     @Override
-    public String getName() {
+    public String method_29277() {
         return "debugCarpet";
     }
 
     @Override
-    public String getUsage(ICommandSender sender) {
+    public String method_29275(class_2010 sender) {
         return "Usage: debugCarpet <debug option>";
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
         if("tracker".equalsIgnoreCase(args[0])) {
-            for(EntityTrackerEntry e : ((EntityTrackerAccessor) ((WorldServer) sender.getEntityWorld()).getEntityTracker()).getEntries()){
-                sender.sendMessage(Messenger.s(sender, e.getTrackedEntity().toString()));
+            for(EntityTrackerEntry e : ((EntityTrackerAccessor) ((ServerWorld) sender.method_29608()).method_33488()).getEntries()){
+                sender.sendMessage(Messenger.s(sender, e.method_33550().toString()));
             }
         }
         if("trackedToMe".equalsIgnoreCase(args[0])) {
-            for(EntityTrackerEntry e : ((EntityTrackerAccessor) ((WorldServer) sender.getEntityWorld()).getEntityTracker()).getEntries()){
-                if(e.isVisibleTo((EntityPlayerMP) sender)){
-                    sender.sendMessage(Messenger.s(sender, e.getTrackedEntity().toString()));
+            for(EntityTrackerEntry e : ((EntityTrackerAccessor) ((ServerWorld) sender.method_29608()).method_33488()).getEntries()){
+                if(e.method_33555((ServerPlayerEntity) sender)){
+                    sender.sendMessage(Messenger.s(sender, e.method_33550().toString()));
                 }
             }
         }
         if("entitys".equalsIgnoreCase(args[0])) {
-            for(Entity e : sender.getEntityWorld().loadedEntityList){
+            for(Entity e : sender.method_29608().field_23572){
                 sender.sendMessage(Messenger.s(sender, e.toString()));
             }
         }
         if("tileEntitys1".equalsIgnoreCase(args[0])) {
-            for(TileEntity e : sender.getEntityWorld().loadedTileEntityList){
+            for(BlockEntity e : sender.method_29608().blockEntities){
                 sender.sendMessage(Messenger.s(sender, e.toString() + " " + e.getPos()));
             }
         }
         if("tileEntitys2".equalsIgnoreCase(args[0])) {
-            for(TileEntity e : sender.getEntityWorld().tickableTileEntities){
+            for(BlockEntity e : sender.method_29608().tickingBlockEntities){
                 sender.sendMessage(Messenger.s(sender, e.toString() + " " + e.getPos()));
             }
         }
         if("playerEntities".equalsIgnoreCase(args[0])) {
-            for(EntityPlayer e : sender.getEntityWorld().playerEntities){
+            for(PlayerEntity e : sender.method_29608().field_23576){
                 sender.sendMessage(Messenger.s(sender, e.toString()));
             }
         }
         if("pendingTickListEntriesTreeSet".equalsIgnoreCase(args[0])) {
-            for(NextTickListEntry e : ((WorldServerAccessor)sender.getEntityWorld()).getPendingTickListEntriesTreeSet()){
+            for(ScheduledTick e : ((ServerWorldAccessor)sender.method_29608()).getPendingTickListEntriesTreeSet()){
                 sender.sendMessage(Messenger.s(sender, e.toString()));
             }
         }
     }
 
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    @Override
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
     {
         if(args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "tracker", "entitys", "trackedToMe", "tileEntitys1", "tileEntitys2", "playerEntities", "pendingTickListEntriesTreeSet");
+            return method_28732(args, "tracker", "entitys", "trackedToMe", "tileEntitys1", "tileEntitys2", "playerEntities", "pendingTickListEntriesTreeSet");
         }
-        return Collections.<String>emptyList();
+        return Collections.emptyList();
     }
 }

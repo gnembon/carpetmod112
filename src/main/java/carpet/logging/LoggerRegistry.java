@@ -3,7 +3,7 @@ package carpet.logging;
 import carpet.CarpetSettings;
 import com.google.common.base.Charsets;
 import com.google.gson.*;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -73,7 +73,7 @@ public class LoggerRegistry
         registerGeneric("carefulBreak", new Logger(server, "carefulBreak", null, null, LogHandler.CHAT));
     }
 
-    private static File getSaveFile(MinecraftServer server) { return server.getActiveAnvilConverter().getFile(server.getFolderName(), "loggerData.json"); }
+    private static File getSaveFile(MinecraftServer server) { return server.getLevelStorage().method_28330(server.getLevelName(), "loggerData.json"); }
 
     public static void readSaveFile(MinecraftServer server) {
         File logData = getSaveFile(server);
@@ -88,7 +88,7 @@ public class LoggerRegistry
                 JsonArray defaultList = rootObj.getAsJsonArray("defaultList");
                 for (JsonElement entryElement : defaultList) {
                     LoggerOptions options = new LoggerOptions();
-                    options.fromJson(entryElement);
+                    options.method_33883(entryElement);
 
                     defaultSubscriptions.put(options.logger, options);
                 }
@@ -101,7 +101,7 @@ public class LoggerRegistry
                     JsonArray loggerEntries = playerEntry.getValue().getAsJsonArray();
                     for (JsonElement entryElement : loggerEntries) {
                         LoggerOptions options = new LoggerOptions();
-                        options.fromJson(entryElement);
+                        options.method_33883(entryElement);
 
                         subs.put(options.logger, options);
                     }
@@ -128,7 +128,7 @@ public class LoggerRegistry
 
             JsonArray defaultList = new JsonArray();
             for (Map.Entry<String, LoggerOptions> logger : defaultSubscriptions.entrySet()) {
-                defaultList.add(logger.getValue().getSerializableElement());
+                defaultList.add(logger.getValue().method_33882());
             }
             root.add("defaultList", defaultList);
 
@@ -137,7 +137,7 @@ public class LoggerRegistry
                 JsonArray playerLoggers = new JsonArray();
 
                 for (LoggerOptions logger : playerEntry.getValue().values()) {
-                    playerLoggers.add(logger.getSerializableElement());
+                    playerLoggers.add(logger.method_33882());
                 }
 
                 playerList.add(playerEntry.getKey(), playerLoggers);
@@ -180,9 +180,9 @@ public class LoggerRegistry
         writeConf(server);
 
         // Subscribe all players who have no customized subscription list
-        for (EntityPlayer player : server.getPlayerList().getPlayers()) {
-            if (!hasSubscriptions(player.getName()))
-                subscribePlayer(player.getName(), logName, option, handler);
+        for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
+            if (!hasSubscriptions(player.method_29611()))
+                subscribePlayer(player.method_29611(), logName, option, handler);
         }
         return true;
     }
@@ -196,9 +196,9 @@ public class LoggerRegistry
             writeConf(server);
 
             // Unsubscribe all players who have no customized subscription list
-            for (EntityPlayer player : server.getPlayerList().getPlayers()) {
-                if (!hasSubscriptions(player.getName()))
-                    unsubscribePlayer(player.getName(), logName);
+            for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
+                if (!hasSubscriptions(player.method_29611()))
+                    unsubscribePlayer(player.method_29611(), logName);
             }
             return true;
         }
@@ -344,9 +344,9 @@ public class LoggerRegistry
         registerLogger(recipes, recipes1.asGeneric());
     }
 
-    public static void playerConnected(EntityPlayer player)
+    public static void playerConnected(PlayerEntity player)
     {
-        String playerName = player.getName();
+        String playerName = player.method_29611();
 
         Map<String, LoggerOptions> subs = getPlayerSubscriptions(playerName);
         for (LoggerOptions option : subs.values()) {
@@ -357,9 +357,9 @@ public class LoggerRegistry
             subscribePlayer(playerName, option.logger, option.option, handler);
         }
     }
-    public static void playerDisconnected(EntityPlayer player)
+    public static void playerDisconnected(PlayerEntity player)
     {
-        String playerName = player.getName();
+        String playerName = player.method_29611();
 
         for (String logName : LoggerRegistry.getLoggerNames(0)) {
             unsubscribePlayer(playerName, logName);

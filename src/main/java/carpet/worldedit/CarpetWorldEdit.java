@@ -5,6 +5,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import java.io.File;
 import java.util.Map;
 
+import net.minecraft.class_2245;
+import net.minecraft.class_5607;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,18 +29,15 @@ import com.sk89q.worldedit.internal.LocalWorldAdapter;
 
 import carpet.CarpetSettings;
 import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.command.ICommand;
-import net.minecraft.command.ICommandSender;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.class_2010;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
@@ -83,19 +82,19 @@ class CarpetWorldEdit {
         }
     }
 
-    public void onCommand(ICommand command, ICommandSender sender, String[] args) {
-        if (sender instanceof EntityPlayerMP) {
-            if (((EntityPlayerMP) sender).world.isRemote) return;
+    public void onCommand(class_5607 command, class_2010 sender, String[] args) {
+        if (sender instanceof ServerPlayerEntity) {
+            if (((ServerPlayerEntity) sender).world.isClient) return;
             String[] split = new String[args.length + 1];
             System.arraycopy(args, 0, split, 1, args.length);
-            split[0] = command.getName();
+            split[0] = command.method_29277();
             com.sk89q.worldedit.event.platform.CommandEvent weEvent =
-                    new com.sk89q.worldedit.event.platform.CommandEvent(wrap((EntityPlayerMP) sender), Joiner.on(" ").join(split));
+                    new com.sk89q.worldedit.event.platform.CommandEvent(wrap((ServerPlayerEntity) sender), Joiner.on(" ").join(split));
             WorldEdit.getInstance().getEventBus().post(weEvent);
         }
     }
     
-    public boolean onLeftClickBlock(World world, BlockPos pos, EntityPlayerMP player) {
+    public boolean onLeftClickBlock(World world, BlockPos pos, ServerPlayerEntity player) {
         if (!platform.isHookingEvents())
             return true;
         
@@ -115,7 +114,7 @@ class CarpetWorldEdit {
         return result;
     }
     
-    public boolean onRightClickBlock(World world, BlockPos pos, EntityPlayerMP player) {
+    public boolean onRightClickBlock(World world, BlockPos pos, ServerPlayerEntity player) {
         if (!platform.isHookingEvents())
             return true;
         
@@ -135,7 +134,7 @@ class CarpetWorldEdit {
         return result;
     }
     
-    public boolean onRightClickAir(World world, EntityPlayerMP player) {
+    public boolean onRightClickAir(World world, ServerPlayerEntity player) {
         if (!platform.isHookingEvents())
             return true;
         
@@ -148,7 +147,7 @@ class CarpetWorldEdit {
         return true;
     }
     
-    public void startEditSession(EntityPlayerMP player) {
+    public void startEditSession(ServerPlayerEntity player) {
         if (player == null)
             return;
 
@@ -159,7 +158,7 @@ class CarpetWorldEdit {
         }
     }
     
-    public void finishEditSession(EntityPlayerMP player) {
+    public void finishEditSession(ServerPlayerEntity player) {
         if (player == null)
             return;
         
@@ -177,7 +176,7 @@ class CarpetWorldEdit {
         }
     }
     
-    public void recordBlockEdit(EntityPlayerMP player, World world, BlockPos pos, IBlockState newBlock, NBTTagCompound newTileEntity) {
+    public void recordBlockEdit(ServerPlayerEntity player, World world, BlockPos pos, BlockState newBlock, net.minecraft.nbt.CompoundTag newTileEntity) {
         if (player == null)
             return;
         
@@ -187,18 +186,18 @@ class CarpetWorldEdit {
         
         BlockVector position = new BlockVector(pos.getX(), pos.getY(), pos.getZ());
         
-        IBlockState oldBlock = world.getBlockState(pos);
-        int oldBlockId = Block.getIdFromBlock(oldBlock.getBlock());
-        int oldMeta = oldBlock.getBlock().getMetaFromState(oldBlock);
-        TileEntity oldTileEntity = world.getTileEntity(pos);
+        BlockState oldBlock = world.getBlockState(pos);
+        int oldBlockId = Block.getId(oldBlock.getBlock());
+        int oldMeta = oldBlock.getBlock().getMeta(oldBlock);
+        BlockEntity oldTileEntity = world.getBlockEntity(pos);
         BaseBlock previous;
         if (oldTileEntity == null)
             previous = new BaseBlock(oldBlockId, oldMeta);
         else
-            previous = new BaseBlock(oldBlockId, oldMeta, NBTConverter.fromNative(oldTileEntity.writeToNBT(new NBTTagCompound())));
+            previous = new BaseBlock(oldBlockId, oldMeta, NBTConverter.fromNative(oldTileEntity.toTag(new net.minecraft.nbt.CompoundTag())));
         
-        int newBlockId = Block.getIdFromBlock(newBlock.getBlock());
-        int newMeta = newBlock.getBlock().getMetaFromState(newBlock);
+        int newBlockId = Block.getId(newBlock.getBlock());
+        int newMeta = newBlock.getBlock().getMeta(newBlock);
         BaseBlock current;
         if (newTileEntity == null)
             current = new BaseBlock(newBlockId, newMeta);
@@ -208,7 +207,7 @@ class CarpetWorldEdit {
         editSession.getChangeSet().add(new BlockChange(position, previous, current));
     }
     
-    public void recordEntityCreation(EntityPlayerMP player, World world, Entity created) {
+    public void recordEntityCreation(ServerPlayerEntity player, World world, Entity created) {
         if (player == null)
             return;
         
@@ -217,14 +216,14 @@ class CarpetWorldEdit {
         }
         
         CarpetEntity carpetEntity = new CarpetEntity(created);
-        String entityId = EntityList.getKey(created).toString();
-        CompoundTag tag = NBTConverter.fromNative(created.writeToNBT(new NBTTagCompound()));
+        String entityId = class_2245.method_34598(created).toString();
+        CompoundTag tag = NBTConverter.fromNative(created.toTag(new net.minecraft.nbt.CompoundTag()));
         BaseEntity baseEntity = new BaseEntity(entityId, tag);
         
         editSession.getChangeSet().add(new EntityCreate(carpetEntity.getLocation(), baseEntity, carpetEntity));
     }
     
-    public void recordEntityRemoval(EntityPlayerMP player, World world, Entity removed) {
+    public void recordEntityRemoval(ServerPlayerEntity player, World world, Entity removed) {
         if (player == null)
             return;
         
@@ -233,17 +232,17 @@ class CarpetWorldEdit {
         }
         
         CarpetEntity carpetEntity = new CarpetEntity(removed);
-        String entityId = EntityList.getKey(removed).toString();
-        CompoundTag tag = NBTConverter.fromNative(removed.writeToNBT(new NBTTagCompound()));
+        String entityId = class_2245.method_34598(removed).toString();
+        CompoundTag tag = NBTConverter.fromNative(removed.toTag(new net.minecraft.nbt.CompoundTag()));
         BaseEntity baseEntity = new BaseEntity(entityId, tag);
         
         editSession.getChangeSet().add(new EntityRemove(carpetEntity.getLocation(), baseEntity));
     }
 
     public static ItemStack toCarpetItemStack(BaseItemStack item) {
-        ItemStack ret = new ItemStack(Item.getItemById(item.getType()), item.getAmount(), item.getData());
+        ItemStack ret = new ItemStack(Item.byRawId(item.getType()), item.getAmount(), item.getData());
         for (Map.Entry<Integer, Integer> entry : item.getEnchantments().entrySet()) {
-            ret.addEnchantment(Enchantment.getEnchantmentByID((entry.getKey())), entry.getValue());
+            ret.addEnchantment(Enchantment.byId((entry.getKey())), entry.getValue());
         }
 
         return ret;
@@ -264,7 +263,7 @@ class CarpetWorldEdit {
      * @param player the player
      * @return the WorldEdit player
      */
-    public CarpetPlayer wrap(EntityPlayerMP player) {
+    public CarpetPlayer wrap(ServerPlayerEntity player) {
         checkNotNull(player);
         return new CarpetPlayer(player);
     }
@@ -275,7 +274,7 @@ class CarpetWorldEdit {
      * @param player the player
      * @return the session
      */
-    public LocalSession getSession(EntityPlayerMP player) {
+    public LocalSession getSession(ServerPlayerEntity player) {
         checkNotNull(player);
         return WorldEdit.getInstance().getSessionManager().get(wrap(player));
     }

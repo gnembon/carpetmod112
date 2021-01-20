@@ -22,14 +22,14 @@ import com.sk89q.worldedit.world.World;
 
 import carpet.CarpetServer;
 import net.minecraft.block.Block;
-import net.minecraft.command.ServerCommandManager;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.class_2245;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.management.PlayerList;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.WorldServer;
+import net.minecraft.server.PlayerManager;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 
 class CarpetPlatform extends AbstractPlatform implements MultiUserPlatform {
 
@@ -53,9 +53,9 @@ class CarpetPlatform extends AbstractPlatform implements MultiUserPlatform {
         int index = name.indexOf(':');
 
         if (index != -1 && index != 0 && index != name.length() - 1) {
-            Block block = Block.getBlockFromName(name);
+            Block block = Block.fromName(name);
             if (block != null) {
-                return Block.getIdFromBlock(block);
+                return Block.getId(block);
             }
         }
 
@@ -64,19 +64,19 @@ class CarpetPlatform extends AbstractPlatform implements MultiUserPlatform {
             if (item == null) continue;
             if (item.getTranslationKey() == null) continue;
             if (item.getTranslationKey().startsWith("item.")) {
-                if (item.getTranslationKey().equalsIgnoreCase("item." + name)) return Item.getIdFromItem(item);
+                if (item.getTranslationKey().equalsIgnoreCase("item." + name)) return Item.getRawId(item);
             }
             if (item.getTranslationKey().startsWith("tile.")) {
-                if (item.getTranslationKey().equalsIgnoreCase("tile." + name)) return Item.getIdFromItem(item);
+                if (item.getTranslationKey().equalsIgnoreCase("tile." + name)) return Item.getRawId(item);
             }
-            if (item.getTranslationKey().equalsIgnoreCase(name)) return Item.getIdFromItem(item);
+            if (item.getTranslationKey().equalsIgnoreCase(name)) return Item.getRawId(item);
         }
         return 0;
     }
 
     @Override
     public boolean isValidMobType(String type) {
-        return EntityList.isRegistered(new ResourceLocation(type));
+        return class_2245.method_34601(new Identifier(type));
     }
 
     @Override
@@ -90,9 +90,9 @@ class CarpetPlatform extends AbstractPlatform implements MultiUserPlatform {
 
     @Override
     public List<? extends com.sk89q.worldedit.world.World> getWorlds() {
-        List<WorldServer> worlds = Arrays.asList(server.worlds);
+        List<ServerWorld> worlds = Arrays.asList(server.worlds);
         List<com.sk89q.worldedit.world.World> ret = new ArrayList<com.sk89q.worldedit.world.World>(worlds.size());
-        for (WorldServer world : worlds) {
+        for (ServerWorld world : worlds) {
             ret.add(new CarpetWorld(world));
         }
         return ret;
@@ -104,7 +104,7 @@ class CarpetPlatform extends AbstractPlatform implements MultiUserPlatform {
         if (player instanceof CarpetPlayer) {
             return player;
         } else {
-            EntityPlayerMP entity = server.getPlayerList().getPlayerByUsername(player.getName());
+            ServerPlayerEntity entity = server.getPlayerManager().getPlayer(player.getName());
             return entity != null ? new CarpetPlayer(entity) : null;
         }
     }
@@ -115,8 +115,8 @@ class CarpetPlatform extends AbstractPlatform implements MultiUserPlatform {
         if (world instanceof CarpetWorld) {
             return world;
         } else {
-            for (WorldServer ws : server.worlds) {
-                if (ws.getWorldInfo().getWorldName().equals(world.getName())) {
+            for (ServerWorld ws : server.worlds) {
+                if (ws.getLevelProperties().getLevelName().equals(world.getName())) {
                     return new CarpetWorld(ws);
                 }
             }
@@ -128,11 +128,11 @@ class CarpetPlatform extends AbstractPlatform implements MultiUserPlatform {
     @Override
     public void registerCommands(Dispatcher dispatcher) {
         if (server == null) return;
-        ServerCommandManager mcMan = (ServerCommandManager) server.getCommandManager();
+        CommandManager mcMan = (CommandManager) server.method_33193();
 
         for (final CommandMapping command : dispatcher.getCommands()) {
             CommandWrapper wrapper = new CommandWrapper(command);
-            mcMan.registerCommand(wrapper);
+            mcMan.method_29056(wrapper);
         }
     }
 
@@ -177,8 +177,8 @@ class CarpetPlatform extends AbstractPlatform implements MultiUserPlatform {
     @Override
     public Collection<Actor> getConnectedUsers() {
         List<Actor> users = new ArrayList<Actor>();
-        PlayerList scm = server.getPlayerList();
-        for (EntityPlayerMP entity : scm.getPlayers()) {
+        PlayerManager scm = server.getPlayerManager();
+        for (ServerPlayerEntity entity : scm.getPlayerList()) {
             if (entity != null) {
                 users.add(new CarpetPlayer(entity));
             }

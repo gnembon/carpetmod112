@@ -1,7 +1,7 @@
 package carpet.helpers;
 
 import carpet.CarpetServer;
-import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -11,11 +11,11 @@ public class AutoCraftingDropperHelper
     {
         while (!stack.isEmpty())
         {
-            EntityItem entityitem = new EntityItem(worldIn, x, y, z, stack.splitStack(CarpetServer.rand.nextInt(21) + 10));
-            entityitem.motionX = (CarpetServer.rand.nextDouble() - CarpetServer.rand.nextDouble()) * 0.05;
-            entityitem.motionY = CarpetServer.rand.nextDouble() * 0.05;
-            entityitem.motionZ = (CarpetServer.rand.nextDouble() - CarpetServer.rand.nextDouble()) * 0.05;
-            worldIn.spawnEntity(entityitem);
+            ItemEntity itemEntity = new ItemEntity(worldIn, x, y, z, stack.split(CarpetServer.rand.nextInt(21) + 10));
+            itemEntity.field_33074 = (CarpetServer.rand.nextDouble() - CarpetServer.rand.nextDouble()) * 0.05;
+            itemEntity.field_33075 = CarpetServer.rand.nextDouble() * 0.05;
+            itemEntity.field_33076 = (CarpetServer.rand.nextDouble() - CarpetServer.rand.nextDouble()) * 0.05;
+            worldIn.method_26040(itemEntity);
         }
     }
 }

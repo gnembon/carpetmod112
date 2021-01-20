@@ -2,15 +2,13 @@ package carpet.helpers;
 
 import carpet.CarpetServer;
 import carpet.mixin.accessors.BlockAccessor;
-import carpet.mixin.accessors.ChunkProviderServerAccessor;
+import carpet.mixin.accessors.ServerChunkManagerAccessor;
 import net.minecraft.block.*;
-import net.minecraft.init.Blocks;
+import net.minecraft.class_5305;
+import net.minecraft.server.world.ServerChunkManager;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraft.world.gen.ChunkProviderServer;
-
+import net.minecraft.world.chunk.ChunkSection;
+import net.minecraft.world.chunk.WorldChunk;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,10 +19,10 @@ public class RandomTickOptimization {
 
     static {
         for (Block b : Block.REGISTRY) {
-            if (b instanceof BlockBasePressurePlate
-                || b instanceof BlockButton
-                || b instanceof BlockPumpkin
-                || b instanceof BlockRedstoneTorch) {
+            if (b instanceof AbstractPressurePlateBlock
+                || b instanceof AbstractButtonBlock
+                || b instanceof PumpkinBlock
+                || b instanceof RedstoneTorchBlock) {
                 USELESS_RANDOMTICKS.add(b);
             }
         }
@@ -38,30 +36,30 @@ public class RandomTickOptimization {
     }
 
     public static void setUselessRandomTicks(boolean on) {
-        USELESS_RANDOMTICKS.forEach(b -> ((BlockAccessor) b).invokeSetTickRandomly(on));
+        USELESS_RANDOMTICKS.forEach(b -> ((BlockAccessor) b).invokeSetRandomTicks(on));
     }
 
     public static void setLiquidRandomTicks(boolean on) {
         needsWorldGenFix = !on;
-        ((BlockAccessor) Blocks.FLOWING_WATER).invokeSetTickRandomly(on);
-        ((BlockAccessor) Blocks.FLOWING_LAVA).invokeSetTickRandomly(on);
+        ((BlockAccessor) Blocks.FLOWING_WATER).invokeSetRandomTicks(on);
+        ((BlockAccessor) Blocks.FLOWING_LAVA).invokeSetRandomTicks(on);
     }
 
     public static void setSpongeRandomTicks(boolean on) {
-        ((BlockAccessor) Blocks.SPONGE).invokeSetTickRandomly(on);
+        ((BlockAccessor) Blocks.SPONGE).invokeSetRandomTicks(on);
     }
 
     public static void recalculateAllChunks() {
         if (CarpetServer.minecraft_server.worlds == null) // worlds not loaded yet
             return;
         for (World world : CarpetServer.minecraft_server.worlds) {
-            IChunkProvider provider = world.getChunkProvider();
-            if (!(provider instanceof ChunkProviderServer))
+            class_5305 provider = world.getChunkManager();
+            if (!(provider instanceof ServerChunkManager))
                 continue;
-            for (Chunk chunk : ((ChunkProviderServerAccessor) provider).getLoadedChunksMap().values()) {
-                for (ExtendedBlockStorage subchunk : chunk.getBlockStorageArray()) {
+            for (WorldChunk chunk : ((ServerChunkManagerAccessor) provider).getLoadedChunksMap().values()) {
+                for (ChunkSection subchunk : chunk.method_27413()) {
                     if (subchunk != null)
-                        subchunk.recalculateRefCounts();
+                        subchunk.method_27445();
                 }
             }
         }

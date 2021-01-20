@@ -5,38 +5,37 @@ import carpet.pubsub.PubSubInfoProvider;
 import carpet.utils.Messenger;
 import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.ITextComponent;
 import net.minecraft.server.MinecraftServer;
-
+import net.minecraft.text.Text;
+import net.minecraft.util.DyeColor;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class HopperCounter
 {
-    public static final HopperCounter cactus = new HopperCounter(EnumDyeColor.GREEN, "cactus");
-    public static final HopperCounter all = new HopperCounter(EnumDyeColor.GRAY, "all");
+    public static final HopperCounter cactus = new HopperCounter(DyeColor.GREEN, "cactus");
+    public static final HopperCounter all = new HopperCounter(DyeColor.GRAY, "all");
     public static final Map<String, HopperCounter> COUNTERS;
 
     static {
         COUNTERS = new HashMap<>();
-        for (EnumDyeColor color : EnumDyeColor.values()) {
-            COUNTERS.put(color.getName(), new HopperCounter(color, color.getName()));
+        for (DyeColor color : DyeColor.values()) {
+            COUNTERS.put(color.asString(), new HopperCounter(color, color.asString()));
         }
         COUNTERS.put("cactus", cactus);
         COUNTERS.put("all", all);
     }
 
-    public final EnumDyeColor color;
+    public final DyeColor color;
     private final Object2LongMap<ItemWithMeta> counter = new Object2LongLinkedOpenHashMap<>();
     private long startTick;
     private long startMillis;
     private PubSubInfoProvider<Long> pubSubProvider;
     private String name;
 
-    private HopperCounter(EnumDyeColor color, String name) {
+    private HopperCounter(DyeColor color, String name) {
         this.name = name;
         this.color = color;
         pubSubProvider = new PubSubInfoProvider<>(CarpetServer.PUBSUB, "carpet.counter." + name, 0, this::getTotalItems);
@@ -44,8 +43,8 @@ public class HopperCounter
 
     public void add(MinecraftServer server, ItemStack stack) {
         if (startTick == 0) {
-            startTick = server.getTickCounter();
-            startMillis = MinecraftServer.getCurrentTimeMillis();
+            startTick = server.getTicks();
+            startMillis = MinecraftServer.getMeasuringTimeMs();
         }
         ItemWithMeta item = new ItemWithMeta(stack);
         counter.put(item, counter.getLong(item) + stack.getCount());
@@ -54,8 +53,8 @@ public class HopperCounter
 
     public void reset(MinecraftServer server) {
         counter.clear();
-        startTick = server.getTickCounter();
-        startMillis = MinecraftServer.getCurrentTimeMillis();
+        startTick = server.getTicks();
+        startMillis = MinecraftServer.getMeasuringTimeMs();
         pubSubProvider.publish();
     }
 
@@ -65,12 +64,12 @@ public class HopperCounter
         }
     }
 
-    public static List<ITextComponent> formatAll(MinecraftServer server, boolean realtime)
+    public static List<Text> formatAll(MinecraftServer server, boolean realtime)
     {
-        List<ITextComponent> text = new ArrayList<>();
+        List<Text> text = new ArrayList<>();
 
         for (HopperCounter counter : COUNTERS.values()) {
-            List<ITextComponent> temp = counter.format(server, realtime, false);
+            List<Text> temp = counter.format(server, realtime, false);
             if (temp.size() > 1) {
                 text.addAll(temp);
             }
@@ -81,7 +80,7 @@ public class HopperCounter
         return text;
     }
 
-    public List<ITextComponent> format(MinecraftServer server, boolean realTime, boolean brief) {
+    public List<Text> format(MinecraftServer server, boolean realTime, boolean brief) {
         if (counter.isEmpty()) {
             if (brief) {
                 return Collections.singletonList(Messenger.m(null, "g "+name+": -, -/h, - min "));
@@ -89,7 +88,7 @@ public class HopperCounter
             return Collections.singletonList(Messenger.s(null, String.format("No items for %s yet", name)));
         }
         long total = getTotalItems();
-        long ticks = Math.max(realTime ? (MinecraftServer.getCurrentTimeMillis() - startMillis) / 50 : server.getTickCounter() - startTick, 1);
+        long ticks = Math.max(realTime ? (MinecraftServer.getMeasuringTimeMs() - startMillis) / 50 : server.getTicks() - startTick, 1);
         if (total == 0) {
             if (brief) {
                 return Collections.singletonList(Messenger.m(null,
@@ -105,7 +104,7 @@ public class HopperCounter
                     String.format("c %s: %d, %d/h, %.1f min ",
                             name, total, total * (20 * 60 * 60) / ticks, ticks / (20.0 * 60.0))));
         }
-        List<ITextComponent> list = counter.entrySet().stream().map(e -> {
+        List<Text> list = counter.entrySet().stream().map(e -> {
             String itemName = e.getKey().getDisplayName();
             long count = e.getValue();
             return Messenger.s(null, String.format(" - %s: %d, %.1f/h",

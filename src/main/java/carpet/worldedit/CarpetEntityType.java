@@ -3,27 +3,26 @@ package carpet.worldedit;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.sk89q.worldedit.entity.metadata.EntityType;
-
+import net.minecraft.class_6444;
+import net.minecraft.entity.EnderEyeEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.IMerchant;
-import net.minecraft.entity.INpc;
-import net.minecraft.entity.IProjectile;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityEnderEye;
-import net.minecraft.entity.item.EntityFallingBlock;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.item.EntityPainting;
-import net.minecraft.entity.item.EntityTNTPrimed;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.monster.EntityGolem;
-import net.minecraft.entity.passive.EntityAmbientCreature;
-import net.minecraft.entity.passive.EntityTameable;
-import net.minecraft.entity.passive.IAnimals;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.ExperienceOrbEntity;
+import net.minecraft.entity.FallingBlockEntity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.Npc;
+import net.minecraft.entity.TntEntity;
+import net.minecraft.entity.decoration.ArmorStandEntity;
+import net.minecraft.entity.decoration.ItemFrameEntity;
+import net.minecraft.entity.decoration.painting.PaintingEntity;
+import net.minecraft.entity.mob.AmbientEntity;
+import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.GolemEntity;
+import net.minecraft.entity.passive.TameableEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.Projectile;
+import net.minecraft.entity.vehicle.AbstractMinecartEntity;
+import net.minecraft.entity.vehicle.BoatEntity;
+import net.minecraft.village.Trader;
 
 class CarpetEntityType implements EntityType {
 
@@ -36,91 +35,91 @@ class CarpetEntityType implements EntityType {
 
     @Override
     public boolean isPlayerDerived() {
-        return entity instanceof EntityPlayer;
+        return entity instanceof PlayerEntity;
     }
 
     @Override
     public boolean isProjectile() {
-        return entity instanceof EntityEnderEye || entity instanceof IProjectile;
+        return entity instanceof EnderEyeEntity || entity instanceof Projectile;
     }
 
     @Override
     public boolean isItem() {
-        return entity instanceof EntityItem;
+        return entity instanceof ItemEntity;
     }
 
     @Override
     public boolean isFallingBlock() {
-        return entity instanceof EntityFallingBlock;
+        return entity instanceof FallingBlockEntity;
     }
 
     @Override
     public boolean isPainting() {
-        return entity instanceof EntityPainting;
+        return entity instanceof PaintingEntity;
     }
 
     @Override
     public boolean isItemFrame() {
-        return entity instanceof EntityItemFrame;
+        return entity instanceof ItemFrameEntity;
     }
 
     @Override
     public boolean isBoat() {
-        return entity instanceof EntityBoat;
+        return entity instanceof BoatEntity;
     }
 
     @Override
     public boolean isMinecart() {
-        return entity instanceof EntityMinecart;
+        return entity instanceof AbstractMinecartEntity;
     }
 
     @Override
     public boolean isTNT() {
-        return entity instanceof EntityTNTPrimed;
+        return entity instanceof TntEntity;
     }
 
     @Override
     public boolean isExperienceOrb() {
-        return entity instanceof EntityXPOrb;
+        return entity instanceof ExperienceOrbEntity;
     }
 
     @Override
     public boolean isLiving() {
-        return entity instanceof EntityLiving;
+        return entity instanceof MobEntity;
     }
 
     @Override
     public boolean isAnimal() {
-        return entity instanceof IAnimals;
+        return entity instanceof class_6444;
     }
 
     @Override
     public boolean isAmbient() {
-        return entity instanceof EntityAmbientCreature;
+        return entity instanceof AmbientEntity;
     }
 
     @Override
     public boolean isNPC() {
-        return entity instanceof INpc || entity instanceof IMerchant;
+        return entity instanceof Npc || entity instanceof Trader;
     }
 
     @Override
     public boolean isGolem() {
-        return entity instanceof EntityGolem;
+        return entity instanceof GolemEntity;
     }
 
     @Override
     public boolean isTamed() {
-        return entity instanceof EntityTameable && ((EntityTameable) entity).isTamed();
+        return entity instanceof TameableEntity && ((TameableEntity) entity).isTamed();
     }
 
     @Override
     public boolean isTagged() {
-        return entity instanceof EntityLiving && ((EntityLiving) entity).hasCustomName();
+        return entity instanceof MobEntity && entity.method_34200();
     }
 
     @Override
     public boolean isArmorStand() {
-        return entity instanceof EntityArmorStand;
+        return entity instanceof ArmorStandEntity;
     }
 }

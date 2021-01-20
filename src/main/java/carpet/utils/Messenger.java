@@ -1,17 +1,16 @@
 package carpet.utils;
 
 import carpet.CarpetSettings;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.EnumCreatureType;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.class_2010;
+import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.text.event.ClickEvent;
-import net.minecraft.util.text.event.HoverEvent;
-
+import net.minecraft.text.ClickEvent;
+import net.minecraft.text.HoverEvent;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -48,31 +47,31 @@ public class Messenger
      / = action added to the previous component
      */
 
-    private static ITextComponent _applyStyleToTextComponent(ITextComponent comp, String style)
+    private static Text _applyStyleToTextComponent(Text comp, String style)
     {
         //could be rewritten to be more efficient
         comp.getStyle().setItalic(style.indexOf('i')>=0);
         comp.getStyle().setStrikethrough(style.indexOf('s')>=0);
-        comp.getStyle().setUnderlined(style.indexOf('u')>=0);
+        comp.getStyle().setUnderline(style.indexOf('u')>=0);
         comp.getStyle().setBold(style.indexOf('b')>=0);
         comp.getStyle().setObfuscated(style.indexOf('o')>=0);
-        comp.getStyle().setColor(TextFormatting.WHITE);
-        if (style.indexOf('w')>=0) comp.getStyle().setColor(TextFormatting.WHITE); // not needed
-        if (style.indexOf('y')>=0) comp.getStyle().setColor(TextFormatting.YELLOW);
-        if (style.indexOf('m')>=0) comp.getStyle().setColor(TextFormatting.LIGHT_PURPLE);
-        if (style.indexOf('r')>=0) comp.getStyle().setColor(TextFormatting.RED);
-        if (style.indexOf('c')>=0) comp.getStyle().setColor(TextFormatting.AQUA);
-        if (style.indexOf('l')>=0) comp.getStyle().setColor(TextFormatting.GREEN);
-        if (style.indexOf('t')>=0) comp.getStyle().setColor(TextFormatting.BLUE);
-        if (style.indexOf('f')>=0) comp.getStyle().setColor(TextFormatting.DARK_GRAY);
-        if (style.indexOf('g')>=0) comp.getStyle().setColor(TextFormatting.GRAY);
-        if (style.indexOf('d')>=0) comp.getStyle().setColor(TextFormatting.GOLD);
-        if (style.indexOf('p')>=0) comp.getStyle().setColor(TextFormatting.DARK_PURPLE);
-        if (style.indexOf('n')>=0) comp.getStyle().setColor(TextFormatting.DARK_RED);
-        if (style.indexOf('q')>=0) comp.getStyle().setColor(TextFormatting.DARK_AQUA);
-        if (style.indexOf('e')>=0) comp.getStyle().setColor(TextFormatting.DARK_GREEN);
-        if (style.indexOf('v')>=0) comp.getStyle().setColor(TextFormatting.DARK_BLUE);
-        if (style.indexOf('k')>=0) comp.getStyle().setColor(TextFormatting.BLACK);
+        comp.getStyle().setColor(Formatting.WHITE);
+        if (style.indexOf('w')>=0) comp.getStyle().setColor(Formatting.WHITE); // not needed
+        if (style.indexOf('y')>=0) comp.getStyle().setColor(Formatting.YELLOW);
+        if (style.indexOf('m')>=0) comp.getStyle().setColor(Formatting.LIGHT_PURPLE);
+        if (style.indexOf('r')>=0) comp.getStyle().setColor(Formatting.RED);
+        if (style.indexOf('c')>=0) comp.getStyle().setColor(Formatting.AQUA);
+        if (style.indexOf('l')>=0) comp.getStyle().setColor(Formatting.GREEN);
+        if (style.indexOf('t')>=0) comp.getStyle().setColor(Formatting.BLUE);
+        if (style.indexOf('f')>=0) comp.getStyle().setColor(Formatting.DARK_GRAY);
+        if (style.indexOf('g')>=0) comp.getStyle().setColor(Formatting.GRAY);
+        if (style.indexOf('d')>=0) comp.getStyle().setColor(Formatting.GOLD);
+        if (style.indexOf('p')>=0) comp.getStyle().setColor(Formatting.DARK_PURPLE);
+        if (style.indexOf('n')>=0) comp.getStyle().setColor(Formatting.DARK_RED);
+        if (style.indexOf('q')>=0) comp.getStyle().setColor(Formatting.DARK_AQUA);
+        if (style.indexOf('e')>=0) comp.getStyle().setColor(Formatting.DARK_GREEN);
+        if (style.indexOf('v')>=0) comp.getStyle().setColor(Formatting.DARK_BLUE);
+        if (style.indexOf('k')>=0) comp.getStyle().setColor(Formatting.BLACK);
         return comp;
     }
     public static String heatmap_color(double actual, double reference)
@@ -83,7 +82,7 @@ public class Messenger
         if (actual > reference) color = "m";
         return color;
     }
-    public static String creatureTypeColor(EnumCreatureType type)
+    public static String creatureTypeColor(EntityCategory type)
     {
         switch (type)
         {
@@ -99,7 +98,7 @@ public class Messenger
         return "w";
     }
 
-    private static ITextComponent _getChatComponentFromDesc(String message, ITextComponent previous_message)
+    private static Text _getChatComponentFromDesc(String message, Text previous_message)
     {
         String parts[] = message.split("\\s", 2);
         String desc = parts[0];
@@ -129,32 +128,32 @@ public class Messenger
                 previous_message.getStyle().setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Messenger.m(null, message.substring(1))));
             return previous_message;
         }
-        ITextComponent txt = new TextComponentString(str);
+        Text txt = new LiteralText(str);
         return _applyStyleToTextComponent(txt, desc);
     }
-    public static ITextComponent tp(String desc, BlockPos pos) { return tp(desc, pos.getX(), pos.getY(), pos.getZ()); }
-    public static ITextComponent tp(String desc, double x, double y, double z) { return tp(desc, (float)x, (float)y, (float)z);}
-    public static ITextComponent tp(String desc, float x, float y, float z)
+    public static Text tp(String desc, BlockPos pos) { return tp(desc, pos.getX(), pos.getY(), pos.getZ()); }
+    public static Text tp(String desc, double x, double y, double z) { return tp(desc, (float)x, (float)y, (float)z);}
+    public static Text tp(String desc, float x, float y, float z)
     {
         return _getCoordsTextComponent(desc, x, y, z, false);
     }
-    public static ITextComponent tp(String desc, int x, int y, int z)
+    public static Text tp(String desc, int x, int y, int z)
     {
         return _getCoordsTextComponent(desc, (float)x, (float)y, (float)z, true);
     }
 
-    public static ITextComponent tp(String desc, Waypoint waypoint) {
+    public static Text tp(String desc, Waypoint waypoint) {
         String text = String.format("%s [ %.2f, %.2f, %.2f]", desc, waypoint.x, waypoint.y, waypoint.z);
         String command = "!/tp " + waypoint.getFullName();
         return m(null, text, command);
     }
 
     /// to be continued
-    public static ITextComponent dbl(String style, double double_value)
+    public static Text dbl(String style, double double_value)
     {
         return m(null, String.format("%s %.1f",style,double_value),String.format("^w %f",double_value));
     }
-    public static ITextComponent dbls(String style, double ... doubles)
+    public static Text dbls(String style, double ... doubles)
     {
         StringBuilder str = new StringBuilder(style + " [ ");
         String prefix = "";
@@ -166,7 +165,7 @@ public class Messenger
         str.append(" ]");
         return m(null, str.toString());
     }
-    public static ITextComponent dblf(String style, double ... doubles)
+    public static Text dblf(String style, double ... doubles)
     {
         StringBuilder str = new StringBuilder(style + " [ ");
         String prefix = "";
@@ -178,7 +177,7 @@ public class Messenger
         str.append(" ]");
         return m(null, str.toString());
     }
-    public static ITextComponent dblt(String style, double ... doubles)
+    public static Text dblt(String style, double ... doubles)
     {
         List<Object> components = new ArrayList<>();
         components.add(style+" [ ");
@@ -196,7 +195,7 @@ public class Messenger
         return m(null, components.toArray(new Object[0]));
     }
 
-    private static ITextComponent _getCoordsTextComponent(String style, float x, float y, float z, boolean isInt)
+    private static Text _getCoordsTextComponent(String style, float x, float y, float z, boolean isInt)
     {
         String text;
         String command;
@@ -215,22 +214,22 @@ public class Messenger
     /*
     builds single line, multicomponent message, optionally returns it to sender, and returns as one chat messagge
      */
-    public static ITextComponent m(ICommandSender receiver, Object ... fields)
+    public static Text m(class_2010 receiver, Object ... fields)
     {
-        ITextComponent message = new TextComponentString("");
-        ITextComponent previous_component = null;
+        Text message = new LiteralText("");
+        Text previous_component = null;
         for (Object o: fields)
         {
-            if (o instanceof ITextComponent)
+            if (o instanceof Text)
             {
-                message.appendSibling((ITextComponent)o);
-                previous_component = (ITextComponent)o;
+                message.append((Text)o);
+                previous_component = (Text)o;
                 continue;
             }
             String txt = o.toString();
             //CarpetSettings.LOG.error(txt);
-            ITextComponent comp = _getChatComponentFromDesc(txt,previous_component);
-            if (comp != previous_component) message.appendSibling(comp);
+            Text comp = _getChatComponentFromDesc(txt,previous_component);
+            if (comp != previous_component) message.append(comp);
             previous_component = comp;
         }
         if (receiver != null)
@@ -238,21 +237,21 @@ public class Messenger
         return message;
     }
 
-    public static ITextComponent s(ICommandSender receiver,String text)
+    public static Text s(class_2010 receiver,String text)
     {
         return s(receiver,text,"");
     }
-    public static ITextComponent s(ICommandSender receiver,String text, String style)
+    public static Text s(class_2010 receiver,String text, String style)
     {
-        ITextComponent message = new TextComponentString(text);
+        Text message = new LiteralText(text);
         _applyStyleToTextComponent(message, style);
         if (receiver != null)
             receiver.sendMessage(message);
         return message;
     }
 
-    public static void send(ICommandSender receiver, ITextComponent ... messages) { send(receiver, Arrays.asList(messages)); }
-    public static void send(ICommandSender receiver, List<ITextComponent> list)
+    public static void send(class_2010 receiver, Text ... messages) { send(receiver, Arrays.asList(messages)); }
+    public static void send(class_2010 receiver, List<Text> list)
     {
         list.forEach(receiver::sendMessage);
     }
@@ -261,19 +260,19 @@ public class Messenger
     {
         if (server == null)
             CarpetSettings.LOG.error("Message not delivered: "+message);
-        server.sendMessage(new TextComponentString(message));
-        ITextComponent txt = m(null, "gi "+message);
-        for (EntityPlayer entityplayer : server.getPlayerList().getPlayers())
+        server.sendMessage(new LiteralText(message));
+        Text txt = m(null, "gi "+message);
+        for (PlayerEntity entityplayer : server.getPlayerManager().getPlayerList())
         {
             entityplayer.sendMessage(txt);
         }
     }
-    public static void print_server_message(MinecraftServer server, ITextComponent message)
+    public static void print_server_message(MinecraftServer server, Text message)
     {
         if (server == null)
-            CarpetSettings.LOG.error("Message not delivered: "+message.getUnformattedText());
+            CarpetSettings.LOG.error("Message not delivered: " + message.method_32275());
         server.sendMessage(message);
-        for (EntityPlayer entityplayer : server.getPlayerList().getPlayers())
+        for (PlayerEntity entityplayer : server.getPlayerManager().getPlayerList())
         {
             entityplayer.sendMessage(message);
         }

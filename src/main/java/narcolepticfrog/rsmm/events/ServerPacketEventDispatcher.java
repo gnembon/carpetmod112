@@ -1,10 +1,9 @@
 package narcolepticfrog.rsmm.events;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.PacketBuffer;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.PacketByteBuf;
 
 public class ServerPacketEventDispatcher {
 
@@ -16,19 +15,19 @@ public class ServerPacketEventDispatcher {
         listeners.add(listener);
     }
 
-    public static void dispatchCustomPayload(EntityPlayerMP sender, String channel, PacketBuffer data) {
+    public static void dispatchCustomPayload(ServerPlayerEntity sender, String channel, PacketByteBuf data) {
         for (ServerPacketListener listener : listeners) {
             listener.onCustomPayload(sender, channel, data);
         }
     }
 
-    public static void dispatchChannelRegister(EntityPlayerMP sender, List<String> channels) {
+    public static void dispatchChannelRegister(ServerPlayerEntity sender, List<String> channels) {
         for (ServerPacketListener listener : listeners) {
             listener.onChannelRegister(sender, channels);
         }
     }
 
-    public static void dispatchChannelUnregister(EntityPlayerMP sender, List<String> channels) {
+    public static void dispatchChannelUnregister(ServerPlayerEntity sender, List<String> channels) {
         for (ServerPacketListener listener : listeners) {
             listener.onChannelUnregister(sender, channels);
         }

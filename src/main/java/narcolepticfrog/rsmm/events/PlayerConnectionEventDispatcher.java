@@ -1,9 +1,8 @@
 package narcolepticfrog.rsmm.events;
 
-import net.minecraft.entity.player.EntityPlayerMP;
-
 import java.util.ArrayList;
 import java.util.List;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public class PlayerConnectionEventDispatcher {
 
@@ -15,13 +14,13 @@ public class PlayerConnectionEventDispatcher {
         listeners.add(listener);
     }
 
-    public static void dispatchPlayerConnectEvent(EntityPlayerMP player) {
+    public static void dispatchPlayerConnectEvent(ServerPlayerEntity player) {
         for (PlayerConnectionListener listener : listeners) {
             listener.onPlayerConnect(player);
         }
     }
 
-    public static void dispatchPlayerDisconnectEvent(EntityPlayerMP player) {
+    public static void dispatchPlayerDisconnectEvent(ServerPlayerEntity player) {
         for (PlayerConnectionListener listener : listeners) {
             listener.onPlayerDisconnect(player);
         }

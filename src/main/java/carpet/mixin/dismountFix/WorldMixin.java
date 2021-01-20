@@ -10,17 +10,17 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(World.class)
 public class WorldMixin {
-    @Redirect(method = "updateEntityWithOptionalForce", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;dismountRidingEntity()V"))
+    @Redirect(method = "method_26050", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;stopRiding()V"))
     private void dismountFix(Entity entity) {
         if (CarpetSettings.dismountFix) {
             // copy of the base Entity::dismountRidingEntity
-            Entity ridingEntity = entity.getRidingEntity();
+            Entity ridingEntity = entity.getVehicle();
             if (ridingEntity != null) {
-                ((EntityAccessor) entity).setRidingEntity(null);
+                ((EntityAccessor) entity).setVehicle(null);
                 ((EntityAccessor) ridingEntity).invokeRemovePassenger(entity);
             }
         } else {
-            entity.dismountRidingEntity();
+            entity.stopRiding();
         }
     }
 }

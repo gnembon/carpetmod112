@@ -3,9 +3,9 @@ package carpet.helpers;
 import carpet.CarpetServer;
 import carpet.pubsub.PubSubInfoProvider;
 import carpet.utils.Messenger;
-import net.minecraft.command.ICommandManager;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.class_2010;
+import net.minecraft.class_5629;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
 
@@ -18,9 +18,9 @@ public class TickSpeed
     public static long time_bias = 0;
     public static long time_warp_start_time = 0;
     public static long time_warp_scheduled_ticks = 0;
-    public static EntityPlayer time_advancerer = null;
+    public static PlayerEntity time_advancerer = null;
     public static String tick_warp_callback = null;
-    public static ICommandSender tick_warp_sender = null;
+    public static class_2010 tick_warp_sender = null;
     public static int player_active_timeout = 0;
     public static boolean process_entities = true;
     public static boolean is_paused = false;
@@ -58,7 +58,7 @@ public class TickSpeed
         PUBSUB_TICKRATE.publish();
     }
 
-    public static String tickrate_advance(EntityPlayer player, long advance, String callback, ICommandSender icommandsender)
+    public static String tickrate_advance(PlayerEntity player, long advance, String callback, class_2010 icommandsender)
     {
         if (0 == advance)
         {
@@ -96,10 +96,10 @@ public class TickSpeed
         time_warp_start_time = 0;
         if (tick_warp_callback != null)
         {
-            ICommandManager icommandmanager = tick_warp_sender.getServer().getCommandManager();
+            class_5629 icommandmanager = tick_warp_sender.method_29602().method_33193();
             try
             {
-                int j = icommandmanager.executeCommand(tick_warp_sender, tick_warp_callback);
+                int j = icommandmanager.method_29374(tick_warp_sender, tick_warp_callback);
 
                 if (j < 1)
                 {
@@ -175,7 +175,7 @@ public class TickSpeed
     }
 
     public static double getMSPT() {
-        return MathHelper.average(CarpetServer.minecraft_server.tickTimeArray) * 1.0E-6D;
+        return MathHelper.average(CarpetServer.minecraft_server.lastTickLengths) * 1.0E-6D;
     }
 
     public static double getTPS() {

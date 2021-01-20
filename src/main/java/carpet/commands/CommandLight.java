@@ -1,51 +1,50 @@
 package carpet.commands;
 
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.EnumSkyBlock;
+import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 
 import java.util.Collections;
 import java.util.List;
 
 public class CommandLight extends CommandCarpetBase {
-    public static BlockPos tntScanPos = null;
     public static final String USAGE = "/light [x1 y1 z1] [x2 y2 z2] <sky/block> <value>";
 
     @Override
-    public String getName() {
+    public String method_29277() {
         return "light";
     }
 
     @Override
-    public String getUsage(ICommandSender sender) {
+    public String method_29275(class_2010 sender) {
         return USAGE;
     }
 
     @Override
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
         if(!command_enabled("commandLight", sender)) return;
 
         int x1, y1, z1, x2, y2, z2, lightLevel;
         String type;
         if (args.length > 7) {
-            if (args.length > 8) throw new WrongUsageException(USAGE);
-            x1 = (int) Math.round(parseCoordinate(sender.getPosition().getX(), args[0], false).getResult());
-            y1 = (int) Math.round(parseCoordinate(sender.getPosition().getY(), args[1], false).getResult());
-            z1 = (int) Math.round(parseCoordinate(sender.getPosition().getZ(), args[2], false).getResult());
+            if (args.length > 8) throw new class_6182(USAGE);
+            x1 = (int) Math.round(method_28702(sender.method_29606().getX(), args[0], false).method_28750());
+            y1 = (int) Math.round(method_28702(sender.method_29606().getY(), args[1], false).method_28750());
+            z1 = (int) Math.round(method_28702(sender.method_29606().getZ(), args[2], false).method_28750());
 
-            x2 = (int) Math.round(parseCoordinate(sender.getPosition().getX(), args[3], false).getResult());
-            y2 = (int) Math.round(parseCoordinate(sender.getPosition().getY(), args[4], false).getResult());
-            z2 = (int) Math.round(parseCoordinate(sender.getPosition().getZ(), args[5], false).getResult());
+            x2 = (int) Math.round(method_28702(sender.method_29606().getX(), args[3], false).method_28750());
+            y2 = (int) Math.round(method_28702(sender.method_29606().getY(), args[4], false).method_28750());
+            z2 = (int) Math.round(method_28702(sender.method_29606().getZ(), args[5], false).method_28750());
 
             type = args[6];
             try {
                 lightLevel = Integer.parseInt(args[7]);
             } catch (Exception e) {
-                throw new WrongUsageException(USAGE);
+                throw new class_6182(USAGE);
             }
 
             if (x1 > x2) {
@@ -64,55 +63,55 @@ public class CommandLight extends CommandCarpetBase {
                 z2 = temp;
             }
 
-            EnumSkyBlock t;
+            LightType t;
 
             if (type.equals("sky")) {
-                t = EnumSkyBlock.SKY;
+                t = LightType.SKY;
             } else if (type.equals("block")) {
-                t = EnumSkyBlock.BLOCK;
+                t = LightType.BLOCK;
             } else {
-                throw new WrongUsageException(USAGE);
+                throw new class_6182(USAGE);
             }
-            fillLightInArea(sender.getEntityWorld(), t, x1, y1, z1, x2, y2, z2, lightLevel);
+            fillLightInArea(sender.method_29608(), t, x1, y1, z1, x2, y2, z2, lightLevel);
 
-            notifyCommandListener(sender, this,
+            method_28710(sender, this,
                     String.format("Changing light level of %s to %d from:[%d %d %d] to:[%d %d %d]", type, lightLevel, x1, y1, z1, x2, y2, z2));
         } else {
-            throw new WrongUsageException(USAGE);
+            throw new class_6182(USAGE);
         }
     }
 
-    private void fillLightInArea(World world, EnumSkyBlock type, int x1, int y1, int z1, int x2, int y2, int z2, int lightLevel) {
+    private void fillLightInArea(World world, LightType type, int x1, int y1, int z1, int x2, int y2, int z2, int lightLevel) {
         for (int z = z1; z <= z2; z++) {
             for (int y = y1; y <= y2; y++) {
                 for (int x = x1; x <= x2; x++) {
                     BlockPos pos = new BlockPos(x, y, z);
-                    world.setLightFor(type, pos, lightLevel);
+                    world.method_25992(type, pos, lightLevel);
                 }
             }
         }
     }
 
     @Override
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, BlockPos targetPos) {
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, BlockPos targetPos) {
         if (args.length == 0) {
             return Collections.emptyList();
         } else if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, String.valueOf(targetPos.getX()));
+            return method_28732(args, String.valueOf(targetPos.getX()));
         } else if (args.length == 2) {
-            return getListOfStringsMatchingLastWord(args, String.valueOf(targetPos.getY()));
+            return method_28732(args, String.valueOf(targetPos.getY()));
         } else if (args.length == 3) {
-            return getListOfStringsMatchingLastWord(args, String.valueOf(targetPos.getZ()));
+            return method_28732(args, String.valueOf(targetPos.getZ()));
         } else if (args.length == 4) {
-            return getListOfStringsMatchingLastWord(args, String.valueOf(targetPos.getX()));
+            return method_28732(args, String.valueOf(targetPos.getX()));
         } else if (args.length == 5) {
-            return getListOfStringsMatchingLastWord(args, String.valueOf(targetPos.getY()));
+            return method_28732(args, String.valueOf(targetPos.getY()));
         } else if (args.length == 6) {
-            return getListOfStringsMatchingLastWord(args, String.valueOf(targetPos.getZ()));
+            return method_28732(args, String.valueOf(targetPos.getZ()));
         } else if (args.length == 7) {
-            return getListOfStringsMatchingLastWord(args, "sky", "block");
+            return method_28732(args, "sky", "block");
         } else if (args.length == 8) {
-            return getListOfStringsMatchingLastWord(args, "0", "15");
+            return method_28732(args, "0", "15");
         } else {
             return Collections.emptyList();
         }

@@ -18,23 +18,22 @@ import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import carpet.mixin.accessors.AnvilChunkLoaderAccessor;
-import carpet.mixin.accessors.ChunkProviderServerAccessor;
+import carpet.mixin.accessors.ThreadedAnvilChunkStorageAccessor;
+import carpet.mixin.accessors.ServerChunkManagerAccessor;
 import carpet.mixin.accessors.MinecraftServerAccessor;
 import carpet.utils.extensions.WorldWithTickingAreas;
+import net.minecraft.class_5318;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
+import net.minecraft.class_5305;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.chunk.IChunkProvider;
-import net.minecraft.world.chunk.storage.AnvilChunkLoader;
-import net.minecraft.world.chunk.storage.IChunkLoader;
-import net.minecraft.world.gen.ChunkProviderServer;
 
 public abstract class TickingArea
 {
@@ -44,7 +43,7 @@ public abstract class TickingArea
     
     public static boolean isTickingChunk(World world, int chunkX, int chunkZ)
     {
-        return ((WorldWithTickingAreas) world).getTickingChunks().contains(ChunkPos.asLong(chunkX, chunkZ));
+        return ((WorldWithTickingAreas) world).getTickingChunks().contains(ColumnPos.method_25891(chunkX, chunkZ));
     }
     
     public static List<TickingArea> getTickingAreas(World world)
@@ -55,9 +54,9 @@ public abstract class TickingArea
     public static void addTickingArea(World world, TickingArea area)
     {
         ((WorldWithTickingAreas) world).getTickingAreas().add(area);
-        for (ChunkPos pos : area.listIncludedChunks(world))
+        for (ColumnPos pos : area.listIncludedChunks(world))
         {
-            ((WorldWithTickingAreas) world).getTickingChunks().add(ChunkPos.asLong(pos.x, pos.z));
+            ((WorldWithTickingAreas) world).getTickingChunks().add(ColumnPos.method_25891(pos.x, pos.z));
         }
     }
     
@@ -82,11 +81,11 @@ public abstract class TickingArea
             {
                 itr.remove();
                 anyRemoved = true;
-                for (ChunkPos chunk : area.listIncludedChunks(world))
+                for (ColumnPos chunk : area.listIncludedChunks(world))
                 {
                     if (((WorldWithTickingAreas) world).getTickingAreas().stream().noneMatch(a -> a.contains(world, chunk.x, chunk.z)))
                     {
-                        ((WorldWithTickingAreas) world).getTickingChunks().remove(ChunkPos.asLong(chunk.x, chunk.z));
+                        ((WorldWithTickingAreas) world).getTickingChunks().remove(ColumnPos.method_25891(chunk.x, chunk.z));
                     }
                 }
             }
@@ -113,18 +112,18 @@ public abstract class TickingArea
         {
             removeAllTickingAreas(world);
             
-            IChunkProvider chunkProvider = world.getChunkProvider();
-            if (!(chunkProvider instanceof ChunkProviderServer))
+            class_5305 chunkProvider = world.getChunkManager();
+            if (!(chunkProvider instanceof ServerChunkManager))
             {
                 continue;
             }
-            IChunkLoader chunkLoader = ((ChunkProviderServerAccessor) chunkProvider).getChunkLoader();
-            if (!(chunkLoader instanceof AnvilChunkLoader))
+            class_5318 chunkLoader = ((ServerChunkManagerAccessor) chunkProvider).getChunkLoader();
+            if (!(chunkLoader instanceof ThreadedAnvilChunkStorage))
             {
                 continue;
             }
             
-            File configFile = new File(((AnvilChunkLoaderAccessor) chunkLoader).getChunkSaveLocation(), "tickingareas.conf");
+            File configFile = new File(((ThreadedAnvilChunkStorageAccessor) chunkLoader).getChunkSaveLocation(), "tickingareas.conf");
             if (!configFile.isFile())
             {
                 continue;
@@ -169,14 +168,14 @@ public abstract class TickingArea
     {
         for (World world : server.worlds)
         {
-            IChunkProvider chunkProvider = world.getChunkProvider();
-            if (!(chunkProvider instanceof ChunkProviderServer))
+            class_5305 chunkProvider = world.getChunkManager();
+            if (!(chunkProvider instanceof ServerChunkManager))
                 continue;
-            IChunkLoader chunkLoader = ((ChunkProviderServerAccessor) chunkProvider).getChunkLoader();
-            if (!(chunkLoader instanceof AnvilChunkLoader))
+            class_5318 chunkLoader = ((ServerChunkManagerAccessor) chunkProvider).getChunkLoader();
+            if (!(chunkLoader instanceof ThreadedAnvilChunkStorage))
                 continue;
             
-            File configFile = new File(((AnvilChunkLoaderAccessor) chunkLoader).getChunkSaveLocation(), "tickingareas.conf");
+            File configFile = new File(((ThreadedAnvilChunkStorageAccessor) chunkLoader).getChunkSaveLocation(), "tickingareas.conf");
             
             try (PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(configFile))))
             {
@@ -198,37 +197,37 @@ public abstract class TickingArea
     
     public static void initialChunkLoad(MinecraftServer server, boolean log)
     {
-        for (WorldServer world : server.worlds)
+        for (ServerWorld world : server.worlds)
         {
             if (TickingArea.hasTickingArea(world))
             {
                 if (log)
-                    LOGGER.info("[CM]: Preparing start region for level " + world.provider.getDimensionType().getId());
+                    LOGGER.info("[CM]: Preparing start region for level " + world.dimension.getType().getRawId());
                 
-                TreeSet<ChunkPos> chunksToLoad = new TreeSet<>(Comparator.<ChunkPos>comparingInt(chunk -> chunk.x).thenComparingInt(chunk -> chunk.z));
+                TreeSet<ColumnPos> chunksToLoad = new TreeSet<>(Comparator.<ColumnPos>comparingInt(chunk -> chunk.x).thenComparingInt(chunk -> chunk.z));
                 for (TickingArea area : TickingArea.getTickingAreas(world))
                 {
                     chunksToLoad.addAll(area.listIncludedChunks(world));
                 }
                 
                 int count = 0;
-                long lastTime = MinecraftServer.getCurrentTimeMillis();
-                for (ChunkPos chunk : chunksToLoad)
+                long lastTime = MinecraftServer.getMeasuringTimeMs();
+                for (ColumnPos chunk : chunksToLoad)
                 {
-                    if (!server.isServerRunning())
+                    if (!server.isRunning())
                         break;
                     
-                    long time = MinecraftServer.getCurrentTimeMillis();
+                    long time = MinecraftServer.getMeasuringTimeMs();
                     
                     if (time - lastTime > 1000)
                     {
                         if (log)
-                            ((MinecraftServerAccessor) server).invokeOutputPercentRemaining("[CM]: Preparing spawn area", count * 100 / chunksToLoad.size());
+                            ((MinecraftServerAccessor) server).invokeLogPercentage("[CM]: Preparing spawn area", count * 100 / chunksToLoad.size());
                         lastTime = time;
                     }
                     
                     count++;
-                    world.getChunkProvider().provideChunk(chunk.x, chunk.z);
+                    world.getChunkManager().method_27347(chunk.x, chunk.z);
                 }
             }
         }
@@ -250,7 +249,7 @@ public abstract class TickingArea
     
     protected abstract boolean contains(World world, int chunkX, int chunkZ);
     
-    public abstract List<ChunkPos> listIncludedChunks(World world);
+    public abstract List<ColumnPos> listIncludedChunks(World world);
     
     public abstract String format();
     
@@ -265,25 +264,25 @@ public abstract class TickingArea
         @Override
         protected boolean contains(World world, int chunkX, int chunkZ)
         {
-            return world.isSpawnChunk(chunkX, chunkZ);
+            return world.method_26115(chunkX, chunkZ);
         }
         
         @Override
-        public List<ChunkPos> listIncludedChunks(World world)
+        public List<ColumnPos> listIncludedChunks(World world)
         {
-            BlockPos spawnPoint = world.getSpawnPoint();
+            BlockPos spawnPoint = world.getSpawnPos();
             int spawnChunkX = spawnPoint.getX() / 16;
             int spawnChunkZ = spawnPoint.getZ() / 16;
             
-            List<ChunkPos> spawnChunks = new ArrayList<>();
+            List<ColumnPos> spawnChunks = new ArrayList<>();
             
             for (int x = spawnChunkX - 9; x <= spawnChunkX + 9; x++)
             {
                 for (int z = spawnChunkZ - 9; z <= spawnChunkZ + 9; z++)
                 {
-                    if (world.isSpawnChunk(x, z))
+                    if (world.method_26115(x, z))
                     {
-                        spawnChunks.add(new ChunkPos(x, z));
+                        spawnChunks.add(new ColumnPos(x, z));
                     }
                 }
             }
@@ -314,12 +313,12 @@ public abstract class TickingArea
     
     public static class Square extends TickingArea
     {
-        private ChunkPos min;
-        private ChunkPos max;
+        private ColumnPos min;
+        private ColumnPos max;
         
         public Square() {}
         
-        public Square(ChunkPos min, ChunkPos max)
+        public Square(ColumnPos min, ColumnPos max)
         {
             this.min = min;
             this.max = max;
@@ -333,15 +332,15 @@ public abstract class TickingArea
         }
         
         @Override
-        public List<ChunkPos> listIncludedChunks(World world)
+        public List<ColumnPos> listIncludedChunks(World world)
         {
-            List<ChunkPos> includedChunks = new ArrayList<>();
+            List<ColumnPos> includedChunks = new ArrayList<>();
             
             for (int x = min.x; x <= max.x; x++)
             {
                 for (int z = min.z; z <= max.z; z++)
                 {
-                    includedChunks.add(new ChunkPos(x, z));
+                    includedChunks.add(new ColumnPos(x, z));
                 }
             }
             
@@ -376,8 +375,8 @@ public abstract class TickingArea
                     return false;
                 if (minZ > maxZ)
                     return false;
-                this.min = new ChunkPos(minX, minZ);
-                this.max = new ChunkPos(maxX, maxZ);
+                this.min = new ColumnPos(minX, minZ);
+                this.max = new ColumnPos(maxX, maxZ);
             }
             catch (NumberFormatException e)
             {
@@ -393,12 +392,12 @@ public abstract class TickingArea
     
     public static class Circle extends TickingArea
     {
-        private ChunkPos center;
+        private ColumnPos center;
         private double radius;
         
         public Circle() {}
         
-        public Circle(ChunkPos center, double radius)
+        public Circle(ColumnPos center, double radius)
         {
             this.center = center;
             this.radius = radius;
@@ -413,9 +412,9 @@ public abstract class TickingArea
         }
         
         @Override
-        public List<ChunkPos> listIncludedChunks(World world)
+        public List<ColumnPos> listIncludedChunks(World world)
         {
-            List<ChunkPos> includedChunks = new ArrayList<>();
+            List<ColumnPos> includedChunks = new ArrayList<>();
             
             for (int x = MathHelper.floor(center.x - radius); x <= center.x + radius; x++)
             {
@@ -423,7 +422,7 @@ public abstract class TickingArea
                 {
                     if (contains(world, x, z))
                     {
-                        includedChunks.add(new ChunkPos(x, z));
+                        includedChunks.add(new ColumnPos(x, z));
                     }
                 }
             }
@@ -457,7 +456,7 @@ public abstract class TickingArea
                 if (radius < 0)
                     return false;
                 
-                this.center = new ChunkPos(centerX, centerZ);
+                this.center = new ColumnPos(centerX, centerZ);
                 this.radius = radius;
             }
             catch (NumberFormatException e)

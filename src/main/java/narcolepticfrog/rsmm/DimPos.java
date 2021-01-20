@@ -1,8 +1,8 @@
 package narcolepticfrog.rsmm;
 
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
 public class DimPos {
@@ -10,7 +10,7 @@ public class DimPos {
     private BlockPos pos;
 
     public DimPos(World w, BlockPos pos) {
-        this(w.provider.getDimensionType().getId(), pos);
+        this(w.dimension.getType().getRawId(), pos);
     }
 
     public DimPos(int dim, BlockPos pos) {
@@ -26,7 +26,7 @@ public class DimPos {
         return pos;
     }
 
-    public DimPos offset(EnumFacing direction) {
+    public DimPos offset(Direction direction) {
         return new DimPos(dim, pos.offset(direction));
     }
 
@@ -51,14 +51,14 @@ public class DimPos {
         return false;
     }
 
-    public void writeToBuffer(PacketBuffer buffer) {
+    public void writeToBuffer(PacketByteBuf buffer) {
         buffer.writeInt(dim);
         buffer.writeInt(pos.getX());
         buffer.writeInt(pos.getY());
         buffer.writeInt(pos.getZ());
     }
 
-    public static DimPos readFromBuffer(PacketBuffer buffer) {
+    public static DimPos readFromBuffer(PacketByteBuf buffer) {
         int dim = buffer.readInt();
         int x = buffer.readInt();
         int y = buffer.readInt();

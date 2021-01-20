@@ -10,25 +10,26 @@ import javax.annotation.Nullable;
 import carpet.CarpetSettings;
 import carpet.helpers.HopperCounter;
 import carpet.utils.Messenger;
-import net.minecraft.command.CommandException;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.command.WrongUsageException;
+import net.minecraft.class_2010;
+import net.minecraft.class_6175;
+import net.minecraft.class_6182;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
-
-import net.minecraft.item.EnumDyeColor;
 
 public class CommandCounter extends CommandCarpetBase
 {
     /**
      * Gets the name of the command
      */
-    public String getUsage(ICommandSender sender)
+    @Override
+    public String method_29275(class_2010 sender)
     {
         return "Usage: counter <color> <reset/realtime>";
     }
 
-    public String getName()
+    @Override
+    public String method_29277()
     {
         return "counter";
     }
@@ -36,7 +37,8 @@ public class CommandCounter extends CommandCarpetBase
     /**
      * Callback for when the command is executed
      */
-    public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    @Override
+    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
     {
         if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.off && !CarpetSettings.cactusCounter){
             msg(sender, Messenger.m(null, "Need cactusCounter or hopperCounters to be enabled to use this command."));
@@ -52,11 +54,11 @@ public class CommandCounter extends CommandCarpetBase
                 return;
             case "reset":
                 HopperCounter.resetAll(server);
-                notifyCommandListener(sender, this, "All counters restarted.");
+                method_28710(sender, this, "All counters restarted.");
                 return;
         }
         HopperCounter counter = HopperCounter.getCounter(args[0]);
-        if (counter == null) throw new WrongUsageException("Invalid color");
+        if (counter == null) throw new class_6182("Invalid color");
         if (args.length == 1) {
             msg(sender, counter.format(server,false, false));
             return;
@@ -67,14 +69,15 @@ public class CommandCounter extends CommandCarpetBase
                 return;
             case "reset":
                 counter.reset(server);
-                notifyCommandListener(sender, this, String.format("%s counters restarted.", args[0]));
+                method_28710(sender, this, String.format("%s counters restarted.", args[0]));
                 return;
         }
-        throw new WrongUsageException(getUsage(sender));
+        throw new class_6182(method_29275(sender));
 
     }
 
-    public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
+    @Override
+    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
     {
         if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.off && !CarpetSettings.cactusCounter)
         {
@@ -85,7 +88,7 @@ public class CommandCounter extends CommandCarpetBase
         {
             List<String> lst = new ArrayList<String>();
             lst.add("reset");
-            for (EnumDyeColor clr : EnumDyeColor.values())
+            for (DyeColor clr : DyeColor.values())
             {
                 lst.add(clr.name().toLowerCase(Locale.ROOT));
             }
@@ -94,11 +97,11 @@ public class CommandCounter extends CommandCarpetBase
             lst.add("realtime");
             String[] stockArr = new String[lst.size()];
             stockArr = lst.toArray(stockArr);
-            return getListOfStringsMatchingLastWord(args, stockArr);
+            return method_28732(args, stockArr);
         }
         if (args.length == 2)
         {
-            return getListOfStringsMatchingLastWord(args, "reset", "realtime");
+            return method_28732(args, "reset", "realtime");
         }
         return Collections.<String>emptyList();
     }

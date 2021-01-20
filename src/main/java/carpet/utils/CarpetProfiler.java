@@ -1,11 +1,10 @@
 package carpet.utils;
 
 import carpet.CarpetSettings;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.class_2245;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -83,11 +82,11 @@ public class CarpetProfiler
         {
             end_current_section();
         }
-        current_section = dimension + "." + EntityList.getKey(e);
+        current_section = dimension + "." + class_2245.method_34598(e);
         current_section_start = System.nanoTime();
     }
 
-    public static void start_tileentity_section(String dimension, TileEntity e)
+    public static void start_tileentity_section(String dimension, BlockEntity e)
     {
         if (tick_health_requested == 0L || test_type != 2)
         {
@@ -101,7 +100,7 @@ public class CarpetProfiler
         {
             end_current_section();
         }
-        current_section = dimension + "." + TileEntity.getKey(e.getClass());
+        current_section = dimension + "." + BlockEntity.method_26928(e.getClass());
         current_section_start = System.nanoTime();
     }
 

@@ -1,9 +1,9 @@
 package carpet.helpers;
 
-import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.network.ServerPlayerEntity;
 
 public final class CarefulBreakHelper {
     private CarefulBreakHelper() {}
 
-    public static EntityPlayerMP miningPlayer;
+    public static ServerPlayerEntity miningPlayer;
 }

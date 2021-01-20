@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
-    @Inject(method = "initialWorldChunkLoad", at = @At("HEAD"))
+    @Inject(method = "prepareStartRegion", at = @At("HEAD"))
     private void initialTickingAreaChunkLoad(CallbackInfo ci) {
         if (!CarpetSettings.tickingAreas) return;
         TickingArea.initialChunkLoad((MinecraftServer) (Object) this, true);

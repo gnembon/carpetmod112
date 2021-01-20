@@ -1,23 +1,22 @@
 package carpet.helpers;
 
-import carpet.mixin.accessors.BlockRedstoneWireAccessor;
+import carpet.mixin.accessors.RedstoneWireBlockAccessor;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockObserver;
-import net.minecraft.block.BlockRedstoneRepeater;
-import net.minecraft.block.BlockRedstoneWire;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.block.BlockEntityProvider;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.block.ObserverBlock;
+import net.minecraft.block.RedstoneWireBlock;
+import net.minecraft.block.RepeaterBlock;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
-
+import net.minecraft.util.math.Direction;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
 public class RedstoneOreRedirectHelper
 {
     
-    public static boolean canConnectToCM(IBlockState blockState, @Nullable EnumFacing side)
+    public static boolean canConnectToCM(BlockState blockState, @Nullable Direction side)
     {
         Block block = blockState.getBlock();
         
@@ -25,38 +24,37 @@ public class RedstoneOreRedirectHelper
         {
             return true;
         }
-        else if (Blocks.UNPOWERED_REPEATER.isSameDiode(blockState))
+        else if (Blocks.UNPOWERED_REPEATER.method_26548(blockState))
         {
-            EnumFacing enumfacing = (EnumFacing)blockState.getValue(BlockRedstoneRepeater.FACING);
+            Direction enumfacing = (Direction)blockState.get(RepeaterBlock.field_24496);
             return enumfacing == side || enumfacing.getOpposite() == side;
         }
         else if (Blocks.OBSERVER == blockState.getBlock())
         {
-            return side == blockState.getValue(BlockObserver.FACING);
+            return side == blockState.get(ObserverBlock.field_24311);
         }
         else
         {
-            // return blockState.canProvidePower() && side != null;
-            return (blockState.canProvidePower() || block == Blocks.REDSTONE_ORE || block == Blocks.LIT_REDSTONE_ORE) && side != null;
+            return (blockState.method_27208() || block == Blocks.REDSTONE_ORE || block == Blocks.LIT_REDSTONE_ORE) && side != null;
         }
     }
     
-    public static int getWeakPowerCM(BlockRedstoneWire wire, IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
+    public static int getWeakPowerCM(RedstoneWireBlock wire, BlockState blockState, BlockEntityProvider blockAccess, BlockPos pos, Direction side)
     {
-        IBlockState iblockstate = blockAccess.getBlockState(pos.offset(side.getOpposite()));
-        if (!((BlockRedstoneWireAccessor) wire).getCanProvidePower())
+        BlockState iblockstate = blockAccess.getBlockState(pos.offset(side.getOpposite()));
+        if (!((RedstoneWireBlockAccessor) wire).getWiresGivePower())
         {
             return 0;
         }
         else
         {
-            int i = ((Integer)blockState.getValue(wire.POWER)).intValue();
+            int i = blockState.get(RedstoneWireBlock.field_24710);
             
             if (i == 0)
             {
                 return 0;
             }
-            else if (side == EnumFacing.UP)
+            else if (side == Direction.UP)
             {
                 return i;
             }
@@ -67,11 +65,11 @@ public class RedstoneOreRedirectHelper
             }
             else
             {
-                EnumSet<EnumFacing> enumset = EnumSet.<EnumFacing>noneOf(EnumFacing.class);
+                EnumSet<Direction> enumset = EnumSet.<Direction>noneOf(Direction.class);
                 
-                for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
+                for (Direction enumfacing : Direction.Type.HORIZONTAL)
                 {
-                    if (((BlockRedstoneWireAccessor) wire).invokeIsPowerSourceAt(blockAccess, pos, enumfacing))
+                    if (((RedstoneWireBlockAccessor) wire).invokeCouldConnectTo(blockAccess, pos, enumfacing))
                     {
                         enumset.add(enumfacing);
                     }
@@ -81,7 +79,7 @@ public class RedstoneOreRedirectHelper
                 {
                     return i;
                 }
-                else if (enumset.contains(side) && !enumset.contains(side.rotateYCCW()) && !enumset.contains(side.rotateY()))
+                else if (enumset.contains(side) && !enumset.contains(side.rotateYCounterclockwise()) && !enumset.contains(side.rotateYClockwise()))
                 {
                     return i;
                 }

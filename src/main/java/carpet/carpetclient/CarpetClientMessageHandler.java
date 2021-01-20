@@ -5,10 +5,10 @@ import carpet.helpers.CustomCrafting;
 import carpet.helpers.TickSpeed;
 import com.google.gson.JsonObject;
 import io.netty.buffer.Unpooled;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.util.PacketByteBuf;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class CarpetClientMessageHandler {
@@ -25,7 +25,7 @@ public class CarpetClientMessageHandler {
 
     private static final int NET_VERSION = 1;
 
-    public static void handler(EntityPlayerMP sender, PacketBuffer data) {
+    public static void handler(ServerPlayerEntity sender, PacketByteBuf data) {
         int type = data.readInt();
 
         if (GUI_ALL_DATA == type) {
@@ -45,44 +45,44 @@ public class CarpetClientMessageHandler {
         }
     }
 
-    private static void registerVillagerMarkers(EntityPlayerMP sender, PacketBuffer data) {
+    private static void registerVillagerMarkers(ServerPlayerEntity sender, PacketByteBuf data) {
         CarpetClientMarkers.registerVillagerMarkers(sender, data);
     }
 
-    private static void boundingboxRequest(EntityPlayerMP sender, PacketBuffer data) {
+    private static void boundingboxRequest(ServerPlayerEntity sender, PacketByteBuf data) {
         CarpetClientMarkers.updateClientBoundingBoxMarkers(sender, data);
     }
 
-    private static void ruleRequest(EntityPlayerMP sender, PacketBuffer data) {
+    private static void ruleRequest(ServerPlayerEntity sender, PacketByteBuf data) {
         CarpetClientRuleChanger.ruleChanger(sender, data);
     }
 
-    public static void sendAllGUIOptions(EntityPlayerMP sender) {
-        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+    public static void sendAllGUIOptions(ServerPlayerEntity sender) {
+        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
         data.writeInt(GUI_ALL_DATA);
 
         String[] list = CarpetSettings.findAll(null);
 
-        NBTTagCompound chunkData = new NBTTagCompound();
+        CompoundTag chunkData = new CompoundTag();
 
-        chunkData.setString("carpetVersion", CarpetSettings.carpetVersion);
-        chunkData.setFloat("tickrate", TickSpeed.tickrate);
-        chunkData.setInteger("netVersion", NET_VERSION);
-        NBTTagList listNBT = new NBTTagList();
+        chunkData.putString("carpetVersion", CarpetSettings.carpetVersion);
+        chunkData.putFloat("tickrate", TickSpeed.tickrate);
+        chunkData.putInt("netVersion", NET_VERSION);
+        ListTag listNBT = new ListTag();
         for (String rule : list) {
             String current = CarpetSettings.get(rule);
             String[] options = CarpetSettings.getOptions(rule);
             String def = CarpetSettings.getDefault(rule);
             boolean isfloat = CarpetSettings.isDouble(rule);
 
-            NBTTagCompound ruleNBT = new NBTTagCompound();
-            ruleNBT.setString("rule", rule);
-            ruleNBT.setString("current", current);
-            ruleNBT.setString("default", def);
-            ruleNBT.setBoolean("isfloat", isfloat);
-            listNBT.appendTag(ruleNBT);
+            CompoundTag ruleNBT = new CompoundTag();
+            ruleNBT.putString("rule", rule);
+            ruleNBT.putString("current", current);
+            ruleNBT.putString("default", def);
+            ruleNBT.putBoolean("isfloat", isfloat);
+            listNBT.add(ruleNBT);
         }
-        chunkData.setTag("ruleList", listNBT);
+        chunkData.put("ruleList", listNBT);
 
         try {
             data.writeCompoundTag(chunkData);
@@ -92,8 +92,8 @@ public class CarpetClientMessageHandler {
         CarpetClientServer.sender(data, sender);
     }
 
-    public static void sendNBTVillageData(EntityPlayerMP sender, NBTTagCompound compound) {
-        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+    public static void sendNBTVillageData(ServerPlayerEntity sender, CompoundTag compound) {
+        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
         data.writeInt(CarpetClientMessageHandler.VILLAGE_MARKERS);
 
         data.writeCompoundTag(compound);
@@ -101,8 +101,8 @@ public class CarpetClientMessageHandler {
         CarpetClientServer.sender(data, sender);
     }
 
-    public static void sendNBTBoundingboxData(EntityPlayerMP sender, NBTTagCompound compound) {
-        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+    public static void sendNBTBoundingboxData(ServerPlayerEntity sender, CompoundTag compound) {
+        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
         data.writeInt(CarpetClientMessageHandler.BOUNDINGBOX_MARKERS);
 
         data.writeCompoundTag(compound);
@@ -111,15 +111,15 @@ public class CarpetClientMessageHandler {
     }
 
     public static void sendTickRateChanges() {
-        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
         data.writeInt(CarpetClientMessageHandler.TICKRATE_CHANGES);
         data.writeFloat(TickSpeed.tickrate);
 
         CarpetClientServer.sender(data);
     }
 
-    public static void sendNBTChunkData(EntityPlayerMP sender, int dataType, NBTTagCompound compound) {
-        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+    public static void sendNBTChunkData(ServerPlayerEntity sender, int dataType, CompoundTag compound) {
+        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
         data.writeInt(CarpetClientMessageHandler.CHUNK_LOGGER);
         data.writeInt(dataType);
         try {
@@ -130,14 +130,14 @@ public class CarpetClientMessageHandler {
     }
 
     public static void sendPistonUpdate() {
-        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
         data.writeInt(CarpetClientMessageHandler.PISTON_UPDATES);
 
         CarpetClientServer.sender(data);
     }
 
-    public static void sendNBTRandomTickData(EntityPlayerMP sender, NBTTagCompound compound) {
-        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+    public static void sendNBTRandomTickData(ServerPlayerEntity sender, CompoundTag compound) {
+        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
         data.writeInt(CarpetClientMessageHandler.RANDOMTICK_DISPLAY);
         try {
             data.writeCompoundTag(compound);
@@ -146,21 +146,21 @@ public class CarpetClientMessageHandler {
         CarpetClientServer.sender(data, sender);
     }
 
-    public static void sendCustomRecipes(EntityPlayerMP sender) {
+    public static void sendCustomRecipes(ServerPlayerEntity sender) {
         if (CustomCrafting.getRecipeList().size() == 0) return;
-        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+        PacketByteBuf data = new PacketByteBuf(Unpooled.buffer());
         data.writeInt(CUSTOM_RECIPES);
 
-        NBTTagCompound chunkData = new NBTTagCompound();
+        CompoundTag chunkData = new CompoundTag();
 
-        NBTTagList listNBT = new NBTTagList();
+        ListTag listNBT = new ListTag();
         for (Pair<String, JsonObject> pair : CustomCrafting.getRecipeList()) {
-            NBTTagCompound recipe = new NBTTagCompound();
-            recipe.setString("name", pair.getKey());
-            recipe.setString("recipe", pair.getValue().toString());
-            listNBT.appendTag(recipe);
+            CompoundTag recipe = new CompoundTag();
+            recipe.putString("name", pair.getKey());
+            recipe.putString("recipe", pair.getValue().toString());
+            listNBT.add(recipe);
         }
-        chunkData.setTag("recipeList", listNBT);
+        chunkData.put("recipeList", listNBT);
 
         try {
             data.writeCompoundTag(chunkData);
@@ -170,7 +170,7 @@ public class CarpetClientMessageHandler {
         CarpetClientServer.sender(data, sender);
     }
 
-    public static void confirmationReceivedCustomRecipesSendUpdate(EntityPlayerMP sender) {
-        sender.getRecipeBook().init(sender);
+    public static void confirmationReceivedCustomRecipesSendUpdate(ServerPlayerEntity sender) {
+        sender.getRecipeBook().sendInitRecipesPacket(sender);
     }
 }

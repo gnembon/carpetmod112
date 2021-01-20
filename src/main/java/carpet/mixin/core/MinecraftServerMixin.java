@@ -6,13 +6,13 @@ import carpet.carpetclient.CarpetClientChunkLogger;
 import carpet.helpers.ScoreboardDelta;
 import carpet.helpers.TickSpeed;
 import carpet.utils.CarpetProfiler;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.network.ServerStatusResponse;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ReportedException;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.WorldServer;
-import net.minecraft.world.WorldType;
+import net.minecraft.server.ServerMetadata;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.LiteralText;
+import net.minecraft.util.crash.CrashException;
+import net.minecraft.util.crash.CrashReport;
+import net.minecraft.world.level.LevelGeneratorType;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -31,38 +31,38 @@ import java.util.Date;
 @Mixin(MinecraftServer.class)
 public abstract class MinecraftServerMixin {
     @Shadow @Final private static Logger LOGGER;
-    @Shadow private int tickCounter;
-    @Shadow @Final private ServerStatusResponse statusResponse;
-    @Shadow private boolean serverRunning;
-    @Shadow private long currentTime;
-    @Shadow private boolean serverIsRunning;
-    @Shadow private long timeOfLastWarning;
-    @Shadow public WorldServer[] worlds;
-    @Shadow private boolean serverStopped;
+    @Shadow private int ticks;
+    @Shadow @Final private ServerMetadata metadata;
+    @Shadow private boolean running;
+    @Shadow private long timeReference;
+    @Shadow private boolean loading;
+    @Shadow private long field_4557;
+    @Shadow public ServerWorld[] worlds;
+    @Shadow private boolean stopped;
 
-    @Shadow protected abstract void stopServer();
-    @Shadow public abstract void systemExitNow();
-    @Shadow protected abstract void finalTick(CrashReport report);
-    @Shadow public abstract CrashReport addServerInfoToCrashReport(CrashReport report);
-    @Shadow public abstract File getDataDirectory();
-    @Shadow protected abstract void tick();
-    @Shadow public abstract void applyServerIconToResponse(ServerStatusResponse response);
-    @Shadow public abstract boolean init() throws IOException;
-    @Shadow public static long getCurrentTimeMillis() { throw new AbstractMethodError(); }
+    @Shadow public abstract void shutdown();
+    @Shadow public abstract void exit();
+    @Shadow public abstract void setCrashReport(CrashReport report);
+    @Shadow public abstract CrashReport populateCrashReport(CrashReport report);
+    @Shadow public abstract File getRunDirectory();
+    @Shadow public abstract void tick();
+    @Shadow public abstract void setFavicon(ServerMetadata response);
+    @Shadow public abstract boolean setupServer() throws IOException;
+    @Shadow public static long getMeasuringTimeMs() { throw new AbstractMethodError(); }
 
     @Shadow private String motd;
 
-    @Inject(method = "loadAllWorlds", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;initialWorldChunkLoad()V"))
-    private void onLoadAllWorlds(String saveName, String worldNameIn, long seed, WorldType type, String generatorOptions, CallbackInfo ci) {
+    @Inject(method = "createWorlds", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;prepareStartRegion()V"))
+    private void onLoadAllWorlds(String saveName, String worldNameIn, long seed, LevelGeneratorType type, String generatorOptions, CallbackInfo ci) {
         CarpetServer.onLoadAllWorlds((MinecraftServer) (Object) this);
     }
 
-    @Inject(method = "loadAllWorlds", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;initialWorldChunkLoad()V", shift = At.Shift.AFTER))
-    private void loadCarpetBots(String saveName, String worldNameIn, long seed, WorldType type, String generatorOptions, CallbackInfo ci) {
+    @Inject(method = "createWorlds", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/MinecraftServer;prepareStartRegion()V", shift = At.Shift.AFTER))
+    private void loadCarpetBots(String saveName, String worldNameIn, long seed, LevelGeneratorType type, String generatorOptions, CallbackInfo ci) {
         CarpetServer.loadBots((MinecraftServer) (Object) this);
     }
 
-    @Inject(method = "saveAllWorlds", at = @At("RETURN"))
+    @Inject(method = "save", at = @At("RETURN"))
     private void onWorldsSaved(boolean isSilent, CallbackInfo ci) {
         CarpetServer.onWorldsSaved((MinecraftServer) (Object) this);
     }
@@ -72,7 +72,7 @@ public abstract class MinecraftServerMixin {
         System.out.println(Arrays.toString(args));
     }
 
-    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;tickCounter:I", ordinal = 0, shift = At.Shift.AFTER))
+    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;ticks:I", ordinal = 0, shift = At.Shift.AFTER))
     private void startTick(CallbackInfo ci) {
         CarpetServer.tick((MinecraftServer) (Object) this);
         if (CarpetProfiler.tick_health_requested != 0) {
@@ -92,7 +92,7 @@ public abstract class MinecraftServerMixin {
             CarpetProfiler.end_tick_profiling((MinecraftServer) (Object) this);
         }
 
-        if(CarpetSettings.scoreboardDelta > 0 && this.tickCounter % 20 == 0){
+        if(CarpetSettings.scoreboardDelta > 0 && this.ticks % 20 == 0){
             ScoreboardDelta.update();
         }
     }
@@ -111,32 +111,32 @@ public abstract class MinecraftServerMixin {
     @Overwrite
     public void run() {
         try {
-            if (this.init()) {
-                this.currentTime = getCurrentTimeMillis();
+            if (this.setupServer()) {
+                this.timeReference = getMeasuringTimeMs();
                 long msGoal = 0L;
                 String motd = "_".equals(CarpetSettings.customMOTD) ? this.motd : CarpetSettings.customMOTD;
-                this.statusResponse.setServerDescription(new TextComponentString(motd));
-                this.statusResponse.setVersion(new ServerStatusResponse.Version("1.12.2", 340));
-                this.applyServerIconToResponse(this.statusResponse);
+                this.metadata.setDescription(new LiteralText(motd));
+                this.metadata.setVersion(new ServerMetadata.Version("1.12.2", 340));
+                this.setFavicon(this.metadata);
 
-                while (this.serverRunning) {
+                while (this.running) {
                     /* carpet mod commandTick */
                     //todo check if this check is necessary
                     if (TickSpeed.time_warp_start_time != 0) {
                         if (TickSpeed.continueWarp()) {
                             this.tick();
-                            this.currentTime = getCurrentTimeMillis();
-                            this.serverIsRunning = true;
+                            this.timeReference = getMeasuringTimeMs();
+                            this.loading = true;
                         }
                         continue;
                     }
                     /* end */
-                    long now = getCurrentTimeMillis();
-                    long timeDelta = now - this.currentTime;
+                    long now = getMeasuringTimeMs();
+                    long timeDelta = now - this.timeReference;
 
-                    if (timeDelta > 2000L && this.currentTime - this.timeOfLastWarning >= 15000L) {
+                    if (timeDelta > 2000L && this.timeReference - this.field_4557 >= 15000L) {
                         timeDelta = 2000L;
-                        this.timeOfLastWarning = this.currentTime;
+                        this.field_4557 = this.timeReference;
                     }
 
                     if (timeDelta < 0L) {
@@ -145,10 +145,10 @@ public abstract class MinecraftServerMixin {
                     }
 
                     msGoal += timeDelta;
-                    this.currentTime = now;
+                    this.timeReference = now;
                     boolean falling_behind = false;
 
-                    if (this.worlds[0].areAllPlayersAsleep()) {
+                    if (this.worlds[0].method_33479()) {
                         this.tick();
                         msGoal = 0L;
                     } else {
@@ -156,14 +156,14 @@ public abstract class MinecraftServerMixin {
                         while (msGoal > TickSpeed.mspt) /* carpet mod 50L */ {
                             msGoal -= TickSpeed.mspt; /* carpet mod 50L */
                             if (CarpetSettings.watchdogFix && keeping_up) {
-                                this.currentTime = getCurrentTimeMillis();
-                                this.serverIsRunning = true;
+                                this.timeReference = getMeasuringTimeMs();
+                                this.loading = true;
                                 falling_behind = true;
                             }
                             this.tick();
                             keeping_up = true;
                             if (CarpetSettings.disableVanillaTickWarp) {
-                                msGoal = getCurrentTimeMillis() - now;
+                                msGoal = getMeasuringTimeMs() - now;
                                 break;
                             }
                         }
@@ -174,37 +174,37 @@ public abstract class MinecraftServerMixin {
                     } else {
                         Thread.sleep(Math.max(1L, TickSpeed.mspt - msGoal)); /* carpet mod 50L */
                     }
-                    this.serverIsRunning = true;
+                    this.loading = true;
                 }
             } else {
-                this.finalTick(null);
+                this.setCrashReport(null);
             }
         } catch (Throwable throwable1) {
             LOGGER.error("Encountered an unexpected exception", throwable1);
             CrashReport crashreport;
-            if (throwable1 instanceof ReportedException) {
-                crashreport = this.addServerInfoToCrashReport(((ReportedException) throwable1).getCrashReport());
+            if (throwable1 instanceof CrashException) {
+                crashreport = this.populateCrashReport(((CrashException) throwable1).getReport());
             } else {
-                crashreport = this.addServerInfoToCrashReport(new CrashReport("Exception in server tick loop", throwable1));
+                crashreport = this.populateCrashReport(new CrashReport("Exception in server tick loop", throwable1));
             }
 
-            File file1 = new File(new File(this.getDataDirectory(), "crash-reports"), "crash-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.txt");
+            File file1 = new File(new File(this.getRunDirectory(), "crash-reports"), "crash-" + new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss").format(new Date()) + "-server.txt");
 
-            if (crashreport.saveToFile(file1)) {
+            if (crashreport.writeToFile(file1)) {
                 LOGGER.error("This crash report has been saved to: {}", file1.getAbsolutePath());
             } else {
                 LOGGER.error("We were unable to save this crash report to disk.");
             }
 
-            this.finalTick(crashreport);
+            this.setCrashReport(crashreport);
         } finally {
             try {
-                this.serverStopped = true;
-                this.stopServer();
+                this.stopped = true;
+                this.shutdown();
             } catch (Throwable throwable) {
                 LOGGER.error("Exception stopping the server", throwable);
             } finally {
-                this.systemExitNow();
+                this.exit();
             }
         }
     }
