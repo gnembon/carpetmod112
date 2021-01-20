@@ -10,23 +10,23 @@ import net.minecraft.util.math.Box;
 public class BabyGrowingUp {
 
     public static void carpetSetSize(Entity entity, float width, float height) {
-        float f = entity.field_33001;
-        entity.field_33001 = width;
-        entity.field_33002 = height;
+        float f = entity.width;
+        entity.width = width;
+        entity.height = height;
         Box oldAABB = entity.getBoundingBox();
 
         double d0 = (double) width / 2.0D;
-        entity.setBoundingBox(new Box(entity.field_33071 - d0, entity.field_33072, entity.field_33073 - d0, entity.field_33071 + d0,
-                entity.field_33072 + (double) entity.field_33002, entity.field_33073 + d0));
+        entity.setBoundingBox(new Box(entity.x - d0, entity.y, entity.z - d0, entity.x + d0,
+                entity.y + (double) entity.height, entity.z + d0));
 
-        if (entity.field_33001 > f && !((EntityAccessor) entity).isFirstUpdate() && !entity.world.isClient) {
+        if (entity.width > f && !((EntityAccessor) entity).isFirstUpdate() && !entity.world.isClient) {
             pushEntityOutOfBlocks(entity, oldAABB);
         }
     }
 
     private static void pushEntityOutOfBlocks(Entity entity, Box oldHitbox) {
         // Pass "null" in first argument to only get _possible_ block collisions
-        List<Box> list1 = entity.world.method_26047(null, entity.getBoundingBox());
+        List<Box> list1 = entity.world.getCollisionBoxes(null, entity.getBoundingBox());
         Box axisalignedbb = entity.getBoundingBox();
 
         for (Box aabb : list1) {
@@ -41,21 +41,21 @@ public class BabyGrowingUp {
                 // is completely to the opposite side of the original AABB
                 if (aabb.x2 > axisalignedbb.x1 && aabb.x1 < axisalignedbb.x2) {
                     if (aabb.x2 >= oldHitbox.x2 && aabb.x1 >= oldHitbox.x2) {
-                        minX = aabb.x1 - entity.field_33001;
+                        minX = aabb.x1 - entity.width;
                         maxX = aabb.x1;
                     } else if (aabb.x2 <= oldHitbox.x1 && aabb.x1 <= oldHitbox.x1) {
                         minX = aabb.x2;
-                        maxX = aabb.x2 + entity.field_33001;
+                        maxX = aabb.x2 + entity.width;
                     }
                 }
 
                 if (aabb.z2 > axisalignedbb.z1 && aabb.z1 < axisalignedbb.z2) {
                     if (aabb.z1 >= oldHitbox.z2 && aabb.z2 >= oldHitbox.z2) {
-                        minZ = aabb.z1 - entity.field_33001;
+                        minZ = aabb.z1 - entity.width;
                         maxZ = aabb.z1;
                     } else if (aabb.z2 <= oldHitbox.z1 && aabb.z1 <= oldHitbox.z1) {
                         minZ = aabb.z2;
-                        maxZ = aabb.z2 + entity.field_33001;
+                        maxZ = aabb.z2 + entity.width;
                     }
                 }
 

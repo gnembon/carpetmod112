@@ -4,6 +4,7 @@ import carpet.utils.Messenger;
 import carpet.utils.Waypoint;
 import carpet.utils.extensions.WaypointContainer;
 import net.minecraft.*;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.world.ServerWorld;
@@ -33,12 +34,12 @@ public class CommandWaypoint extends CommandCarpetBase {
     }
 
     @Override
-    public String method_29275(class_2010 sender) {
+    public String method_29275(CommandSource sender) {
         return USAGE;
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
         if (!command_enabled("commandWaypoint", sender))
             return;
 
@@ -61,10 +62,10 @@ public class CommandWaypoint extends CommandCarpetBase {
         }
     }
 
-    public ServerWorld getDimension(class_2010 sender, String[] args, int offset) {
-        if (args.length <= offset) return (ServerWorld) sender.method_29608();
+    public ServerWorld getDimension(CommandSource sender, String[] args, int offset) {
+        if (args.length <= offset) return (ServerWorld) sender.getEntityWorld();
         String id = args[offset];
-        MinecraftServer server = sender.method_29602();
+        MinecraftServer server = sender.getServer();
         switch (id) {
             case "overworld": return server.getWorldById(0);
             case "the_nether": case "nether": return server.getWorldById(-1);
@@ -73,26 +74,26 @@ public class CommandWaypoint extends CommandCarpetBase {
         return null;
     }
 
-    private void addWaypoint(class_2010 sender, String[] args) throws class_6175 {
+    private void addWaypoint(CommandSource sender, String[] args) throws class_6175 {
         if (args.length < 2) {
             throw new class_6182(USAGE_ADD);
         }
         String name = args[1];
-        Vec3d pos = sender.method_29607();
+        Vec3d pos = sender.getPosVector();
         double x = pos.x;
         double y = pos.y;
         double z = pos.z;
         ServerWorld dimension = getDimension(sender, args, 5);
         boolean validDimension = dimension != null;
         if (!validDimension) {
-            dimension = (ServerWorld) sender.method_29608();
+            dimension = (ServerWorld) sender.getEntityWorld();
         }
         if (((WaypointContainer) dimension).getWaypoints().containsKey(name)) {
             throw new class_6175("Waypoint already exists");
         }
         double yaw = 0;
         double pitch = 0;
-        Entity senderEntity = sender.method_29609();
+        Entity senderEntity = sender.getCommandInvoker();
         if (senderEntity != null) {
             yaw = senderEntity.yaw;
             pitch = senderEntity.pitch;
@@ -113,16 +114,16 @@ public class CommandWaypoint extends CommandCarpetBase {
                 }
             }
         }
-        Waypoint w = new Waypoint(dimension, name, sender.method_29611(), x, y, z, yaw, pitch);
+        Waypoint w = new Waypoint(dimension, name, sender.getName(), x, y, z, yaw, pitch);
         ((WaypointContainer) dimension).getWaypoints().put(name, w);
         Messenger.m(sender, "w Waypoint ", "w " + w.getDimension().method_27531(), "g :", "y " + w.name + " ", Messenger.tp("c", w), "w  added");
     }
 
-    private void removeWaypoint(class_2010 sender, String[] args) throws class_6175 {
+    private void removeWaypoint(CommandSource sender, String[] args) throws class_6175 {
         if (args.length < 2) {
             throw new class_6182(USAGE_REMOVE);
         }
-        Waypoint w = Waypoint.find(args[1], (ServerWorld) sender.method_29608(), sender.method_29602().worlds);
+        Waypoint w = Waypoint.find(args[1], (ServerWorld) sender.getEntityWorld(), sender.getServer().worlds);
         if (w == null) {
             throw new class_6175("Waypoint not found");
         }
@@ -133,7 +134,7 @@ public class CommandWaypoint extends CommandCarpetBase {
         Messenger.s(sender, "Waypoint removed");
     }
 
-    private void listWaypoints(class_2010 sender, String[] args) throws class_6175 {
+    private void listWaypoints(CommandSource sender, String[] args) throws class_6175 {
         if (args.length > 3) {
             throw new class_6182(USAGE_LIST);
         }
@@ -141,7 +142,7 @@ public class CommandWaypoint extends CommandCarpetBase {
         ServerWorld dimension = getDimension(sender, args, 1);
         boolean validDimension = dimension != null;
         if (!validDimension) {
-            dimension = (ServerWorld) sender.method_29608();
+            dimension = (ServerWorld) sender.getEntityWorld();
         }
         Text header = new LiteralText("Waypoints in the " + dimension.dimension.getType().method_27531().replace("the_", ""));
         boolean printDimension = true;
@@ -152,13 +153,13 @@ public class CommandWaypoint extends CommandCarpetBase {
                 waypoints.addAll(((WaypointContainer) dimension).getWaypoints().values());
             } else if ("all".equalsIgnoreCase(args[1])) {
                 header = new LiteralText("All waypoints");
-                for (ServerWorld w : sender.method_29602().worlds) {
+                for (ServerWorld w : sender.getServer().worlds) {
                     waypoints.addAll(((WaypointContainer) w).getWaypoints().values());
                 }
             } else {
                 printCreator = false;
                 header = Messenger.m(null, "w Waypoints by ", "e " + args[1]);
-                for (ServerWorld w : sender.method_29602().worlds) {
+                for (ServerWorld w : sender.getServer().worlds) {
                     for (Waypoint wp : ((WaypointContainer) w).getWaypoints().values()) {
                         if (args[1].equalsIgnoreCase(wp.creator)) waypoints.add(wp);
                     }
@@ -207,7 +208,7 @@ public class CommandWaypoint extends CommandCarpetBase {
             }
         }
         header.append(":");
-        sender.sendMessage(header);
+        sender.sendSystemMessage(header);
         waypoints = waypoints.subList(page * PAGE_SIZE, Math.min((page + 1) * PAGE_SIZE, waypoints.size()));
         for (Waypoint w : waypoints) {
             if (printDimension) {
@@ -227,7 +228,7 @@ public class CommandWaypoint extends CommandCarpetBase {
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos) {
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos targetPos) {
         if (args.length == 0) return Arrays.asList("add", "list", "remove");
         if (args.length == 1) return method_28732(args, "add", "list", "remove");
         switch (args[0]) {
@@ -254,7 +255,7 @@ public class CommandWaypoint extends CommandCarpetBase {
             }
             case "remove": {
                 if (args.length == 2) {
-                    Set<String> waypointNames = Waypoint.getAllWaypoints(sender.method_29602().worlds).stream()
+                    Set<String> waypointNames = Waypoint.getAllWaypoints(sender.getServer().worlds).stream()
                             .filter(w -> w.canManipulate(sender))
                             .flatMap(w -> Stream.of(w.name, w.getFullName()))
                             .collect(Collectors.toCollection(TreeSet::new));

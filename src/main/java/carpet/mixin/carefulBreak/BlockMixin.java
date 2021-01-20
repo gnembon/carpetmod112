@@ -27,7 +27,7 @@ public class BlockMixin {
         if(CarpetSettings.carefulBreak && player != null && player.isSneaking() && LoggerRegistry.getLogger("carefulBreak").subscribed(player)){
             item.onPlayerCollision(player);
             if(item.removed){
-                player.networkHandler.method_33624(new PlaySoundS2CPacket(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, pos.getX(), pos.getY(), pos.getZ(), 0.2F, (CarpetServer.rand.nextFloat() - CarpetServer.rand.nextFloat()) * 1.4F + 2.0F));
+                player.networkHandler.sendPacket(new PlaySoundS2CPacket(SoundEvents.ENTITY_ITEM_PICKUP, SoundCategory.PLAYERS, pos.getX(), pos.getY(), pos.getZ(), 0.2F, (CarpetServer.rand.nextFloat() - CarpetServer.rand.nextFloat()) * 1.4F + 2.0F));
                 ci.cancel();
             }
         }

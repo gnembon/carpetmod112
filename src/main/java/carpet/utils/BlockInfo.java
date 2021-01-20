@@ -6,7 +6,7 @@ import net.minecraft.block.Material;
 import net.minecraft.block.MaterialColor;
 import net.minecraft.entity.ai.TargetFinder;
 import net.minecraft.entity.ai.goal.WanderAroundGoal;
-import net.minecraft.entity.mob.MobEntityWithAi;
+import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.ZombiePigmanEntity;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.property.BooleanProperty;
@@ -170,17 +170,17 @@ public class BlockInfo
         lst.add(Messenger.s(null, ""));
         lst.add(Messenger.m(null, "w  - Full block: ", formatBoolean(state.method_27187())));
         lst.add(Messenger.m(null, "w  - Full cube: ", formatBoolean(state.method_27202())));
-        lst.add(Messenger.m(null, "w  - Normal cube: ", formatBoolean(state.method_27207())));
+        lst.add(Messenger.m(null, "w  - Normal cube: ", formatBoolean(state.isSolidBlock())));
         lst.add(Messenger.m(null, "w  - Block normal cube: ", formatBoolean(state.method_27206())));
         lst.add(Messenger.m(null, "w  - Is liquid: ", formatBoolean(material.isLiquid())));
         lst.add(Messenger.m(null, "w  - Is solid: ", formatBoolean(material.isSolid())));
         lst.add(Messenger.s(null, ""));
         lst.add(Messenger.s(null, String.format(" - Light in: %d, above: %d", world.method_26136(pos), world.method_26136(pos.up()))));
-        lst.add(Messenger.s(null, String.format(" - Brightness in: %.2f, above: %.2f", world.method_26144(pos), world.method_26144(pos.up()))));
+        lst.add(Messenger.s(null, String.format(" - Brightness in: %.2f, above: %.2f", world.getBrightness(pos), world.getBrightness(pos.up()))));
         lst.add(Messenger.m(null, "w  - Is opaque: ", formatBoolean(material.isOpaque())));
         lst.add(Messenger.s(null, String.format(" - Light opacity: %d", state.method_27191())));
         lst.add(Messenger.m(null, "w  - Blocks light: ", formatBoolean(material.allowsLight())));
-        lst.add(Messenger.s(null, String.format(" - Emitted light: %d", state.method_27195())));
+        lst.add(Messenger.s(null, String.format(" - Emitted light: %d", state.getLuminance())));
         lst.add(Messenger.m(null, "w  - Picks neighbour light value: ", formatBoolean(state.method_27200())));
         lst.add(Messenger.s(null, ""));
         lst.add(Messenger.m(null, "w  - Causes suffocation: ", formatBoolean(state.method_27213())));
@@ -202,7 +202,7 @@ public class BlockInfo
 
     private static Text wander_chances(BlockPos pos, World worldIn)
     {
-        MobEntityWithAi creature = new ZombiePigmanEntity(worldIn);
+        PathAwareEntity creature = new ZombiePigmanEntity(worldIn);
         creature.initialize(worldIn.getLocalDifficulty(pos), null);
         creature.refreshPositionAndAngles(pos.getX()+0.5F, pos.getY(), pos.getZ()+0.5F, 0.0F, 0.0F);
         WanderAroundGoal wander = new WanderAroundGoal(creature, 0.8D);

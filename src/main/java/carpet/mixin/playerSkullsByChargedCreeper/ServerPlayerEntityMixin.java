@@ -24,17 +24,17 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     }
 
     // Allows players to drop their skulls when blown up by charged creeper CARPET-XCOM
-    @Inject(method = "method_34638", at = @At("RETURN"))
+    @Inject(method = "onDeath", at = @At("RETURN"))
     private void dropSkullByChargedCreeper(DamageSource cause, CallbackInfo ci) {
         if (!CarpetSettings.playerSkullsByChargedCreeper) return;
         Entity entity = cause.getAttacker();
         if (!(entity instanceof CreeperEntity)) return;
         CreeperEntity creeper = (CreeperEntity) entity;
-        if (!creeper.method_24726() || !creeper.method_24722()) return;
+        if (!creeper.shouldRenderOverlay() || !creeper.shouldDropHead()) return;
         creeper.onHeadDropped();
         try {
             ItemStack skull = new ItemStack(Items.SKULL, 1, 3);
-            skull.setTag(StringNbtReader.parse(String.format("{SkullOwner:\"%s\"}", method_29611().toLowerCase())));
+            skull.setTag(StringNbtReader.parse(String.format("{SkullOwner:\"%s\"}", getName().toLowerCase())));
             this.dropStack(skull, 0.0F);
         } catch (class_6223 e) {
             e.printStackTrace();

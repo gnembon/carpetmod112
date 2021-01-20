@@ -14,7 +14,7 @@ import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.MobEntityWithAi;
+import net.minecraft.entity.mob.PathAwareEntity;
 import net.minecraft.entity.mob.SlimeEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.passive.HorseBaseEntity;
@@ -85,7 +85,7 @@ public class EntityInfo
 		{
 			return "None";
 		}
-		return String.format("%s at [%.1f, %.1f, %.1f]",e.getDisplayName().method_32275(), e.field_33071, e.field_33072, e.field_33073);
+		return String.format("%s at [%.1f, %.1f, %.1f]",e.getDisplayName().method_32275(), e.x, e.y, e.z);
 	}
 
     private static double get_speed(double internal)
@@ -115,7 +115,7 @@ public class EntityInfo
     public static List<String> entityInfo(Entity e, World ws)
     {
         List<String> lst = new ArrayList<String>();
-		World world = e.method_29608();
+		World world = e.getEntityWorld();
         lst.add(entity_short_string(e));
         if (e.hasVehicle()) { lst.add(String.format(" - Rides: %s", e.getVehicle().getDisplayName().method_32275())); }
         if (e.hasPassengers())
@@ -134,15 +134,15 @@ public class EntityInfo
                 }
             }
         }
-        lst.add(String.format(" - Height: %.2f, Width: %.2f, Eye height: %.2f", e.field_33002, e.field_33001, e.method_34518()));
+        lst.add(String.format(" - Height: %.2f, Width: %.2f, Eye height: %.2f", e.height, e.width, e.getStandingEyeHeight()));
         lst.add(String.format(" - Age: %s", makeTime(e.age)));
-		if (ws.dimension.getType().getRawId() != e.field_33045)
+		if (ws.dimension.getType().getRawId() != e.dimensionId)
 		{
-			lst.add(String.format(" - Dimension: %s", (e.field_33045>0)?"The End":((e.field_33045<0)?"Nether":"Overworld")));
+			lst.add(String.format(" - Dimension: %s", (e.dimensionId>0)?"The End":((e.dimensionId<0)?"Nether":"Overworld")));
 		}
 		int fire = ((EntityAccessor) e).getFireTicks();
         if (fire > 0) { lst.add(String.format(" - Fire for %d ticks",fire)); }
-		if (e.isInLava() ) { lst.add(" - Immune to fire"); }
+		if (e.isFireImmune() ) { lst.add(" - Immune to fire"); }
 		if (e.netherPortalCooldown > 0) { lst.add(String.format(" - Portal cooldown for %d ticks",e.netherPortalCooldown)); }
 		if (e.isInvulnerable()) { lst.add(" - Invulnerable"); } //  func_190530_aW()
 		if (e.isImmuneToExplosion()) { lst.add(" - Immune to explosions"); }
@@ -170,7 +170,7 @@ public class EntityInfo
 		if (e instanceof PaintingEntity)
         {
 			PaintingEntity ep = (PaintingEntity)e;
-            lst.add(String.format(" - Art: %s", ep.motive.field_22187 ));
+            lst.add(String.format(" - Art: %s", ep.motive.name ));
         }
 
 
@@ -181,7 +181,7 @@ public class EntityInfo
             LivingEntity elb = (LivingEntity)e;
 			lst.add(String.format(" - Despawn timer: %s", makeTime(elb.getDespawnCounter())));
 
-            lst.add(String.format(" - Health: %.2f/%.2f", elb.getHealth(), elb.getMaximumHealth()));
+            lst.add(String.format(" - Health: %.2f/%.2f", elb.getHealth(), elb.getMaxHealth()));
 			if (elb.getAttributeInstance(EntityAttributes.ARMOR).getValue() > 0.0)
 			{
 				lst.add(String.format(" - Armour: %.1f",elb.getAttributeInstance(EntityAttributes.ARMOR).getValue()));
@@ -233,7 +233,7 @@ public class EntityInfo
 				MobEntity el = (MobEntity)elb;
 				lst.add(String.format(" - Follow range: %.1f",el.getAttributeInstance(EntityAttributes.FOLLOW_RANGE).getValue()));
 
-				lst.add(String.format(" - Movement speed factor: %.2f", el.method_34810().getSpeed()));
+				lst.add(String.format(" - Movement speed factor: %.2f", el.getMoveControl().getSpeed()));
 
 
 				LivingEntity target_elb = el.getTarget();
@@ -260,10 +260,10 @@ public class EntityInfo
 					etarget = world.getEntityById(ew.getTrackedEntityId(2));
 					lst.add(String.format(" - Head 3 target: %s", entity_short_string(etarget) ));
 				}
-				if (e instanceof MobEntityWithAi)
+				if (e instanceof PathAwareEntity)
 				{
-					MobEntityWithAi ec = (MobEntityWithAi) e;
-					if (ec.method_34829())
+					PathAwareEntity ec = (PathAwareEntity) e;
+					if (ec.hasPositionTarget())
 					{
 						BlockPos pos = ec.method_34826();
 						lst.add(String.format(" - Home position: %d blocks around [%d, %d, %d]", (int)ec.method_34827(), pos.getX(),pos.getY(),pos.getZ()));
@@ -343,7 +343,7 @@ public class EntityInfo
 	{
         try
         {
-			player.method_29602().method_33193().method_29374(player, "entityinfo @e[r=5,c=5,type=!player]");
+			player.getServer().method_33193().method_29374(player, "entityinfo @e[r=5,c=5,type=!player]");
         }
         catch (Throwable ignored)
         {

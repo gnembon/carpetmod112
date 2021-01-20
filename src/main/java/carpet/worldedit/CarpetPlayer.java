@@ -47,7 +47,7 @@ class CarpetPlayer extends AbstractPlayerActor {
 
     @Override
     public String getName() {
-        return this.player.method_29611();
+        return this.player.getName();
     }
 
     @Override
@@ -57,17 +57,17 @@ class CarpetPlayer extends AbstractPlayerActor {
 
     @Override
     public Location getLocation() {
-        Vector position = new Vector(this.player.field_33071, this.player.field_33072, this.player.field_33073);
+        Vector position = new Vector(this.player.x, this.player.y, this.player.z);
         return new Location(
                 CarpetWorldEdit.inst.getWorld(this.player.world),
                 position,
-                this.player.field_22511,
-                this.player.field_33149);
+                this.player.strideDistance,
+                this.player.cameraPitch);
     }
 
     @Override
     public WorldVector getPosition() {
-        return new WorldVector(LocalWorldAdapter.adapt(CarpetWorldEdit.inst.getWorld(this.player.world)), this.player.field_33071, this.player.field_33072, this.player.field_33073);
+        return new WorldVector(LocalWorldAdapter.adapt(CarpetWorldEdit.inst.getWorld(this.player.world)), this.player.x, this.player.y, this.player.z);
     }
 
     @Override
@@ -99,34 +99,34 @@ class CarpetPlayer extends AbstractPlayerActor {
         }
         PacketByteBuf pb = new PacketByteBuf(Unpooled.wrappedBuffer(send.getBytes(WECUIPacketHandler.UTF_8_CHARSET)));
         CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(CarpetWorldEdit.CUI_PLUGIN_CHANNEL, pb);
-        this.player.networkHandler.method_33624(packet);
+        this.player.networkHandler.sendPacket(packet);
     }
 
     @Override
     public void printRaw(String msg) {
         for (String part : msg.split("\n")) {
-            this.player.sendMessage(new LiteralText(part));
+            this.player.sendSystemMessage(new LiteralText(part));
         }
     }
 
     @Override
     public void printDebug(String msg) {
         for (String part : msg.split("\n")) {
-            this.player.sendMessage(new LiteralText("\u00a77" + part));
+            this.player.sendSystemMessage(new LiteralText("\u00a77" + part));
         }
     }
 
     @Override
     public void print(String msg) {
         for (String part : msg.split("\n")) {
-            this.player.sendMessage(new LiteralText("\u00a7d" + part));
+            this.player.sendSystemMessage(new LiteralText("\u00a7d" + part));
         }
     }
 
     @Override
     public void printError(String msg) {
         for (String part : msg.split("\n")) {
-            this.player.sendMessage(new LiteralText("\u00a7c" + part));
+            this.player.sendSystemMessage(new LiteralText("\u00a7c" + part));
         }
     }
 
@@ -160,7 +160,7 @@ class CarpetPlayer extends AbstractPlayerActor {
 
     @Override
     public SessionKey getSessionKey() {
-        return new SessionKeyImpl(player.getUuid(), player.method_29611());
+        return new SessionKeyImpl(player.getUuid(), player.getName());
     }
 
     private static class SessionKeyImpl implements SessionKey {

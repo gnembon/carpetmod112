@@ -22,7 +22,7 @@ import com.sk89q.worldedit.world.World;
 
 import carpet.CarpetServer;
 import net.minecraft.block.Block;
-import net.minecraft.class_2245;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
@@ -76,7 +76,7 @@ class CarpetPlatform extends AbstractPlatform implements MultiUserPlatform {
 
     @Override
     public boolean isValidMobType(String type) {
-        return class_2245.method_34601(new Identifier(type));
+        return EntityType.isRegistered(new Identifier(type));
     }
 
     @Override

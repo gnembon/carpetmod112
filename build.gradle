@@ -55,10 +55,9 @@ minecraft {
 dependencies {
 	implementation "com.google.guava:guava:23.5-jre"
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	//mappings "de.oceanlabs:mcp:${project.mcp_mappings}:v2"
 	mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
 	// Fix for https://github.com/FabricMC/fabric-loader/issues/152
-	modImplementation "com.github.shedaniel:fabric-loader:e4a8c2f8b6"
+	modImplementation project.loader_version
 
 	// World Edit
 	implementation "com.sk89q.worldedit:worldedit-core:6.1"

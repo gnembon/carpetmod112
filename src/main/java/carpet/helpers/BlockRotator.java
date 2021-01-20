@@ -28,7 +28,7 @@ public class BlockRotator
         if (block instanceof ObserverBlock)
         {
             return block.getDefaultState()
-                .with(FacingBlock.field_24311, Direction.byId((int)hitX - 2))
+                .with(FacingBlock.FACING, Direction.byId((int)hitX - 2))
                 .with(ObserverBlock.field_24607, CarpetSettings.observersDoNonUpdate);
         }
         return null;
@@ -50,7 +50,7 @@ public class BlockRotator
         else if (block instanceof ObserverBlock)
         {
             return block.getDefaultState()
-                    .with(FacingBlock.field_24311, Direction.byId((int)hitX - 2))
+                    .with(FacingBlock.FACING, Direction.byId((int)hitX - 2))
                     .with(ObserverBlock.field_24607, CarpetSettings.observersDoNonUpdate);
         }
         else if (block instanceof RepeaterBlock)
@@ -68,10 +68,10 @@ public class BlockRotator
         else if (block instanceof TrapdoorBlock)
         {
             return block.getDefaultState()
-                    .with(TrapdoorBlock.field_24930, Direction.byId((((int)hitX) % 10) - 2))
-                    .with(TrapdoorBlock.field_24931, Boolean.FALSE)
+                    .with(TrapdoorBlock.FACING, Direction.byId((((int)hitX) % 10) - 2))
+                    .with(TrapdoorBlock.OPEN, Boolean.FALSE)
                     .with(TrapdoorBlock.field_24932, (hitX > 10) ? TrapdoorBlock.class_5272.field_24938 : TrapdoorBlock.class_5272.field_24939)
-                    .with(TrapdoorBlock.field_24931, worldIn.isReceivingRedstonePower(pos));
+                    .with(TrapdoorBlock.OPEN, worldIn.isReceivingRedstonePower(pos));
         }
         else if (block instanceof ComparatorBlock)
         {
@@ -95,7 +95,7 @@ public class BlockRotator
         else if (block instanceof PistonBlock)
         {
             return block.getDefaultState()
-                    .with(FacingBlock.field_24311,Direction.byId((int)hitX - 2) )
+                    .with(FacingBlock.FACING,Direction.byId((int)hitX - 2) )
                     .with(PistonBlock.field_25225, Boolean.FALSE);
         }
         else if (block instanceof StairsBlock)
@@ -148,7 +148,7 @@ public class BlockRotator
         }
         else if ((block instanceof ObserverBlock) || (block instanceof EndRodBlock))
         {
-            worldIn.setBlockState(pos, state.with(FacingBlock.field_24311, state.get(FacingBlock.field_24311).getOpposite()), 130);
+            worldIn.setBlockState(pos, state.with(FacingBlock.FACING, state.get(FacingBlock.FACING).getOpposite()), 130);
         }
         else if (block instanceof DispenserBlock)
         {
@@ -157,7 +157,7 @@ public class BlockRotator
         else if (block instanceof PistonBlock)
         {
             if (!state.get(PistonBlock.field_25225))
-                worldIn.setBlockState(pos, state.with(FacingBlock.field_24311, state.get(FacingBlock.field_24311).getOpposite()), 130);
+                worldIn.setBlockState(pos, state.with(FacingBlock.FACING, state.get(FacingBlock.FACING).getOpposite()), 130);
         }
         else if (block instanceof SlabBlock)
         {

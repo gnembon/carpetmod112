@@ -17,8 +17,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
     @Shadow public PlayerAbilities abilities;
-    @Shadow protected abstract void method_25049();
-    @Shadow protected abstract void method_25066(CompoundTag tag);
+    @Shadow protected abstract void dropShoulderEntities();
+    @Shadow protected abstract void dropShoulderEntity(CompoundTag tag);
     @Shadow protected abstract void setShoulderEntityLeft(CompoundTag tag);
     @Shadow public abstract CompoundTag getShoulderEntityLeft();
     @Shadow public abstract CompoundTag getShoulderEntityRight();
@@ -37,19 +37,19 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     private void onLivingUpdateEnd(CallbackInfo ci) {
         boolean parrots_will_drop = !CarpetSettings.persistentParrots || this.abilities.invulnerable;
         if (!this.world.isClient && ((parrots_will_drop && this.fallDistance > 0.5F) || this.isTouchingWater() || (parrots_will_drop && this.hasVehicle())) || this.abilities.flying) {
-            this.method_25049();
+            this.dropShoulderEntities();
         }
     }
 
-    @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;method_25049()V"))
+    @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;dropShoulderEntities()V"))
     private void dropParrotsOnAttack(PlayerEntity entityPlayer, DamageSource source, float amount) {
         if (CarpetSettings.persistentParrots && !this.isSneaking()) {
             if (this.random.nextFloat() < amount / 15.0) {
-                this.method_25066(this.getShoulderEntityLeft());
+                this.dropShoulderEntity(this.getShoulderEntityLeft());
                 this.setShoulderEntityLeft(new CompoundTag());
             }
             if (this.random.nextFloat() < amount / 15.0) {
-                this.method_25066(this.getShoulderEntityRight());
+                this.dropShoulderEntity(this.getShoulderEntityRight());
                 this.setShoulderEntityRight(new CompoundTag());
             }
         }

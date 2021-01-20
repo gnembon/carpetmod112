@@ -18,7 +18,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         super(worldIn, gameProfileIn);
     }
 
-    @Inject(method = "setGameMode", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;method_25049()V"))
+    @Inject(method = "setGameMode", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;dropShoulderEntities()V"))
     private void onChangeToSpectator(GameMode gameType, CallbackInfo ci) {
         if (CarpetSettings.spectatorsDontLoadChunks) {
             ((ServerWorld) world).getRaidManager().method_33588((ServerPlayerEntity) (Object) this);

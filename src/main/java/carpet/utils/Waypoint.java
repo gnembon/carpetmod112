@@ -7,7 +7,7 @@ import com.google.gson.TypeAdapter;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
-import net.minecraft.class_2010;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.s2c.play.PlayerRespawnS2CPacket;
 import net.minecraft.server.MinecraftServer;
@@ -78,24 +78,24 @@ public class Waypoint implements Comparable<Waypoint> {
     public void teleport(Entity entity) {
         if (entity.world != this.world) {
             // Adapted from spectator teleport code (ServerPlayNetworkHandler::onSpectatorTeleport)
-            MinecraftServer server = entity.method_29602();
+            MinecraftServer server = entity.getServer();
             ServerPlayerEntity player = entity instanceof ServerPlayerEntity ? (ServerPlayerEntity) entity : null;
             ServerWorld worldFrom = (ServerWorld) entity.world;
             ServerWorld worldTo = this.world;
             int dimension = worldTo.dimension.getType().getRawId();
-            entity.field_33045 = dimension;
+            entity.dimensionId = dimension;
             if (player != null) {
-                player.networkHandler.method_33624(new PlayerRespawnS2CPacket(dimension, worldFrom.getDifficulty(), worldFrom.getLevelProperties().getGeneratorType(), player.interactionManager.getGameMode()));
+                player.networkHandler.sendPacket(new PlayerRespawnS2CPacket(dimension, worldFrom.getDifficulty(), worldFrom.getLevelProperties().getGeneratorType(), player.interactionManager.getGameMode()));
                 server.getPlayerManager().sendCommandTree(player);
             }
-            worldFrom.method_26119(entity);
+            worldFrom.removeEntity(entity);
             worldFrom.method_25975(entity.chunkX, entity.chunkZ).remove(entity, entity.chunkY);
             entity.removed = false;
             entity.refreshPositionAndAngles(x, y, z, (float) yaw, (float) pitch);
 
             if (entity.isAlive())
             {
-                worldTo.method_26040(entity);
+                worldTo.spawnEntity(entity);
                 worldTo.method_26050(entity, false);
             }
 
@@ -116,8 +116,8 @@ public class Waypoint implements Comparable<Waypoint> {
         }
     }
 
-    public boolean canManipulate(class_2010 sender) {
-        return sender.method_29603(2, "") || (this.creator != null && this.creator.equalsIgnoreCase(sender.method_29611()));
+    public boolean canManipulate(CommandSource sender) {
+        return sender.allowCommandExecution(2, "") || (this.creator != null && this.creator.equalsIgnoreCase(sender.getName()));
     }
 
     public static Set<Waypoint> getAllWaypoints(ServerWorld ...worlds) {

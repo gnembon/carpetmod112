@@ -59,7 +59,7 @@ public class EntityAIAutotrader extends Goal {
      * Finds an emerald block the trader will use to throw the items towards.
      */
     private void findClosestEmeraldBlock() {
-        World worldIn = villager.method_29608();
+        World worldIn = villager.getEntityWorld();
         BlockPos villagerpos = new BlockPos(villager);
         for (BlockPos pos : BlockPos.iterate(villagerpos.add(-3, -1, -3), villagerpos.add(3, 4, 3))) {
             if (worldIn.getBlockState(pos).getBlock() == Blocks.EMERALD_BLOCK) {
@@ -117,23 +117,23 @@ public class EntityAIAutotrader extends Goal {
         float f2 = villager.pitch;
 
         if (emeraldBlockPosition != null) {
-            double d0 = emeraldBlockPosition.getX() + 0.5D - villager.field_33071;
-            double d1 = emeraldBlockPosition.getY() + 1.5D - (villager.field_33072 + (double) villager.method_34518());
-            double d2 = emeraldBlockPosition.getZ() + 0.5D - villager.field_33073;
+            double d0 = emeraldBlockPosition.getX() + 0.5D - villager.x;
+            double d1 = emeraldBlockPosition.getY() + 1.5D - (villager.y + (double) villager.getStandingEyeHeight());
+            double d2 = emeraldBlockPosition.getZ() + 0.5D - villager.z;
             double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
             f1 = (float) (MathHelper.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
             f2 = (float) (-(MathHelper.atan2(d1, d3) * (180D / Math.PI)));
         }
 
-        double d0 = villager.field_33072 - 0.30000001192092896D + (double) villager.method_34518();
-        ItemEntity entityitem = new ItemEntity(villager.world, villager.field_33071, d0, villager.field_33073, itemstack);
+        double d0 = villager.y - 0.30000001192092896D + (double) villager.getStandingEyeHeight();
+        ItemEntity entityitem = new ItemEntity(villager.world, villager.x, d0, villager.z, itemstack);
         float f = 0.3F;
 
-        entityitem.field_33074 = -MathHelper.sin(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f;
-        entityitem.field_33075 = MathHelper.cos(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f;
-        entityitem.field_33076 = -MathHelper.sin(f2 * 0.017453292F) * 0.3F + 0.1F;
+        entityitem.velocityX = -MathHelper.sin(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f;
+        entityitem.velocityY = MathHelper.cos(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f;
+        entityitem.velocityZ = -MathHelper.sin(f2 * 0.017453292F) * 0.3F + 0.1F;
         entityitem.setToDefaultPickupDelay();
-        villager.world.method_26040(entityitem);
+        villager.world.spawnEntity(entityitem);
     }
 
     /**

@@ -15,8 +15,8 @@ public abstract class ItemFrameEntityMixin extends AbstractDecorationEntity {
         super(worldIn);
     }
 
-    @Redirect(method = "method_24656", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;method_25916(Ljava/lang/String;)Z"))
+    @Redirect(method = "dropHeldStack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/GameRules;getBoolean(Ljava/lang/String;)Z"))
     private boolean checkDead(GameRules gameRules, String name) {
-        return gameRules.method_25916(name) && (!CarpetSettings.duplicationFixItemFrame || !removed);
+        return gameRules.getBoolean(name) && (!CarpetSettings.duplicationFixItemFrame || !removed);
     }
 }

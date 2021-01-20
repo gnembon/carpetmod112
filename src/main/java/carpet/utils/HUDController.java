@@ -5,7 +5,7 @@ import carpet.helpers.TickSpeed;
 import carpet.logging.LoggerRegistry;
 import carpet.logging.logHelpers.PacketCounter;
 import carpet.mixin.accessors.PlayerListHeaderS2CPacketAccessor;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.packet.s2c.play.PlayerListHeaderS2CPacket;
 import net.minecraft.server.MinecraftServer;
@@ -43,7 +43,7 @@ public class HUDController
         PlayerListHeaderS2CPacketAccessor acc = (PlayerListHeaderS2CPacketAccessor) packet;
         acc.setHeader(new LiteralText(""));
         acc.setFooter(new LiteralText(""));
-        ((ServerPlayerEntity)player).networkHandler.method_33624(packet);
+        ((ServerPlayerEntity)player).networkHandler.sendPacket(packet);
     }
 
 
@@ -74,7 +74,7 @@ public class HUDController
             PlayerListHeaderS2CPacketAccessor acc = (PlayerListHeaderS2CPacketAccessor) packet;
             acc.setHeader(new LiteralText(""));
             acc.setFooter(Messenger.m(null, player_huds.get(player).toArray(new Object[0])));
-            ((ServerPlayerEntity)player).networkHandler.method_33624(packet);
+            ((ServerPlayerEntity)player).networkHandler.sendPacket(packet);
         }
     }
     private static void log_tps(MinecraftServer server)
@@ -93,7 +93,7 @@ public class HUDController
         List<Object> commandParams = new ArrayList<>();
         for (int dim = -1; dim <= 1; dim++)
         {
-            for (EntityCategory type : EntityCategory.values())
+            for (SpawnGroup type : SpawnGroup.values())
             {
                 Pair<Integer, Integer> counts = SpawnReporter.mobcaps.get(dim).getOrDefault(type, new Pair<>(0, 0));
                 int actual = counts.getLeft(), limit = counts.getRight();
@@ -101,7 +101,7 @@ public class HUDController
             }
         }
         LoggerRegistry.getLogger("mobcaps").log((option, player) -> {
-            int dim = player.field_33045;
+            int dim = player.dimensionId;
             switch (option)
             {
                 case "overworld":
@@ -121,7 +121,7 @@ public class HUDController
     private static Text [] send_mobcap_display(int dim)
     {
         List<Text> components = new ArrayList<>();
-        for (EntityCategory type:EntityCategory.values())
+        for (SpawnGroup type:SpawnGroup.values())
         {
             Pair<Integer,Integer> counts = SpawnReporter.mobcaps.get(dim).getOrDefault(type, new Pair<>(0,0));
             int actual = counts.getLeft(); int limit = counts.getRight();

@@ -107,7 +107,7 @@ public class CraftingTableBlockEntity extends AbstractParentElement implements S
 
     // Not sure about this one so left it commented
     @Override
-    public Container method_34189(PlayerInventory playerInventory, PlayerEntity playerIn)
+    public Container createScreenHandler(PlayerInventory playerInventory, PlayerEntity playerIn)
     {
         ContainerAutoCraftingTable container = new ContainerAutoCraftingTable(playerInventory, this, this.world, this.pos);
         ((CraftingInventoryAccessor) inventory).setContainer(container);
@@ -116,7 +116,7 @@ public class CraftingTableBlockEntity extends AbstractParentElement implements S
     }
 
     @Override
-    public String method_34190()
+    public String getId()
     {
         return "minecraft:crafting_table";
     }
@@ -283,7 +283,7 @@ public class CraftingTableBlockEntity extends AbstractParentElement implements S
 
         if (irecipe != null && !irecipe.isIgnoredInRecipeBook())
         {
-            player.method_25007(Lists.newArrayList(irecipe));
+            player.unlockRecipes(Lists.newArrayList(irecipe));
         }
     }
 

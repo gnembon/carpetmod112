@@ -36,7 +36,7 @@ public abstract class ItemEntityMixin extends Entity {
         }
     }
 
-    @Inject(method = "method_24682", at = @At(value = "RETURN", ordinal = 0), slice = @Slice(
+    @Inject(method = "tryMerge(Lnet/minecraft/entity/ItemEntity;)Z", at = @At(value = "RETURN", ordinal = 0), slice = @Slice(
         from = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;getMaxCount()I")
     ), cancellable = true)
     private void doGroundStacking(ItemEntity other, CallbackInfoReturnable<Boolean> cir) {
@@ -53,7 +53,7 @@ public abstract class ItemEntityMixin extends Entity {
         }
     }
 
-    @Inject(method = "method_24682", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;increment(I)V"), cancellable = true)
+    @Inject(method = "tryMerge(Lnet/minecraft/entity/ItemEntity;)Z", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;increment(I)V"), cancellable = true)
     private void checkStackable(ItemEntity other, CallbackInfoReturnable<Boolean> cir) {
         ItemStack ownStack = this.getStack();
         ItemStack otherStack = other.getStack();

@@ -3,7 +3,7 @@ package carpet.mixin.huskSpawningInTemples;
 import carpet.CarpetSettings;
 import carpet.mixin.accessors.StructureFeatureAccessor;
 import net.minecraft.class_4301;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.HuskEntity;
 import net.minecraft.structure.StructurePiece;
 import net.minecraft.structure.StructureStart;
@@ -35,7 +35,7 @@ public class OverworldChunkGeneratorMixin {
     }
 
     @Inject(method = "method_27343", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/feature/AbstractTempleFeature;method_27800(Lnet/minecraft/util/math/BlockPos;)Z"))
-    private void huskSpawningInTemples(EntityCategory creatureType, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnEntry>> cir) {
+    private void huskSpawningInTemples(SpawnGroup creatureType, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnEntry>> cir) {
         if (CarpetSettings.huskSpawningInTemples && isPyramid(field_25746, pos)) {
             cir.setReturnValue(HUSK_SPAWN_LIST);
         }

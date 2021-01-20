@@ -6,9 +6,9 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -20,12 +20,12 @@ public class CommandAutosave extends CommandCarpetBase {
 	}
 
 	@Override
-	public String method_29275(class_2010 sender) {
+	public String method_29275(CommandSource sender) {
 		return "Usage: autosave info | autosave detect <range-start> <range-end> <quiet t| run <command>>";
 	}
 
 	@Override
-	public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
+	public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
 		if (!command_enabled("commandAutosave", sender)) return;
 		
 		if(args.length < 1)
@@ -101,7 +101,7 @@ public class CommandAutosave extends CommandCarpetBase {
 	}
 
 	@Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.commandAutosave)
         {

@@ -181,8 +181,8 @@ public class LoggerRegistry
 
         // Subscribe all players who have no customized subscription list
         for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
-            if (!hasSubscriptions(player.method_29611()))
-                subscribePlayer(player.method_29611(), logName, option, handler);
+            if (!hasSubscriptions(player.getName()))
+                subscribePlayer(player.getName(), logName, option, handler);
         }
         return true;
     }
@@ -197,8 +197,8 @@ public class LoggerRegistry
 
             // Unsubscribe all players who have no customized subscription list
             for (PlayerEntity player : server.getPlayerManager().getPlayerList()) {
-                if (!hasSubscriptions(player.method_29611()))
-                    unsubscribePlayer(player.method_29611(), logName);
+                if (!hasSubscriptions(player.getName()))
+                    unsubscribePlayer(player.getName(), logName);
             }
             return true;
         }
@@ -346,7 +346,7 @@ public class LoggerRegistry
 
     public static void playerConnected(PlayerEntity player)
     {
-        String playerName = player.method_29611();
+        String playerName = player.getName();
 
         Map<String, LoggerOptions> subs = getPlayerSubscriptions(playerName);
         for (LoggerOptions option : subs.values()) {
@@ -359,7 +359,7 @@ public class LoggerRegistry
     }
     public static void playerDisconnected(PlayerEntity player)
     {
-        String playerName = player.method_29611();
+        String playerName = player.getName();
 
         for (String logName : LoggerRegistry.getLoggerNames(0)) {
             unsubscribePlayer(playerName, logName);

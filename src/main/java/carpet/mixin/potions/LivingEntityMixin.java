@@ -27,7 +27,7 @@ public abstract class LivingEntityMixin {
     @Shadow protected abstract void onStatusEffectUpgraded(StatusEffectInstance id, boolean p_70695_2_);
     @Shadow public abstract void addStatusEffect(StatusEffectInstance potioneffectIn);
 
-    @Inject(method = "addStatusEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;method_34318(Lnet/minecraft/entity/effect/StatusEffectInstance;)V"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "addStatusEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/effect/StatusEffectInstance;upgrade(Lnet/minecraft/entity/effect/StatusEffectInstance;)V"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
     private void combinePotions(StatusEffectInstance added, CallbackInfo ci, StatusEffectInstance current) {
         StatusEffectInstance newEffect = ((ExtendedStatusEffectInstance) current).combine(added);
         if (newEffect != current) {

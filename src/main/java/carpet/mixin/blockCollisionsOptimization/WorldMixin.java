@@ -14,7 +14,7 @@ import java.util.List;
 
 @Mixin(World.class)
 public class WorldMixin {
-    @Inject(method = "method_26049", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "appendCollisionBoxes", at = @At("HEAD"), cancellable = true)
     private void blockCollisionsOptimization(Entity entity, Box box, boolean flag, List<Box> outList, CallbackInfoReturnable<Boolean> cir) {
         if (CarpetSettings.blockCollisionsOptimization) {
             cir.setReturnValue(CollisionBoxesOptimizations.optimizedGetCollisionBoxes((World) (Object) this, entity, box, flag, outList));

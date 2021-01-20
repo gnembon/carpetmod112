@@ -6,8 +6,8 @@ import java.util.List;
 import com.sk89q.worldedit.util.command.CommandMapping;
 
 import carpet.commands.CommandCarpetBase;
-import net.minecraft.class_2010;
 import net.minecraft.class_5607;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 
 class CommandWrapper extends CommandCarpetBase {
@@ -28,10 +28,10 @@ class CommandWrapper extends CommandCarpetBase {
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 var1, String[] var2) {}
+    public void method_29272(MinecraftServer server, CommandSource var1, String[] var2) {}
 
     @Override
-    public String method_29275(class_2010 sender) {
+    public String method_29275(CommandSource sender) {
         return "/" + command.getPrimaryAlias() + " " + command.getDescription().getUsage();
     }
 
@@ -41,7 +41,7 @@ class CommandWrapper extends CommandCarpetBase {
     }
 
     @Override
-    public boolean method_29271(MinecraftServer server, class_2010 sender) {
+    public boolean method_29271(MinecraftServer server, CommandSource sender) {
         return command_enabled("worldEdit", sender); // Will send an extra vanilla permission message but that's the best we can do
     }
 

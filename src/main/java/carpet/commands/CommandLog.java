@@ -17,9 +17,9 @@ import carpet.logging.LogHandler;
 import carpet.logging.Logger;
 import carpet.logging.LoggerRegistry;
 import carpet.utils.Messenger;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -33,12 +33,12 @@ public class CommandLog extends CommandCarpetBase {
     }
 
     @Override
-    public String method_29275(class_2010 sender) {
+    public String method_29275(CommandSource sender) {
         return USAGE;
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandLog", sender)) return;
         PlayerEntity player = null;
@@ -53,7 +53,7 @@ public class CommandLog extends CommandCarpetBase {
             {
                 return;
             }
-            Map<String, LoggerOptions> subs = LoggerRegistry.getPlayerSubscriptions(player.method_29611());
+            Map<String, LoggerOptions> subs = LoggerRegistry.getPlayerSubscriptions(player.getName());
             if (subs == null)
             {
                 subs = new HashMap<>();
@@ -120,7 +120,7 @@ public class CommandLog extends CommandCarpetBase {
             {
                 throw new class_6182("No player specified");
             }
-            LoggerRegistry.resetSubscriptions(server, player.method_29611());
+            LoggerRegistry.resetSubscriptions(server, player.getName());
             method_28710(sender, this, "Unsubscribed from all logs and restored default subscriptions");
             return;
         }
@@ -255,16 +255,16 @@ public class CommandLog extends CommandCarpetBase {
             boolean subscribed = true;
             if (args.length >= 2 && "clear".equalsIgnoreCase(args[1]))
             {
-                LoggerRegistry.unsubscribePlayer(server, player.method_29611(), logger.getLogName());
+                LoggerRegistry.unsubscribePlayer(server, player.getName(), logger.getLogName());
                 subscribed = false;
             }
             else if (option == null)
             {
-                subscribed = LoggerRegistry.togglePlayerSubscription(server, player.method_29611(), logger.getLogName(), handler);
+                subscribed = LoggerRegistry.togglePlayerSubscription(server, player.getName(), logger.getLogName(), handler);
             }
             else
             {
-                LoggerRegistry.subscribePlayer(server, player.method_29611(), logger.getLogName(), option, handler);
+                LoggerRegistry.subscribePlayer(server, player.getName(), logger.getLogName(), option, handler);
             }
             if (subscribed)
             {
@@ -282,7 +282,7 @@ public class CommandLog extends CommandCarpetBase {
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, BlockPos targetPos)
     {
         if (!CarpetSettings.commandLog)
         {

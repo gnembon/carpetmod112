@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(Block.class)
 public class BlockMixin {
-    @Redirect(method = "dropStack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_26040(Lnet/minecraft/entity/Entity;)Z"))
+    @Redirect(method = "dropStack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
     private static boolean captureDrops(World world, Entity entity) {
-        if (world.method_26040(entity)) {
+        if (world.spawnEntity(entity)) {
             if (CapturedDrops.isCapturingDrops()) CapturedDrops.captureDrop((ItemEntity) entity);
             return true;
         }

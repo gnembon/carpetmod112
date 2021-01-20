@@ -22,9 +22,9 @@ import carpet.mixin.accessors.StructureManagerAccessor;
 import org.apache.logging.log4j.LogManager;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Blocks;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.structure.Structure;
 import net.minecraft.structure.StructureManager;
@@ -52,13 +52,13 @@ public class CommandStructure extends CommandCarpetBase
     }
 
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return USAGE;
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandStructure", sender))
             return;
@@ -82,7 +82,7 @@ public class CommandStructure extends CommandCarpetBase
         }
     }
     
-    private void loadStructure(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    private void loadStructure(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (args.length < 2)
             throw new class_6182(USAGE_LOAD);
@@ -98,7 +98,7 @@ public class CommandStructure extends CommandCarpetBase
         if (template == null)
             throw new class_6175("Template \"" + args[1] + "\" doesn't exist");
         
-        BlockPos origin = sender.method_29606();
+        BlockPos origin = sender.getBlockPos();
         if (args.length >= 5)
         {
             origin = method_28713(sender, args, 2, false);
@@ -173,12 +173,12 @@ public class CommandStructure extends CommandCarpetBase
             settings.method_27999(integrity).method_28006(seed);
         }
         
-        template.place(sender.method_29608(), origin, settings);
+        template.place(sender.getEntityWorld(), origin, settings);
         
         method_28710(sender, this, "Successfully loaded structure " + args[1]);
     }
     
-    private void saveStructure(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    private void saveStructure(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (args.length < 8)
             throw new class_6182(USAGE_SAVE);
@@ -203,21 +203,21 @@ public class CommandStructure extends CommandCarpetBase
             structureName = structureName.replace(illegal, '_');
         StructureManager manager = server.worlds[0].getStructureManager();
         Structure template = manager.method_27992(server, new Identifier(structureName));
-        template.method_28026(sender.method_29608(), origin, size, !ignoreEntities, Blocks.STRUCTURE_VOID);
-        template.setAuthor(sender.method_29611());
+        template.method_28026(sender.getEntityWorld(), origin, size, !ignoreEntities, Blocks.STRUCTURE_VOID);
+        template.setAuthor(sender.getName());
         manager.method_27996(server, new Identifier(structureName));
         
         method_28710(sender, this, "Successfully saved structure " + structureName);
     }
     
-    private void listStructure(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    private void listStructure(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         StructureManager manager = server.worlds[0].getStructureManager();
         List<String> templates = listStructures(manager);
         
         if (templates.isEmpty())
         {
-            sender.sendMessage(new LiteralText("There are no saved structures yet"));
+            sender.sendSystemMessage(new LiteralText("There are no saved structures yet"));
         }
         else
         {
@@ -226,11 +226,11 @@ public class CommandStructure extends CommandCarpetBase
             int page = args.length >= 2 ? method_28715(args[1]) - 1 : 0;
             page = MathHelper.clamp(page, 0, pageCount - 1);
             
-            sender.sendMessage(new LiteralText(Formatting.GREEN + "Structure list page " + (page + 1) + " of " + pageCount + " (/structure list <page>)"));
+            sender.sendSystemMessage(new LiteralText(Formatting.GREEN + "Structure list page " + (page + 1) + " of " + pageCount + " (/structure list <page>)"));
             for (int offset = 0; offset < PAGE_SIZE && page * PAGE_SIZE + offset < templates.size(); offset++)
             {
                 String template = templates.get(page * PAGE_SIZE + offset);
-                sender.sendMessage(new LiteralText("- " + template + " by " + manager.method_27994(server, new Identifier(template)).getAuthor()));
+                sender.sendSystemMessage(new LiteralText("- " + template + " by " + manager.method_27994(server, new Identifier(template)).getAuthor()));
             }
         }
     }
@@ -297,7 +297,7 @@ public class CommandStructure extends CommandCarpetBase
     }
     
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, BlockPos targetPos)
     {
         if (args.length == 0)
         {

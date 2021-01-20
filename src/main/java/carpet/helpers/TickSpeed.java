@@ -3,8 +3,8 @@ package carpet.helpers;
 import carpet.CarpetServer;
 import carpet.pubsub.PubSubInfoProvider;
 import carpet.utils.Messenger;
-import net.minecraft.class_2010;
 import net.minecraft.class_5629;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.MathHelper;
@@ -20,7 +20,7 @@ public class TickSpeed
     public static long time_warp_scheduled_ticks = 0;
     public static PlayerEntity time_advancerer = null;
     public static String tick_warp_callback = null;
-    public static class_2010 tick_warp_sender = null;
+    public static CommandSource tick_warp_sender = null;
     public static int player_active_timeout = 0;
     public static boolean process_entities = true;
     public static boolean is_paused = false;
@@ -58,7 +58,7 @@ public class TickSpeed
         PUBSUB_TICKRATE.publish();
     }
 
-    public static String tickrate_advance(PlayerEntity player, long advance, String callback, class_2010 icommandsender)
+    public static String tickrate_advance(PlayerEntity player, long advance, String callback, CommandSource icommandsender)
     {
         if (0 == advance)
         {
@@ -96,7 +96,7 @@ public class TickSpeed
         time_warp_start_time = 0;
         if (tick_warp_callback != null)
         {
-            class_5629 icommandmanager = tick_warp_sender.method_29602().method_33193();
+            class_5629 icommandmanager = tick_warp_sender.getServer().method_33193();
             try
             {
                 int j = icommandmanager.method_29374(tick_warp_sender, tick_warp_callback);

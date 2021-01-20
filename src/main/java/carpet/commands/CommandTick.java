@@ -5,9 +5,9 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.utils.CarpetProfiler;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -25,13 +25,13 @@ public class CommandTick extends CommandCarpetBase
     }
 
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "Usage: tick rate <tickrate in tps> | warp [time in ticks to skip]";
     }
 
     @Override
-    public void method_29272(final MinecraftServer server, final class_2010 sender, String[] args) throws class_6175
+    public void method_29272(final MinecraftServer server, final CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandTick", sender)) return;
         if (args.length == 0)
@@ -59,7 +59,7 @@ public class CommandTick extends CommandCarpetBase
             }
 
             String s = null;
-            class_2010 icommandsender = null;
+            CommandSource icommandsender = null;
             if (args.length > 3)
             {
                 s = method_28729(args, 2);
@@ -144,7 +144,7 @@ public class CommandTick extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.commandTick)
         {

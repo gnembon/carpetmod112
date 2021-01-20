@@ -35,7 +35,7 @@ public abstract class ServerWorldMixin extends World {
             for (PlayerEntity player : field_23576) {
                 if (player.isSpectator()) continue;
                 players++;
-                if (player.method_25039()) sleeping++;
+                if (player.isSleepingLongEnough()) sleeping++;
             }
             cir.setReturnValue(players == 0 || CarpetSettings.sleepingThreshold * players <= sleeping * 100);
         }

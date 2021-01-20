@@ -3,7 +3,6 @@ package carpet.patches;
 import carpet.CarpetSettings;
 import carpet.carpetclient.CarpetClientChunkLogger;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ColoredBlock;
 import net.minecraft.block.Material;
@@ -11,6 +10,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -85,7 +85,7 @@ public class WoolBlock extends ColoredBlock {
     }
 
     @Override
-    public int getWeakRedstonePower(BlockState state, BlockEntityProvider blockAccess, BlockPos pos, Direction side) {
+    public int getWeakRedstonePower(BlockState state, BlockView blockAccess, BlockPos pos, Direction side) {
         if (!CarpetSettings.wirelessRedstone)
             return 0;
 

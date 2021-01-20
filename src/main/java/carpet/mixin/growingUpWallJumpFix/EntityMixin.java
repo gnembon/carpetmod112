@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Entity.class)
 public class EntityMixin {
-    @Inject(method = "method_34380", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/Entity;field_33001:F", ordinal = 1), cancellable = true)
+    @Inject(method = "setDimensions", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/Entity;width:F", ordinal = 1), cancellable = true)
     private void growingUpWallJumpFix(float width, float height, CallbackInfo ci) {
         if (CarpetSettings.growingUpWallJumpFix) {
             BabyGrowingUp.carpetSetSize((Entity) (Object) this, width, height);

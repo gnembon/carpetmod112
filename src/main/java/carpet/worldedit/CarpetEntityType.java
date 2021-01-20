@@ -3,10 +3,9 @@ package carpet.worldedit;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.sk89q.worldedit.entity.metadata.EntityType;
-import net.minecraft.class_6444;
-import net.minecraft.entity.EnderEyeEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ExperienceOrbEntity;
+import net.minecraft.entity.EyeOfEnderEntity;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.Npc;
@@ -16,6 +15,7 @@ import net.minecraft.entity.decoration.ItemFrameEntity;
 import net.minecraft.entity.decoration.painting.PaintingEntity;
 import net.minecraft.entity.mob.AmbientEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.passive.Animal;
 import net.minecraft.entity.passive.GolemEntity;
 import net.minecraft.entity.passive.TameableEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -40,7 +40,7 @@ class CarpetEntityType implements EntityType {
 
     @Override
     public boolean isProjectile() {
-        return entity instanceof EnderEyeEntity || entity instanceof Projectile;
+        return entity instanceof EyeOfEnderEntity || entity instanceof Projectile;
     }
 
     @Override
@@ -90,7 +90,7 @@ class CarpetEntityType implements EntityType {
 
     @Override
     public boolean isAnimal() {
-        return entity instanceof class_6444;
+        return entity instanceof Animal;
     }
 
     @Override
@@ -115,7 +115,7 @@ class CarpetEntityType implements EntityType {
 
     @Override
     public boolean isTagged() {
-        return entity instanceof MobEntity && entity.method_34200();
+        return entity instanceof MobEntity && entity.hasCustomName();
     }
 
     @Override

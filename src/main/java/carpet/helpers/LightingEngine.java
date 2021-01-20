@@ -442,7 +442,7 @@ public class LightingEngine {
             return this.curChunk.method_27396(this.curPos) ? LightType.SKY.field_23634 : 0;
         }
 
-        return MathHelper.clamp(state.method_27195(), 0, MAX_LIGHT);
+        return MathHelper.clamp(state.getLuminance(), 0, MAX_LIGHT);
     }
 
     private int curToOpac(final BlockState state) {

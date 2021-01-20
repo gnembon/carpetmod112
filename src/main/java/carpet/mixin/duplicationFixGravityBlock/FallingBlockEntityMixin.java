@@ -15,7 +15,7 @@ public abstract class FallingBlockEntityMixin extends Entity {
         super(worldIn);
     }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/FallingBlockEntity;method_34411(Lnet/minecraft/entity/MovementType;DDD)V", shift = At.Shift.AFTER), cancellable = true)
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/FallingBlockEntity;move(Lnet/minecraft/entity/MovementType;DDD)V", shift = At.Shift.AFTER), cancellable = true)
     private void dupeFix(CallbackInfo ci) {
         //Fix falling blocks duplication when going through portals. CARPET-XCOM
         if (CarpetSettings.duplicationFixGravityBlocks && removed) ci.cancel();

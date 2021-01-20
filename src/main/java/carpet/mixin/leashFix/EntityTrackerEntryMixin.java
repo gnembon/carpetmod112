@@ -20,6 +20,6 @@ public class EntityTrackerEntryMixin {
     @Inject(method = "method_33553", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;onStartedTracking(Lnet/minecraft/entity/Entity;)V", shift = At.Shift.AFTER))
     private void leashFix(ServerPlayerEntity playerMP, CallbackInfo ci) {
         if (CarpetSettings.leashFix == CarpetSettings.LeashFix.off || !(entity instanceof MobEntity)) return;
-        playerMP.networkHandler.method_33624(new EntityAttachS2CPacket(entity, ((MobEntity) entity).method_34796()));
+        playerMP.networkHandler.sendPacket(new EntityAttachS2CPacket(entity, ((MobEntity) entity).getHoldingEntity()));
     }
 }

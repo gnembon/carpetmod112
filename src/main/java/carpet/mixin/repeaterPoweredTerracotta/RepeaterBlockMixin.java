@@ -21,7 +21,7 @@ public class RepeaterBlockMixin extends AbstractRedstoneGateBlockMixin {
         int delay = 2;
         // Added repeater with adjustable delay on terracota CARPET-XCOM
         if (CarpetSettings.repeaterPoweredTerracotta) {
-            BlockState stateBelow = world.getBlockState(pos.method_31898());
+            BlockState stateBelow = world.getBlockState(pos.down());
             Block blockBelow = stateBelow.getBlock();
             if (blockBelow == Blocks.STAINED_TERRACOTTA) {
                 delay = blockBelow.getMeta(stateBelow);

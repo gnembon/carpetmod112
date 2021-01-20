@@ -18,7 +18,7 @@ public abstract class LogHandler
         @Override
         public void handle(ServerPlayerEntity player, Text[] message, Object[] commandParams)
         {
-            Arrays.stream(message).forEach(player::sendMessage);
+            Arrays.stream(message).forEach(player::sendSystemMessage);
         }
     };
     public static final LogHandler HUD = new LogHandler()

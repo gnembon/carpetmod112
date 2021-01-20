@@ -4,11 +4,12 @@ import carpet.mixin.accessors.PistonBlockAccessor;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.ComparatorBlockEntity;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 
 public class IsPoweredHelper {
 
-    public static boolean isPowered(BlockState state, BlockEntityProvider source, BlockPos pos) {
+    public static boolean isPowered(BlockState state, BlockView source, BlockPos pos) {
         if (!(source instanceof World)) {
             return false;
         }
@@ -26,7 +27,7 @@ public class IsPoweredHelper {
         } else if (block instanceof ObserverBlock) {
             return state.get(ObserverBlock.field_24607);
         } else if (block instanceof PistonBlock) {
-            return ((PistonBlockAccessor) block).invokeShouldExtend(world, pos, state.get(FacingBlock.field_24311));
+            return ((PistonBlockAccessor) block).invokeShouldExtend(world, pos, state.get(FacingBlock.FACING));
         } else if (block instanceof WeightedPressurePlateBlock) {
             return state.get(WeightedPressurePlateBlock.field_25004) > 0;
         } else if (block instanceof PressurePlateBlock) {
@@ -34,7 +35,7 @@ public class IsPoweredHelper {
         } else if (block instanceof DetectorRailBlock) {
             return state.get(DetectorRailBlock.field_24305);
         } else if (block instanceof PoweredRailBlock) {
-            return state.get(PoweredRailBlock.field_24641);
+            return state.get(PoweredRailBlock.POWERED);
         } else if (block instanceof ComparatorBlock) {
             if (state.get(ComparatorBlock.field_24288) == ComparatorBlock.ComparatorMode.COMPARE) {
                 return state.get(ComparatorBlock.field_24287);

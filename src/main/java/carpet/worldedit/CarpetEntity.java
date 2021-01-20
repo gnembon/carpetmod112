@@ -7,7 +7,6 @@ import com.sk89q.worldedit.entity.metadata.EntityType;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.NullWorld;
-import net.minecraft.class_2245;
 import net.minecraft.nbt.CompoundTag;
 import javax.annotation.Nullable;
 import java.lang.ref.WeakReference;
@@ -27,7 +26,7 @@ class CarpetEntity implements Entity {
     public BaseEntity getState() {
         net.minecraft.entity.Entity entity = entityRef.get();
         if (entity != null) {
-            String id = class_2245.method_34602(entity);
+            String id = net.minecraft.entity.EntityType.getName(entity);
             if (id != null) {
                 CompoundTag tag = new CompoundTag();
                 entity.toTag(tag);
@@ -44,7 +43,7 @@ class CarpetEntity implements Entity {
     public Location getLocation() {
         net.minecraft.entity.Entity entity = entityRef.get();
         if (entity != null) {
-            Vector position = new Vector(entity.field_33071, entity.field_33072, entity.field_33073);
+            Vector position = new Vector(entity.x, entity.y, entity.z);
             float yaw = entity.yaw;
             float pitch = entity.pitch;
 

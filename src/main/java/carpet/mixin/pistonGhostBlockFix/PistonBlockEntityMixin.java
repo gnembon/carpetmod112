@@ -26,7 +26,7 @@ public class PistonBlockEntityMixin extends BlockEntity implements ExtendedPisto
     private void onSetBlockState(CallbackInfo ci) {
         if (CarpetSettings.pistonGhostBlocksFix == CarpetSettings.PistonGhostBlocksFix.serverOnly) {
             BlockState state = this.world.getBlockState(this.pos);
-            this.world.updateListeners(pos.offset(state.get(PistonHeadBlock.field_24311).getOpposite()), state, state, 0);
+            this.world.updateListeners(pos.offset(state.get(PistonHeadBlock.FACING).getOpposite()), state, state, 0);
         }
     }
 

@@ -25,7 +25,7 @@ public class CarpetClientRuleChanger {
         String rule = data.readString(100);
 
         if (CHANGE_RULE == type) {
-            if (sender.method_29603(2, "carpet")) {
+            if (sender.allowCommandExecution(2, "carpet")) {
                 String[] options = CarpetSettings.getOptions(rule);
                 int index = valueIndex.getOrDefault(rule.toLowerCase(Locale.ENGLISH), -1);
                 if (index == -1) {
@@ -40,14 +40,14 @@ public class CarpetClientRuleChanger {
                 Messenger.m(sender, "r You do not have permissions to change the rules.");
             }
         } else if (CHANGE_TEXT_RULE == type) {
-            if (sender.method_29603(2, "carpet")) {
+            if (sender.allowCommandExecution(2, "carpet")) {
                 String value = data.readString(100);
                 ruleChangeLogic(sender, rule, value);
             } else {
                 Messenger.m(sender, "r You do not have permissions to change the rules.");
             }
         } else if (RESET_RULE == type) {
-            if (sender.method_29603(2, "carpet")) {
+            if (sender.allowCommandExecution(2, "carpet")) {
                 String value = CarpetSettings.getDefault(rule);
                 ruleChangeLogic(sender, rule, value);
                 valueIndex.put(rule.toLowerCase(Locale.ENGLISH), 0);
@@ -62,7 +62,7 @@ public class CarpetClientRuleChanger {
     private static void ruleChangeLogic(ServerPlayerEntity sender, String rule, String value) {
         CarpetSettings.set(rule, value);
         String s = CarpetSettings.getDescription(rule) + " is set to: " + CarpetSettings.get(rule);
-        Messenger.print_server_message(sender.method_29608().getServer(), s);
+        Messenger.print_server_message(sender.getEntityWorld().getServer(), s);
     }
 
     public static void updateCarpetClientsRule(String rule, String value) {

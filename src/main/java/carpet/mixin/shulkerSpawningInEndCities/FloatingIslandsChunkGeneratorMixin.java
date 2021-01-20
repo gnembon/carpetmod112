@@ -1,7 +1,7 @@
 package carpet.mixin.shulkerSpawningInEndCities;
 
 import carpet.CarpetSettings;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.ShulkerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -28,8 +28,8 @@ public class FloatingIslandsChunkGeneratorMixin {
     @Shadow @Final private World field_25758;
 
     @Inject(method = "method_27343", at = @At("HEAD"), cancellable = true)
-    private void shulkerSpawning(EntityCategory creatureType, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnEntry>> cir) {
-        if (CarpetSettings.shulkerSpawningInEndCities && creatureType == EntityCategory.MONSTER && field_25761.method_27842(pos)) {
+    private void shulkerSpawning(SpawnGroup creatureType, BlockPos pos, CallbackInfoReturnable<List<Biome.SpawnEntry>> cir) {
+        if (CarpetSettings.shulkerSpawningInEndCities && creatureType == SpawnGroup.MONSTER && field_25761.method_27842(pos)) {
             cir.setReturnValue(spawnList);
         }
     }

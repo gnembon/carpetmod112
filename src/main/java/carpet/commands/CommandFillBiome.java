@@ -5,10 +5,10 @@ import java.util.List;
 
 import carpet.mixin.accessors.PlayerChunkMapEntryAccessor;
 import carpet.mixin.accessors.ServerWorldAccessor;
-import net.minecraft.class_2010;
 import net.minecraft.class_4615;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.network.packet.s2c.play.ChunkDataS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -27,13 +27,13 @@ public class CommandFillBiome extends CommandCarpetBase
     }
 
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "/fillbiome <from: x z> <to: x z> <biome>";
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandFillBiome", sender))
             return;
@@ -41,10 +41,10 @@ public class CommandFillBiome extends CommandCarpetBase
         if (args.length < 5)
             throw new class_6182(method_29275(sender));
         
-        int x1 = (int) Math.round(method_28702(sender.method_29606().getX(), args[0], false).method_28750());
-        int z1 = (int) Math.round(method_28702(sender.method_29606().getZ(), args[1], false).method_28750());
-        int x2 = (int) Math.round(method_28702(sender.method_29606().getX(), args[2], false).method_28750());
-        int z2 = (int) Math.round(method_28702(sender.method_29606().getZ(), args[3], false).method_28750());
+        int x1 = (int) Math.round(method_28702(sender.getBlockPos().getX(), args[0], false).method_28750());
+        int z1 = (int) Math.round(method_28702(sender.getBlockPos().getZ(), args[1], false).method_28750());
+        int x2 = (int) Math.round(method_28702(sender.getBlockPos().getX(), args[2], false).method_28750());
+        int z2 = (int) Math.round(method_28702(sender.getBlockPos().getZ(), args[3], false).method_28750());
         
         int minX = Math.min(x1, x2);
         int maxX = Math.max(x1, x2);
@@ -66,7 +66,7 @@ public class CommandFillBiome extends CommandCarpetBase
         }
         byte biomeId = (byte) (Biome.method_26235(biome) & 255);
         
-        ServerWorld world = (ServerWorld) sender.method_29608();
+        ServerWorld world = (ServerWorld) sender.getEntityWorld();
         if (!world.setBlockState(new BlockPos(minX, 0, minZ), new BlockPos(maxX, 0, maxZ)))
         {
             throw new class_6175("commands.fill.outOfWorld");
@@ -100,7 +100,7 @@ public class CommandFillBiome extends CommandCarpetBase
                     {
                         ChunkDataS2CPacket packet = new ChunkDataS2CPacket(chunk, 65535);
                         for (ServerPlayerEntity player : ((PlayerChunkMapEntryAccessor) entry).getPlayers())
-                            player.networkHandler.method_33624(packet);
+                            player.networkHandler.sendPacket(packet);
                     }
                 }
             }
@@ -110,7 +110,7 @@ public class CommandFillBiome extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, BlockPos targetPos)
     {
         if (args.length == 0)
         {

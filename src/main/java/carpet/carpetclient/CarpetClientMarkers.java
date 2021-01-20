@@ -55,12 +55,12 @@ public class CarpetClientMarkers {
 
     public static void updateClientBoundingBoxMarkers(ServerPlayerEntity sender, PacketByteBuf data) {
         MinecraftServer ms = sender.world.getServer();
-        ServerWorld ws = ms.getWorldById(sender.field_33045);
+        ServerWorld ws = ms.getWorldById(sender.dimensionId);
         ListTag list = ((BoundingBoxProvider) ws.getChunkManager()).getBoundingBoxes(sender);
         CompoundTag nbttagcompound = new CompoundTag();
 
         nbttagcompound.put("Boxes", list);
-        nbttagcompound.putInt("Dimention", sender.field_33045);
+        nbttagcompound.putInt("Dimention", sender.dimensionId);
         nbttagcompound.putLong("Seed", sender.world.getSeed());
 
         CarpetClientMessageHandler.sendNBTBoundingboxData(sender, nbttagcompound);

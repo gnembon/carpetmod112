@@ -13,6 +13,6 @@ public abstract class BeaconBlockEntityMixin extends AbstractParentElement {
     @ModifyConstant(method = "method_26900", constant = @Constant(intValue = 1, ordinal = 2))
     private int optimizedTileEntitiesOffset(int origValue) {
         if (!CarpetSettings.optimizedTileEntities || world.isClient) return origValue;
-        return world.dimension.method_27521() && world.method_26129(pos) ? 256 : origValue;
+        return world.dimension.hasSkyLight() && world.isSkyVisible(pos) ? 256 : origValue;
     }
 }

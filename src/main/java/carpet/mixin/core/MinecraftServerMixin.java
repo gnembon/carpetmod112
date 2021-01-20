@@ -72,7 +72,7 @@ public abstract class MinecraftServerMixin {
         System.out.println(Arrays.toString(args));
     }
 
-    @Inject(method = "tick", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;ticks:I", ordinal = 0, shift = At.Shift.AFTER))
+    @Inject(method = "tickWorlds", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;ticks:I", ordinal = 0, shift = At.Shift.AFTER))
     private void startTick(CallbackInfo ci) {
         CarpetServer.tick((MinecraftServer) (Object) this);
         if (CarpetProfiler.tick_health_requested != 0) {
@@ -80,7 +80,7 @@ public abstract class MinecraftServerMixin {
         }
     }
 
-    @Inject(method = "tick", at = @At("RETURN"))
+    @Inject(method = "tickWorlds", at = @At("RETURN"))
     private void endTick(CallbackInfo ci) {
         // ChunkLogger - 0x-CARPET
         if(CarpetClientChunkLogger.logger.enabled) {

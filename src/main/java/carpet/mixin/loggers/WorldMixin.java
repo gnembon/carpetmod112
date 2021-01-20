@@ -56,7 +56,7 @@ public abstract class WorldMixin {
         }
     }
 
-    @Inject(method = "method_26119", at = @At("HEAD"))
+    @Inject(method = "removeEntity", at = @At("HEAD"))
     private void invisDebugAtRemoveEntity(Entity entity, CallbackInfo ci) {
         if (entity instanceof ServerPlayerEntity) DebugLogHelper.invisDebug(() -> "r1: " + entity);
     }

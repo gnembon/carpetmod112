@@ -80,7 +80,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         mobsSmashed++;
     }
 
-    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;method_25033()V"))
+    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;spawnSweepAttackParticles()V"))
     private void onSweep(Entity targetEntity, CallbackInfo ci) {
         sweeping = true;
         if (LoggerRegistry.__kills) KillLogHelper.onSweep((PlayerEntity) (Object) this, mobsSmashed);

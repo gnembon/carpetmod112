@@ -22,10 +22,10 @@ public class PlayerManagerMixin {
         }
     }
 
-    @Redirect(method = "method_33705", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;method_26123(Lnet/minecraft/entity/Entity;)V"))
+    @Redirect(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;method_26123(Lnet/minecraft/entity/Entity;)V"))
     private void removePlayerOnDimensionChange(ServerWorld world, Entity player) {
         if (CarpetSettings.playersTurningInvisibleFix) {
-            world.method_26119(player);
+            world.removeEntity(player);
         } else {
             world.method_26123(player);
         }

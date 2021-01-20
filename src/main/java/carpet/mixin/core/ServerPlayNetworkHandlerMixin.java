@@ -36,7 +36,7 @@ public class ServerPlayNetworkHandlerMixin {
         }
     }
 
-    @Inject(method = "onPlayerMove", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;method_34726()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "onPlayerMove", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;isSleeping()Z", ordinal = 0), locals = LocalCapture.CAPTURE_FAILHARD)
     private void resetActiveTimeout(PlayerMoveC2SPacket packet, CallbackInfo ci, ServerWorld world,
             double posX, double posY, double posZ, double posY2, double packetX, double packetY, double packetZ,
             float packetYaw, float packetPitch, double diffX, double diffY, double diffZ, double speed, double distance) {
@@ -48,11 +48,11 @@ public class ServerPlayNetworkHandlerMixin {
     // Invisibility fix
     @Redirect(method = "onSpectatorTeleport", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;method_26123(Lnet/minecraft/entity/Entity;)V"))
     private void removeEntityDangerously(ServerWorld world, Entity player) {
-        world.method_26119(player);
+        world.removeEntity(player);
         world.method_25975(player.chunkX, player.chunkZ).remove(player, player.chunkY);
     }
 
-    @Inject(method = "onSpectatorTeleport", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;method_26040(Lnet/minecraft/entity/Entity;)Z"))
+    @Inject(method = "onSpectatorTeleport", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
     private void updateRemovedPlayer(SpectatorTeleportC2SPacket packet, CallbackInfo ci) {
         player.getServerWorld().method_26050(player, false);
     }

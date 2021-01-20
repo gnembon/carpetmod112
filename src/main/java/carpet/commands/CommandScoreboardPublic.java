@@ -1,11 +1,11 @@
 package carpet.commands;
 
 import carpet.CarpetSettings;
-import net.minecraft.class_1313;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.ScoreboardCriterions;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ScoreboardCommand;
 import net.minecraft.util.math.BlockPos;
@@ -22,7 +22,7 @@ public class CommandScoreboardPublic extends ScoreboardCommand {
     }
 
     @Override
-    public String method_29275(class_2010 sender) {
+    public String method_29275(CommandSource sender) {
         return "/scoreboardPublic objectives <list|add|remove|setdisplay> [objective]";
     }
 
@@ -32,12 +32,12 @@ public class CommandScoreboardPublic extends ScoreboardCommand {
     }
 
     @Override
-    public boolean method_29271(MinecraftServer server, class_2010 sender) {
+    public boolean method_29271(MinecraftServer server, CommandSource sender) {
         return true;
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
         if (!CarpetSettings.commandPublicScoreboard) return;
 
         if (args.length < 1) {
@@ -78,7 +78,7 @@ public class CommandScoreboardPublic extends ScoreboardCommand {
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos) {
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos targetPos) {
         if (!CarpetSettings.commandPublicScoreboard) return Collections.emptyList();
 
         if (args.length == 1) {
@@ -91,7 +91,7 @@ public class CommandScoreboardPublic extends ScoreboardCommand {
 
                 if ("add".equalsIgnoreCase(args[1])) {
                     if (args.length == 4) {
-                        Set<String> set = class_1313.field_26748.keySet();
+                        Set<String> set = ScoreboardCriterions.field_26748.keySet();
                         return method_28731(args, set);
                     }
                 } else if ("remove".equalsIgnoreCase(args[1])) {

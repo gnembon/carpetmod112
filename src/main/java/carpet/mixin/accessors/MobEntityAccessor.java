@@ -9,5 +9,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(MobEntity.class)
 public interface MobEntityAccessor {
     @Accessor GoalSelector getGoalSelector();
-    @Invoker("method_34760") boolean invokeCanDespawn();
+    @Invoker boolean invokeCanImmediatelyDespawn();
 }

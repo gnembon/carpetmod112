@@ -10,9 +10,9 @@ import javax.annotation.Nullable;
 import carpet.CarpetSettings;
 import carpet.helpers.HopperCounter;
 import carpet.utils.Messenger;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.math.BlockPos;
@@ -23,7 +23,7 @@ public class CommandCounter extends CommandCarpetBase
      * Gets the name of the command
      */
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "Usage: counter <color> <reset/realtime>";
     }
@@ -38,7 +38,7 @@ public class CommandCounter extends CommandCarpetBase
      * Callback for when the command is executed
      */
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.off && !CarpetSettings.cactusCounter){
             msg(sender, Messenger.m(null, "Need cactusCounter or hopperCounters to be enabled to use this command."));
@@ -77,7 +77,7 @@ public class CommandCounter extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos pos)
     {
         if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.off && !CarpetSettings.cactusCounter)
         {

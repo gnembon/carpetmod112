@@ -1,7 +1,6 @@
 package carpet.mixin.pocketPushing;
 
 import carpet.CarpetSettings;
-import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
@@ -12,6 +11,7 @@ import net.minecraft.entity.MovementType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,7 +22,7 @@ import java.util.List;
 
 @Mixin(PistonBlockEntity.class)
 public abstract class PistonBlockEntityMixin extends BlockEntity {
-    @Shadow public abstract Box method_27144(BlockEntityProvider p_184321_1_, BlockPos p_184321_2_);
+    @Shadow public abstract Box method_27144(BlockView p_184321_1_, BlockPos p_184321_2_);
     @Shadow private boolean field_25263;
     @Shadow private Direction facing;
     @Shadow private BlockState field_25261;
@@ -37,7 +37,7 @@ public abstract class PistonBlockEntityMixin extends BlockEntity {
 
     private void translocateCollidedEntities() {
         Box axisalignedbb = this.method_27144(this.world, this.pos).offset(this.pos);
-        List<Entity> entities = this.world.method_26090(null, axisalignedbb);
+        List<Entity> entities = this.world.getEntitiesIn(null, axisalignedbb);
         if (!entities.isEmpty()) {
             Direction facing = this.field_25263 ? this.facing : this.facing.getOpposite();
             for (Entity entity : entities) {
@@ -49,13 +49,13 @@ public abstract class PistonBlockEntityMixin extends BlockEntity {
                     if (this.field_25261.getBlock() == Blocks.SLIME_BLOCK) {
                         switch (facing.getAxis()) {
                             case X:
-                                entity.field_33074 = facing.getOffsetX();
+                                entity.velocityX = facing.getOffsetX();
                                 break;
                             case Y:
-                                entity.field_33075 = facing.getOffsetY();
+                                entity.velocityY = facing.getOffsetY();
                                 break;
                             case Z:
-                                entity.field_33076 = facing.getOffsetZ();
+                                entity.velocityZ = facing.getOffsetZ();
                                 break;
                         }
                     }
@@ -85,7 +85,7 @@ public abstract class PistonBlockEntityMixin extends BlockEntity {
                             dz = dz + 0.01D;
                             break;
                     }
-                    entity.method_34411(MovementType.SELF, dx * facing.getOffsetX(), dy * facing.getOffsetY(), dz * facing.getOffsetZ());
+                    entity.move(MovementType.SELF, dx * facing.getOffsetX(), dy * facing.getOffsetY(), dz * facing.getOffsetZ());
                 }
             }
         }

@@ -8,7 +8,6 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.class_1313;
 import net.minecraft.class_5569;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -87,7 +86,7 @@ public class StatHelper {
 
     public static void initialize(Scoreboard scoreboard, MinecraftServer server, ScoreboardObjective objective) {
         LOGGER.info("Initializing " + objective);
-        class_1313 criteria = objective.getDisplayName();
+        ScoreboardCriterions criteria = objective.getDisplayName();
         if (!(criteria instanceof class_5569)) return;
         Stat stat = ((ScoreCriteriaStatAccessor) criteria).getStat();
         for (Map.Entry<UUID, StatHandler> statEntry : getAllStatistics(server).entrySet()) {

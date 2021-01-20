@@ -33,7 +33,7 @@ public class GhastHelper
         @Override
         public boolean canStart()
         {
-            if (CarpetSettings.rideableGhasts && entity.method_34200())
+            if (CarpetSettings.rideableGhasts && entity.hasCustomName())
             {
                 return false;
             }
@@ -43,7 +43,7 @@ public class GhastHelper
         @Override
         public boolean shouldContinue()
         {
-            if (CarpetSettings.rideableGhasts && entity.method_34200())
+            if (CarpetSettings.rideableGhasts && entity.hasCustomName())
             {
                 return false;
             }
@@ -53,7 +53,7 @@ public class GhastHelper
     }
     public static boolean is_yo_bro(GhastEntity ghast, PlayerEntity player)
     {
-        return (ghast.method_34200() && player.getGameProfile().getName().equals(ghast.method_34510()));
+        return (ghast.hasCustomName() && player.getGameProfile().getName().equals(ghast.getCustomName()));
     }
     public static boolean holds_yo_tear(PlayerEntity player)
     {
@@ -69,15 +69,15 @@ public class GhastHelper
      */
     public static void set_off_fball(GhastEntity ghast, World world, PlayerEntity player)
     {
-        world.method_25985(null, 1015, new BlockPos(ghast), 0);
-        Vec3d vec3d = player.method_34535(1.0F);
-        world.method_25985(null, 1016, new BlockPos(ghast), 0);
+        world.syncWorldEvent(null, 1015, new BlockPos(ghast), 0);
+        Vec3d vec3d = player.getRotationVec(1.0F);
+        world.syncWorldEvent(null, 1016, new BlockPos(ghast), 0);
         FireballEntity entitylargefireball = new FireballEntity(world, player, 30.0*vec3d.x, 30.0*vec3d.y, 30.0*vec3d.z);
         entitylargefireball.explosionPower = ghast.getFireballStrength();
-        entitylargefireball.field_33071 = ghast.field_33071 + vec3d.x * 4.0D;
-        entitylargefireball.field_33072 = ghast.field_33072 + (double)(ghast.field_33002 / 2.0F) +vec3d.y * 4.0D+ 0.5D;
-        entitylargefireball.field_33073 = ghast.field_33073 + vec3d.z * 4.0D;
-        world.method_26040(entitylargefireball);
+        entitylargefireball.x = ghast.x + vec3d.x * 4.0D;
+        entitylargefireball.y = ghast.y + (double)(ghast.height / 2.0F) +vec3d.y * 4.0D+ 0.5D;
+        entitylargefireball.z = ghast.z + vec3d.z * 4.0D;
+        world.spawnEntity(entitylargefireball);
     }
 
     /*rided ghast follows rider's tear clues
@@ -135,7 +135,7 @@ public class GhastHelper
             Vec3d vec3d = Vec3d.ZERO;
             if (forward != 0.0f)
             {
-                vec3d = rider.method_34535(1.0F);
+                vec3d = rider.getRotationVec(1.0F);
                 if (forward < 0.0f)
                 {
                     vec3d = vec3d.reverseSubtract(Vec3d.ZERO);
@@ -158,11 +158,11 @@ public class GhastHelper
             }
             if (!(vec3d.equals(Vec3d.ZERO)))
             {
-                this.parentEntity.method_34810().moveTo(this.parentEntity.field_33071 + vec3d.x, this.parentEntity.field_33072 + vec3d.y,this.parentEntity.field_33073 + vec3d.z, 1.0D );
+                this.parentEntity.getMoveControl().moveTo(this.parentEntity.x + vec3d.x, this.parentEntity.y + vec3d.y,this.parentEntity.z + vec3d.z, 1.0D );
             }
             else
             {
-                this.parentEntity.method_34810().state = MoveControl.State.WAIT;
+                this.parentEntity.getMoveControl().state = MoveControl.State.WAIT;
             }
         }
     }
@@ -181,14 +181,14 @@ public class GhastHelper
 
         private PlayerEntity findOwner()
         {
-            if (!this.parentEntity.hasPassengers() && this.parentEntity.method_34200())
+            if (!this.parentEntity.hasPassengers() && this.parentEntity.hasCustomName())
             {
-                PlayerEntity player = this.parentEntity.method_29608().getServer().getPlayerManager().getPlayer(this.parentEntity.method_34510());
-                if (player != null && player.field_33045 == this.parentEntity.field_33045 && this.parentEntity.method_34553(player) < 300.0D*300.0D)
+                PlayerEntity player = this.parentEntity.getEntityWorld().getServer().getPlayerManager().getPlayer(this.parentEntity.getCustomName());
+                if (player != null && player.dimensionId == this.parentEntity.dimensionId && this.parentEntity.squaredDistanceTo(player) < 300.0D*300.0D)
                 {
                     if (!(player.hasVehicle() && player.getVehicle() instanceof GhastEntity))
                     {
-                        if (this.parentEntity.method_34553(player) > 10.0D*10.0D && holds_yo_tear(player))
+                        if (this.parentEntity.squaredDistanceTo(player) > 10.0D*10.0D && holds_yo_tear(player))
                         {
                             return player;
                         }
@@ -231,12 +231,12 @@ public class GhastHelper
         }
         public boolean continueExecuting()
         {
-            if (owner != null && owner.field_33045 == this.parentEntity.field_33045)
+            if (owner != null && owner.dimensionId == this.parentEntity.dimensionId)
                 {
-                    if (this.parentEntity.method_34553(owner) > 50D && holds_yo_tear(owner))
+                    if (this.parentEntity.squaredDistanceTo(owner) > 50D && holds_yo_tear(owner))
                     {
-                        Vec3d target = new Vec3d(this.owner.field_33071 - this.parentEntity.field_33071, this.owner.field_33072 - this.parentEntity.field_33072,this.owner.field_33073 - this.parentEntity.field_33073).normalize();
-                        this.parentEntity.method_34810().moveTo(this.parentEntity.field_33071 + target.x, this.parentEntity.field_33072 + target.y, this.parentEntity.field_33073 + target.z, 1.0D);
+                        Vec3d target = new Vec3d(this.owner.x - this.parentEntity.x, this.owner.y - this.parentEntity.y,this.owner.z - this.parentEntity.z).normalize();
+                        this.parentEntity.getMoveControl().moveTo(this.parentEntity.x + target.x, this.parentEntity.y + target.y, this.parentEntity.z + target.z, 1.0D);
                         return true;
                     }
                 }

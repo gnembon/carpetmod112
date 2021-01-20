@@ -10,14 +10,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin {
-    @Shadow public abstract String method_29611();
+    @Shadow public abstract String getName();
 
-    @Inject(method = "method_34456", at = @At("HEAD"))
+    @Inject(method = "checkWaterState", at = @At("HEAD"))
     private void onHandleWaterMovementStart(CallbackInfoReturnable<Boolean> cir) {
-        CarpetClientChunkLogger.setReason(() -> "Item checking if pushed by water: " + method_29611());
+        CarpetClientChunkLogger.setReason(() -> "Item checking if pushed by water: " + getName());
     }
 
-    @Inject(method = "method_34456", at = @At("RETURN"))
+    @Inject(method = "checkWaterState", at = @At("RETURN"))
     private void onHandleWaterMovementEnd(CallbackInfoReturnable<Boolean> cir) {
         CarpetClientChunkLogger.resetReason();
     }

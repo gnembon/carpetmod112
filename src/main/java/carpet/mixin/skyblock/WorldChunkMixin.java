@@ -76,7 +76,7 @@ public class WorldChunkMixin {
             }
         }
         field_25385 = 0;
-        if (world.dimension.method_27521()) {
+        if (world.dimension.hasSkyLight()) {
             Arrays.fill(field_25375, 15);
         }
     }

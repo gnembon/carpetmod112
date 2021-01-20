@@ -23,7 +23,7 @@ public class ObserverBlockMixin extends FacingBlock {
     @ModifyConstant(method = "method_26712", constant = @Constant(intValue = 2))
     private int adjustDelay(int delay, BlockState state, World world, BlockPos pos) {
         if (CarpetSettings.observerPoweredTerracotta){
-            Direction enumfacing = state.get(field_24311);
+            Direction enumfacing = state.get(FACING);
             BlockPos blockpos = pos.offset(enumfacing.getOpposite());
             BlockState iblockstate = world.getBlockState(blockpos);
             Block block = iblockstate.getBlock();

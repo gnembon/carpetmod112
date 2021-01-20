@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(World.class)
 public class WorldMixin {
-    @Redirect(method = "method_25993", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_26002(Lnet/minecraft/util/math/Box;Lnet/minecraft/entity/Entity;)Z"))
+    @Redirect(method = "canReplace", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;doesNotCollide(Lnet/minecraft/util/math/Box;Lnet/minecraft/entity/Entity;)Z"))
     private boolean ignoreEntityWhenPlacing(World world, Box box, Entity entity) {
-        return CarpetSettings.ignoreEntityWhenPlacing || world.method_26002(box, entity);
+        return CarpetSettings.ignoreEntityWhenPlacing || world.doesNotCollide(box, entity);
     }
 }

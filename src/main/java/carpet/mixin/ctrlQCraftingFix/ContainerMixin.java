@@ -18,7 +18,7 @@ import java.util.List;
 public abstract class ContainerMixin {
     @Shadow public List<Slot> field_22767;
     @Shadow public abstract ItemStack onSlotClick(int slotId, int dragType, SlotActionType clickTypeIn, PlayerEntity player);
-    @Shadow public abstract void method_25307();
+    @Shadow public abstract void sendContentUpdates();
 
     @Inject(method = "onSlotClick", at = @At(value = "INVOKE", target = "Lnet/minecraft/container/Slot;takeStack(I)Lnet/minecraft/item/ItemStack;", ordinal = 2), cancellable = true)
     private void ctrlQCrafting(int slotId, int dragType, SlotActionType clickTypeIn, PlayerEntity player, CallbackInfoReturnable<ItemStack> cir) {
@@ -27,7 +27,7 @@ public abstract class ContainerMixin {
             while (slot.hasStack()) {
                 this.onSlotClick(slotId, 0, SlotActionType.THROW, player);
             }
-            this.method_25307();
+            this.sendContentUpdates();
             cir.setReturnValue(ItemStack.EMPTY);
         }
     }

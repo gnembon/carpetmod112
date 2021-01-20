@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(FallingBlockEntity.class)
 public abstract class FallingBlockEntityMixin extends Entity {
-    @Shadow private BlockState field_22245;
+    @Shadow private BlockState block;
     private int iceCount;
 
     public FallingBlockEntityMixin(World worldIn) {
@@ -25,19 +25,19 @@ public abstract class FallingBlockEntityMixin extends Entity {
 
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;getBlock()Lnet/minecraft/block/Block;", ordinal = 3), cancellable = true)
     private void checkIce(CallbackInfo ci) {
-        Block block = field_22245.getBlock();
+        Block block = this.block.getBlock();
         BlockPos pos = new BlockPos(this);
 
         if (block == Blocks.ANVIL && CarpetSettings.renewablePackedIce &&
-                this.world.getBlockState(new BlockPos(this.field_33071, this.field_33072 - 0.06, this.field_33073)).getBlock() == Blocks.ICE) {
+                this.world.getBlockState(new BlockPos(this.x, this.y - 0.06, this.z)).getBlock() == Blocks.ICE) {
             if (iceCount < 2) {
-                world.method_26083(pos.method_31898(), false);
+                world.breakBlock(pos.down(), false);
                 this.onGround = false;
                 iceCount++;
                 ci.cancel();
             } else {
-                world.setBlockState(pos.method_31898(), Blocks.PACKED_ICE.getDefaultState(), 3);
-                world.method_26069(2001, pos.method_31898(), Block.getId(Blocks.PACKED_ICE));
+                world.setBlockState(pos.down(), Blocks.PACKED_ICE.getDefaultState(), 3);
+                world.syncWorldEvent(2001, pos.down(), Block.getId(Blocks.PACKED_ICE));
             }
         }
     }

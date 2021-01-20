@@ -4,8 +4,8 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import carpet.utils.CarpetProfiler;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -21,13 +21,13 @@ public class CommandProfile extends CommandCarpetBase
     }
 
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "Usage: /profile <entities>";
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandProfile", sender)) return;
         if (args.length > 0 && "entities".equalsIgnoreCase(args[0]))
@@ -42,7 +42,7 @@ public class CommandProfile extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.commandProfile)
         {

@@ -749,7 +749,7 @@ public class EntityAICrafter extends Goal {
 			taskList[1] = getRecipe(tier2[tasks[1]]);
 			taskList[2] = getRecipe(tier3[tasks[2]]);
 		} catch (Exception e) {
-			Messenger.print_server_message(villager.method_29602(),
+			Messenger.print_server_message(villager.getServer(),
 					"A villager with nasty craftings was found and stats was rerolled.");
 			randomiseStats();
 		}
@@ -843,7 +843,7 @@ public class EntityAICrafter extends Goal {
 	 * Finds a crafting table in an area around the villager.
 	 */
 	private void findCraftingTableNear() {
-		World worldIn = villager.method_29608();
+		World worldIn = villager.getEntityWorld();
 		BlockPos villagerpos = new BlockPos(villager);
 		for (BlockPos pos : BlockPos.iterate(villagerpos.add(-3, -1, -3), villagerpos.add(3, 4, 3))) {
 			if (worldIn.getBlockState(pos).getBlock() == Blocks.CRAFTING_TABLE) {
@@ -885,7 +885,7 @@ public class EntityAICrafter extends Goal {
 			villagerName = s;
 
 		if (s != null && !villagerName.equals(s)) {
-			villager.method_34525(s);
+			villager.setCustomName(s);
 		}
 	}
 
@@ -1160,23 +1160,23 @@ public class EntityAICrafter extends Goal {
 		float f2 = villager.pitch;
 
 		if (craftingTablePosition != null) {
-			double d0 = craftingTablePosition.getX() + 0.5D - villager.field_33071;
-			double d1 = craftingTablePosition.getY() + 1.5D - (villager.field_33072 + (double) villager.method_34518());
-			double d2 = craftingTablePosition.getZ() + 0.5D - villager.field_33073;
+			double d0 = craftingTablePosition.getX() + 0.5D - villager.x;
+			double d1 = craftingTablePosition.getY() + 1.5D - (villager.y + (double) villager.getStandingEyeHeight());
+			double d2 = craftingTablePosition.getZ() + 0.5D - villager.z;
 			double d3 = MathHelper.sqrt(d0 * d0 + d2 * d2);
 			f1 = (float) (MathHelper.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
 			f2 = (float) (-(MathHelper.atan2(d1, d3) * (180D / Math.PI)));
 		}
 
-		double d0 = villager.field_33072 - 0.30000001192092896D + (double) villager.method_34518();
-		ItemEntity entityitem = new ItemEntity(villager.world, villager.field_33071, d0, villager.field_33073, itemstack);
+		double d0 = villager.y - 0.30000001192092896D + (double) villager.getStandingEyeHeight();
+		ItemEntity entityitem = new ItemEntity(villager.world, villager.x, d0, villager.z, itemstack);
 		float f = 0.3F;
 
-		entityitem.field_33074 = -MathHelper.sin(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f;
-		entityitem.field_33075 = MathHelper.cos(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f;
-		entityitem.field_33076 = -MathHelper.sin(f2 * 0.017453292F) * 0.3F + 0.1F;
+		entityitem.velocityX = -MathHelper.sin(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f;
+		entityitem.velocityY = MathHelper.cos(f1 * 0.017453292F) * MathHelper.cos(f2 * 0.017453292F) * f;
+		entityitem.velocityZ = -MathHelper.sin(f2 * 0.017453292F) * 0.3F + 0.1F;
 		entityitem.setToDefaultPickupDelay();
-		villager.world.method_26040(entityitem);
+		villager.world.spawnEntity(entityitem);
 	}
 
 	/**
@@ -1551,7 +1551,7 @@ public class EntityAICrafter extends Goal {
 	 * @return The specific IRecpie being request.
 	 */
 	private static Recipe getRecipe(String recipe) {
-		return RecipeManager.method_25725(new Identifier(recipe));
+		return RecipeManager.getRecipe(new Identifier(recipe));
 	}
 
 
@@ -1597,6 +1597,6 @@ public class EntityAICrafter extends Goal {
 			}
 		} catch(Exception ignored) {}
 		
-		Messenger.print_server_message(villager.method_29602(), sb.toString());
+		Messenger.print_server_message(villager.getServer(), sb.toString());
 	}
 }

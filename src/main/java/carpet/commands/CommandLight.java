@@ -1,8 +1,8 @@
 package carpet.commands;
 
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.LightType;
@@ -20,25 +20,25 @@ public class CommandLight extends CommandCarpetBase {
     }
 
     @Override
-    public String method_29275(class_2010 sender) {
+    public String method_29275(CommandSource sender) {
         return USAGE;
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
         if(!command_enabled("commandLight", sender)) return;
 
         int x1, y1, z1, x2, y2, z2, lightLevel;
         String type;
         if (args.length > 7) {
             if (args.length > 8) throw new class_6182(USAGE);
-            x1 = (int) Math.round(method_28702(sender.method_29606().getX(), args[0], false).method_28750());
-            y1 = (int) Math.round(method_28702(sender.method_29606().getY(), args[1], false).method_28750());
-            z1 = (int) Math.round(method_28702(sender.method_29606().getZ(), args[2], false).method_28750());
+            x1 = (int) Math.round(method_28702(sender.getBlockPos().getX(), args[0], false).method_28750());
+            y1 = (int) Math.round(method_28702(sender.getBlockPos().getY(), args[1], false).method_28750());
+            z1 = (int) Math.round(method_28702(sender.getBlockPos().getZ(), args[2], false).method_28750());
 
-            x2 = (int) Math.round(method_28702(sender.method_29606().getX(), args[3], false).method_28750());
-            y2 = (int) Math.round(method_28702(sender.method_29606().getY(), args[4], false).method_28750());
-            z2 = (int) Math.round(method_28702(sender.method_29606().getZ(), args[5], false).method_28750());
+            x2 = (int) Math.round(method_28702(sender.getBlockPos().getX(), args[3], false).method_28750());
+            y2 = (int) Math.round(method_28702(sender.getBlockPos().getY(), args[4], false).method_28750());
+            z2 = (int) Math.round(method_28702(sender.getBlockPos().getZ(), args[5], false).method_28750());
 
             type = args[6];
             try {
@@ -72,7 +72,7 @@ public class CommandLight extends CommandCarpetBase {
             } else {
                 throw new class_6182(USAGE);
             }
-            fillLightInArea(sender.method_29608(), t, x1, y1, z1, x2, y2, z2, lightLevel);
+            fillLightInArea(sender.getEntityWorld(), t, x1, y1, z1, x2, y2, z2, lightLevel);
 
             method_28710(sender, this,
                     String.format("Changing light level of %s to %d from:[%d %d %d] to:[%d %d %d]", type, lightLevel, x1, y1, z1, x2, y2, z2));
@@ -93,7 +93,7 @@ public class CommandLight extends CommandCarpetBase {
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, BlockPos targetPos) {
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, BlockPos targetPos) {
         if (args.length == 0) {
             return Collections.emptyList();
         } else if (args.length == 1) {

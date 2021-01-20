@@ -26,7 +26,7 @@ public class ServerPlayerInteractionManagerMixin {
     @Inject(method = "processBlockBreakingAction", at = @At("HEAD"), cancellable = true)
     private void onWorldEditLeftClick(BlockPos pos, Direction side, CallbackInfo ci) {
         if (!WorldEditBridge.onLeftClickBlock(field_31754, pos, player)) {
-            player.networkHandler.method_33624(new BlockUpdateS2CPacket(field_31754, pos));
+            player.networkHandler.sendPacket(new BlockUpdateS2CPacket(field_31754, pos));
             ci.cancel();
         }
     }
@@ -34,7 +34,7 @@ public class ServerPlayerInteractionManagerMixin {
     @Inject(method = "interactBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isSneaking()Z"), cancellable = true)
     private void onWorldEditRightClick(PlayerEntity player, World worldIn, ItemStack stack, Hand hand, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, CallbackInfoReturnable<ActionResult> cir) {
         if (!WorldEditBridge.onRightClickBlock(field_31754, pos, this.player)) {
-            this.player.networkHandler.method_33624(new BlockUpdateS2CPacket(field_31754, pos));
+            this.player.networkHandler.sendPacket(new BlockUpdateS2CPacket(field_31754, pos));
             cir.setReturnValue(ActionResult.FAIL);
         }
     }

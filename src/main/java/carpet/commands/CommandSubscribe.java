@@ -1,6 +1,6 @@
 package carpet.commands;
 
-import net.minecraft.class_2010;
+import net.minecraft.command.CommandSource;
 
 public class CommandSubscribe extends CommandLog {
 
@@ -12,7 +12,7 @@ public class CommandSubscribe extends CommandLog {
     }
 
     @Override
-    public String method_29275(class_2010 sender) {
+    public String method_29275(CommandSource sender) {
         return USAGE;
     }
 }

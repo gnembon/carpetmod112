@@ -35,7 +35,7 @@ public abstract class PlayerChunkMapMixin {
         return getOrCreateEntry(chunkX, chunkZ, player);
     }
 
-    @Inject(method = "method_33578", at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayerEntity;field_33071:D"), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "method_33578", at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayerEntity;x:D"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void capturePlayer(int radius, CallbackInfo ci, int i, List<ServerPlayerEntity> list, Iterator<ServerPlayerEntity> iterator, ServerPlayerEntity player) {
         ChunkLoading.INITIAL_PLAYER_FOR_CHUNK_MAP_ENTRY.set(player);
     }

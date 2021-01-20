@@ -13,8 +13,8 @@ public class ScoreboardDelta {
 
     public static void update() {
         for(int i = 0; i < 2; i++) {
-            ScoreboardObjective objective = CarpetServer.minecraft_server.getWorldById(0).method_26057().getObjectiveForSlot(i);
-            Collection<ScoreboardPlayerScore> list = CarpetServer.minecraft_server.getWorldById(0).method_26057().getAllPlayerScores(objective);
+            ScoreboardObjective objective = CarpetServer.minecraft_server.getWorldById(0).getScoreboard().getObjectiveForSlot(i);
+            Collection<ScoreboardPlayerScore> list = CarpetServer.minecraft_server.getWorldById(0).getScoreboard().getAllPlayerScores(objective);
 
             for(ScoreboardPlayerScore s : list){
                 ((ExtendedScore) s).computeScoreDelta();
@@ -28,8 +28,8 @@ public class ScoreboardDelta {
 
     public static void resetScoreboardDelta(){
         for(int i = 0; i < 2; i++) {
-            ScoreboardObjective objective = CarpetServer.minecraft_server.getWorldById(0).method_26057().getObjectiveForSlot(i);
-            Collection<ScoreboardPlayerScore> list = CarpetServer.minecraft_server.getWorldById(0).method_26057().getAllPlayerScores(objective);
+            ScoreboardObjective objective = CarpetServer.minecraft_server.getWorldById(0).getScoreboard().getObjectiveForSlot(i);
+            Collection<ScoreboardPlayerScore> list = CarpetServer.minecraft_server.getWorldById(0).getScoreboard().getAllPlayerScores(objective);
 
             for(ScoreboardPlayerScore s : list){
                 ((ExtendedScore) s).computeScoreDelta();

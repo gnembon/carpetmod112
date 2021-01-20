@@ -36,8 +36,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.class_2245;
 import net.minecraft.class_5305;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -137,7 +137,7 @@ class CarpetWorld extends AbstractWorld {
 
         BlockPos pos = new BlockPos(x, y, z);
         if (notifyAndLight) {
-            if (newState.method_27191() != oldState.method_27191() || newState.method_27195() != oldState.method_27195())
+            if (newState.method_27191() != oldState.method_27191() || newState.getLuminance() != oldState.getLuminance())
                 world.method_26153(pos);
         }
         world.updateListeners(pos, oldState, newState, 3);
@@ -155,7 +155,7 @@ class CarpetWorld extends AbstractWorld {
     @Override
     public int getBlockLightLevel(Vector position) {
         checkNotNull(position);
-        return getWorld().method_26072(LightType.BLOCK, new BlockPos(position.getBlockX(), position.getBlockY(), position.getBlockZ()));
+        return getWorld().getLightLevel(LightType.BLOCK, new BlockPos(position.getBlockX(), position.getBlockY(), position.getBlockZ()));
     }
 
     @Override
@@ -176,7 +176,7 @@ class CarpetWorld extends AbstractWorld {
     @Override
     public BaseBiome getBiome(Vector2D position) {
         checkNotNull(position);
-        return new BaseBiome(Biome.method_26235(getWorld().method_26188(new BlockPos(position.getBlockX(), 0, position.getBlockZ()))));
+        return new BaseBiome(Biome.method_26235(getWorld().getBiome(new BlockPos(position.getBlockX(), 0, position.getBlockZ()))));
     }
 
     @Override
@@ -205,7 +205,7 @@ class CarpetWorld extends AbstractWorld {
 
         ItemEntity entity = new ItemEntity(getWorld(), position.getX(), position.getY(), position.getZ(), CarpetWorldEdit.toCarpetItemStack(item));
         entity.setToDefaultPickupDelay();
-        getWorld().method_26040(entity);
+        getWorld().spawnEntity(entity);
     }
 
     @Override
@@ -382,7 +382,7 @@ class CarpetWorld extends AbstractWorld {
         World world = getWorld();
         List<net.minecraft.entity.Entity> ents = world.field_23572;
         for (net.minecraft.entity.Entity entity : ents) {
-            if (region.contains(new Vector(entity.field_33071, entity.field_33072, entity.field_33073))) {
+            if (region.contains(new Vector(entity.x, entity.y, entity.z))) {
                 entities.add(new CarpetEntity(entity));
             }
         }
@@ -402,7 +402,7 @@ class CarpetWorld extends AbstractWorld {
     @Override
     public Entity createEntity(Location location, BaseEntity entity) {
         World world = getWorld();
-        net.minecraft.entity.Entity createdEntity = class_2245.method_34597(new Identifier(entity.getTypeId()), world);
+        net.minecraft.entity.Entity createdEntity = EntityType.createInstanceFromId(new Identifier(entity.getTypeId()), world);
         if (createdEntity != null) {
             CompoundTag nativeTag = entity.getNbtData();
             if (nativeTag != null) {
@@ -415,7 +415,7 @@ class CarpetWorld extends AbstractWorld {
 
             createdEntity.refreshPositionAndAngles(location.getX(), location.getY(), location.getZ(), location.getYaw(), location.getPitch());
 
-            world.method_26040(createdEntity);
+            world.spawnEntity(createdEntity);
             return new CarpetEntity(createdEntity);
         } else {
             return null;

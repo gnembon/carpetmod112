@@ -21,7 +21,7 @@ public abstract class AbstractDecorationEntityMixin extends Entity {
     @Redirect(method = {
         "tick",
         "damage",
-        "method_34411",
+        "move",
         "addVelocity"
     }, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/decoration/AbstractDecorationEntity;remove()V"))
     private void moveSetDead1(AbstractDecorationEntity entity) {}
@@ -36,7 +36,7 @@ public abstract class AbstractDecorationEntityMixin extends Entity {
         remove();
     }
 
-    @Inject(method = "method_34411", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/decoration/AbstractDecorationEntity;onBreak(Lnet/minecraft/entity/Entity;)V", shift = At.Shift.AFTER))
+    @Inject(method = "move", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/decoration/AbstractDecorationEntity;onBreak(Lnet/minecraft/entity/Entity;)V", shift = At.Shift.AFTER))
     private void moveSetDead2(MovementType type, double x, double y, double z, CallbackInfo ci) {
         remove();
     }

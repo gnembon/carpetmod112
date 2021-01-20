@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(HuskEntity.class)
 public class HuskEntityMixin {
-    @Redirect(method = "method_34765", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_26129(Lnet/minecraft/util/math/BlockPos;)Z"))
+    @Redirect(method = "canMobSpawn", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;isSkyVisible(Lnet/minecraft/util/math/BlockPos;)Z"))
     private boolean alwaysInTemple(World world, BlockPos pos) {
-        if (world.method_26129(pos)) return true;
+        if (world.isSkyVisible(pos)) return true;
         if (!CarpetSettings.huskSpawningInTemples) return false;
         return ((ServerWorld) world).getChunkManager().method_33446(world, "Temple", pos);
     }

@@ -25,7 +25,7 @@ public class PlayerChunkMapEntryMixin {
             if (field_31800) {
                 for (ServerPlayerEntity player : field_31793) {
                     BlockEntityUpdateS2CPacket packet = ((IPlayerSensitiveTileEntity) be).getUpdatePacketPlayerSensitive(player);
-                    if (packet != null) player.networkHandler.method_33624(packet);
+                    if (packet != null) player.networkHandler.sendPacket(packet);
                 }
             }
             ci.cancel();

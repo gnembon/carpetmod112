@@ -19,16 +19,16 @@ public abstract class GuardianEntityMixin extends HostileEntity {
     public void onStruckByLightning(LightningEntity lightningBolt) {
         if (!this.world.isClient && !this.removed && CarpetSettings.renewableElderGuardians) {
             ElderGuardianEntity elderGuardian = new ElderGuardianEntity(this.world);
-            elderGuardian.refreshPositionAndAngles(this.field_33071, this.field_33072, this.field_33073, this.yaw, this.pitch);
+            elderGuardian.refreshPositionAndAngles(this.x, this.y, this.z, this.yaw, this.pitch);
             elderGuardian.initialize(this.world.getLocalDifficulty(new BlockPos(elderGuardian)), null);
             elderGuardian.setAiDisabled(this.isAiDisabled());
 
-            if (this.method_34200()) {
-                elderGuardian.method_34525(this.method_34510());
+            if (this.hasCustomName()) {
+                elderGuardian.setCustomName(this.getCustomName());
                 elderGuardian.setCustomNameVisible(this.isCustomNameVisible());
             }
 
-            this.world.method_26040(elderGuardian);
+            this.world.spawnEntity(elderGuardian);
             this.remove();
         } else {
             super.onStruckByLightning(lightningBolt);

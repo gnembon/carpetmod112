@@ -294,10 +294,10 @@ public class EntityPlayerActionPack
             return;
         }
         Entity closest = entities.get(0);
-        double distance = player.method_34553(closest);
+        double distance = player.squaredDistanceTo(closest);
         for (Entity e: entities)
         {
-            double dd = player.method_34553(e);
+            double dd = player.squaredDistanceTo(e);
             if (dd<distance)
             {
                 distance = dd;
@@ -370,19 +370,19 @@ public class EntityPlayerActionPack
         BlockHitResult raytraceresult = mouseOver();
         if(raytraceresult == null) return;
 
-        switch (raytraceresult.field_26673)
+        switch (raytraceresult.type)
         {
             case ENTITY:
-                player.attack(raytraceresult.field_26676);
+                player.attack(raytraceresult.entity);
                 this.player.swingHand(Hand.MAIN_HAND);
                 break;
             case MISS:
                 break;
             case BLOCK:
                 BlockPos blockpos = raytraceresult.getBlockPos();
-                if (player.method_29608().getBlockState(blockpos).getMaterial() != Material.AIR)
+                if (player.getEntityWorld().getBlockState(blockpos).getMaterial() != Material.AIR)
                 {
-                    onPlayerDamageBlock(blockpos,raytraceresult.field_26674.getOpposite());
+                    onPlayerDamageBlock(blockpos,raytraceresult.side.getOpposite());
                     this.player.swingHand(Hand.MAIN_HAND);
                     break;
                 }
@@ -397,13 +397,13 @@ public class EntityPlayerActionPack
             ItemStack itemstack = this.player.getStackInHand(enumhand);
             if (raytraceresult != null)
             {
-                switch (raytraceresult.field_26673)
+                switch (raytraceresult.type)
                 {
                     case ENTITY:
-                        Entity target = raytraceresult.field_26676;
-                        Vec3d vec3d = new Vec3d(raytraceresult.field_26675.x - target.field_33071, raytraceresult.field_26675.y - target.field_33072, raytraceresult.field_26675.z - target.field_33073);
+                        Entity target = raytraceresult.entity;
+                        Vec3d vec3d = new Vec3d(raytraceresult.field_26675.x - target.x, raytraceresult.field_26675.y - target.y, raytraceresult.field_26675.z - target.z);
 
-                        boolean flag = player.method_34630(target);
+                        boolean flag = player.canSee(target);
                         double d0 = 36.0D;
 
                         if (!flag)
@@ -411,7 +411,7 @@ public class EntityPlayerActionPack
                             d0 = 9.0D;
                         }
 
-                        if (player.method_34553(target) < d0)
+                        if (player.squaredDistanceTo(target) < d0)
                         {
                             ActionResult res = player.interact(target,enumhand);
                             if (res == ActionResult.SUCCESS)
@@ -430,7 +430,7 @@ public class EntityPlayerActionPack
                     case BLOCK:
                         BlockPos blockpos = raytraceresult.getBlockPos();
 
-                        if (player.method_29608().getBlockState(blockpos).getMaterial() != Material.AIR)
+                        if (player.getEntityWorld().getBlockState(blockpos).getMaterial() != Material.AIR)
                         {
                             if(itemstack.isEmpty())
                                 continue;
@@ -438,7 +438,7 @@ public class EntityPlayerActionPack
                             float y = (float) raytraceresult.field_26675.y;
                             float z = (float) raytraceresult.field_26675.z;
 
-                            ActionResult res = player.interactionManager.interactBlock(player, player.method_29608(), itemstack, enumhand, blockpos, raytraceresult.field_26674, x, y, z);
+                            ActionResult res = player.interactionManager.interactBlock(player, player.getEntityWorld(), itemstack, enumhand, blockpos, raytraceresult.side, x, y, z);
                             if (res == ActionResult.SUCCESS)
                             {
                                 this.player.swingHand(enumhand);
@@ -447,7 +447,7 @@ public class EntityPlayerActionPack
                         }
                 }
             }
-            ActionResult res = player.interactionManager.interactItem(player,player.method_29608(),itemstack,enumhand);
+            ActionResult res = player.interactionManager.interactItem(player,player.getEntityWorld(),itemstack,enumhand);
             if (res == ActionResult.SUCCESS)
             {
                 return true;
@@ -459,14 +459,14 @@ public class EntityPlayerActionPack
     private BlockHitResult rayTraceBlocks(double blockReachDistance)
     {
         Vec3d eyeVec = player.getCameraPosVec(1.0F);
-        Vec3d lookVec = player.method_34535(1.0F);
+        Vec3d lookVec = player.getRotationVec(1.0F);
         Vec3d pointVec = eyeVec.add(lookVec.x * blockReachDistance, lookVec.y * blockReachDistance, lookVec.z * blockReachDistance);
-        return player.method_29608().rayTrace(eyeVec, pointVec, false, false, true);
+        return player.getEntityWorld().rayTrace(eyeVec, pointVec, false, false, true);
     }
 
     public BlockHitResult mouseOver()
     {
-        World world = player.method_29608();
+        World world = player.getEntityWorld();
         if (world == null)
             return null;
         BlockHitResult result = null;
@@ -486,7 +486,7 @@ public class EntityPlayerActionPack
                 result = null;
         }
 
-        Vec3d lookVec = player.method_34535(1.0F);
+        Vec3d lookVec = player.getRotationVec(1.0F);
         Vec3d pointVec = eyeVec.add(lookVec.x * reach, lookVec.y * reach, lookVec.z * reach);
         Vec3d field_26675 = null;
         List<Entity> list = world.getEntities(
@@ -556,7 +556,7 @@ public class EntityPlayerActionPack
 
     public boolean clickBlock(BlockPos loc, Direction face) // don't call this one
     {
-        World world = player.method_29608();
+        World world = player.getEntityWorld();
         if (player.interactionManager.getGameMode()!=GameMode.ADVENTURE)
         {
             if (player.interactionManager.getGameMode() == GameMode.SPECTATOR)
@@ -640,7 +640,7 @@ public class EntityPlayerActionPack
             --this.blockHitDelay;
             return true;
         }
-        World world = player.method_29608();
+        World world = player.getEntityWorld();
         if (player.interactionManager.getGameMode()==GameMode.CREATIVE && world.getWorldBorder().contains(posBlock))
         {
             this.blockHitDelay = 5;
@@ -683,7 +683,7 @@ public class EntityPlayerActionPack
 
     private boolean onPlayerDestroyBlock(BlockPos pos)
     {
-        World world = player.method_29608();
+        World world = player.getEntityWorld();
         if (player.interactionManager.getGameMode()!=GameMode.ADVENTURE)
         {
             if (player.interactionManager.getGameMode() == GameMode.SPECTATOR)
@@ -726,7 +726,7 @@ public class EntityPlayerActionPack
             }
             else
             {
-                world.method_26069(2001, pos, Block.getRawIdFromState(iblockstate));
+                world.syncWorldEvent(2001, pos, Block.getRawIdFromState(iblockstate));
                 block.onBreak(world, pos, iblockstate, player);
                 boolean flag = world.setBlockState(pos, Blocks.AIR.getDefaultState(), 11);
 
@@ -764,7 +764,7 @@ public class EntityPlayerActionPack
             player.networkHandler.onPlayerAction(createDiggingPacket(PlayerActionC2SPacket.Action.ABORT_DESTROY_BLOCK, this.currentBlock, Direction.DOWN));
             this.isHittingBlock = false;
             this.curBlockDamageMP = 0.0F;
-            player.method_29608().method_26094(player.getEntityId(), this.currentBlock, -1);
+            player.getEntityWorld().method_26094(player.getEntityId(), this.currentBlock, -1);
             player.resetLastAttackedTicks();
             this.currentBlock = new BlockPos(-1,-1,-1);
         }

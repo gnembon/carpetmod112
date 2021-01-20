@@ -50,9 +50,9 @@ public class PistonBlockMixin extends FacingBlock {
                 break;
             }
         }
-        BlockState movingBlock = Blocks.PISTON_EXTENSION.getDefaultState().with(field_24311, direction)
+        BlockState movingBlock = Blocks.PISTON_EXTENSION.getDefaultState().with(FACING, direction)
                 .with(PistonHelper.OPACITY, Math.min(currentState.method_27191(), 15))
-                .with(PistonHelper.LIGHT, currentState.method_27195());
+                .with(PistonHelper.LIGHT, currentState.getLuminance());
         worldIn.setBlockState(currentPos, movingBlock, 20);
         if (remove){
             worldIn.setBlockState(posOld, Blocks.AIR.getDefaultState(), 2);

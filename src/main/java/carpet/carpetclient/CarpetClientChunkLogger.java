@@ -14,7 +14,6 @@ import carpet.mixin.accessors.PlayerChunkMapAccessor;
 import carpet.utils.LRUCache;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.Iterators;
-import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.class_4615;
 import net.minecraft.class_6380;
@@ -27,6 +26,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
+import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.WorldChunk;
 import javax.annotation.Nullable;
@@ -109,19 +109,19 @@ public class CarpetClientChunkLogger {
         reason = null;
     }
 
-    public static BlockState getBlockState(BlockEntityProvider world, BlockPos pos, String reason) {
+    public static BlockState getBlockState(BlockView world, BlockPos pos, String reason) {
         setReason(reason);
         BlockState state = world.getBlockState(pos);
         resetToOldReason();
         return state;
     }
-    public static BlockState getBlockState(BlockEntityProvider world, BlockPos pos, ChunkLoadingReason reason) {
+    public static BlockState getBlockState(BlockView world, BlockPos pos, ChunkLoadingReason reason) {
         setReason(reason);
         BlockState state = world.getBlockState(pos);
         resetToOldReason();
         return state;
     }
-    public static BlockState getBlockState(BlockEntityProvider world, BlockPos pos, Supplier<ChunkLoadingReason> reason) {
+    public static BlockState getBlockState(BlockView world, BlockPos pos, Supplier<ChunkLoadingReason> reason) {
         setReason(reason);
         BlockState state = world.getBlockState(pos);
         resetToOldReason();
@@ -360,7 +360,7 @@ public class CarpetClientChunkLogger {
         }
 
         private void sendInitalChunks(ServerPlayerEntity sender) {
-            MinecraftServer server = sender.method_29602();
+            MinecraftServer server = sender.getServer();
             ArrayList<ChunkLog> logs = getInitialChunksForNewClient(server);
             sendMissingStackTracesForPlayer(sender, logs);
             for (int i = 0; i < logs.size(); i += LOGS_BATCH_SIZE) {

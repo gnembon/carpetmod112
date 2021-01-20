@@ -12,10 +12,10 @@ public class AutoCraftingDropperHelper
         while (!stack.isEmpty())
         {
             ItemEntity itemEntity = new ItemEntity(worldIn, x, y, z, stack.split(CarpetServer.rand.nextInt(21) + 10));
-            itemEntity.field_33074 = (CarpetServer.rand.nextDouble() - CarpetServer.rand.nextDouble()) * 0.05;
-            itemEntity.field_33075 = CarpetServer.rand.nextDouble() * 0.05;
-            itemEntity.field_33076 = (CarpetServer.rand.nextDouble() - CarpetServer.rand.nextDouble()) * 0.05;
-            worldIn.method_26040(itemEntity);
+            itemEntity.velocityX = (CarpetServer.rand.nextDouble() - CarpetServer.rand.nextDouble()) * 0.05;
+            itemEntity.velocityY = CarpetServer.rand.nextDouble() * 0.05;
+            itemEntity.velocityZ = (CarpetServer.rand.nextDouble() - CarpetServer.rand.nextDouble()) * 0.05;
+            worldIn.spawnEntity(itemEntity);
         }
     }
 }

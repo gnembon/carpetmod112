@@ -13,7 +13,7 @@ public class FakeServerPlayNetworkHandler extends ServerPlayNetworkHandler {
     }
 
     @Override
-    public void method_33624(final Packet<?> packetIn) {
+    public void sendPacket(final Packet<?> packetIn) {
     }
 
     @Override

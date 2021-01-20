@@ -6,16 +6,16 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import carpet.utils.DistanceCalculator;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
 public class CommandDistance extends CommandCarpetBase
 {
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "Usage: distance <X1> <Y1> <Z1> <X2> <Y2> <Z2>";
     }
@@ -27,7 +27,7 @@ public class CommandDistance extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandDistance", sender)) return;
         if (args.length != 6)
@@ -41,7 +41,7 @@ public class CommandDistance extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.commandDistance)
         {

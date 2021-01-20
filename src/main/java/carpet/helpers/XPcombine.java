@@ -10,7 +10,7 @@ public class XPcombine {
 
     public static void searchForOtherXPNearbyCarpet(ExperienceOrbEntity first)
     {
-        for (ExperienceOrbEntity entityxp : first.world.method_26031(ExperienceOrbEntity.class,
+        for (ExperienceOrbEntity entityxp : first.world.getEntities(ExperienceOrbEntity.class,
                 first.getBoundingBox().stretch(0.5D, 0.0D, 0.5D)))
         {
             combineItems(first, entityxp);
@@ -37,7 +37,7 @@ public class XPcombine {
                     if (getTextureByXP(other.getExperienceAmount() ) != size)
                     {
                         other.remove();
-                        first.world.method_26040(newXPOrb(other.world, other.getExperienceAmount(), other));
+                        first.world.spawnEntity(newXPOrb(other.world, other.getExperienceAmount(), other));
                     }
                     else
                     {
@@ -63,11 +63,11 @@ public class XPcombine {
     }
 
     private static ExperienceOrbEntity newXPOrb(World world, int expValue, ExperienceOrbEntity old) {
-        ExperienceOrbEntity orb = new ExperienceOrbEntity(world, old.field_33071, old.field_33072, old.field_33073, expValue);
+        ExperienceOrbEntity orb = new ExperienceOrbEntity(world, old.x, old.y, old.z, expValue);
         orb.yaw = old.yaw;
-        orb.field_33074 = old.field_33074;
-        orb.field_33075 = old.field_33075;
-        orb.field_33076 = old.field_33076;
+        orb.velocityX = old.velocityX;
+        orb.velocityY = old.velocityY;
+        orb.velocityZ = old.velocityZ;
         return orb;
     }
 

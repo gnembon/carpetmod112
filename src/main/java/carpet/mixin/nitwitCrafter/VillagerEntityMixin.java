@@ -19,9 +19,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class VillagerEntityMixin extends PassiveEntity {
     private EntityAICrafter craftingAI;
 
-    @Shadow public abstract int method_24914();
+    @Shadow public abstract int getType();
 
-    @Shadow @Final private BasicInventory field_22468;
+    @Shadow @Final private BasicInventory inventory;
 
     public VillagerEntityMixin(World worldIn) {
         super(worldIn);
@@ -35,24 +35,24 @@ public abstract class VillagerEntityMixin extends PassiveEntity {
     @Inject(method = {
         "method_24925",
         "onGrowUp"
-    }, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/VillagerEntity;method_24914()I"))
+    }, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/VillagerEntity;getType()I"))
     private void addCraftTask(CallbackInfo ci) {
-        if (CarpetSettings.nitwitCrafter && method_24914() == 5) {
+        if (CarpetSettings.nitwitCrafter && getType() == 5) {
             craftingAI.updateNitwit();
             goalSelector.add(6, craftingAI);
         }
     }
 
-    @Inject(method = "method_34638", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/PassiveEntity;method_34638(Lnet/minecraft/entity/damage/DamageSource;)V"))
+    @Inject(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/PassiveEntity;onDeath(Lnet/minecraft/entity/damage/DamageSource;)V"))
     private void onDeath(DamageSource cause, CallbackInfo ci) {
-        if (CarpetSettings.nitwitCrafter && method_24914() == 5 || CarpetSettings.villagerInventoryDropFix) {
+        if (CarpetSettings.nitwitCrafter && getType() == 5 || CarpetSettings.villagerInventoryDropFix) {
             craftingAI.dropInventory();
         }
     }
 
     @Inject(method = "method_24926", at = @At("HEAD"), cancellable = true)
     private void emptyNitwitBuyingList(CallbackInfo ci) {
-        if (CarpetSettings.nitwitCrafter && method_24914() == 5) {
+        if (CarpetSettings.nitwitCrafter && getType() == 5) {
             ci.cancel();
         }
     }
@@ -60,7 +60,7 @@ public abstract class VillagerEntityMixin extends PassiveEntity {
     @Inject(method = "loot", at = @At("HEAD"), cancellable = true)
     private void updateCraftingEquipment(ItemEntity itemEntity, CallbackInfo ci) {
         if (CarpetSettings.nitwitCrafter && craftingAI != null) {
-            if (craftingAI.updateEquipment(itemEntity, field_22468)) ci.cancel();
+            if (craftingAI.updateEquipment(itemEntity, inventory)) ci.cancel();
         }
     }
 }

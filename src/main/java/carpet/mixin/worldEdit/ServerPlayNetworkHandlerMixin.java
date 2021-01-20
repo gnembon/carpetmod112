@@ -19,6 +19,6 @@ public class ServerPlayNetworkHandlerMixin {
 
     @Inject(method = "onPlayerInteractItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerInteractionManager;interactItem(Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/world/World;Lnet/minecraft/item/ItemStack;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/ActionResult;"))
     private void onRightClickAir(PlayerInteractItemC2SPacket packetIn, CallbackInfo ci) {
-        WorldEditBridge.onRightClickAir(server.getWorldById(player.field_33045), player);
+        WorldEditBridge.onRightClickAir(server.getWorldById(player.dimensionId), player);
     }
 }

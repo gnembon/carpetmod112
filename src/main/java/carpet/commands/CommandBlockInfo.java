@@ -6,9 +6,9 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import carpet.utils.BlockInfo;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -20,7 +20,7 @@ public class CommandBlockInfo extends CommandCarpetBase
      */
 
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "Usage: blockinfo <X> <Y> <Z>";
     }
@@ -35,7 +35,7 @@ public class CommandBlockInfo extends CommandCarpetBase
      * Callback for when the command is executed
      */
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandBlockInfo", sender)) return;
 
@@ -44,12 +44,12 @@ public class CommandBlockInfo extends CommandCarpetBase
             throw new class_6182(method_29275(sender));
         }
         BlockPos blockpos = method_28713(sender, args, 0, false);
-        World world = sender.method_29608();
+        World world = sender.getEntityWorld();
         msg(sender, BlockInfo.blockInfo(blockpos, world));
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.commandBlockInfo)
         {

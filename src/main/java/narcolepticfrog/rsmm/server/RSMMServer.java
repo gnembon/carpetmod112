@@ -58,7 +58,7 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
     private MeterGroup getOrCreateMeterGroup(ServerPlayerEntity player) {
         UUID playerUUID = player.getUuid();
         if (!playerSubscriptions.containsKey(playerUUID)) {
-            playerSubscriptions.put(playerUUID, player.method_29611());
+            playerSubscriptions.put(playerUUID, player.getName());
         }
         String groupName = playerSubscriptions.get(playerUUID);
         if (!meterGroups.containsKey(groupName)) {
@@ -106,7 +106,7 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
      */
     public void sendToPlayer(ServerPlayerEntity player, RSMMCPacket packet) {
         if (CarpetServer.pluginChannels.tracker.isRegistered(player, "RSMM")) {
-            player.networkHandler.method_33624(new CustomPayloadS2CPacket("RSMM", packet.toBuffer()));
+            player.networkHandler.sendPacket(new CustomPayloadS2CPacket("RSMM", packet.toBuffer()));
         }
     }
 

@@ -17,8 +17,8 @@ public class ServerRecipeBookMixin {
     private static final ThreadLocal<ServerPlayerEntity> tlPlayer = new ThreadLocal<>();
 
     @Redirect(method = {
-        "method_33855",
-        "method_33858"
+        "unlockRecipes",
+        "remove"
     }, at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", remap = false))
     private boolean filter(List<Recipe> list, Object e, List<Recipe> recipesIn, ServerPlayerEntity player) {
         Recipe recipe = (Recipe) e;

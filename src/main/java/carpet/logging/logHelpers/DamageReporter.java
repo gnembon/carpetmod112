@@ -40,7 +40,7 @@ public class DamageReporter
     public static void register_damage(LivingEntity target, DamageSource source, float amount)
     {
         if (!LoggerRegistry.__damage) return;
-        if (source.isFire() && (target.isInLava() ||
+        if (source.isFire() && (target.isFireImmune() ||
                 target.hasStatusEffect(StatusEffects.FIRE_RESISTANCE)))
             return;
         LoggerRegistry.getLogger("damage").logNoCommand( (option, player)->
@@ -77,7 +77,7 @@ public class DamageReporter
             return;
         if (previous_amount == final_amount)
             return;
-        if (source.isFire() && (target.isInLava() ||
+        if (source.isFire() && (target.isFireImmune() ||
                 target.hasStatusEffect(StatusEffects.FIRE_RESISTANCE)))
             return;
         LoggerRegistry.getLogger("damage").logNoCommand( (option, player)->

@@ -24,7 +24,7 @@ public abstract class GhastShootFireballGoalMixin extends Goal {
         if (this.ghast.getTarget() == null) {
             return false;
         }
-        if (CarpetSettings.rideableGhasts && this.ghast.method_34200()) {
+        if (CarpetSettings.rideableGhasts && this.ghast.hasCustomName()) {
             if (this.ghast.hasPassengers()) {
                 //reset the attack;
                 this.stop();

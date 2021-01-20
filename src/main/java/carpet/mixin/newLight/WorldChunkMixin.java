@@ -33,14 +33,14 @@ public abstract class WorldChunkMixin implements NewLightChunk {
     @Shadow public abstract void method_27421();
     @Shadow protected abstract void method_27399(int x, int z);
 
-    @Inject(method = "method_27385", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;method_27521()Z"), locals = LocalCapture.CAPTURE_FAILHARD)
+    @Inject(method = "method_27385", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;hasSkyLight()Z"), locals = LocalCapture.CAPTURE_FAILHARD)
     private void generateSkyLight(CallbackInfo ci, int top, int x, int z) {
         if (CarpetSettings.newLight) LightingHooks.fillSkylightColumn((WorldChunk) (Object) this, x, z);
     }
 
-    @Redirect(method = "method_27385", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;method_27521()Z"))
+    @Redirect(method = "method_27385", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;hasSkyLight()Z"))
     private boolean generateSkyLightCancelVanilla(Dimension worldProvider) {
-        return !CarpetSettings.newLight && worldProvider.method_27521();
+        return !CarpetSettings.newLight && worldProvider.hasSkyLight();
     }
 
     @ModifyConstant(method = "method_27394", constant = @Constant(intValue = 255))
@@ -53,17 +53,17 @@ public abstract class WorldChunkMixin implements NewLightChunk {
         if (!CarpetSettings.newLight) world.method_25977(x, z, y1, y2);
     }
 
-    @Redirect(method = "method_27394", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;method_27521()Z", ordinal = 0))
+    @Redirect(method = "method_27394", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;hasSkyLight()Z", ordinal = 0))
     private boolean relightSkyLight(Dimension worldProvider, int x, int y, int z) {
-        boolean hasSkylight = worldProvider.method_27521();
+        boolean hasSkylight = worldProvider.hasSkyLight();
         if (!hasSkylight || !CarpetSettings.newLight) return hasSkylight;
         LightingHooks.relightSkylightColumn(world, (WorldChunk) (Object) this, x, z, this.field_25365 * 16 + x, this.field_25366 * 16 + z);
         return false; // cancel vanilla code
     }
 
-    @Redirect(method = "method_27394", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;method_27521()Z", ordinal = 1))
+    @Redirect(method = "method_27394", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/dimension/Dimension;hasSkyLight()Z", ordinal = 1))
     private boolean relightSkyLight2(Dimension worldProvider) {
-        return !CarpetSettings.newLight && worldProvider.method_27521();
+        return !CarpetSettings.newLight && worldProvider.hasSkyLight();
     }
 
     @Inject(method = "method_27364", at = @At("HEAD"))
@@ -155,7 +155,7 @@ public abstract class WorldChunkMixin implements NewLightChunk {
             return this.method_27396(pos) ? type.field_23634 : 0;
         }
         if (type == LightType.SKY) {
-            return !this.world.dimension.method_27521() ? 0 : section.method_27440(x, y & 15, z);
+            return !this.world.dimension.hasSkyLight() ? 0 : section.method_27440(x, y & 15, z);
         }
         return type == LightType.BLOCK ? section.method_27443(x, y & 15, z) : type.field_23634;
     }

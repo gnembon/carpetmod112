@@ -26,7 +26,7 @@ public class PacketSplitter {
             buf.resetWriterIndex();
             if (offset == 0) buf.writeVarInt(len);
             buf.writeBytes(packet, thisLen);
-            player.networkHandler.method_33624(new CustomPayloadS2CPacket(channel, buf));
+            player.networkHandler.sendPacket(new CustomPayloadS2CPacket(channel, buf));
         }
         packet.release();
     }

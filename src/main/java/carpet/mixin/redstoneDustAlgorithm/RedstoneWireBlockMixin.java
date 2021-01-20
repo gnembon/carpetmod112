@@ -51,12 +51,12 @@ public abstract class RedstoneWireBlockMixin {
                     maxCurrentStrength = this.method_26761(world, blockpos, maxCurrentStrength);
                 }
 
-                if (world.getBlockState(blockpos).method_27207() && !world.getBlockState(pos1.up()).method_27207()) {
+                if (world.getBlockState(blockpos).isSolidBlock() && !world.getBlockState(pos1.up()).isSolidBlock()) {
                     if (isNeighbor && pos1.getY() >= pos2.getY()) {
                         maxCurrentStrength = this.method_26761(world, blockpos.up(), maxCurrentStrength);
                     }
-                } else if (!world.getBlockState(blockpos).method_27207() && isNeighbor && pos1.getY() <= pos2.getY()) {
-                    maxCurrentStrength = this.method_26761(world, blockpos.method_31898(), maxCurrentStrength);
+                } else if (!world.getBlockState(blockpos).isSolidBlock() && isNeighbor && pos1.getY() <= pos2.getY()) {
+                    maxCurrentStrength = this.method_26761(world, blockpos.down(), maxCurrentStrength);
                 }
             }
         }

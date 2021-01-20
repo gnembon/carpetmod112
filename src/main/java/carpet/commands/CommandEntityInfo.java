@@ -14,8 +14,8 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
+import net.minecraft.command.CommandSource;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
@@ -29,13 +29,13 @@ public class CommandEntityInfo extends CommandCarpetBase
     }
 
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "Usage: entityinfo <entity_selector>";
     }
 
 
-    public void print_multi_message(List<String> messages, class_2010 sender, String grep)
+    public void print_multi_message(List<String> messages, CommandSource sender, String grep)
     {
         List<String> actual = new ArrayList<>();
         if (grep != null)
@@ -70,7 +70,7 @@ public class CommandEntityInfo extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandEntityInfo", sender)) return;
         if (args.length == 0 || "grep".equalsIgnoreCase(args[0]))
@@ -81,14 +81,14 @@ public class CommandEntityInfo extends CommandCarpetBase
                 grep = args[1];
             }
             PlayerEntity entityplayer = method_28708(sender);
-            List<String> report = EntityInfo.entityInfo(entityplayer, sender.method_29608());
+            List<String> report = EntityInfo.entityInfo(entityplayer, sender.getEntityWorld());
             print_multi_message(report, sender, grep);
         }
         else
         {
             Entity entity = method_28743(server, sender, args[0]);
             //LOG.error("SENDER dimension "+ sender.method_29608().provider.getDimensionType().getId());
-            List<String> report = EntityInfo.entityInfo(entity, sender.method_29608());
+            List<String> report = EntityInfo.entityInfo(entity, sender.getEntityWorld());
             String grep = null;
             if (args.length >= 3 && "grep".equalsIgnoreCase(args[1]))
             {
@@ -105,7 +105,7 @@ public class CommandEntityInfo extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos targetPos)
     {
         if (!CarpetSettings.commandEntityInfo)
         {
@@ -113,8 +113,8 @@ public class CommandEntityInfo extends CommandCarpetBase
         }
         List<String> list = method_28732(args, server.getPlayerNames());
         BlockHitResult result = ((ActionPackOwner) sender).getActionPack().mouseOver();
-        if (result != null && result.field_26673 == BlockHitResult.Type.ENTITY) {
-            list.add(result.field_26676.getUuid().toString());
+        if (result != null && result.type == BlockHitResult.Type.ENTITY) {
+            list.add(result.entity.getUuid().toString());
         }
         return args.length == 1 ? list : Collections.emptyList();
     }

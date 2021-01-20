@@ -65,7 +65,7 @@ public class GhastEntityMixin extends FlyingEntity {
 
     @Override
     public double getMountedHeightOffset() {
-        if (CarpetSettings.rideableGhasts) return this.field_33002 - 0.2;
+        if (CarpetSettings.rideableGhasts) return this.height - 0.2;
         return super.getMountedHeightOffset();
     }
 }

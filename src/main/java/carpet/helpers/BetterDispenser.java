@@ -61,14 +61,14 @@ public class BetterDispenser {
                 
                 // Block rotation for blocks that can be placed in all 6 rotations.
                 if(block instanceof FacingBlock || block instanceof DispenserBlock){ 
-                    Direction face = (Direction)iblockstate.get(FacingBlock.field_24311);
+                    Direction face = (Direction)iblockstate.get(FacingBlock.FACING);
                     face = rotateAround(face, sourceFace.getAxis());
                     if(sourceFace.getId() % 2 == 0){ // Rotate twice more to make blocks always rotate clockwise relative to the dispenser
                                                         // when index is equal to zero. when index is equal to zero the dispenser is in the opposite direction.
                         face = rotateAround(face, sourceFace.getAxis());
                         face = rotateAround(face, sourceFace.getAxis());
                     }
-                    world.setBlockState(blockpos, iblockstate.with(FacingBlock.field_24311, face), 3);
+                    world.setBlockState(blockpos, iblockstate.with(FacingBlock.FACING, face), 3);
                 
                 // Block rotation for blocks that can be placed in only 4 horizontal rotations.
                 }else if(block instanceof HorizontalFacingBlock){
@@ -193,7 +193,7 @@ public class BetterDispenser {
             }
             
             BlockPos blockpos = source.getBlockPos().offset(source.getBlockState().get(DispenserBlock.FACING));
-            List<MinecartEntity> list = source.getWorld().method_26031(MinecartEntity.class, new Box(blockpos));
+            List<MinecartEntity> list = source.getWorld().getEntities(MinecartEntity.class, new Box(blockpos));
     
             if (list.isEmpty())
             {
@@ -203,14 +203,14 @@ public class BetterDispenser {
             {
                 MinecartEntity minecart = list.get(0);
                 minecart.remove();
-                AbstractMinecartEntity entityminecart = AbstractMinecartEntity.method_25227(minecart.world, minecart.field_33071, minecart.field_33072, minecart.field_33073, this.minecartType);
-                entityminecart.field_33074 = minecart.field_33074;
-                entityminecart.field_33075 = minecart.field_33075;
-                entityminecart.field_33076 = minecart.field_33076;
+                AbstractMinecartEntity entityminecart = AbstractMinecartEntity.create(minecart.world, minecart.x, minecart.y, minecart.z, this.minecartType);
+                entityminecart.velocityX = minecart.velocityX;
+                entityminecart.velocityY = minecart.velocityY;
+                entityminecart.velocityZ = minecart.velocityZ;
                 entityminecart.pitch = minecart.pitch;
                 entityminecart.yaw = minecart.yaw;
                 
-                minecart.world.method_26040(entityminecart);
+                minecart.world.spawnEntity(entityminecart);
                 stack.decrement(1);
                 return stack;
             }
@@ -221,8 +221,8 @@ public class BetterDispenser {
                 World world = source.getWorld();
                 BlockPos blockpos = source.getBlockPos().offset(source.getBlockState().get(DispenserBlock.FACING));
                 TntEntity entitytntprimed = new TntEntity(world, (double)blockpos.getX() + 0.5D, (double)blockpos.getY(), (double)blockpos.getZ() + 0.5D, (LivingEntity)null);
-                world.method_26040(entitytntprimed);
-                world.playSound((PlayerEntity)null, entitytntprimed.field_33071, entitytntprimed.field_33072, entitytntprimed.field_33073, SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                world.spawnEntity(entitytntprimed);
+                world.playSound((PlayerEntity)null, entitytntprimed.x, entitytntprimed.y, entitytntprimed.z, SoundEvents.ENTITY_TNT_PRIMED, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 stack.decrement(1);
                 return stack;
             }else{
@@ -232,7 +232,7 @@ public class BetterDispenser {
 
         protected void playSound(BlockPointer source)
         {
-            source.getWorld().method_26069(1000, source.getBlockPos(), 0);
+            source.getWorld().syncWorldEvent(1000, source.getBlockPos(), 0);
         }
     }
 }

@@ -18,7 +18,7 @@ import java.util.List;
 public class EntityMixin {
     @Shadow @Final private List<Entity> passengerList;
 
-    @Inject(method = "method_34532", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;putString(Ljava/lang/String;Ljava/lang/String;)V"), cancellable = true)
+    @Inject(method = "saveToTag", at = @At(value = "INVOKE", target = "Lnet/minecraft/nbt/CompoundTag;putString(Ljava/lang/String;Ljava/lang/String;)V"), cancellable = true)
     private void duplicationFixRidingEntitys(CompoundTag compound, CallbackInfoReturnable<Boolean> cir) {
         // Fix for fixing duplication caused by riding entitys into unloaded chunks CARPET-XCOM
         if(CarpetSettings.duplicationFixRidingEntitys && hasPlayerPassenger()) {

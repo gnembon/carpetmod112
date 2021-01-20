@@ -12,22 +12,22 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
-    @Shadow public abstract String method_29611();
+    @Shadow public abstract String getName();
 
-    @Inject(method = "method_34456", at = @At("HEAD"))
+    @Inject(method = "checkWaterState", at = @At("HEAD"))
     private void onWaterMovementStart(CallbackInfoReturnable<Boolean> cir) {
-        CarpetClientChunkLogger.setReason(() -> "Entity checking if pushed by water: " + method_29611());
+        CarpetClientChunkLogger.setReason(() -> "Entity checking if pushed by water: " + getName());
     }
 
-    @Inject(method = "method_34456", at = @At("RETURN"))
+    @Inject(method = "checkWaterState", at = @At("RETURN"))
     private void onWaterMovementEnd(CallbackInfoReturnable<Boolean> cir) {
         CarpetClientChunkLogger.resetReason();
     }
 
-    @Redirect(method = "method_34471", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/PortalForcer;method_26217(Lnet/minecraft/entity/Entity;F)Z"))
+    @Redirect(method = "changeDimension", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/PortalForcer;method_26217(Lnet/minecraft/entity/Entity;F)Z"))
     private boolean placeInExistingPortal(PortalForcer teleporter, Entity entityIn, float rotationYaw) {
         try {
-            CarpetClientChunkLogger.setReason(() -> "Entity going through nether portal: " + method_29611());
+            CarpetClientChunkLogger.setReason(() -> "Entity going through nether portal: " + getName());
             return teleporter.method_26217(entityIn, rotationYaw);
         } finally {
             CarpetClientChunkLogger.resetReason();

@@ -2,9 +2,9 @@ package narcolepticfrog.rsmm;
 
 import carpet.commands.CommandCarpetBase;
 import narcolepticfrog.rsmm.server.RSMMServer;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.LiteralText;
@@ -30,12 +30,12 @@ public class MeterCommand extends CommandCarpetBase
             " /meter group <groupName> OR /meter listGroups";
 
     @Override
-    public String method_29275(class_2010 sender) {
+    public String method_29275(CommandSource sender) {
         return USAGE;
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("redstoneMultimeter", sender)) return;
         if (args.length < 1) {
@@ -105,15 +105,15 @@ public class MeterCommand extends CommandCarpetBase
         }
     }
 
-    public void notifySender(class_2010 sender, String message) {
+    public void notifySender(CommandSource sender, String message) {
         LiteralText messageText = new LiteralText(message);
         messageText.getStyle().setColor(Formatting.GRAY);
-        sender.sendMessage(messageText);
+        sender.sendSystemMessage(messageText);
     }
 
     @Override
     public List<String> method_29273(MinecraftServer server,
-                                          class_2010 sender, String[] args, BlockPos targetPos) {
+                                          CommandSource sender, String[] args, BlockPos targetPos) {
         if (args.length == 1) {
             return method_28732(args, "name", "color", "removeAll", "group", "listGroups");
         } else if (args.length == 2 && args[0].equals("group")) {

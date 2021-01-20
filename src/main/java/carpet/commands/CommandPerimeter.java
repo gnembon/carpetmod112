@@ -2,10 +2,10 @@ package carpet.commands;
 
 import carpet.utils.Messenger;
 import carpet.utils.PerimeterDiagnostics;
-import net.minecraft.class_2010;
-import net.minecraft.class_2245;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
@@ -28,13 +28,13 @@ public class CommandPerimeter extends CommandCarpetBase
     }
 
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "/perimetercheck <X> <Y> <Z> <target_entity?>";
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandPerimeterInfo", sender)) return;
         if (args.length < 1)
@@ -44,8 +44,8 @@ public class CommandPerimeter extends CommandCarpetBase
         else
         {
             String s;
-            BlockPos blockpos = sender.method_29606();
-            Vec3d vec3d = sender.method_29607();
+            BlockPos blockpos = sender.getBlockPos();
+            Vec3d vec3d = sender.getPosVector();
             double d0 = vec3d.x;
             double d1 = vec3d.y;
             double d2 = vec3d.z;
@@ -56,7 +56,7 @@ public class CommandPerimeter extends CommandCarpetBase
                 d2 = method_28734(d2, args[2], true);
                 blockpos = new BlockPos(d0, d1, d2);
             }
-            World world = sender.method_29608();
+            World world = sender.getEntityWorld();
             CompoundTag nbttagcompound = new CompoundTag();
             MobEntity entityliving = null;
             if (args.length >= 4)
@@ -94,11 +94,11 @@ public class CommandPerimeter extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos pos)
     {
         if (args.length == 4)
         {
-            return method_28731(args, class_2245.method_34587());
+            return method_28731(args, EntityType.getSummonableEntities());
         }
         else
         {

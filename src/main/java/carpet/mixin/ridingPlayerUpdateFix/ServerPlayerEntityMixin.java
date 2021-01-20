@@ -24,12 +24,12 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
         super(worldIn, gameProfileIn);
     }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/criterion/TickCriterion;method_27677(Lnet/minecraft/server/network/ServerPlayerEntity;)V"))
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/advancement/criterion/TickCriterion;trigger(Lnet/minecraft/server/network/ServerPlayerEntity;)V"))
     private void ridingPlayerUpdateFix(CallbackInfo ci) {
         if (CarpetSettings.ridingPlayerUpdateFix) {
             Entity riding = getRootVehicle();
             if (riding instanceof AbstractMinecartEntity || riding instanceof LlamaEntity){
-                this.server.getPlayerManager().method_33725((ServerPlayerEntity) (Object) this);
+                this.server.getPlayerManager().updateCameraPosition((ServerPlayerEntity) (Object) this);
             }
         }
     }

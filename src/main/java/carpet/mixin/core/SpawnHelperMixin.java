@@ -3,7 +3,7 @@ package carpet.mixin.core;
 import carpet.CarpetSettings;
 import carpet.utils.SpawnReporter;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Pair;
@@ -31,7 +31,7 @@ public class SpawnHelperMixin {
     private int localSpawns;
     private int did;
     private String suffix;
-    private EntityCategory currentCategory;
+    private SpawnGroup currentCategory;
     private int chunksCount;
     private int mobcapTotal;
 
@@ -49,17 +49,17 @@ public class SpawnHelperMixin {
         }
     }
 
-    @Inject(method = "method_26212", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityCategory;method_34817()Z", ordinal = 0, shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void spawnTrackingAll(ServerWorld worldServer, boolean spawnHostileMobs, boolean spawnPeacefulMobs, boolean spawnOnSetTickRate, CallbackInfoReturnable<Integer> cir, int chunks, int j4, BlockPos spawnPos, EntityCategory[] types, int var9, int var10, EntityCategory category) {
+    @Inject(method = "method_26212", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/SpawnGroup;isPeaceful()Z", ordinal = 0, shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+    private void spawnTrackingAll(ServerWorld worldServer, boolean spawnHostileMobs, boolean spawnPeacefulMobs, boolean spawnOnSetTickRate, CallbackInfoReturnable<Integer> cir, int chunks, int j4, BlockPos spawnPos, SpawnGroup[] types, int var9, int var10, SpawnGroup category) {
         currentCategory = category;
         if (SpawnReporter.track_spawns <= 0) return;
         String group_code = category + suffix;
         SpawnReporter.overall_spawn_ticks.put(group_code, SpawnReporter.overall_spawn_ticks.get(group_code) + SpawnReporter.spawn_tries.getOrDefault(category, 1));
     }
 
-    @Redirect(method = "method_26212", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/EntityCategory;getSpawnCap()I"))
-    private int getMaxNumberOfCreature(EntityCategory category) {
-        int max = (int) Math.pow(2.0, (SpawnReporter.mobcap_exponent / 4)) * category.getSpawnCap();
+    @Redirect(method = "method_26212", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/SpawnGroup;getCapacity()I"))
+    private int getMaxNumberOfCreature(SpawnGroup category) {
+        int max = (int) Math.pow(2.0, (SpawnReporter.mobcap_exponent / 4)) * category.getCapacity();
         mobcapTotal = max * chunksCount / field_23636;
         return max;
     }
@@ -112,7 +112,7 @@ public class SpawnHelperMixin {
         });
     }
 
-    @Redirect(method = "method_26212", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;method_26040(Lnet/minecraft/entity/Entity;)Z"))
+    @Redirect(method = "method_26212", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;spawnEntity(Lnet/minecraft/entity/Entity;)Z"))
     private boolean spawnEntity(ServerWorld worldServer, Entity entity) {
         MobEntity living = (MobEntity) entity;
         if (CarpetSettings.optimizedDespawnRange && SpawnReporter.willImmediatelyDespawn(living)) {
@@ -127,6 +127,6 @@ public class SpawnHelperMixin {
             entity.remove();
             return false;
         }
-        return worldServer.method_26040(entity);
+        return worldServer.spawnEntity(entity);
     }
 }

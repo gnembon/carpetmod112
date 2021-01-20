@@ -2,9 +2,9 @@ package carpet.commands;
 
 import carpet.CarpetSettings;
 import carpet.helpers.OptimizedTNT;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 
@@ -23,12 +23,12 @@ public class CommandTNT extends CommandCarpetBase{
     }
 
     @Override
-    public String method_29275(class_2010 sender) {
+    public String method_29275(CommandSource sender) {
         return USAGE;
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
         int x;
         int y;
         int z;
@@ -43,9 +43,9 @@ public class CommandTNT extends CommandCarpetBase{
              method_28710(sender, this, "TNT scanning block cleared.");
          } else if (args.length > 2) {
             if (args.length > 3) throw new class_6182(USAGE);
-            x = (int) Math.round(method_28702(sender.method_29606().getX(), args[0], false).method_28750());
-            y = (int) Math.round(method_28702(sender.method_29606().getY(), args[1], false).method_28750());
-            z = (int) Math.round(method_28702(sender.method_29606().getZ(), args[2], false).method_28750());
+            x = (int) Math.round(method_28702(sender.getBlockPos().getX(), args[0], false).method_28750());
+            y = (int) Math.round(method_28702(sender.getBlockPos().getY(), args[1], false).method_28750());
+            z = (int) Math.round(method_28702(sender.getBlockPos().getZ(), args[2], false).method_28750());
             tntScanPos = new BlockPos(x, y, z);
             OptimizedTNT.setBlastChanceLocation(tntScanPos);
             method_28710(sender, this,
@@ -56,7 +56,7 @@ public class CommandTNT extends CommandCarpetBase{
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, BlockPos targetPos)
     {
         if (args.length == 0)
         {

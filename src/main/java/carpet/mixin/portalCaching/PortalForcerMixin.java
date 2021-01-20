@@ -44,8 +44,8 @@ public class PortalForcerMixin implements ExtendedPortalForcer {
     public boolean method_26217(Entity entity, float rotationYaw) {
         int range = 128;
         double distance = -1.0D;
-        int x = MathHelper.floor(entity.field_33071);
-        int z = MathHelper.floor(entity.field_33073);
+        int x = MathHelper.floor(entity.x);
+        int z = MathHelper.floor(entity.z);
         boolean flag = true;
         boolean flag_cm = true;
         BlockPos outPos = BlockPos.ORIGIN;
@@ -76,10 +76,10 @@ public class PortalForcerMixin implements ExtendedPortalForcer {
 
                 for (int offZ = -range; offZ <= range; ++offZ) {
                     for (BlockPos currentPos = entityBlockPos.add(offX, this.world.getEffectiveHeight() - 1 - entityBlockPos.getY(), offZ); currentPos.getY() >= 0; currentPos = blockpos2) {
-                        blockpos2 = currentPos.method_31898();
+                        blockpos2 = currentPos.down();
 
                         if (this.world.getBlockState(currentPos).getBlock() == Blocks.NETHER_PORTAL) {
-                            for (blockpos2 = currentPos.method_31898(); this.world.getBlockState(blockpos2).getBlock() == Blocks.NETHER_PORTAL; blockpos2 = blockpos2.method_31898()) {
+                            for (blockpos2 = currentPos.down(); this.world.getBlockState(blockpos2).getBlock() == Blocks.NETHER_PORTAL; blockpos2 = blockpos2.down()) {
                                 currentPos = blockpos2;
                             }
 
@@ -100,17 +100,17 @@ public class PortalForcerMixin implements ExtendedPortalForcer {
         }
 
         if (flag) {
-            this.field_23640.put(posKey, createPortalPosition(outPos, this.world.getTime(), new Vec3d(entity.field_33071, entity.field_33072, entity.field_33073)));
+            this.field_23640.put(posKey, createPortalPosition(outPos, this.world.getTime(), new Vec3d(entity.x, entity.y, entity.z)));
         }
 
         if (CarpetSettings.portalCaching && (flag || flag_cm)) {
             //its timeless
-            this.destinationHistoryCache.put(posKey, createPortalPosition(outPos, 0L, new Vec3d(entity.field_33071, entity.field_33072, entity.field_33073)));
+            this.destinationHistoryCache.put(posKey, createPortalPosition(outPos, 0L, new Vec3d(entity.x, entity.y, entity.z)));
         }
 
         double outX = outPos.getX() + 0.5;
         double outZ = outPos.getZ() + 0.5;
-        BlockPattern.Result pattern = Blocks.NETHER_PORTAL.method_26722(this.world, outPos);
+        BlockPattern.Result pattern = Blocks.NETHER_PORTAL.findPortal(this.world, outPos);
         boolean axisNegative = pattern.getForwards().rotateYClockwise().getDirection() == Direction.AxisDirection.NEGATIVE;
         double horizontal = pattern.getForwards().getAxis() == Direction.Axis.X ? pattern.getFrontTopLeft().getZ() : pattern.getFrontTopLeft().getX();
         double outY = pattern.getFrontTopLeft().getY() + 1 - entity.getLastNetherPortalDirectionVector().y * pattern.getHeight();
@@ -123,7 +123,7 @@ public class PortalForcerMixin implements ExtendedPortalForcer {
         //removed offset calculation outside of the if statement
         double offset = (1.0D - entity.getLastNetherPortalDirectionVector().x) * pattern.getWidth() * pattern.getForwards().rotateYClockwise().getDirection().offset();
         if (CarpetSettings.portalSuffocationFix) {
-            double correctedRadius = 1.02 * entity.field_33001 / 2;
+            double correctedRadius = 1.02 * entity.width / 2;
             if (correctedRadius >= pattern.getWidth() - correctedRadius) {
                 //entity is wider than portal, so will suffocate anyways, so place it directly in the middle
                 correctedRadius = (double) pattern.getWidth() / 2 - 0.001;
@@ -163,10 +163,10 @@ public class PortalForcerMixin implements ExtendedPortalForcer {
             z2x = 1;
         }
 
-        double motionX = entity.field_33074;
-        double motionZ = entity.field_33076;
-        entity.field_33074 = motionX * (double) x2x + motionZ * (double) z2x;
-        entity.field_33076 = motionX * (double) x2z + motionZ * (double) z2z;
+        double motionX = entity.velocityX;
+        double motionZ = entity.velocityZ;
+        entity.velocityX = motionX * (double) x2x + motionZ * (double) z2x;
+        entity.velocityZ = motionX * (double) x2z + motionZ * (double) z2z;
         entity.yaw = rotationYaw - (float) (teleportDir.getOpposite().getHorizontal() * 90) + (float) (pattern.getForwards().getHorizontal() * 90);
 
         if (entity instanceof ServerPlayerEntity) {

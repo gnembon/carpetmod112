@@ -19,7 +19,7 @@ import carpet.carpetclient.CarpetClientServer;
 
 import carpet.helpers.TickSpeed;
 import carpet.logging.LoggerRegistry;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -81,7 +81,7 @@ public class CarpetServer // static for now - easier to handle all around the co
             String prefix = "minecraft." + world.dimension.getType().method_27531();
             new PubSubInfoProvider<>(PUBSUB,prefix + ".chunk_loading.dropped_chunks.hash_size",20,
                     () -> ChunkLoading.getCurrentHashSize(world));
-            for (EntityCategory creatureType : EntityCategory.values()) {
+            for (SpawnGroup creatureType : SpawnGroup.values()) {
                 String mobCapPrefix = prefix + ".mob_cap." + creatureType.name().toLowerCase(Locale.ROOT);
                 new PubSubInfoProvider<>(PUBSUB, mobCapPrefix + ".filled", 20, () -> {
                     Pair<Integer, Integer> mobCap = SpawnReporter.mobcaps.get(dim).get(creatureType);

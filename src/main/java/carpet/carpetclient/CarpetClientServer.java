@@ -48,7 +48,7 @@ public class CarpetClientServer implements PluginChannelHandler {
                     if (!this.minecraftServer.isSpawnProtected(player.world, pos, player) && player.world.getWorldBorder().contains(pos)) {
                         player.interactionManager.processBlockBreakingAction(pos, facing);
                     } else {
-                        player.networkHandler.method_33624(new BlockUpdateS2CPacket(player.world, pos));
+                        player.networkHandler.sendPacket(new BlockUpdateS2CPacket(player.world, pos));
                     }
                 } else {
                     player.interactionManager.method_33535(pos);

@@ -107,7 +107,7 @@ public class PluginChannelManager {
         ByteBuf payload = Unpooled.wrappedBuffer(joinedChannels.getBytes(Charsets.UTF_8));
         CustomPayloadS2CPacket packet = new CustomPayloadS2CPacket(updateType, new PacketByteBuf(payload));
         for (ServerPlayerEntity player : players) {
-            player.networkHandler.method_33624(packet);
+            player.networkHandler.sendPacket(packet);
         }
     }
 

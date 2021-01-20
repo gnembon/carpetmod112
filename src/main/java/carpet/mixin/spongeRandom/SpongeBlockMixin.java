@@ -41,7 +41,7 @@ public class SpongeBlockMixin extends Block {
                 touchesWet = true;
             }
         }
-        if (state.get(field_24805) && !touchesWater && world.method_26129(pos.up()) && world.isDay() && !world.hasRain(pos.up())) {
+        if (state.get(field_24805) && !touchesWater && world.isSkyVisible(pos.up()) && world.isDay() && !world.hasRain(pos.up())) {
             world.setBlockState(pos, state.with(field_24805, Boolean.FALSE), 2);
         } else if (!state.get(field_24805) && (touchesWet || touchesWater || world.hasRain(pos.up())) && random.nextInt(3) == 0) {
             world.setBlockState(pos, state.with(field_24805, Boolean.TRUE), 2);

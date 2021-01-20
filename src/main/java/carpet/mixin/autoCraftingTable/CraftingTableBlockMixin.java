@@ -3,15 +3,15 @@ package carpet.mixin.autoCraftingTable;
 import carpet.CarpetSettings;
 import carpet.helpers.CraftingTableBlockEntity;
 import carpet.mixin.accessors.CraftingInventoryAccessor;
-import com.mojang.datafixers.optics.profunctors.FunctorProfunctor;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.CraftingTableBlock;
 import net.minecraft.block.Material;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.class_3270;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,15 +21,15 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import javax.annotation.Nullable;
 
 @Mixin(CraftingTableBlock.class)
-public class CraftingTableBlockMixin extends Block implements class_3270 {
+public class CraftingTableBlockMixin extends Block implements BlockEntityProvider {
     protected CraftingTableBlockMixin(Material materialIn) {
         super(materialIn);
     }
 
-    @Redirect(method = "onUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;method_25011(Lcom/mojang/datafixers/optics/profunctors/FunctorProfunctor;)V"))
-    private void displayGui(PlayerEntity player, FunctorProfunctor gui, World world, BlockPos pos) {
+    @Redirect(method = "onUse", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;openScreen(Lnet/minecraft/screen/NamedScreenHandlerFactory;)V"))
+    private void displayGui(PlayerEntity player, NamedScreenHandlerFactory gui, World world, BlockPos pos) {
         CraftingTableBlockEntity te = getTileEntity(world, pos);
-        player.method_25011(te != null ? te : gui);
+        player.openScreen(te != null ? te : gui);
     }
 
     @Override

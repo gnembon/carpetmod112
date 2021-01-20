@@ -57,7 +57,7 @@ public class BlockEntityOptimizer
                 {
                     iblockstate.method_27176(worldIn, blockpos, blockIn, pos);
                 }
-                else if (horizontal && iblockstate.method_27207())
+                else if (horizontal && iblockstate.isSolidBlock())
                 {
                     blockpos = blockpos.offset(enumfacing);
                     iblockstate = worldIn.getBlockState(blockpos);

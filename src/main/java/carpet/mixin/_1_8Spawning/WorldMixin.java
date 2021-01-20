@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(World.class)
 public class WorldMixin {
-    @Redirect(method = "method_26002", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;isConnectedThroughVehicle(Lnet/minecraft/entity/Entity;)Z"))
+    @Redirect(method = "doesNotCollide", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;isConnectedThroughVehicle(Lnet/minecraft/entity/Entity;)Z"))
     private boolean noRidingCheck18(Entity entity, Entity other) {
         return CarpetSettings._1_8Spawning || entity.isConnectedThroughVehicle(other);
     }

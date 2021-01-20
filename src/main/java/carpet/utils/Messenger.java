@@ -3,8 +3,8 @@ package carpet.utils;
 import carpet.CarpetSettings;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.class_2010;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.command.CommandSource;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.ClickEvent;
@@ -82,7 +82,7 @@ public class Messenger
         if (actual > reference) color = "m";
         return color;
     }
-    public static String creatureTypeColor(EntityCategory type)
+    public static String creatureTypeColor(SpawnGroup type)
     {
         switch (type)
         {
@@ -214,7 +214,7 @@ public class Messenger
     /*
     builds single line, multicomponent message, optionally returns it to sender, and returns as one chat messagge
      */
-    public static Text m(class_2010 receiver, Object ... fields)
+    public static Text m(CommandSource receiver, Object ... fields)
     {
         Text message = new LiteralText("");
         Text previous_component = null;
@@ -233,48 +233,48 @@ public class Messenger
             previous_component = comp;
         }
         if (receiver != null)
-            receiver.sendMessage(message);
+            receiver.sendSystemMessage(message);
         return message;
     }
 
-    public static Text s(class_2010 receiver,String text)
+    public static Text s(CommandSource receiver,String text)
     {
         return s(receiver,text,"");
     }
-    public static Text s(class_2010 receiver,String text, String style)
+    public static Text s(CommandSource receiver,String text, String style)
     {
         Text message = new LiteralText(text);
         _applyStyleToTextComponent(message, style);
         if (receiver != null)
-            receiver.sendMessage(message);
+            receiver.sendSystemMessage(message);
         return message;
     }
 
-    public static void send(class_2010 receiver, Text ... messages) { send(receiver, Arrays.asList(messages)); }
-    public static void send(class_2010 receiver, List<Text> list)
+    public static void send(CommandSource receiver, Text ... messages) { send(receiver, Arrays.asList(messages)); }
+    public static void send(CommandSource receiver, List<Text> list)
     {
-        list.forEach(receiver::sendMessage);
+        list.forEach(receiver::sendSystemMessage);
     }
 
     public static void print_server_message(MinecraftServer server, String message)
     {
         if (server == null)
             CarpetSettings.LOG.error("Message not delivered: "+message);
-        server.sendMessage(new LiteralText(message));
+        server.sendSystemMessage(new LiteralText(message));
         Text txt = m(null, "gi "+message);
         for (PlayerEntity entityplayer : server.getPlayerManager().getPlayerList())
         {
-            entityplayer.sendMessage(txt);
+            entityplayer.sendSystemMessage(txt);
         }
     }
     public static void print_server_message(MinecraftServer server, Text message)
     {
         if (server == null)
             CarpetSettings.LOG.error("Message not delivered: " + message.method_32275());
-        server.sendMessage(message);
+        server.sendSystemMessage(message);
         for (PlayerEntity entityplayer : server.getPlayerManager().getPlayerList())
         {
-            entityplayer.sendMessage(message);
+            entityplayer.sendSystemMessage(message);
         }
     }
 }

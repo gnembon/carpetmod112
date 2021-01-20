@@ -3,11 +3,11 @@ package carpet.mixin.movableTileEntities;
 import carpet.CarpetSettings;
 import carpet.utils.extensions.ExtendedPistonBlockEntityMBE;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.PistonBlockEntity;
-import net.minecraft.class_3270;
 import net.minecraft.nbt.CompoundTag;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -36,7 +36,7 @@ public class PistonBlockEntityMixin extends BlockEntity implements ExtendedPisto
         //Also /setblock will cause this to be called, and drop e.g. a moving chest's contents. This is MC-40380 (BlockEntities that aren't Inventories drop stuff when setblock is called )
         if (this.carriedTileEntity != null && this.world.getBlockState(this.pos).getBlock() == Blocks.AIR) {
             this.placeBlock();
-            this.world.method_26125(this.pos);
+            this.world.removeBlock(this.pos);
         }
         return block;
     }
@@ -52,8 +52,8 @@ public class PistonBlockEntityMixin extends BlockEntity implements ExtendedPisto
     @Inject(method = "fromTag", at = @At("RETURN"))
     private void onDeserialize(CompoundTag compound, CallbackInfo ci) {
         if ((CarpetSettings.movableTileEntities || CarpetSettings.autocrafter) && compound.contains("carriedTileEntity", 10)) {
-            if (this.field_25261.getBlock() instanceof class_3270)
-                this.carriedTileEntity = ((class_3270) (this.field_25261.getBlock())).createBlockEntity(this.world, this.field_25261.getBlock().getMeta(this.field_25261));
+            if (this.field_25261.getBlock() instanceof BlockEntityProvider)
+                this.carriedTileEntity = ((BlockEntityProvider) (this.field_25261.getBlock())).createBlockEntity(this.world, this.field_25261.getBlock().getMeta(this.field_25261));
             if (carriedTileEntity != null) //Can actually be null, as BlockPistonMoving.createNewTileEntity(...) returns null
                 this.carriedTileEntity.fromTag(compound.getCompound("carriedTileEntity"));
         }

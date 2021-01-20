@@ -104,16 +104,16 @@ public class LightingHooks
                 {
                     for (int y = 0; y < 16; ++y)
                     {
-                        if (blockStorage.method_27435(x, y, z).method_27195() > 0)
+                        if (blockStorage.method_27435(x, y, z).getLuminance() > 0)
                             world.method_26095(LightType.BLOCK, pos.set(xBase + x, (j << 4) + y, zBase + z));
                     }
                 }
             }
         }
 
-        pos.method_31935();
+        pos.free();
 
-        if (!world.dimension.method_27521())
+        if (!world.dimension.hasSkyLight())
             return;
 
         for (int x = 0; x < 16; ++x)
@@ -208,7 +208,7 @@ public class LightingHooks
             }
         }
 
-        pos.method_31935();
+        pos.free();
     }
 
     public static void initNeighborLight(final World world, final WorldChunk chunk)
@@ -243,7 +243,7 @@ public class LightingHooks
 
     public static void initSkylightForSection(final World world, final WorldChunk chunk, final ChunkSection section)
     {
-        if (world.dimension.method_27521())
+        if (world.dimension.hasSkyLight())
         {
             for (int x = 0; x < 16; ++x)
             {
@@ -263,7 +263,7 @@ public class LightingHooks
 
     public static void relightSkylightColumns(final World world, final WorldChunk chunk, @Nullable int[] oldHeightMap)
     {
-        if (!world.dimension.method_27521())
+        if (!world.dimension.hasSkyLight())
             return;
 
         if (oldHeightMap == null)

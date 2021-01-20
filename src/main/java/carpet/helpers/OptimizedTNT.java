@@ -11,7 +11,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
-import net.minecraft.class_6208;
 import net.minecraft.enchantment.ProtectionEnchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -19,6 +18,7 @@ import net.minecraft.entity.TntEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.vehicle.TntMinecartEntity;
+import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
@@ -86,7 +86,7 @@ public class OptimizedTNT
         if (vec3dmem == null || !vec3dmem.equals(vec3d) || tickmem != e.getWorld().getTime()) {
             vec3dmem = vec3d;
             tickmem = e.getWorld().getTime();
-            entitylist = e.getWorld().method_26090(null, new Box(k1, i2, j2, l1, i1, j1));
+            entitylist = e.getWorld().getEntitiesIn(null, new Box(k1, i2, j2, l1, i1, j1));
             explosionSound = 0;
         }
 
@@ -103,19 +103,19 @@ public class OptimizedTNT
             }
 
             if (entity instanceof TntEntity &&
-                entity.field_33071 == e.getEntity().field_33071 &&
-                entity.field_33072 == e.getEntity().field_33072 &&
-                entity.field_33073 == e.getEntity().field_33073) {
+                entity.x == e.getEntity().x &&
+                entity.y == e.getEntity().y &&
+                entity.z == e.getEntity().z) {
                 continue;
             }
 
             if (!entity.isImmuneToExplosion()) {
-                double d12 = entity.method_34534(e.getX(), e.getY(), e.getZ()) / (double) f3;
+                double d12 = entity.distanceTo(e.getX(), e.getY(), e.getZ()) / (double) f3;
 
                 if (d12 <= 1.0D) {
-                    double d5 = entity.field_33071 - e.getX();
-                    double d7 = entity.field_33072 + (double) entity.method_34518() - e.getY();
-                    double d9 = entity.field_33073 - e.getZ();
+                    double d5 = entity.x - e.getX();
+                    double d7 = entity.y + (double) entity.getStandingEyeHeight() - e.getY();
+                    double d9 = entity.z - e.getZ();
                     double d13 = (double) MathHelper.sqrt(d5 * d5 + d7 * d7 + d9 * d9);
 
                     if (d13 != 0.0D) {
@@ -144,9 +144,9 @@ public class OptimizedTNT
                             d11 = ProtectionEnchantment.transformExplosionKnockback((LivingEntity) entity, d10);
                         }
 
-                        entity.field_33074 += d5 * d11;
-                        entity.field_33075 += d7 * d11;
-                        entity.field_33076 += d9 * d11;
+                        entity.velocityX += d5 * d11;
+                        entity.velocityY += d7 * d11;
+                        entity.velocityZ += d9 * d11;
 
                         if (entity instanceof PlayerEntity) {
                             PlayerEntity entityplayer = (PlayerEntity) entity;
@@ -179,11 +179,11 @@ public class OptimizedTNT
 
             if (e.getPower() >= 2.0F && e.getDamagesTerrain())
             {
-                world.method_26027(class_6208.field_30721, posX, posY, posZ, 1.0D, 0.0D, 0.0D);
+                world.addParticle(ParticleTypes.EXPLOSION_HUGE, posX, posY, posZ, 1.0D, 0.0D, 0.0D);
             }
             else
             {
-                world.method_26027(class_6208.field_30720, posX, posY, posZ, 1.0D, 0.0D, 0.0D);
+                world.addParticle(ParticleTypes.EXPLOSION_LARGE, posX, posY, posZ, 1.0D, 0.0D, 0.0D);
             }
         }
 
@@ -211,9 +211,9 @@ public class OptimizedTNT
                     d3 = d3 * d7;
                     d4 = d4 * d7;
                     d5 = d5 * d7;
-                    world.method_26027(class_6208.field_30715,
+                    world.addParticle(ParticleTypes.EXPLOSION_NORMAL,
                             (d0 + posX) / 2.0D, (d1 + posY) / 2.0D, (d2 + posZ) / 2.0D, d3, d4, d5);
-                    world.method_26027(class_6208.field_30730, d0, d1, d2, d3, d4, d5);
+                    world.addParticle(ParticleTypes.SMOKE_NORMAL, d0, d1, d2, d3, d4, d5);
                 }
 
                 if (iblockstate.getMaterial() != Material.AIR)
@@ -238,10 +238,10 @@ public class OptimizedTNT
                 WorldChunk chunk = world.method_25975(blockpos1.getX() >> 4, blockpos1.getZ() >> 4);
 
                 if (chunk.getBlockState(blockpos1).getMaterial() == Material.AIR &&
-                    chunk.getBlockState(blockpos1.method_31898()).method_27187() &&
+                    chunk.getBlockState(blockpos1.down()).method_27187() &&
                     e.getRandom().nextInt(3) == 0)
                 {
-                    world.method_26019(blockpos1, Blocks.FIRE.getDefaultState());
+                    world.setBlockState(blockpos1, Blocks.FIRE.getDefaultState());
                 }
             }
         }
@@ -282,7 +282,7 @@ public class OptimizedTNT
 
                             if (iblockstate.getMaterial() != Material.AIR) {
                                 float f2 = e.getEntity() != null
-                                        ? e.getEntity().method_34386((Explosion) e, e.getWorld(), blockpos, iblockstate)
+                                        ? e.getEntity().getEffectiveExplosionResistance((Explosion) e, e.getWorld(), blockpos, iblockstate)
                                         : iblockstate.getBlock().getBlastResistance(null);
                                 f -= (f2 + 0.3F) * 0.3F;
                             }
@@ -411,7 +411,7 @@ public class OptimizedTNT
 
                 if (e.getEntity() != null)
                 {
-                    resistance = e.getEntity().method_34386((Explosion) e, e.getWorld(), posMutable, state);
+                    resistance = e.getEntity().getEffectiveExplosionResistance((Explosion) e, e.getWorld(), posMutable, state);
                 }
                 else
                 {
@@ -471,7 +471,7 @@ public class OptimizedTNT
 
                             if (iblockstate.getMaterial() != Material.AIR) {
                                 float f2 = e.getEntity() != null
-                                        ? e.getEntity().method_34386((Explosion) e, e.getWorld(), blockpos, iblockstate)
+                                        ? e.getEntity().getEffectiveExplosionResistance((Explosion) e, e.getWorld(), blockpos, iblockstate)
                                         : iblockstate.getBlock().getBlastResistance((Entity) null);
                                 f -= (f2 + 0.3F) * 0.3F;
                             }

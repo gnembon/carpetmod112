@@ -28,10 +28,10 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ex
     }
 
     @Override
-    public void method_34411(MovementType type, double x, double y, double z) {
+    public void move(MovementType type, double x, double y, double z) {
         if (CarpetSettings.pistonClippingFix > 0) {
             this.pistonClippingCounter = CarpetSettings.pistonClippingFix;
         }
-        super.method_34411(type, x, y, z);
+        super.move(type, x, y, z);
     }
 }

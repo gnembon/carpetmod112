@@ -2,7 +2,6 @@ package carpet.helpers;
 
 import carpet.mixin.accessors.RedstoneWireBlockAccessor;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ObserverBlock;
@@ -10,6 +9,7 @@ import net.minecraft.block.RedstoneWireBlock;
 import net.minecraft.block.RepeaterBlock;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 import javax.annotation.Nullable;
 import java.util.EnumSet;
 
@@ -31,7 +31,7 @@ public class RedstoneOreRedirectHelper
         }
         else if (Blocks.OBSERVER == blockState.getBlock())
         {
-            return side == blockState.get(ObserverBlock.field_24311);
+            return side == blockState.get(ObserverBlock.FACING);
         }
         else
         {
@@ -39,7 +39,7 @@ public class RedstoneOreRedirectHelper
         }
     }
     
-    public static int getWeakPowerCM(RedstoneWireBlock wire, BlockState blockState, BlockEntityProvider blockAccess, BlockPos pos, Direction side)
+    public static int getWeakPowerCM(RedstoneWireBlock wire, BlockState blockState, BlockView blockAccess, BlockPos pos, Direction side)
     {
         BlockState iblockstate = blockAccess.getBlockState(pos.offset(side.getOpposite()));
         if (!((RedstoneWireBlockAccessor) wire).getWiresGivePower())

@@ -3,7 +3,7 @@ package carpet.commands;
 import carpet.CarpetSettings;
 import carpet.utils.Messenger;
 import net.minecraft.class_1999;
-import net.minecraft.class_2010;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
@@ -12,7 +12,7 @@ import java.util.List;
 public abstract class CommandCarpetBase extends class_1999
 {
     @Override
-    public boolean method_29271(MinecraftServer server, class_2010 sender) {
+    public boolean method_29271(MinecraftServer server, CommandSource sender) {
         return true;
     }
 
@@ -21,19 +21,19 @@ public abstract class CommandCarpetBase extends class_1999
         return 0;
     }
 
-    public void msg(class_2010 sender, List<Text> texts) { msg(sender, texts.toArray(new Text[0])); }
-    public void msg(class_2010 sender, Text ... texts)
+    public void msg(CommandSource sender, List<Text> texts) { msg(sender, texts.toArray(new Text[0])); }
+    public void msg(CommandSource sender, Text ... texts)
     {
         if (sender instanceof PlayerEntity)
         {
-            for (Text t: texts) sender.sendMessage(t);
+            for (Text t: texts) sender.sendSystemMessage(t);
         }
         else
         {
             for (Text t: texts) method_28710(sender, this, t.method_32275());
         }
     }
-    public boolean command_enabled(String command_name, class_2010 sender)
+    public boolean command_enabled(String command_name, CommandSource sender)
     {
         if (!CarpetSettings.get(command_name).equalsIgnoreCase("true"))
         {

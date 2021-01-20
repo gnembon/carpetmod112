@@ -4,9 +4,9 @@ import carpet.CarpetSettings;
 import carpet.helpers.EntityPlayerActionPack;
 import carpet.patches.FakeServerPlayerEntity;
 import carpet.utils.extensions.ActionPackOwner;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -32,13 +32,13 @@ public class CommandPlayer extends CommandCarpetBase
     }
 
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "player <spawn|kill|stop|drop|swapHands|mount|dismount> <player_name>  OR /player <use|attack|jump> <player_name> <once|continuous|interval.. ticks>";
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandPlayer", sender)) return;
         if (args.length < 2)
@@ -130,16 +130,16 @@ public class CommandPlayer extends CommandCarpetBase
             {
                 throw new class_6182("player names can only be 3 to 16 chars long");
             }
-            if (isWhitelistedPlayer(server, playerName) && !sender.method_29603(2, "gamemode")) {
+            if (isWhitelistedPlayer(server, playerName) && !sender.allowCommandExecution(2, "gamemode")) {
                 throw new class_6175("You are not allowed to spawn a whitelisted player");
             }
-            Vec3d vec3d = sender.method_29607();
+            Vec3d vec3d = sender.getPosVector();
             double d0 = vec3d.x;
             double d1 = vec3d.y;
             double d2 = vec3d.z;
             double yaw = 0.0D;
             double pitch = 0.0D;
-            World world = sender.method_29608();
+            World world = sender.getEntityWorld();
             int dimension = world.dimension.getType().getRawId();
             int gamemode = server.getDefaultGameMode().getId();
 
@@ -174,7 +174,7 @@ public class CommandPlayer extends CommandCarpetBase
             if (args.length >= 9)
             {
                 gamemode = method_28719(args[8],0,3);
-                if (gamemode == 1 && !sender.method_29603(2, "gamemode")) {
+                if (gamemode == 1 && !sender.allowCommandExecution(2, "gamemode")) {
                     throw new class_6175("You are not allowed to spawn a creative player");
                 }
             }
@@ -295,7 +295,7 @@ public class CommandPlayer extends CommandCarpetBase
             {
                 throw new class_6182("player names can only be 3 to 16 chars long");
             }
-            if (isWhitelistedPlayer(server, playerName) && !sender.method_29603(2, "gamemode")) {
+            if (isWhitelistedPlayer(server, playerName) && !sender.allowCommandExecution(2, "gamemode")) {
                 throw new class_6175("You are not allowed to spawn a whitelisted player");
             }
             FakeServerPlayerEntity.create(playerName, server);
@@ -312,7 +312,7 @@ public class CommandPlayer extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos targetPos)
     {
         if (!CarpetSettings.commandPlayer)
         {

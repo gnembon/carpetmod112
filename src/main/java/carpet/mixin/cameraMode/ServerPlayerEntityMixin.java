@@ -81,20 +81,20 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ca
     @Override
     public boolean moveToStoredCameraData() {
         if (CarpetSettings.cameraModeRestoreLocation) {
-            if (cameraData.storedDim != field_33045) {
+            if (cameraData.storedDim != dimensionId) {
                 ServerWorld worldserver1 = getServerWorld();
                 ServerWorld worldserver2 = server.getWorldById(cameraData.storedDim);
-                field_33045 = cameraData.storedDim;
-                networkHandler.method_33624(new PlayerRespawnS2CPacket(field_33045, worldserver1.getDifficulty(), worldserver1.getLevelProperties().getGeneratorType(), this.interactionManager.getGameMode()));
+                dimensionId = cameraData.storedDim;
+                networkHandler.sendPacket(new PlayerRespawnS2CPacket(dimensionId, worldserver1.getDifficulty(), worldserver1.getLevelProperties().getGeneratorType(), this.interactionManager.getGameMode()));
                 this.server.getPlayerManager().sendCommandTree(asPlayer());
                 DebugLogHelper.invisDebug(() -> "s2: " + worldserver1.field_23572.contains(this) + " " + worldserver2.field_23572.contains(this));
-                worldserver1.method_26119(this);
+                worldserver1.removeEntity(this);
                 removed = false;
                 worldserver1.method_25975(chunkX, chunkZ).remove(this, chunkY);
 
                 if (isAlive()) {
                     refreshPositionAndAngles(cameraData.storeX, cameraData.storeY, cameraData.storeZ, cameraData.storeYaw, cameraData.storePitch);
-                    worldserver2.method_26040(this);
+                    worldserver2.spawnEntity(this);
                     worldserver2.method_26050(this, false);
                 }
                 DebugLogHelper.invisDebug(() -> "s3: " + worldserver1.field_23572.contains(this) + " " + worldserver2.field_23572.contains(this));
@@ -109,7 +109,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity implements Ca
             } else {
                 if (cameraData.storeX == 0 && cameraData.storeY == 0 && cameraData.storeZ == 0)
                     cameraData.storeY = 256.0f;
-                double dist = Math.sqrt(new BlockPos(cameraData.storeX, cameraData.storeY, cameraData.storeZ).getSquaredDistance(field_33071, field_33072, field_33073));
+                double dist = Math.sqrt(new BlockPos(cameraData.storeX, cameraData.storeY, cameraData.storeZ).getSquaredDistance(x, y, z));
                 networkHandler.requestTeleport(cameraData.storeX, cameraData.storeY, cameraData.storeZ, cameraData.storeYaw, cameraData.storePitch);
                 return dist > (this.server.getPlayerManager().getViewDistance() - 2) * 16;
             }

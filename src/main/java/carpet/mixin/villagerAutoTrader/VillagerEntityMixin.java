@@ -43,7 +43,7 @@ public abstract class VillagerEntityMixin extends PassiveEntity implements Autot
     @Inject(method = {
             "initGoals",
             "onGrowUp"
-    }, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/VillagerEntity;method_24914()I"))
+    }, at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/passive/VillagerEntity;getType()I"))
     private void addCraftTask(CallbackInfo ci) {
         if (CarpetSettings.villagerAutoTrader) {
             goalSelector.add(6, autotraderAI);

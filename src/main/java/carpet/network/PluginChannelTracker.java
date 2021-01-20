@@ -25,14 +25,14 @@ public class PluginChannelTracker {
      * Returns the collection of channels {@code player} is registered to.
      */
     public Set<String> getChannels(ServerPlayerEntity player) {
-        return name2channels.get(player.method_29611());
+        return name2channels.get(player.getName());
     }
 
     /**
      * Returns whether or not {@code player} is reigstered to {@code channel}.
      */
     public boolean isRegistered(ServerPlayerEntity player, String channel) {
-        return name2channels.containsEntry(player.method_29611(), channel);
+        return name2channels.containsEntry(player.getName(), channel);
     }
 
     /**
@@ -57,16 +57,16 @@ public class PluginChannelTracker {
      * Registers {@code player} on {@code channel}.
      */
     public void register(ServerPlayerEntity player, String channel) {
-        name2channels.put(player.method_29611(), channel);
-        channel2names.put(channel, player.method_29611());
+        name2channels.put(player.getName(), channel);
+        channel2names.put(channel, player.getName());
     }
 
     /**
      * Unregisters {@code player} from {@code channel}.
      */
     public void unregister(ServerPlayerEntity player, String channel) {
-        name2channels.remove(player.method_29611(), channel);
-        channel2names.remove(channel, player.method_29611());
+        name2channels.remove(player.getName(), channel);
+        channel2names.remove(channel, player.getName());
     }
 
     /**
@@ -74,9 +74,9 @@ public class PluginChannelTracker {
      */
     public void unregisterAll(ServerPlayerEntity player) {
         for (String channel : getChannels(player)) {
-            channel2names.remove(channel, player.method_29611());
+            channel2names.remove(channel, player.getName());
         }
-        name2channels.removeAll(player.method_29611());
+        name2channels.removeAll(player.getName());
     }
 
 }

@@ -28,7 +28,7 @@ public abstract class ThrownEntityMixin extends Entity {
     @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/thrown/ThrownEntity;updatePosition(DDD)V"))
     private void onTick(CallbackInfo ci) {
         if (LoggerRegistry.__projectiles && logHelper != null) {
-            logHelper.onTick(field_33071, field_33072, field_33073, field_33074, field_33075, field_33076);
+            logHelper.onTick(x, y, z, velocityX, velocityY, velocityZ);
         }
     }
 

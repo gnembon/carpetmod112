@@ -13,10 +13,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.GameMode;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 
 public class CommandGMC extends CommandCarpetBase
@@ -28,13 +28,13 @@ public class CommandGMC extends CommandCarpetBase
     }
 
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "commands.gamemode.usage";
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
         if (!command_enabled("commandCameramode", sender)) return;
         if (args.length > 0)
         {
@@ -49,7 +49,7 @@ public class CommandGMC extends CommandCarpetBase
             ServerPlayerEntity entityplayer = method_28708(sender);
             if(entityplayer.isSpectator()) return;
             if(CarpetSettings.cameraModeSurvivalRestrictions && entityplayer.interactionManager.getGameMode() == GameMode.SURVIVAL) {
-                List<HostileEntity> hostiles = sender.method_29608().getEntities(HostileEntity.class, new Box(entityplayer.field_33071 - 8.0D, entityplayer.field_33072 - 5.0D, entityplayer.field_33073 - 8.0D, entityplayer.field_33071 + 8.0D, entityplayer.field_33072 + 5.0D, entityplayer.field_33073 + 8.0D), mob -> mob.isAngryAt(entityplayer));
+                List<HostileEntity> hostiles = sender.getEntityWorld().getEntities(HostileEntity.class, new Box(entityplayer.x - 8.0D, entityplayer.y - 5.0D, entityplayer.z - 8.0D, entityplayer.x + 8.0D, entityplayer.y + 5.0D, entityplayer.z + 8.0D), mob -> mob.isAngryAt(entityplayer));
                 StatusEffectInstance fireresist = entityplayer.getStatusEffect(StatusEffect.method_34297("fire_resistance"));
                 if(!entityplayer.onGround || entityplayer.isFallFlying() || (((EntityAccessor) entityplayer).getFireTicks() > 0 && (fireresist == null || fireresist.getDuration() < ((EntityAccessor) entityplayer).getFireTicks())) || entityplayer.getAir() != 300 || !hostiles.isEmpty()){
                     method_28710(sender, this, "Restricted use to: on ground, not in water, not on fire, not flying/falling, not near hostile mobs.");
@@ -69,7 +69,7 @@ public class CommandGMC extends CommandCarpetBase
         }
     }
 
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos targetPos)
     {
         return Collections.emptyList();
     }

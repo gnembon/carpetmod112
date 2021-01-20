@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(MinecraftServer.class)
 public class MinecraftServerMixin {
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;tickTime()V"))
+    @Redirect(method = "tickWorlds", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;tickTime()V"))
     private void fixUpdateSuppressionCrashTick(ServerWorld worldServer) {
         if (!CarpetSettings.updateSuppressionCrashFix) {
             worldServer.tickTime();
@@ -28,7 +28,7 @@ public class MinecraftServerMixin {
         }
     }
 
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;tickBlockEntities()V"))
+    @Redirect(method = "tickWorlds", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;tickBlockEntities()V"))
     private void fixUpdateSuppressionCrashTickEntities(ServerWorld worldServer) {
         if (!CarpetSettings.updateSuppressionCrashFix) {
             worldServer.tickBlockEntities();

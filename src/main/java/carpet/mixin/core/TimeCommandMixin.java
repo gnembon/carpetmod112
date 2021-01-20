@@ -1,8 +1,8 @@
 package carpet.mixin.core;
 
 import net.minecraft.class_1999;
-import net.minecraft.class_2010;
-import net.minecraft.class_2014;
+import net.minecraft.command.CommandSource;
+import net.minecraft.command.CommandStats;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.TimeCommand;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,10 +17,10 @@ import java.util.List;
 @Mixin(TimeCommand.class)
 public abstract class TimeCommandMixin extends class_1999 {
     @Inject(method = "method_29272", at = @At(value = "NEW", target = "net/minecraft/class_6182"), cancellable = true)
-    private void queryServerTime(MinecraftServer server, class_2010 sender, String[] args, CallbackInfo ci) {
+    private void queryServerTime(MinecraftServer server, CommandSource sender, String[] args, CallbackInfo ci) {
         if (args.length >= 2 && "query".equals(args[0]) && "servertime".equals(args[1])) {
-            int time = (int) (sender.method_29608().getTime() % Integer.MAX_VALUE);
-            sender.method_29604(class_2014.class_5737.field_28183, time);
+            int time = (int) (sender.getEntityWorld().getTime() % Integer.MAX_VALUE);
+            sender.updateCommandStat(CommandStats.Type.QUERY_RESULT, time);
             method_28710(sender, this, "commands.time.query", time);
             ci.cancel();
         }

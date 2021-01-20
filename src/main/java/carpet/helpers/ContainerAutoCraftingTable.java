@@ -61,7 +61,7 @@ public class ContainerAutoCraftingTable extends CraftingTableContainer {
     public void onContentChanged(Inventory inv) {
         if (this.player instanceof ServerPlayerEntity) {
             ServerPlayNetworkHandler netHandler = ((ServerPlayerEntity) this.player).networkHandler;
-            netHandler.method_33624(new ContainerSlotUpdateS2CPacket(this.field_22768, 0, this.tileEntity.getInvStack(0)));
+            netHandler.sendPacket(new ContainerSlotUpdateS2CPacket(this.syncId, 0, this.tileEntity.getInvStack(0)));
         }
     }
 

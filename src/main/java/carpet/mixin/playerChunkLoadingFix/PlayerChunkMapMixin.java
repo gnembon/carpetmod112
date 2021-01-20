@@ -13,17 +13,17 @@ public class PlayerChunkMapMixin {
     @Redirect(method = {
         "method_33582",
         "method_33592"
-    }, at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayerEntity;field_33071:D", ordinal = 0))
+    }, at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayerEntity;x:D", ordinal = 0))
     private double getPosX(ServerPlayerEntity player) {
-        return CarpetSettings.playerChunkLoadingFix ? Math.floor(player.field_33071) : player.field_33071;
+        return CarpetSettings.playerChunkLoadingFix ? Math.floor(player.x) : player.x;
     }
 
     @Redirect(method = {
         "method_33582",
         "method_33592"
-    }, at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayerEntity;field_33073:D", ordinal = 0))
+    }, at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayerEntity;z:D", ordinal = 0))
     private double getPosZ(ServerPlayerEntity player) {
-        return CarpetSettings.playerChunkLoadingFix ? Math.floor(player.field_33073) : player.field_33073;
+        return CarpetSettings.playerChunkLoadingFix ? Math.floor(player.z) : player.z;
     }
 
     @Redirect(method = "method_33588", at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayerEntity;field_31749:D", ordinal = 0))

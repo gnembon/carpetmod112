@@ -4,9 +4,9 @@ import java.util.*;
 import javax.annotation.Nullable;
 
 import carpet.utils.Messenger;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
@@ -20,7 +20,7 @@ public class CommandCarpet extends CommandCarpetBase
      * Gets the name of the command
      */
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "carpet <rule> <value>";
     }
@@ -34,9 +34,9 @@ public class CommandCarpet extends CommandCarpetBase
      * Return the required permission level for this command.
      */
     @Override
-    public boolean method_29271(MinecraftServer server, class_2010 sender)
+    public boolean method_29271(MinecraftServer server, CommandSource sender)
     {
-        return sender.method_29603(this.method_28700(), this.method_29277());
+        return sender.allowCommandExecution(this.method_28700(), this.method_29277());
     }
     @Override
     public int method_28700()
@@ -71,7 +71,7 @@ public class CommandCarpet extends CommandCarpetBase
         return Messenger.m(null, args.toArray(new Object[0]));
     }
 
-    public void list_settings(class_2010 sender, String title, String[] settings_list)
+    public void list_settings(CommandSource sender, String title, String[] settings_list)
     {
         if (sender instanceof PlayerEntity)
         {
@@ -90,7 +90,7 @@ public class CommandCarpet extends CommandCarpetBase
      * Callback for when the command is executed
      */
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (CarpetSettings.locked)
         {
@@ -279,7 +279,7 @@ public class CommandCarpet extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos pos)
     {
         if (CarpetSettings.locked)
         {

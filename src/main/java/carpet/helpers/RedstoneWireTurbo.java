@@ -323,7 +323,7 @@ public class RedstoneWireTurbo
         if (!wire.canReplace(worldIn, pos)) {
             // Pop off the redstone dust
             wire.method_26417(worldIn, pos, oldState, 0);
-            worldIn.method_26125(pos);
+            worldIn.removeBlock(pos);
              
             // Mark this position as not being redstone wire
             upd1.type = UpdateNode.Type.OTHER;
@@ -864,7 +864,7 @@ public class RedstoneWireTurbo
             // position directly above the node being calculated is always
             // at index 1.
             UpdateNode center_up = upd.neighbor_nodes[1];
-            boolean center_up_is_cube = center_up.currentState.method_27207();
+            boolean center_up_is_cube = center_up.currentState.isSolidBlock();
  
             for (int m=0; m<4; m++) {
                 // Get the neighbor array index of each of the four cardinal
@@ -878,7 +878,7 @@ public class RedstoneWireTurbo
  
                 // Also check the positions above and below the cardinal
                 // neighbors
-                boolean neighbor_is_cube = neighbor.currentState.method_27207();
+                boolean neighbor_is_cube = neighbor.currentState.isSolidBlock();
                 if (!neighbor_is_cube) {
                     UpdateNode neighbor_down = upd.neighbor_nodes[rs_neighbors_dn[m]];
                     l = this.getMaxCurrentStrength(neighbor_down, l);

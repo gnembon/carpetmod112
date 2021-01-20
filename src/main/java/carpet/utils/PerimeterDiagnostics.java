@@ -5,10 +5,10 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
 import net.minecraft.class_2278;
-import net.minecraft.class_4818;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.mob.AmbientEntity;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.mob.Monster;
 import net.minecraft.entity.mob.WaterCreatureEntity;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -34,9 +34,9 @@ public class PerimeterDiagnostics
     }
     private Biome.SpawnEntry sle;
     private ServerWorld worldServer;
-    private EntityCategory ctype;
+    private SpawnGroup ctype;
     private MobEntity el;
-    private PerimeterDiagnostics(ServerWorld server, EntityCategory ctype, MobEntity el)
+    private PerimeterDiagnostics(ServerWorld server, SpawnGroup ctype, MobEntity el)
     {
         this.sle = null;
         this.worldServer = server;
@@ -59,28 +59,28 @@ public class PerimeterDiagnostics
         //int specific_spawns = 0;
         boolean add_water = false;
         boolean add_ground = false;
-        EntityCategory ctype = null;
+        SpawnGroup ctype = null;
 
         if (el != null)
         {
             if (el instanceof WaterCreatureEntity)
             {
                 add_water = true;
-                ctype = EntityCategory.WATER_CREATURE;
+                ctype = SpawnGroup.WATER_CREATURE;
             }
             else if (el instanceof AnimalEntity)
             {
                 add_ground = true;
-                ctype = EntityCategory.CREATURE;
+                ctype = SpawnGroup.CREATURE;
             }
-            else if (el instanceof class_4818)
+            else if (el instanceof Monster)
             {
                 add_ground = true;
-                ctype = EntityCategory.MONSTER;
+                ctype = SpawnGroup.MONSTER;
             }
             else if (el instanceof AmbientEntity)
             {
-                ctype = EntityCategory.AMBIENT;
+                ctype = SpawnGroup.AMBIENT;
             }
         }
         PerimeterDiagnostics diagnostic = new PerimeterDiagnostics(worldserver,ctype,el);
@@ -106,10 +106,10 @@ public class PerimeterDiagnostics
                     pos = new BlockPos(eX+x, y, eZ+z);
 
                     BlockState iblockstate = worldserver.getBlockState(pos);
-                    BlockState iblockstate_down = worldserver.getBlockState(pos.method_31898());
+                    BlockState iblockstate_down = worldserver.getBlockState(pos.down());
                     BlockState iblockstate_up = worldserver.getBlockState(pos.up());
 
-                    if ( iblockstate.getMaterial() == Material.WATER && iblockstate_down.getMaterial() == Material.WATER && !iblockstate_up.method_27207())
+                    if ( iblockstate.getMaterial() == Material.WATER && iblockstate_down.getMaterial() == Material.WATER && !iblockstate_up.isSolidBlock())
                     {
                         result.liquid++;
                         if (add_water && diagnostic.check_entity_spawn(pos))
@@ -174,7 +174,7 @@ public class PerimeterDiagnostics
         if (SpawnHelper.method_26213(class_2278.method_34819(sle.field_23703), worldServer, pos))
         {
             el.refreshPositionAndAngles((float)pos.getX() + 0.5F, (float)pos.getY(), (float)pos.getZ()+0.5F, 0.0F, 0.0F);
-            return el.method_34765() && el.method_34766();
+            return el.canMobSpawn() && el.canSpawn();
         }
         return false;
     }

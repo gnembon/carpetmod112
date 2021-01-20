@@ -4,9 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.util.Map;
-
-import net.minecraft.class_2245;
 import net.minecraft.class_5607;
+import net.minecraft.command.CommandSource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,9 +30,9 @@ import carpet.CarpetSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.class_2010;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
@@ -82,7 +81,7 @@ class CarpetWorldEdit {
         }
     }
 
-    public void onCommand(class_5607 command, class_2010 sender, String[] args) {
+    public void onCommand(class_5607 command, CommandSource sender, String[] args) {
         if (sender instanceof ServerPlayerEntity) {
             if (((ServerPlayerEntity) sender).world.isClient) return;
             String[] split = new String[args.length + 1];
@@ -216,7 +215,7 @@ class CarpetWorldEdit {
         }
         
         CarpetEntity carpetEntity = new CarpetEntity(created);
-        String entityId = class_2245.method_34598(created).toString();
+        String entityId = EntityType.getId(created).toString();
         CompoundTag tag = NBTConverter.fromNative(created.toTag(new net.minecraft.nbt.CompoundTag()));
         BaseEntity baseEntity = new BaseEntity(entityId, tag);
         
@@ -232,7 +231,7 @@ class CarpetWorldEdit {
         }
         
         CarpetEntity carpetEntity = new CarpetEntity(removed);
-        String entityId = class_2245.method_34598(removed).toString();
+        String entityId = EntityType.getId(removed).toString();
         CompoundTag tag = NBTConverter.fromNative(removed.toTag(new net.minecraft.nbt.CompoundTag()));
         BaseEntity baseEntity = new BaseEntity(entityId, tag);
         

@@ -7,7 +7,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.class_2010;
+import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CloneCommand;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,7 +29,7 @@ import java.util.List;
 @Mixin(CloneCommand.class)
 public class CloneCommandMixin {
     @Inject(method = "method_29272", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/world/World;getBlockEntity(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/entity/BlockEntity;", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void recordRemove(MinecraftServer server, class_2010 sender, String[] args, CallbackInfo ci,
+    private void recordRemove(MinecraftServer server, CommandSource sender, String[] args, CallbackInfo ci,
                               BlockPos pos1, BlockPos pos2, BlockPos pos3, BlockBox box1, BlockBox box2, boolean flag, Block block, Predicate<BlockState> predicate,
                               World world, boolean flag1, List<?> list, List<?> list1, List<?> list2, Deque<BlockPos> deque, BlockPos pos4, Iterator<BlockPos> it,
                               BlockPos currentPos, BlockEntity unused) {
@@ -38,7 +38,7 @@ public class CloneCommandMixin {
     }
 
     @Inject(method = "method_29272", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockEntity(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/entity/BlockEntity;", ordinal = 3), locals = LocalCapture.CAPTURE_FAILHARD)
-    private void recordAdd(MinecraftServer server, class_2010 sender, String[] args, CallbackInfo ci,
+    private void recordAdd(MinecraftServer server, CommandSource sender, String[] args, CallbackInfo ci,
                            BlockPos blockpos, BlockPos blockpos1, BlockPos blockpos2, BlockBox structureboundingbox, BlockBox structureboundingbox1, int i, boolean flag, Block block, Predicate<?> predicate,
                            World world, boolean flag1, List<?> list, List<?> list1, List<?> list2, Deque<?> deque, BlockPos blockpos3, List<?> list3, List<?> list4, Iterator<?> var22,
                            @Coerce StaticCloneDataAccessor data) {

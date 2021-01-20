@@ -6,10 +6,10 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import carpet.helpers.HopperCounter;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
-import net.minecraft.entity.EntityCategory;
+import net.minecraft.command.CommandSource;
+import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class CommandSpawn extends CommandCarpetBase
 {
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "Usage:\nspawn list <X> <Y> <Z>\nspawn entities/rates <... | passive | hostile | ambient | water>\nspawn mobcaps <set <num>, nether, overworld, end>\nspawn tracking <.../stop/start/hostile/passive/water/ambient>\nspawn mocking <true/false>";
     }
@@ -36,14 +36,14 @@ public class CommandSpawn extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandSpawn", sender)) return;
         if (args.length == 0)
         {
             throw new class_6182(method_29275(sender));
         }
-        World world = sender.method_29608();
+        World world = sender.getEntityWorld();
         if ("list".equalsIgnoreCase(args[0]))
         {
             BlockPos blockpos = method_28713(sender, args, 1, false);
@@ -171,7 +171,7 @@ public class CommandSpawn extends CommandCarpetBase
         {
             if (args.length >= 2 && "reset".equalsIgnoreCase(args[1]))
             {
-                for (EntityCategory s: SpawnReporter.spawn_tries.keySet())
+                for (SpawnGroup s: SpawnReporter.spawn_tries.keySet())
                 {
                     SpawnReporter.spawn_tries.put(s,1);
                 }
@@ -203,7 +203,7 @@ public class CommandSpawn extends CommandCarpetBase
                         if (args.length > 2)
                         {
                             int desired_mobcap = method_28718(args[2], 0);
-                            double desired_ratio = (double)desired_mobcap/EntityCategory.MONSTER.getSpawnCap();
+                            double desired_ratio = (double)desired_mobcap/SpawnGroup.MONSTER.getCapacity();
                             SpawnReporter.mobcap_exponent = 4.0*Math.log(desired_ratio)/Math.log(2.0);
                             method_28710(sender, this, String.format("Mobcaps for hostile mobs changed to %d, other groups will follow", desired_mobcap));
                             return;
@@ -243,7 +243,7 @@ public class CommandSpawn extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos pos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos pos)
     {
         if (!CarpetSettings.commandSpawn)
         {

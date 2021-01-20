@@ -14,11 +14,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class ServerPlayNetworkHandlerMixin {
     @Shadow public ServerPlayerEntity player;
 
-    @Inject(method = "onClickWindow", at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayerEntity;field_31751:Z", ordinal = 0))
+    @Inject(method = "onClickWindow", at = @At(value = "FIELD", target = "Lnet/minecraft/server/network/ServerPlayerEntity;skipPacketSlotUpdates:Z", ordinal = 0))
     private void itemDesynchFix(ClickWindowC2SPacket packetIn, CallbackInfo ci) {
         // Update item changes before setting boolean true given it can cause desynchs. CARPET-XCOM
         if (CarpetSettings.itemDesynchFix) {
-            this.player.container.method_25307();
+            this.player.currentScreenHandler.sendContentUpdates();
         }
     }
 }

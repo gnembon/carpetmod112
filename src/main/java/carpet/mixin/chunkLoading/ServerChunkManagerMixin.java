@@ -63,7 +63,7 @@ public abstract class ServerChunkManagerMixin {
         if (CarpetSettings.whereToChunkSavestate.canUnloadNearPlayers) {
             //noinspection ConstantConditions
             if (CarpetSettings.whereToChunkSavestate == CarpetSettings.WhereToChunkSavestate.everywhere
-                    || world.method_26084(Entity.class, player -> player.chunkX == chunk.field_25365 && player.chunkZ == chunk.field_25366).isEmpty()) {
+                    || world.getPlayers(Entity.class, player -> player.chunkX == chunk.field_25365 && player.chunkZ == chunk.field_25366).isEmpty()) {
                 // Getting the chunk size is incredibly inefficient, but it's better than unloading and reloading the chunk
                 if ((ChunkLoading.getSavedChunkSize(chunk) + 5) / 4096 + 1 >= 256) {
                     chunk.method_27398();

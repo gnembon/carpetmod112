@@ -23,7 +23,7 @@ public class ServerPlayerInteractionManagerMixin {
     @Inject(method = "processBlockBreakingAction", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;method_26094(ILnet/minecraft/util/math/BlockPos;I)V"))
     private void miningGhostBlockFix(BlockPos pos, Direction side, CallbackInfo ci) {
         if (CarpetSettings.miningGhostBlocksFix && CarpetClientServer.activateInstantMine) {
-            player.networkHandler.method_33624(new BlockUpdateS2CPacket(field_31754, field_31759));
+            player.networkHandler.sendPacket(new BlockUpdateS2CPacket(field_31754, field_31759));
         }
     }
 }

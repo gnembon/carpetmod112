@@ -23,7 +23,7 @@ public class NoteBlockMixin {
 
     @Inject(method = "neighborUpdate", at = @At(value = "RETURN"))
     private void onInstrumentChange(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, CallbackInfo ci) {
-        int instrument = getInstrumentId(world.getBlockState(pos.method_31898()));
+        int instrument = getInstrumentId(world.getBlockState(pos.down()));
         if (previousInstrument != instrument) {
             previousInstrument = instrument;
             // Instrument change updates only observers

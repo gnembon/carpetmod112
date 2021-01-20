@@ -7,6 +7,7 @@ import carpet.mixin.accessors.MobEntityAccessor;
 import carpet.utils.extensions.AccessibleGoalSelectorEntry;
 import net.minecraft.*;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ai.goal.AnimalMateGoal;
 import net.minecraft.entity.ai.goal.AttackGoal;
 import net.minecraft.entity.ai.goal.AttackWithOwnerGoal;
@@ -163,8 +164,8 @@ public class AIHelper {
 
     public static String getName(@Nullable Entity entity) {
         if (entity == null) return "unknown";
-        if (!entity.method_34200()) return entity.method_29611();
-        String id = class_2245.method_34602(entity);
+        if (!entity.hasCustomName()) return entity.getName();
+        String id = EntityType.getName(entity);
         if (id == null) id = "generic";
         return CommonI18n.translate("entity." + id + ".name");
     }
@@ -192,7 +193,7 @@ public class AIHelper {
         Map<Goal, Supplier<String>> details = DETAILED_INFO.get(owner);
         Optional<String> formatted = formatCurrentTasks(owner, details);
         if (!formatted.isPresent()) return;
-        owner.method_34525(formatted.get());
+        owner.setCustomName(formatted.get());
     }
     public static void setDetailedInfo(MobEntity owner, Goal task, String info) {
         setDetailedInfo(owner, task, () -> info);

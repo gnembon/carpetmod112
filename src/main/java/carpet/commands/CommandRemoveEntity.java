@@ -1,8 +1,8 @@
 package carpet.commands;
 
 import carpet.worldedit.WorldEditBridge;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -17,7 +17,7 @@ public class CommandRemoveEntity extends KillCommand {
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (args.length == 0)
         {
@@ -33,7 +33,7 @@ public class CommandRemoveEntity extends KillCommand {
             if (!(entity instanceof ServerPlayerEntity))
             {
                 ServerPlayerEntity worldEditPlayer = sender instanceof ServerPlayerEntity ? (ServerPlayerEntity) sender : null;
-                WorldEditBridge.recordEntityRemoval(worldEditPlayer, sender.method_29608(), entity);
+                WorldEditBridge.recordEntityRemoval(worldEditPlayer, sender.getEntityWorld(), entity);
             }
 
             method_28710(sender, this, "commands.kill.successful", entity.getDisplayName());

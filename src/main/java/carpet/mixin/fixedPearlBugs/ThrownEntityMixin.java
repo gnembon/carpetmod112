@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Mixin(ThrownEntity.class)
 public abstract class ThrownEntityMixin extends Entity {
-    @Shadow private String field_22644;
+    @Shadow private String ownerName;
     @Shadow protected LivingEntity owner;
 
     public ThrownEntityMixin(World worldIn) {
@@ -24,15 +24,15 @@ public abstract class ThrownEntityMixin extends Entity {
     }
 
     // Fixes pearls disappearing when players relog similar to 1.15 CARPET-XCOM
-    @Inject(method = "method_25162", at = @At("HEAD"))
+    @Inject(method = "getOwner", at = @At("HEAD"))
     private void pearlCheck(CallbackInfoReturnable<LivingEntity> cir) {
         if (!CarpetSettings.fixedPearlBugs) return;
-        if (field_22644 == null) {
+        if (ownerName == null) {
             if (owner == null) return;
-            field_22644 = owner.method_29611();
+            ownerName = owner.getName();
         }
         try {
-            Entity e = ((ServerWorld) world).getEntity(UUID.fromString(field_22644));
+            Entity e = ((ServerWorld) world).getEntity(UUID.fromString(ownerName));
             if (!world.field_23576.contains(e)) {
                 owner = null;
             }

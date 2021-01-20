@@ -11,8 +11,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameMode;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandSource;
 import net.minecraft.entity.effect.StatusEffect;
-import net.minecraft.class_2010;
 import net.minecraft.class_6175;
 
 public class CommandGMS extends CommandCarpetBase
@@ -24,13 +24,13 @@ public class CommandGMS extends CommandCarpetBase
     }
 
     @Override
-    public String method_29275(class_2010 sender)
+    public String method_29275(CommandSource sender)
     {
         return "commands.gamemode.usage";
     }
 
     @Override
-    public void method_29272(MinecraftServer server, class_2010 sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
     {
         if (!command_enabled("commandCameramode", sender)) return;
         if (args.length > 0)
@@ -65,7 +65,7 @@ public class CommandGMS extends CommandCarpetBase
     }
 
     @Override
-    public List<String> method_29273(MinecraftServer server, class_2010 sender, String[] args, @Nullable BlockPos targetPos)
+    public List<String> method_29273(MinecraftServer server, CommandSource sender, String[] args, @Nullable BlockPos targetPos)
     {
         return Collections.emptyList();
     }

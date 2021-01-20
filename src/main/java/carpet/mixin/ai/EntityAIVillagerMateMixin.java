@@ -53,7 +53,7 @@ public abstract class EntityAIVillagerMateMixin extends Goal {
         AIHelper.setDetailedInfo(this.field_33432, this, "Ready to Mate");
     }
 
-    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/control/LookControl;method_34905(Lnet/minecraft/entity/Entity;FF)V"))
+    @Inject(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/ai/control/LookControl;lookAt(Lnet/minecraft/entity/Entity;FF)V"))
     private void onUpdateTask(CallbackInfo ci) {
         int matingTimeout = this.field_33435;
         if (matingTimeout > 0) {
