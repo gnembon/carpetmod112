@@ -4,6 +4,7 @@ import java.util.*;
 import javax.annotation.Nullable;
 
 import carpet.utils.Messenger;
+import carpetmod.Build;
 import net.minecraft.class_6175;
 import net.minecraft.class_6182;
 import net.minecraft.command.CommandSource;
@@ -94,7 +95,7 @@ public class CommandCarpet extends CommandCarpetBase
     {
         if (CarpetSettings.locked)
         {
-            list_settings(sender, "Carpet Mod admin locked with the following settings",CarpetSettings.findNonDefault());
+            list_settings(sender, Build.NAME + " admin locked with the following settings",CarpetSettings.findNonDefault());
             return;
         }
         String tag = null;
@@ -102,8 +103,8 @@ public class CommandCarpet extends CommandCarpetBase
         {
             if (args.length == 0)
             {
-                list_settings(sender, "Current CarpetMod Settings", CarpetSettings.findNonDefault());
-                method_28710(sender, this, "Carpet Mod version: "+CarpetSettings.carpetVersion);
+                list_settings(sender, "Current " + Build.NAME + " Settings", CarpetSettings.findNonDefault());
+                method_28710(sender, this, Build.NAME + " version: " + Build.VERSION);
                 if (sender instanceof PlayerEntity)
                 {
                     List<Object> tags = new ArrayList<>();
@@ -123,14 +124,14 @@ public class CommandCarpet extends CommandCarpetBase
             }
             if (args.length == 1 && "list".equalsIgnoreCase(args[0]))
             {
-                list_settings(sender, "All CarpetMod Settings", CarpetSettings.findAll(null));
-                method_28710(sender, this, "Carpet Mod version: "+CarpetSettings.carpetVersion);
+                list_settings(sender, "All " + Build.NAME + " Settings", CarpetSettings.findAll(null));
+                method_28710(sender, this, Build.NAME + " version: " + Build.VERSION);
                 return;
             }
             if ("defaults".equalsIgnoreCase(args[0])) // empty tag
             {
-                list_settings(sender, "Current CarpetMod Startup Settings from carpet.conf", CarpetSettings.findStartupOverrides(server));
-                method_28710(sender, this, "Carpet Mod version: "+CarpetSettings.carpetVersion);
+                list_settings(sender, "Current " + Build.NAME + " Startup Settings from carpet.conf", CarpetSettings.findStartupOverrides(server));
+                method_28710(sender, this, Build.NAME + " version: " + Build.VERSION);
                 return;
             }
             if ("use".equalsIgnoreCase(args[0])) // empty tag
@@ -171,7 +172,7 @@ public class CommandCarpet extends CommandCarpetBase
             }
             if (args.length == 0)
             {
-                list_settings(sender, String.format("CarpetMod Settings matching \"%s\"", tag),CarpetSettings.findAll(tag)) ;
+                list_settings(sender, String.format(Build.NAME + " Settings matching \"%s\"", tag),CarpetSettings.findAll(tag)) ;
                 return;
             }
             if ("setDefault".equalsIgnoreCase(args[0]))

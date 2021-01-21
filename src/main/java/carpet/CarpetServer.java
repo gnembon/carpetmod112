@@ -11,6 +11,8 @@ import carpet.worldedit.WorldEditBridge;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 import narcolepticfrog.rsmm.events.TickStartEventDispatcher;
 import narcolepticfrog.rsmm.server.RSMMServer;
@@ -24,12 +26,19 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import javax.annotation.Nullable;
 
 public class CarpetServer // static for now - easier to handle all around the code, its one anyways
 {
     public static final Random rand = new Random((int)((2>>16)*Math.random()));
     public static final PubSubManager PUBSUB = new PubSubManager();
     public static final PubSubMessenger PUBSUB_MESSENGER = new PubSubMessenger(PUBSUB);
+
+    private static final Logger LOGGER = LogManager.getLogger("Carpet|Server");
+    private static final CompletableFuture<StackTraceDeobfuscator> DEOBFUSCATOR = StackTraceDeobfuscator.loadDefault();
 
     public static MinecraftServer minecraft_server;
     public static PluginChannelManager pluginChannels;
@@ -53,20 +62,14 @@ public class CarpetServer // static for now - easier to handle all around the co
         rsmmChannel = new ToggleableChannelHandler(pluginChannels, rsmmServer.createChannelHandler(), false);
         wecuiChannel = new ToggleableChannelHandler(pluginChannels, WorldEditBridge.createChannelHandler(), false);
     }
-    public static void onServerLoaded(MinecraftServer server)
-    {
+
+    public static void onServerLoaded(MinecraftServer server) {
         CarpetSettings.applySettingsFromConf(server);
         LoggerRegistry.initLoggers(server);
         LoggerRegistry.readSaveFile(server);
         WorldEditBridge.onServerLoaded(server);
-
-        // Precache mappings so as not to lag the server later
-        StackTraceDeobfuscator.create()
-                .withMinecraftVersion(CarpetSettings.minecraftVersion)
-                .withSnapshotMcpNames(CarpetSettings.mcpMappings)
-                .withStackTrace(new StackTraceElement[0])
-                .deobfuscate();
     }
+
     public static void onLoadAllWorlds(MinecraftServer server)
     {
         TickingArea.loadConfig(server);
@@ -181,6 +184,18 @@ public class CarpetServer // static for now - easier to handle all around the co
         catch (IOException e)
         {
             e.printStackTrace();
+        }
+    }
+
+    @Nullable
+    public static StackTraceDeobfuscator getDeobfuscator(boolean block) {
+        if (!DEOBFUSCATOR.isDone() && !block) return null;
+        if (DEOBFUSCATOR.isCompletedExceptionally() || DEOBFUSCATOR.isCancelled()) return null;
+        try {
+            return DEOBFUSCATOR.join();
+        } catch (RuntimeException e) {
+            LOGGER.debug(e);
+            return null;
         }
     }
 }

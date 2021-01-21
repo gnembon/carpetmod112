@@ -7,6 +7,7 @@ package carpet.carpetclient;
  *
  */
 
+import carpet.CarpetServer;
 import carpet.CarpetSettings;
 import carpet.helpers.StackTraceDeobfuscator;
 import carpet.mixin.accessors.ServerChunkManagerAccessor;
@@ -257,7 +258,6 @@ public class CarpetClientChunkLogger {
     }
 
     private static class StackTraces {
-        private static final StackTraceDeobfuscator DEOBFUSCATOR = StackTraceDeobfuscator.create().withMinecraftVersion(CarpetSettings.minecraftVersion).withStableMcpNames(CarpetSettings.mcpMappings);
         private final Map<String, InternedString> internedStrings = new LRUCache<>(128); // 64 ~ 98%, 128+ > 99%
         private int nextId = 1;
 
@@ -288,7 +288,8 @@ public class CarpetClientChunkLogger {
 
         private String asString(StackTraceElement[] trace, boolean deobfuscated) {
             if (deobfuscated) {
-                trace = DEOBFUSCATOR.withStackTrace(trace).deobfuscate();
+                StackTraceDeobfuscator deobfuscator = CarpetServer.getDeobfuscator(true);
+                if (deobfuscator != null) trace = deobfuscator.deobfuscate(trace);
             }
             StringBuilder stacktrace = new StringBuilder();
             int i;

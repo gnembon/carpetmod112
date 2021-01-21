@@ -48,10 +48,8 @@ public final class CarpetSettings
 
     // TODO: replace these constants at build time
     public static final String carpetVersion = FabricLoader.getInstance().getModContainer("carpetmod").get().getMetadata().getVersion().getFriendlyString();
-    public static final String minecraftVersion = "1.12.2";
-    public static final String mcpMappings = "39-1.12";
 
-    public static final Logger LOG = LogManager.getLogger();
+    public static final Logger LOG = LogManager.getLogger("Carpet|Settings");
 
     public static long setSeed = 0; // Xcom: if you dunno where to put it, shove it in CarpetSettings - Earth :)
     public static long endChunkSeed = 0;

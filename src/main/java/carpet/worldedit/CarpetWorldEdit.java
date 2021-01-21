@@ -4,6 +4,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.File;
 import java.util.Map;
+
+import carpetmod.Build;
 import net.minecraft.class_5607;
 import net.minecraft.command.CommandSource;
 import org.apache.logging.log4j.LogManager;
@@ -304,7 +306,7 @@ class CarpetWorldEdit {
      * @return a version string
      */
     String getInternalVersion() {
-        return CarpetSettings.carpetVersion;
+        return Build.VERSION;
     }
 
 }

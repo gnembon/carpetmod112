@@ -2,6 +2,7 @@ package carpet.helpers;
 
 import carpet.CarpetSettings;
 import carpet.utils.Messenger;
+import carpetmod.Build;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -122,7 +123,7 @@ public class CarpetUpdater {
     }
 
     private static boolean checkVersion(String tag) {
-        return CarpetSettings.carpetVersion.equals(tag);
+        return Build.VERSION.equals(tag);
     }
 
     private static void downloadUsingStream(String urlStr, String file) throws IOException {

@@ -3,6 +3,7 @@ package carpet.carpetclient;
 import carpet.CarpetSettings;
 import carpet.helpers.CustomCrafting;
 import carpet.helpers.TickSpeed;
+import carpetmod.Build;
 import com.google.gson.JsonObject;
 import io.netty.buffer.Unpooled;
 import net.minecraft.nbt.CompoundTag;
@@ -65,7 +66,7 @@ public class CarpetClientMessageHandler {
 
         CompoundTag chunkData = new CompoundTag();
 
-        chunkData.putString("carpetVersion", CarpetSettings.carpetVersion);
+        chunkData.putString("carpetVersion", Build.VERSION);
         chunkData.putFloat("tickrate", TickSpeed.tickrate);
         chunkData.putInt("netVersion", NET_VERSION);
         ListTag listNBT = new ListTag();

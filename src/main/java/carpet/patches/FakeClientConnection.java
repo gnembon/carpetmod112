@@ -3,8 +3,8 @@ package carpet.patches;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
 
-public class NetworkManagerFake extends ClientConnection {
-    public NetworkManagerFake(NetworkSide p) {
+public class FakeClientConnection extends ClientConnection {
+    public FakeClientConnection(NetworkSide p) {
         super(p);
     }
 

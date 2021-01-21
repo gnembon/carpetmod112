@@ -9,6 +9,7 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
+import carpetmod.Build;
 import com.sk89q.worldedit.entity.Player;
 import com.sk89q.worldedit.extension.platform.AbstractPlatform;
 import com.sk89q.worldedit.extension.platform.Actor;
@@ -154,7 +155,7 @@ class CarpetPlatform extends AbstractPlatform implements MultiUserPlatform {
 
     @Override
     public String getPlatformName() {
-        return "CarpetMod";
+        return Build.ID;
     }
 
     @Override

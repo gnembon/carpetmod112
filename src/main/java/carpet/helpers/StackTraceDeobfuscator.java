@@ -1,22 +1,25 @@
 package carpet.helpers;
 
+import carpet.CarpetSettings;
 import carpet.utils.LRUCache;
-import net.fabricmc.loader.launch.knot.Knot;
-import org.apache.commons.lang3.tuple.Pair;
-import org.objectweb.asm.ClassReader;
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.*;
-import org.spongepowered.asm.mixin.transformer.meta.MixinMerged;
-import org.spongepowered.asm.util.Annotations;
+import carpetmod.Build;
+import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.mapping.reader.v2.MappingGetter;
+import net.fabricmc.mapping.reader.v2.TinyMetadata;
+import net.fabricmc.mapping.reader.v2.TinyV2Factory;
+import net.fabricmc.mapping.reader.v2.TinyVisitor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.annotation.Nullable;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.concurrent.CompletableFuture;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -30,269 +33,170 @@ import java.util.zip.ZipInputStream;
  * .printDeobf();
  */
 public class StackTraceDeobfuscator {
-
-    private String srgUrl;
-    private String namesUrl;
-    private StackTraceElement[] stackTrace;
-
+    private static final Logger LOGGER = LogManager.getLogger("Carpet|Deobfuscator");
+    private static final Path CACHE_DIRECTORY = Paths.get(".fabric", "carpetCache");
     private final LRUCache<StackTraceElement, StackTraceElement> deobfCache = new LRUCache<>(1024);
-    private Map<String, String> classMappings, methodMappings, methodNames;
+    private final Map<String, String> mappings;
 
-    private static final Map<String, Map<String, String>> classMappingsCache = new HashMap<>(),
-            methodMappingsCache = new HashMap<>(),
-            methodNamesCache = new HashMap<>();
-    private static final Set<String> srgUrlsLoaded = new HashSet<>(), namesUrlsLoaded = new HashSet<>();
-    private static final Object SRG_SYNC_LOCK = new Object();
-    private static final Object NAMES_SYNC_LOCK = new Object();
-    private static final String CARPET_DIRECTORY = "carpet";
-    private static final String JOINED_FILE_NAME = CARPET_DIRECTORY + "/joined.srg";
-    private static final String METHODS_FILE_NAME = CARPET_DIRECTORY + "/methods.csv";
-
-    private StackTraceDeobfuscator() {
+    private StackTraceDeobfuscator(Map<String, String> mappings) {
+        this.mappings = mappings;
     }
 
-    // BUILDER
+    public static class Builder {
+        private CompletableFuture<URI> url;
+        private Map<String, String> mappings;
+        private String path = "mappings/mappings.tiny";
+        private String namespaceFrom = FabricLoader.getInstance().getMappingResolver().getCurrentRuntimeNamespace();
+        private String namespaceTo = "named";
 
-    public static StackTraceDeobfuscator create() {
-        return new StackTraceDeobfuscator();
-    }
-
-    public StackTraceDeobfuscator withSrgUrl(String srgUrl) {
-        this.srgUrl = srgUrl;
-        return this;
-    }
-
-    public StackTraceDeobfuscator withMinecraftVersion(String minecraftVersion) {
-        return withSrgUrl(String.format("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp/%1$s/mcp-%1$s-srg.zip", minecraftVersion));
-    }
-
-    public StackTraceDeobfuscator withNamesUrl(String namesUrl) {
-        this.namesUrl = namesUrl;
-        return this;
-    }
-
-    // e.g. 39-1.12
-    public StackTraceDeobfuscator withStableMcpNames(String mcpVersion) {
-        return withNamesUrl(String.format("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_stable/%1$s/mcp_stable-%1$s.zip", mcpVersion));
-    }
-
-    // e.g. 20180204-1.12
-    public StackTraceDeobfuscator withSnapshotMcpNames(String mcpVersion) {
-        return withNamesUrl(String.format("https://files.minecraftforge.net/maven/de/oceanlabs/mcp/mcp_snapshot/%1$s/mcp_snapshot-%1$s.zip", mcpVersion));
-    }
-
-    public StackTraceDeobfuscator withStackTrace(StackTraceElement[] stackTrace) {
-        this.stackTrace = stackTrace;
-        return this;
-    }
-
-    public StackTraceDeobfuscator withCurrentStackTrace() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        final String thisClass = getClass().getName();
-        boolean foundThisClass = false;
-        int firstIndex;
-        for (firstIndex = 0; firstIndex < stackTrace.length; firstIndex++) {
-            if (stackTrace[firstIndex].getClassName().equals(thisClass))
-                foundThisClass = true;
-            else if (foundThisClass)
-                break;
+        public Builder withNamesUrl(CompletableFuture<URI> url) {
+            this.url = url;
+            return this;
         }
-        return withStackTrace(Arrays.copyOfRange(stackTrace, firstIndex, stackTrace.length));
-    }
 
-    // IMPLEMENTATION
+        public Builder withNamesUrl(URI url) {
+            return withNamesUrl(CompletableFuture.completedFuture(url));
+        }
 
-    private void ensureSrgLoaded() {
-        while (true) {
-            synchronized (SRG_SYNC_LOCK) {
-                if (srgUrlsLoaded.contains(srgUrl))
-                    break;
-            }
+        public Builder withPath(@Nullable String path) {
+            this.path = path;
+            return this;
+        }
+
+        public Builder withNamespaces(String namespaceFrom, String namespaceTo) {
+            this.namespaceFrom = namespaceFrom;
+            this.namespaceTo = namespaceTo;
+            return this;
+        }
+
+        public Builder withLegacyYarnNames(String version) {
             try {
-                //noinspection BusyWait
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+                return withNamesUrl(new URI("https://dl.bintray.com/legacy-fabric/Legacy-Fabric-Maven/net/fabricmc/yarn/" + version + "/yarn-" + version + "-v2.jar"));
+            } catch (URISyntaxException e) {
+                throw new IllegalStateException(e);
             }
         }
-    }
 
-    private void ensureNamesLoaded() {
-        if (namesUrl == null)
-            return;
-
-        while (true) {
-            synchronized (NAMES_SYNC_LOCK) {
-                if (namesUrlsLoaded.contains(namesUrl))
-                    break;
-            }
-            try {
-                //noinspection BusyWait
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    private void loadMappings() {
-        boolean loadingSrg;
-        synchronized (SRG_SYNC_LOCK) {
-            loadingSrg = classMappingsCache.containsKey(srgUrl);
-            if (!loadingSrg) {
-                classMappingsCache.put(srgUrl, new HashMap<>());
-                methodMappingsCache.put(srgUrl, new HashMap<>());
-            }
-            classMappings = classMappingsCache.get(srgUrl);
-            methodMappings = methodMappingsCache.get(srgUrl);
+        public Builder withMappings(Map<String, String> mappings) {
+            this.mappings = mappings;
+            return this;
         }
 
-
-        if (!loadingSrg) {
-            Thread t = new Thread(() -> {
-                URL url;
-                InputStream in = null;
-                File carpetDirectory = new File(CARPET_DIRECTORY);
-                File joinedFile = new File(JOINED_FILE_NAME);
-                if (!carpetDirectory.exists() || !joinedFile.exists()) {
-                    carpetDirectory.mkdir();
+        public CompletableFuture<StackTraceDeobfuscator> build() {
+            if (mappings != null) return CompletableFuture.completedFuture(new StackTraceDeobfuscator(mappings));
+            if (url == null) throw new IllegalStateException("No URL set");
+            return url.thenComposeAsync(StackTraceDeobfuscator::downloadFile).thenApply(in -> {
+                if (path == null) {
                     try {
-                        url = new URL(srgUrl);
-                    } catch (MalformedURLException e) {
-                        throw new RuntimeException(e);
-                    }
-                    try {
-                        in = url.openConnection().getInputStream();
-                        Files.copy(in, Paths.get(JOINED_FILE_NAME));
-                    } catch (Exception e) {
-                    }
-                }
-                try {
-                    in = new FileInputStream(joinedFile);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    ZipInputStream zipIn = new ZipInputStream(in);
-                    ZipEntry entry;
-                    while ((entry = zipIn.getNextEntry()) != null) {
-                        if (entry.getName().equals("joined.srg")) {
-                            loadSrg(new BufferedReader(new InputStreamReader(zipIn)));
-                            break;
-                        } else {
-                            zipIn.closeEntry();
-                        }
-                    }
-                    zipIn.close();
-                } catch (IOException e) {
-                    System.err.println("Unable to load srg mappings");
-                }
-            });
-            t.setDaemon(true);
-            t.start();
-        }
-
-        if (namesUrl != null) {
-            boolean loadingNames;
-            synchronized (NAMES_SYNC_LOCK) {
-                loadingNames = methodNamesCache.containsKey(namesUrl);
-                if (!loadingNames) {
-                    methodNamesCache.put(namesUrl, new HashMap<>());
-                }
-                methodNames = methodNamesCache.get(namesUrl);
-            }
-
-            if (!loadingNames) {
-                Thread t = new Thread(() -> {
-                    URL url;
-                    InputStream in = null;
-                    File carpetDirectory = new File(CARPET_DIRECTORY);
-                    File methodsFile = new File(METHODS_FILE_NAME);
-                    if (!carpetDirectory.exists() || !methodsFile.exists()) {
-                        carpetDirectory.mkdir();
+                        return new StackTraceDeobfuscator(readMappings(in, namespaceFrom, namespaceTo));
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    } finally {
                         try {
-                            url = new URL(namesUrl);
-                        } catch (MalformedURLException e) {
-                            throw new RuntimeException(e);
-                        }
-                        try {
-                            in = url.openConnection().getInputStream();
-                            Files.copy(in, Paths.get(METHODS_FILE_NAME));
-                        } catch (Exception e) {
-                        }
+                            in.close();
+                        } catch (IOException ignored) {}
                     }
-                    try {
-                        in = new FileInputStream(methodsFile);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        ZipInputStream zipIn = new ZipInputStream(in);
+                } else {
+                    try (ZipInputStream zip = new ZipInputStream(in)) {
                         ZipEntry entry;
-                        while ((entry = zipIn.getNextEntry()) != null) {
-                            if (entry.getName().equals("methods.csv")) {
-                                loadNames(new BufferedReader(new InputStreamReader(zipIn)));
-                                break;
+                        while ((entry = zip.getNextEntry()) != null) {
+                            if (entry.getName().equals(path)) {
+                                return new StackTraceDeobfuscator(readMappings(zip, namespaceFrom, namespaceTo));
                             } else {
-                                zipIn.closeEntry();
+                                zip.closeEntry();
                             }
                         }
-                        zipIn.close();
+                        throw new IllegalStateException("Entry '" + path + "' not found in mappings jar");
                     } catch (IOException e) {
-                        System.err.println("Unable to load method names");
+                        throw new UncheckedIOException(e);
                     }
-                });
-                t.setDaemon(true);
-                t.start();
-            }
+                }
+            });
         }
     }
 
-    private void loadSrg(BufferedReader in) {
-        in.lines().map(line -> line.split(" ")).forEach(tokens -> {
-            if (tokens[0].equals("CL:")) {
-                classMappings.put(tokens[1], tokens[2]);
-            } else if (tokens[0].equals("MD:")) {
-                methodMappings.put(tokens[1] + tokens[2], tokens[3].substring(tokens[3].lastIndexOf('/') + 1));
+    public static CompletableFuture<StackTraceDeobfuscator> loadDefault() {
+        Builder builder = new Builder();
+        if (FabricLoader.getInstance().isDevelopmentEnvironment() && false) {
+            builder.withMappings(new HashMap<>());
+        } else {
+            builder.withLegacyYarnNames(Build.YARN_MAPPINGS);
+        }
+        return builder.build();
+    }
+
+    private static CompletableFuture<InputStream> downloadFile(URI url) {
+        return CompletableFuture.supplyAsync(() -> {
+            Path cachePath = getCacheFile(url);
+            if (Files.exists(cachePath)) {
+                try {
+                    return Files.newInputStream(cachePath);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+            try {
+                LOGGER.info("Downloading {}", url);
+                Files.createDirectories(cachePath.getParent());
+                try (InputStream in = url.toURL().openStream()) {
+                    Files.copy(in, cachePath);
+                }
+                return Files.newInputStream(cachePath);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
         });
-        synchronized (SRG_SYNC_LOCK) {
-            srgUrlsLoaded.add(srgUrl);
-        }
     }
 
-    private void loadNames(BufferedReader in) {
-        in.lines().skip(1).map(line -> line.split(",")).forEach(tokens -> {
-            methodNames.put(tokens[0], tokens[1]);
+    private static Path getCacheFile(URI url) {
+        String path = url.getPath();
+        path = path.substring(path.lastIndexOf('/') + 1);
+        return CACHE_DIRECTORY.resolve(path);
+    }
+
+    private static Map<String, String> readMappings(InputStream in, String namespaceFrom, String namespaceTo) throws IOException {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8));
+        Map<String, String> mappings = new HashMap<>();
+        TinyV2Factory.visit(reader, new TinyVisitor() {
+            private int columnFrom;
+            private int columnTo;
+
+            private void add(MappingGetter mapping) {
+                mappings.put(mapping.get(columnFrom), mapping.get(columnTo));
+            }
+
+            @Override
+            public void start(TinyMetadata metadata) {
+                columnFrom = metadata.index(namespaceFrom);
+                columnTo = metadata.index(namespaceTo);
+            }
+
+            @Override
+            public void pushClass(MappingGetter name) {
+                add(name);
+            }
+
+            @Override
+            public void pushMethod(MappingGetter name, String descriptor) {
+                add(name);
+            }
+
+            @Override
+            public void pushField(MappingGetter name, String descriptor) {
+                add(name);
+            }
         });
-        synchronized (NAMES_SYNC_LOCK) {
-            namesUrlsLoaded.add(namesUrl);
-        }
+        return mappings;
     }
 
-    public void printDeobf() {
-        printDeobf(System.err);
+    public <T extends Throwable> T deobfuscate(T throwable) {
+        StackTraceElement[] stack = throwable.getStackTrace();
+        StackTraceElement[] deobf = deobfuscate(stack);
+        throwable.setStackTrace(deobf);
+        return throwable;
     }
 
-    public void printDeobf(PrintStream out) {
-        out.println(deobfAsString());
-    }
-
-    public String deobfAsString() {
-        StackTraceElement[] elems = deobfuscate();
-        return Arrays.stream(elems).map(StackTraceElement::toString).collect(Collectors.joining("\n"));
-    }
-
-    public StackTraceElement[] deobfuscate() {
-        if (srgUrl == null) {
-            throw new IllegalStateException("No mappings url has been set");
-        }
-        if (stackTrace == null) {
-            throw new IllegalStateException("No stack trace has been set");
-        }
-
-        loadMappings();
-
+    public StackTraceElement[] deobfuscate(StackTraceElement[] stackTrace) {
         StackTraceElement[] deobfStackTrace = new StackTraceElement[stackTrace.length];
         for (int i = 0; i < stackTrace.length; i++) {
             deobfStackTrace[i] = deobfuscate(stackTrace[i]);
@@ -304,115 +208,15 @@ public class StackTraceDeobfuscator {
         return deobfCache.computeIfAbsent(elem, this::computeDeobfuscatedElement);
     }
 
+
     private StackTraceElement computeDeobfuscatedElement(StackTraceElement elem) {
         String className = elem.getClassName().replace('.', '/');
-        ensureSrgLoaded();
-        // if (!classMappings.containsKey(className)) return elem;
         String methodName = elem.getMethodName();
         String fileName = elem.getFileName();
-        int line = elem.getLineNumber();
-        try {
-            ClassNode classNode = getClass(elem.getClassName(), true);
-            if (classNode != null) {
-                MethodNode method = findMethod(classNode.methods, methodName, line);
-                if (method != null) {
-                    Pair<ClassNode, MethodNode> mixinMethod = findMatchingMixin(method);
-                    if (mixinMethod != null) {
-                        // This method was merged from a mixin
-                        classNode = mixinMethod.getLeft();
-                        className = classNode.name;
-                        // reset file name so it gets generated from the class name
-                        fileName = null;
-                        int origFirstLine = getFirstLine(method);
-                        method = mixinMethod.getRight();
-                        methodName = method.name;
-                        int mixinFirstLine = getFirstLine(method);
-                        // Mixin translates the line numbers, but relative to each other they are still correct
-                        if (origFirstLine > 0 && mixinFirstLine > 0) {
-                            line -= origFirstLine - mixinFirstLine;
-                        }
-                    } else {
-                        // Not a mixin, try to remap method & class
-                        String key = className + "/" + methodName + method.desc;
-                        ensureNamesLoaded();
-                        if (methodMappings.containsKey(key)) {
-                            methodName = methodMappings.get(key);
-                            if (methodNames != null && methodNames.containsKey(methodName))
-                                methodName = methodNames.get(methodName);
-                        }
-                        className = classMappings.getOrDefault(className, className);
-                    }
-                    className = className.replace('/', '.');
-                    fileName = createFileName(className, fileName);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new StackTraceElement(className, methodName, fileName, line);
-    }
-
-    @Nullable
-    private static MethodNode findMethod(List<MethodNode> methods, String methodName, int line) {
-        Set<MethodNode> methodsWithMatchingName = methods.stream()
-                .filter(m -> methodName.equals(m.name))
-                .collect(Collectors.toSet());
-        if (methodsWithMatchingName.size() == 1) {
-            return methodsWithMatchingName.iterator().next();
-        }
-        for (MethodNode method : methodsWithMatchingName) {
-            if (containsLine(method, line)) {
-                return method;
-            }
-        }
-        return null;
-    }
-
-    private static int getFirstLine(MethodNode method) {
-        for (Iterator<AbstractInsnNode> iter = method.instructions.iterator(); iter.hasNext();) {
-            AbstractInsnNode insn = iter.next();
-            if (insn instanceof LineNumberNode) {
-                return ((LineNumberNode) insn).line;
-            }
-        }
-        return -1;
-    }
-
-    private Pair<ClassNode, MethodNode> findMatchingMixin(MethodNode method) {
-        if (method.visibleAnnotations == null) return null;
-        AnnotationNode merged = Annotations.getVisible(method, MixinMerged.class);
-        if (merged == null) return null;
-        String mixinClassName = Annotations.getValue(merged, "mixin");
-        String methodName = method.name.substring(method.name.lastIndexOf('$') + 1);
-        try {
-            ClassNode mixinClass = getClass(mixinClassName, false);
-            if (mixinClass == null) return null;
-            for (MethodNode mixinMethod : mixinClass.methods) {
-                if (mixinMethod.name.equals(methodName) && mixinMethod.desc.equals(method.desc)) {
-                    return Pair.of(mixinClass, mixinMethod);
-                }
-            }
-        } catch (IOException ignored) {}
-        return null;
-    }
-
-    private static boolean containsLine(MethodNode method, int line) {
-        for (Iterator<AbstractInsnNode> iter = method.instructions.iterator(); iter.hasNext();) {
-            AbstractInsnNode insn = iter.next();
-            if (insn instanceof LineNumberNode) {
-                if (((LineNumberNode) insn).line == line) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private static void skip(DataInputStream dataIn, long n) throws IOException {
-        long actual = 0;
-        while (actual < n) {
-            actual += dataIn.skip(n - actual);
-        }
+        className = mappings.getOrDefault(className, className);
+        methodName = mappings.getOrDefault(methodName, methodName);
+        fileName = createFileName(className, fileName);
+        return new StackTraceElement(className.replace('/', '.'), methodName, fileName, elem.getLineNumber());
     }
 
     private static String createFileName(String className, String oldFileName) {
@@ -425,19 +229,5 @@ public class StackTraceDeobfuscator {
         } else {
             return oldFileName;
         }
-    }
-
-    private static ClassNode getClass(String name, boolean transformed) throws IOException {
-        String className = name.replace('.', '/');
-        byte[] bytes = getClassBinary(className, transformed);
-        if (bytes == null) return null;
-        ClassReader reader = new ClassReader(bytes);
-        ClassNode node = new ClassNode(Opcodes.ASM5);
-        reader.accept(node, ClassReader.EXPAND_FRAMES);
-        return node;
-    }
-
-    private static byte[] getClassBinary(String name, boolean transformed) throws IOException {
-        return Knot.getLauncher().getClassByteArray(name, transformed);
     }
 }

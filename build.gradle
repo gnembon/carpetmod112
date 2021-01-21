@@ -81,3 +81,27 @@ processResources {
 		exclude "fabric.mod.json"
 	}
 }
+
+task generateJava(type: Copy) {
+	group = 'build'
+	description 'Generates Build.java'
+
+	def df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+	df.setTimeZone(TimeZone.getTimeZone("UTC"))
+	def templateContext = [
+			version: project.version,
+			timestamp: df.format(buildDate),
+			branch: GitHelper.branch,
+			commit: GitHelper.commit,
+			working_dir_clean: GitHelper.status,
+			minecraft_version: project.minecraft_version,
+			yarn_mappings: project.yarn_mappings
+	]
+	inputs.properties templateContext // for gradle up-to-date check
+	from 'src/template/java'
+	into "$buildDir/generated/java"
+	expand templateContext
+}
+
+sourceSets.main.java.srcDir "$buildDir/generated/java"
+compileJava.dependsOn generateJava

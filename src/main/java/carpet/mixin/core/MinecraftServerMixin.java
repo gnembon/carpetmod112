@@ -67,11 +67,6 @@ public abstract class MinecraftServerMixin {
         CarpetServer.onWorldsSaved((MinecraftServer) (Object) this);
     }
 
-    @Inject(method = "main", at = @At("HEAD"), remap = false)
-    private static void onMain(String[] args, CallbackInfo ci) {
-        System.out.println(Arrays.toString(args));
-    }
-
     @Inject(method = "tickWorlds", at = @At(value = "FIELD", target = "Lnet/minecraft/server/MinecraftServer;ticks:I", ordinal = 0, shift = At.Shift.AFTER))
     private void startTick(CallbackInfo ci) {
         CarpetServer.tick((MinecraftServer) (Object) this);

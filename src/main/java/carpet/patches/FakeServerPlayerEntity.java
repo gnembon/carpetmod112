@@ -60,7 +60,7 @@ public class FakeServerPlayerEntity extends ServerPlayerEntity
         }
         FakeServerPlayerEntity instance = new FakeServerPlayerEntity(server, worldIn, gameprofile, interactionManagerIn);
         instance.setSetPosition(x, y, z, (float)yaw, (float)pitch);
-        server.getPlayerManager().onPlayerConnect(new NetworkManagerFake(NetworkSide.CLIENTBOUND), instance);
+        server.getPlayerManager().onPlayerConnect(new FakeClientConnection(NetworkSide.CLIENTBOUND), instance);
         if (instance.dimensionId != dimension) //player was logged in in a different dimension
         {
             ServerWorld old_world = server.getWorldById(instance.dimensionId);
@@ -101,7 +101,7 @@ public class FakeServerPlayerEntity extends ServerPlayerEntity
         gameprofile = fixSkin(gameprofile);
         FakeServerPlayerEntity playerShadow = new FakeServerPlayerEntity(server, worldIn, gameprofile, interactionManagerIn);
         playerShadow.setSetPosition(player.x, player.y, player.z, player.yaw, player.pitch);
-        server.getPlayerManager().onPlayerConnect(new NetworkManagerFake(NetworkSide.CLIENTBOUND), playerShadow);
+        server.getPlayerManager().onPlayerConnect(new FakeClientConnection(NetworkSide.CLIENTBOUND), playerShadow);
 
         playerShadow.setHealth(player.getHealth());
         playerShadow.networkHandler.requestTeleport(player.x, player.y,player.z, player.yaw, player.pitch);
@@ -133,7 +133,7 @@ public class FakeServerPlayerEntity extends ServerPlayerEntity
         server.getPlayerManager().loadPlayerData(instance);
         instance.setSetPosition(instance.x, instance.y, instance.z, instance.yaw, instance.pitch);
         setShouldFixMinecart(true);
-        server.getPlayerManager().onPlayerConnect(new NetworkManagerFake(NetworkSide.CLIENTBOUND), instance);
+        server.getPlayerManager().onPlayerConnect(new FakeClientConnection(NetworkSide.CLIENTBOUND), instance);
         setShouldFixMinecart(false);
         if (instance.dimensionId != 0) //player was logged in in a different dimension
         {
