@@ -1,0 +1,42 @@
+name: Releases
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v1
+      - name: Set up JDK 8
+        uses: actions/setup-java@v1
+        with:
+          java-version: 8
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*gradle*') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Cache Loom Files
+        uses: actions/cache@v2
+        with:
+          path: |
+            build/loom-cache
+            .gradle/loom-cache
+          key: ${{ runner.os }}-loom-${{ hashFiles('**/*gradle*', '**/*.accesswidener') }}
+          restore-keys: |
+            ${{ runner.os }}-loom-
+      - name: Build with Gradle
+        run: ./gradlew clean build
+      - name: Attach JARs to release
+        uses: AButler/upload-release-assets@v2.0
+        with:
+          files: build/libs/*.jar
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
