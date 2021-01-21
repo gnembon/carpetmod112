@@ -38,7 +38,6 @@ public class CarpetCommands {
         handler.method_29056(new CommandTNT());
         handler.method_29056(new CommandUnload());
         handler.method_29056(new CommandUnload13());
-        handler.method_29056(new CommandUpdateCarpet());
         handler.method_29056(new CommandWaypoint());
 
         // ----- RSMM Start ----- //
