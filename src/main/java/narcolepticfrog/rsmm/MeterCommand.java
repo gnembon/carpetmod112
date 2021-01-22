@@ -2,8 +2,8 @@ package narcolepticfrog.rsmm;
 
 import carpet.commands.CommandCarpetBase;
 import narcolepticfrog.rsmm.server.RSMMServer;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -35,7 +35,7 @@ public class MeterCommand extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (!command_enabled("redstoneMultimeter", sender)) return;
         if (args.length < 1) {
@@ -49,7 +49,7 @@ public class MeterCommand extends CommandCarpetBase
 
         if (args[0].equals("name")) {
             if (rsmmServer.getNumMeters(player) <= 0) {
-                throw new class_6175("There are no meters to rename!");
+                throw new CommandException("There are no meters to rename!");
             }
             if (args.length == 2) {
                 rsmmServer.renameLastMeter(player, args[1]);
@@ -63,7 +63,7 @@ public class MeterCommand extends CommandCarpetBase
             }
         } else if (args[0].equals("color")) {
             if (rsmmServer.getNumMeters(player) <= 0) {
-                throw new class_6175("There are no meters to recolor!");
+                throw new CommandException("There are no meters to recolor!");
             }
             if (args.length == 2) {
                 rsmmServer.recolorLastMeter(player, ColorUtils.parseColor(args[1]));

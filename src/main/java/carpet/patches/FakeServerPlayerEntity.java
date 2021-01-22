@@ -91,7 +91,7 @@ public class FakeServerPlayerEntity extends ServerPlayerEntity
             GameMode gametype = server.getDefaultGameMode();
             ((CameraPlayer) player).moveToStoredCameraData();
             player.setGameMode(gametype);
-            player.removeStatusEffect(StatusEffect.method_34297("night_vision"));
+            player.removeStatusEffect(StatusEffect.fromId("night_vision"));
         }
         player.getServer().getPlayerManager().remove(player);
         player.networkHandler.disconnect(new TranslatableText("multiplayer.disconnect.duplicate_login"));

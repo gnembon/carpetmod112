@@ -13,11 +13,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.GameMode;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.mob.HostileEntity;
-import net.minecraft.class_6175;
 
 public class CommandGMC extends CommandCarpetBase
 {
@@ -34,7 +34,7 @@ public class CommandGMC extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException {
         if (!command_enabled("commandCameramode", sender)) return;
         if (args.length > 0)
         {
@@ -50,13 +50,13 @@ public class CommandGMC extends CommandCarpetBase
             if(entityplayer.isSpectator()) return;
             if(CarpetSettings.cameraModeSurvivalRestrictions && entityplayer.interactionManager.getGameMode() == GameMode.SURVIVAL) {
                 List<HostileEntity> hostiles = sender.getEntityWorld().getEntities(HostileEntity.class, new Box(entityplayer.x - 8.0D, entityplayer.y - 5.0D, entityplayer.z - 8.0D, entityplayer.x + 8.0D, entityplayer.y + 5.0D, entityplayer.z + 8.0D), mob -> mob.isAngryAt(entityplayer));
-                StatusEffectInstance fireresist = entityplayer.getStatusEffect(StatusEffect.method_34297("fire_resistance"));
+                StatusEffectInstance fireresist = entityplayer.getStatusEffect(StatusEffect.fromId("fire_resistance"));
                 if(!entityplayer.onGround || entityplayer.isFallFlying() || (((EntityAccessor) entityplayer).getFireTicks() > 0 && (fireresist == null || fireresist.getDuration() < ((EntityAccessor) entityplayer).getFireTicks())) || entityplayer.getAir() != 300 || !hostiles.isEmpty()){
                     method_28710(sender, this, "Restricted use to: on ground, not in water, not on fire, not flying/falling, not near hostile mobs.");
                     return;
                 }
             }
-            StatusEffect nightvision = StatusEffect.method_34297("night_vision");
+            StatusEffect nightvision = StatusEffect.fromId("night_vision");
             boolean hasNightvision = entityplayer.getStatusEffect(nightvision) != null;
             ((CameraPlayer) entityplayer).storeCameraData(hasNightvision);
             GameMode gametype = GameMode.byName("spectator", GameMode.NOT_SET);

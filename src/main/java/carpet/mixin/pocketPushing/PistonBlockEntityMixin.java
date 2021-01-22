@@ -23,9 +23,9 @@ import java.util.List;
 @Mixin(PistonBlockEntity.class)
 public abstract class PistonBlockEntityMixin extends BlockEntity {
     @Shadow public abstract Box method_27144(BlockView p_184321_1_, BlockPos p_184321_2_);
-    @Shadow private boolean field_25263;
+    @Shadow private boolean extending;
     @Shadow private Direction facing;
-    @Shadow private BlockState field_25261;
+    @Shadow private BlockState pushedBlock;
 
     @Inject(method = "method_27160", at = @At("HEAD"), cancellable = true)
     private void pocketPushing(float nextProgress, CallbackInfo ci) {
@@ -39,14 +39,14 @@ public abstract class PistonBlockEntityMixin extends BlockEntity {
         Box axisalignedbb = this.method_27144(this.world, this.pos).offset(this.pos);
         List<Entity> entities = this.world.getEntitiesIn(null, axisalignedbb);
         if (!entities.isEmpty()) {
-            Direction facing = this.field_25263 ? this.facing : this.facing.getOpposite();
+            Direction facing = this.extending ? this.facing : this.facing.getOpposite();
             for (Entity entity : entities) {
                 if (entity.getPistonBehavior() != PistonBehavior.IGNORE) {
                     double dx = 0;
                     double dy = 0;
                     double dz = 0;
                     Box box = entity.getBoundingBox();
-                    if (this.field_25261.getBlock() == Blocks.SLIME_BLOCK) {
+                    if (this.pushedBlock.getBlock() == Blocks.SLIME_BLOCK) {
                         switch (facing.getAxis()) {
                             case X:
                                 entity.velocityX = facing.getOffsetX();

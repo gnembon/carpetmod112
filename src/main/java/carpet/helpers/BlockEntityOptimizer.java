@@ -55,7 +55,7 @@ public class BlockEntityOptimizer
                 // Check for comparators like in vanilla. This check is only performed horizontally, as comparators are only horizontal
                 if (horizontal && Blocks.UNPOWERED_COMPARATOR.method_26548(iblockstate))
                 {
-                    iblockstate.method_27176(worldIn, blockpos, blockIn, pos);
+                    iblockstate.neighbourUpdate(worldIn, blockpos, blockIn, pos);
                 }
                 else if (horizontal && iblockstate.isSolidBlock())
                 {
@@ -64,7 +64,7 @@ public class BlockEntityOptimizer
 
                     if (Blocks.UNPOWERED_COMPARATOR.method_26548(iblockstate))
                     {
-                        iblockstate.method_27176(worldIn, blockpos, blockIn, pos);
+                        iblockstate.neighbourUpdate(worldIn, blockpos, blockIn, pos);
                     }
                 }
                 

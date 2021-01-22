@@ -8,9 +8,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.TypeFilterableList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkManager;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkGenerator;
 import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.WorldChunk;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -23,24 +23,24 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-@Mixin(WorldChunk.class)
-public class WorldChunkMixin {
+@Mixin(Chunk.class)
+public class ChunkMixin {
     @Shadow @Final private TypeFilterableList<Entity>[] entitySections;
     @Shadow @Final private Map<BlockPos, BlockEntity> blockEntities;
     @Shadow private int field_25385;
     @Shadow @Final private World world;
     @Shadow @Final private int[] field_25375;
     @Shadow @Final private ChunkSection[] sections;
-    @Shadow @Final public int field_25365;
-    @Shadow @Final public int field_25366;
+    @Shadow @Final public int x;
+    @Shadow @Final public int z;
 
-    @Inject(method = "method_27367", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkManager;method_27344(II)V", shift = At.Shift.AFTER))
-    private void afterPopulate(ChunkManager generator, CallbackInfo ci) {
+    @Inject(method = "method_27367", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/ChunkGenerator;decorate(II)V", shift = At.Shift.AFTER))
+    private void afterPopulate(ChunkGenerator generator, CallbackInfo ci) {
         // Skyblock in carpet 12
         if(CarpetSettings.skyblock) {
             for(int i = 0; i < 4; i++) {
-                if(world.method_26067(field_25365 + i % 2, field_25366 + i / 2)) {
-                    ((WorldChunkMixin) (Object) world.method_25975(field_25365 + i % 2, field_25366 + i / 2)).removeAllBlocks();
+                if(world.method_26067(x + i % 2, z + i / 2)) {
+                    ((ChunkMixin) (Object) world.method_25975(x + i % 2, z + i / 2)).removeAllBlocks();
                 }
             }
         }

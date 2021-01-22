@@ -11,8 +11,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ChestBlockEntity.class)
 public class ChestBlockEntityMixin {
-    @Redirect(method = "method_26955", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;"))
-    private BlockState onGetBoundingBox(World world, BlockPos pos) {
+    @Redirect(method = "isChest", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;"))
+    private BlockState onIsChest(World world, BlockPos pos) {
         return CarpetClientChunkLogger.getBlockState(world, pos, "Chest loading");
     }
 }

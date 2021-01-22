@@ -3,11 +3,11 @@ package carpet.mixin.newLight;
 import carpet.CarpetSettings;
 import carpet.helpers.LightingEngine;
 import carpet.utils.extensions.NewLightWorld;
-import net.minecraft.class_1268;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelProperties;
 import org.spongepowered.asm.mixin.Final;
@@ -24,7 +24,7 @@ public class WorldMixin implements NewLightWorld {
     protected LightingEngine lightingEngine;
 
     @Inject(method = "<init>", at = @At("RETURN"))
-    private void onCtor(class_1268 levelProperties, LevelProperties levelProperties2, Dimension dimension, Profiler profiler, boolean isClient, CallbackInfo ci) {
+    private void onCtor(WorldSaveHandler levelProperties, LevelProperties levelProperties2, Dimension dimension, Profiler profiler, boolean isClient, CallbackInfo ci) {
         this.lightingEngine = new LightingEngine((World) (Object) this);
     }
 

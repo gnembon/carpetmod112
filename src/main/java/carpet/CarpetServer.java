@@ -81,7 +81,7 @@ public class CarpetServer // static for now - easier to handle all around the co
                 throw new UncheckedIOException(e);
             }
 
-            String prefix = "minecraft." + world.dimension.getType().method_27531();
+            String prefix = "minecraft." + world.dimension.getType().getSaveDir();
             new PubSubInfoProvider<>(PUBSUB,prefix + ".chunk_loading.dropped_chunks.hash_size",20,
                     () -> ChunkLoading.getCurrentHashSize(world));
             for (SpawnGroup creatureType : SpawnGroup.values()) {

@@ -26,7 +26,7 @@ public class RedstoneOreRedirectHelper
         }
         else if (Blocks.UNPOWERED_REPEATER.method_26548(blockState))
         {
-            Direction enumfacing = (Direction)blockState.get(RepeaterBlock.field_24496);
+            Direction enumfacing = (Direction)blockState.get(RepeaterBlock.FACING);
             return enumfacing == side || enumfacing.getOpposite() == side;
         }
         else if (Blocks.OBSERVER == blockState.getBlock())
@@ -35,7 +35,7 @@ public class RedstoneOreRedirectHelper
         }
         else
         {
-            return (blockState.method_27208() || block == Blocks.REDSTONE_ORE || block == Blocks.LIT_REDSTONE_ORE) && side != null;
+            return (blockState.emitsRedstonePowe() || block == Blocks.REDSTONE_ORE || block == Blocks.LIT_REDSTONE_ORE) && side != null;
         }
     }
     
@@ -48,7 +48,7 @@ public class RedstoneOreRedirectHelper
         }
         else
         {
-            int i = blockState.get(RedstoneWireBlock.field_24710);
+            int i = blockState.get(RedstoneWireBlock.POWER);
             
             if (i == 0)
             {

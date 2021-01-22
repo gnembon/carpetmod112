@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 
-import carpet.mixin.accessors.ServerChunkManagerAccessor;
+import carpet.mixin.accessors.ServerChunkCacheAccessor;
 import com.sk89q.jnbt.CompoundTag;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.MaxChangedBlocksException;
@@ -36,19 +36,19 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.class_5305;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.server.world.ServerChunkCache;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkCache;
 
 /**
  * An adapter to Minecraft worlds for WorldEdit.
@@ -115,11 +115,11 @@ class CarpetWorld extends AbstractWorld {
         int z = position.getBlockZ();
 
         // First set the block
-        WorldChunk chunk = world.method_25975(x >> 4, z >> 4);
+        Chunk chunk = world.method_25975(x >> 4, z >> 4);
         BlockState oldState = Blocks.AIR.getDefaultState();
 
         if (notifyAndLight) {
-            oldState = chunk.method_27361(x & 15, y, z & 15);
+            oldState = chunk.getBlockState(x & 15, y, z & 15);
         }
 
         BlockState newState = Block.getBlockFromRawId(block.getId()).getDefaultState(block.getData());
@@ -137,14 +137,14 @@ class CarpetWorld extends AbstractWorld {
 
         BlockPos pos = new BlockPos(x, y, z);
         if (notifyAndLight) {
-            if (newState.method_27191() != oldState.method_27191() || newState.getLuminance() != oldState.getLuminance())
+            if (newState.getOpacity() != oldState.getOpacity() || newState.getLuminance() != oldState.getLuminance())
                 world.method_26153(pos);
         }
         world.updateListeners(pos, oldState, newState, 3);
         if (notifyAndLight) {
             world.method_26017(pos, oldState.getBlock(), true);
 
-            if (newState.method_27209()) {
+            if (newState.hasComparatorOutput()) {
                 world.updateHorizontalAdjacent(pos, newState.getBlock());
             }
         }
@@ -186,7 +186,7 @@ class CarpetWorld extends AbstractWorld {
 
         BlockPos pos = new BlockPos(position.getBlockX(), 0, position.getBlockZ());
         if (getWorld().canSetBlock(pos)) {
-            WorldChunk chunk = getWorld().getWorldChunk(pos);
+            Chunk chunk = getWorld().getWorldChunk(pos);
             chunk.method_27418()[((position.getBlockZ() & 0xF) << 4 | position.getBlockX() & 0xF)] = (byte) biome.getId();
             return true;
         }
@@ -226,11 +226,11 @@ class CarpetWorld extends AbstractWorld {
             }
             try {
                 Set<Vector2D> chunks = region.getChunks();
-                class_5305 provider = getWorld().getChunkManager();
-                if (!(provider instanceof ServerChunkManager)) {
+                ChunkCache provider = getWorld().getChunkManager();
+                if (!(provider instanceof ServerChunkCache)) {
                     return false;
                 }
-                ServerChunkManager chunkServer = (ServerChunkManager) provider;
+                ServerChunkCache chunkServer = (ServerChunkCache) provider;
                 /*
                 Field u;
                 try {
@@ -240,7 +240,7 @@ class CarpetWorld extends AbstractWorld {
                 }
                 u.setAccessible(true);
                 */
-                Set<Long> unloadQueue = ((ServerChunkManagerAccessor) chunkServer).getDroppedChunks();
+                Set<Long> unloadQueue = ((ServerChunkCacheAccessor) chunkServer).getDroppedChunks();
                 /*
                 Field m;
                 try {
@@ -250,7 +250,7 @@ class CarpetWorld extends AbstractWorld {
                 }
                 m.setAccessible(true);
                 */
-                Long2ObjectMap<WorldChunk> loadedMap = ((ServerChunkManagerAccessor) chunkServer).getLoadedChunksMap();
+                Long2ObjectMap<Chunk> loadedMap = ((ServerChunkCacheAccessor) chunkServer).getLoadedChunksMap();
                 /*
                 Field lc;
                 try {
@@ -274,7 +274,7 @@ class CarpetWorld extends AbstractWorld {
 
                 for (Vector2D coord : chunks) {
                     long pos = ColumnPos.method_25891(coord.getBlockX(), coord.getBlockZ());
-                    WorldChunk mcChunk;
+                    Chunk mcChunk;
                     if (chunkServer.method_33456(coord.getBlockX(), coord.getBlockZ())) {
                         mcChunk = chunkServer.method_33452(coord.getBlockX(), coord.getBlockZ());
                         mcChunk.method_27398();

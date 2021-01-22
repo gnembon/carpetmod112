@@ -47,7 +47,7 @@ public class WoolBlock extends ColoredBlock {
             World world = server.getWorldById(location.getLeft());
             CarpetClientChunkLogger.setReason("Carpet wireless redstone");
             BlockState state = world.getBlockState(location.getRight());
-            if (state.getBlock() != this || state.get(field_24283) != type) {
+            if (state.getBlock() != this || state.get(COLOR) != type) {
                 locationItr.remove();
             } else {
                 woolList.add(location);
@@ -63,7 +63,7 @@ public class WoolBlock extends ColoredBlock {
         if (!CarpetSettings.wirelessRedstone) return;
 
         // Adds this location if absent
-        woolBlocks.get(state.get(field_24283)).add(Pair.of(worldIn.dimension.getType().getRawId(), pos));
+        woolBlocks.get(state.get(COLOR)).add(Pair.of(worldIn.dimension.getType().getRawId(), pos));
 
         boolean updateRoot = !updatingWool;
         updatingWool = true;
@@ -71,7 +71,7 @@ public class WoolBlock extends ColoredBlock {
         if (!updatedBlocks.add(Pair.of(worldIn.dimension.getType().getRawId(), pos)))
             return;
 
-        for (Pair<Integer, BlockPos> wool : getAllWoolOfType(worldIn.getServer(), state.get(field_24283))) {
+        for (Pair<Integer, BlockPos> wool : getAllWoolOfType(worldIn.getServer(), state.get(COLOR))) {
             World world = worldIn.getServer().getWorldById(wool.getLeft());
             CarpetClientChunkLogger.setReason("Carpet wireless redstone");
             world.updateNeighborsAlways(wool.getRight(), this, false);
@@ -91,13 +91,13 @@ public class WoolBlock extends ColoredBlock {
 
         World worldIn = (World) blockAccess;
         // Adds this location if absent
-        woolBlocks.get(state.get(field_24283)).add(Pair.of(worldIn.dimension.getType().getRawId(), pos));
+        woolBlocks.get(state.get(COLOR)).add(Pair.of(worldIn.dimension.getType().getRawId(), pos));
 
-        if (!alreadyCheckedColors.add(state.get(field_24283)))
+        if (!alreadyCheckedColors.add(state.get(COLOR)))
             return 0;
 
         int power = 0;
-        for (Pair<Integer, BlockPos> location : getAllWoolOfType(worldIn.getServer(), state.get(field_24283))) {
+        for (Pair<Integer, BlockPos> location : getAllWoolOfType(worldIn.getServer(), state.get(COLOR))) {
             World world = worldIn.getServer().getWorldById(location.getLeft());
             CarpetClientChunkLogger.setReason("Carpet wireless redstone");
             for (Direction facing : Direction.values()) {
@@ -116,14 +116,14 @@ public class WoolBlock extends ColoredBlock {
     @Override
     public void onBlockAdded(World worldIn, BlockPos pos, BlockState state) {
         if (CarpetSettings.wirelessRedstone) {
-            woolBlocks.get(state.get(field_24283)).add(Pair.of(worldIn.dimension.getType().getRawId(), pos));
+            woolBlocks.get(state.get(COLOR)).add(Pair.of(worldIn.dimension.getType().getRawId(), pos));
         }
     }
 
     @Override
     public void onBlockRemoved(World worldIn, BlockPos pos, BlockState state) {
         if (CarpetSettings.wirelessRedstone) {
-            woolBlocks.get(state.get(field_24283)).remove(Pair.of(worldIn.dimension.getType().getRawId(), pos));
+            woolBlocks.get(state.get(COLOR)).remove(Pair.of(worldIn.dimension.getType().getRawId(), pos));
         }
     }
 }

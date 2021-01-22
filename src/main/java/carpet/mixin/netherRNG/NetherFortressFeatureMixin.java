@@ -14,7 +14,7 @@ public abstract class NetherFortressFeatureMixin extends StructureFeature {
     @Redirect(method = "method_27834", at = @At(value = "INVOKE", target = "Ljava/util/Random;setSeed(J)V", remap = false))
     private void setSeed(Random random, long seed) {
         if (CarpetSettings.netherRNG) {
-            field_25679.random.setSeed(seed);
+            world.random.setSeed(seed);
         }
         random.setSeed(seed);
     }

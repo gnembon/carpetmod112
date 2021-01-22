@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(CarpetBlock.class)
 public class CarpetBlockMixin extends Block {
-    @Shadow @Final public static EnumProperty<DyeColor> field_25007;
+    @Shadow @Final public static EnumProperty<DyeColor> COLOR;
 
     protected CarpetBlockMixin(Material materialIn) {
         super(materialIn);
@@ -28,7 +28,7 @@ public class CarpetBlockMixin extends Block {
     public BlockState getPlacementState(World worldIn, BlockPos pos, Direction facing, float hitX, float hitY, float hitZ, int meta, LivingEntity placer) {
         BlockState state = super.getPlacementState(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer);
         if (placer instanceof PlayerEntity) {
-            WoolTool.carpetPlacedAction(state.get(field_25007), (PlayerEntity) placer, pos, worldIn);
+            WoolTool.carpetPlacedAction(state.get(COLOR), (PlayerEntity) placer, pos, worldIn);
         }
         return state;
     }

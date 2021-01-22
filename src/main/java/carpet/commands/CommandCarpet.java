@@ -5,8 +5,8 @@ import javax.annotation.Nullable;
 
 import carpet.utils.Messenger;
 import carpetmod.Build;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -91,7 +91,7 @@ public class CommandCarpet extends CommandCarpetBase
      * Callback for when the command is executed
      */
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (CarpetSettings.locked)
         {
@@ -269,7 +269,7 @@ public class CommandCarpet extends CommandCarpetBase
             }
             // Updates the carpet client with the changed rule.
         }
-        catch(class_6175 e)
+        catch(CommandException e)
         {
             if (e instanceof class_6182)
             {

@@ -834,7 +834,7 @@ public class RedstoneWireTurbo
     private BlockState calculateCurrentChanges(final World worldIn, final UpdateNode upd)
     {
         BlockState state = upd.currentState;
-        final int i = state.get(RedstoneWireBlock.field_24710);
+        final int i = state.get(RedstoneWireBlock.POWER);
         int j = 0;
         j = getMaxCurrentStrength(upd, j);
         int l = 0;
@@ -904,7 +904,7 @@ public class RedstoneWireTurbo
             // and set it in the world.  
             // Possible optimization:  Don't commit state changes to the world until they
             // need to be known by some nearby non-redstone-wire block.
-            state = state.with(RedstoneWireBlock.field_24710, j);
+            state = state.with(RedstoneWireBlock.POWER, j);
             worldIn.setBlockState(upd.self, state, 2);
         }
  
@@ -917,7 +917,7 @@ public class RedstoneWireTurbo
      */
     private static int getMaxCurrentStrength(final UpdateNode upd, final int strength) {   
         if (upd.type != UpdateNode.Type.REDSTONE) return strength;
-        final int i = upd.currentState.get(RedstoneWireBlock.field_24710);
+        final int i = upd.currentState.get(RedstoneWireBlock.POWER);
         return Math.max(i, strength);
     }
 }

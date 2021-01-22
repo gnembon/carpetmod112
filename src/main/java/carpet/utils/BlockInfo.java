@@ -29,17 +29,17 @@ public class BlockInfo
     public static String getSoundName(BlockSoundGroup stype)
     {
         if (stype == BlockSoundGroup.WOOD   ) { return "WOOD"  ;   }
-        if (stype == BlockSoundGroup.field_24787 ) { return "GRAVEL";   }
-        if (stype == BlockSoundGroup.field_24788  ) { return "GRASS" ;   }
+        if (stype == BlockSoundGroup.GRAVEL ) { return "GRAVEL";   }
+        if (stype == BlockSoundGroup.GRASS  ) { return "GRASS" ;   }
         if (stype == BlockSoundGroup.STONE  ) { return "STONE" ;   }
-        if (stype == BlockSoundGroup.field_24790  ) { return "METAL" ;   }
-        if (stype == BlockSoundGroup.field_24791  ) { return "GLASS" ;   }
-        if (stype == BlockSoundGroup.field_24792  ) { return "WOOL"  ;   }
-        if (stype == BlockSoundGroup.field_24793   ) { return "SAND"  ;   }
-        if (stype == BlockSoundGroup.field_24794   ) { return "SNOW"  ;   }
-        if (stype == BlockSoundGroup.field_24795 ) { return "LADDER";   }
-        if (stype == BlockSoundGroup.field_24796  ) { return "ANVIL" ;   }
-        if (stype == BlockSoundGroup.field_24797  ) { return "SLIME" ;   }
+        if (stype == BlockSoundGroup.METAL  ) { return "METAL" ;   }
+        if (stype == BlockSoundGroup.GLASS  ) { return "GLASS" ;   }
+        if (stype == BlockSoundGroup.CLOTH  ) { return "WOOL"  ;   }
+        if (stype == BlockSoundGroup.SAND   ) { return "SAND"  ;   }
+        if (stype == BlockSoundGroup.SNOW   ) { return "SNOW"  ;   }
+        if (stype == BlockSoundGroup.LADDER ) { return "LADDER";   }
+        if (stype == BlockSoundGroup.ANVIL  ) { return "ANVIL" ;   }
+        if (stype == BlockSoundGroup.SLIME  ) { return "SLIME" ;   }
         return "Something new";
     }
 
@@ -165,33 +165,33 @@ public class BlockInfo
         lst.add(Messenger.s(null, String.format("Block info for %s%s (id %d%s):",Block.REGISTRY.getId(block),metastring, Block.getId(block), metastring )));
         lst.add(Messenger.m(null, "w  - State: ", stateInfo));
         lst.add(Messenger.s(null, String.format(" - Material: %s", getMaterialName(material))));
-        lst.add(Messenger.s(null, String.format(" - Map colour: %s", getMapColourName(state.method_27182(world, pos)))));
+        lst.add(Messenger.s(null, String.format(" - Map colour: %s", getMapColourName(state.getColor(world, pos)))));
         lst.add(Messenger.s(null, String.format(" - Sound type: %s", getSoundName(block.getSoundGroup()))));
         lst.add(Messenger.s(null, ""));
-        lst.add(Messenger.m(null, "w  - Full block: ", formatBoolean(state.method_27187())));
-        lst.add(Messenger.m(null, "w  - Full cube: ", formatBoolean(state.method_27202())));
+        lst.add(Messenger.m(null, "w  - Full block: ", formatBoolean(state.isOpaque())));
+        lst.add(Messenger.m(null, "w  - Full cube: ", formatBoolean(state.isFullCube())));
         lst.add(Messenger.m(null, "w  - Normal cube: ", formatBoolean(state.isSolidBlock())));
-        lst.add(Messenger.m(null, "w  - Block normal cube: ", formatBoolean(state.method_27206())));
+        lst.add(Messenger.m(null, "w  - Block normal cube: ", formatBoolean(state.isSolidFullCube())));
         lst.add(Messenger.m(null, "w  - Is liquid: ", formatBoolean(material.isLiquid())));
         lst.add(Messenger.m(null, "w  - Is solid: ", formatBoolean(material.isSolid())));
         lst.add(Messenger.s(null, ""));
         lst.add(Messenger.s(null, String.format(" - Light in: %d, above: %d", world.method_26136(pos), world.method_26136(pos.up()))));
         lst.add(Messenger.s(null, String.format(" - Brightness in: %.2f, above: %.2f", world.getBrightness(pos), world.getBrightness(pos.up()))));
         lst.add(Messenger.m(null, "w  - Is opaque: ", formatBoolean(material.isOpaque())));
-        lst.add(Messenger.s(null, String.format(" - Light opacity: %d", state.method_27191())));
+        lst.add(Messenger.s(null, String.format(" - Light opacity: %d", state.getOpacity())));
         lst.add(Messenger.m(null, "w  - Blocks light: ", formatBoolean(material.allowsLight())));
         lst.add(Messenger.s(null, String.format(" - Emitted light: %d", state.getLuminance())));
-        lst.add(Messenger.m(null, "w  - Picks neighbour light value: ", formatBoolean(state.method_27200())));
+        lst.add(Messenger.m(null, "w  - Picks neighbour light value: ", formatBoolean(state.usesNeighbourLight())));
         lst.add(Messenger.s(null, ""));
-        lst.add(Messenger.m(null, "w  - Causes suffocation: ", formatBoolean(state.method_27213())));
+        lst.add(Messenger.m(null, "w  - Causes suffocation: ", formatBoolean(state.shouldSuffocate())));
         lst.add(Messenger.m(null, "w  - Blocks movement: ", formatBoolean(!block.method_26420(world, pos))));
         lst.add(Messenger.m(null, "w  - Can burn: ", formatBoolean(material.isBurnable())));
         lst.add(Messenger.m(null, "w  - Requires a tool: ", formatBoolean(!material.canBreakByHand())));
-        lst.add(Messenger.s(null, String.format(" - Hardness: %.2f", state.method_27188(world, pos))));
+        lst.add(Messenger.s(null, String.format(" - Hardness: %.2f", state.getHardness(world, pos))));
         lst.add(Messenger.s(null, String.format(" - Blast resistance: %.2f", block.getBlastResistance(null))));
         lst.add(Messenger.m(null, "w  - Ticks randomly: ", formatBoolean(block.hasRandomTicks())));
         lst.add(Messenger.s(null, ""));
-        lst.add(Messenger.m(null, "w  - Can provide power: ", formatBoolean(state.method_27208())));
+        lst.add(Messenger.m(null, "w  - Can provide power: ", formatBoolean(state.emitsRedstonePowe())));
         lst.add(Messenger.s(null, String.format(" - Strong power level: %d", world.getReceivedStrongRedstonePower(pos))));
         lst.add(Messenger.s(null, String.format(" - Redstone power level: %d", world.getReceivedRedstonePower(pos))));
         lst.add(Messenger.s(null, ""));

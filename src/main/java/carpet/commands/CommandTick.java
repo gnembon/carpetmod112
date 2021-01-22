@@ -5,8 +5,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.utils.CarpetProfiler;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -31,7 +31,7 @@ public class CommandTick extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(final MinecraftServer server, final CommandSource sender, String[] args) throws class_6175
+    public void method_29272(final MinecraftServer server, final CommandSource sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandTick", sender)) return;
         if (args.length == 0)

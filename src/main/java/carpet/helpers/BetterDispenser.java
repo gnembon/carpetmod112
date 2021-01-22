@@ -44,7 +44,7 @@ public class BetterDispenser {
     
     public static void dispenserAddons(){
         // Block rotation stuffs CARPET-XCOM
-        DispenserBlock.field_24325.put(Item.fromBlock(Blocks.CACTUS), new Bootstrap.FallibleItemDispenserBehavior()
+        DispenserBlock.CUSTOM_BEHAVIORS.put(Item.fromBlock(Blocks.CACTUS), new Bootstrap.FallibleItemDispenserBehavior()
         {
             private final ItemDispenserBehavior dispenseBehavior = new ItemDispenserBehavior();
             
@@ -72,7 +72,7 @@ public class BetterDispenser {
                 
                 // Block rotation for blocks that can be placed in only 4 horizontal rotations.
                 }else if(block instanceof HorizontalFacingBlock){
-                    Direction face = (Direction)iblockstate.get(HorizontalFacingBlock.field_24496);
+                    Direction face = (Direction)iblockstate.get(HorizontalFacingBlock.FACING);
                     face = rotateAround(face, sourceFace.getAxis());
                     if(sourceFace.getId() % 2 == 0){ // same as above.
                         face = rotateAround(face, sourceFace.getAxis());
@@ -80,7 +80,7 @@ public class BetterDispenser {
                     }
                     if(sourceFace.getId() <= 1){ // Make sure to suppress rotation when index is lower then 2 as that will result in a faulty rotation for 
                                                     // blocks that only can be placed horizontaly.
-                        world.setBlockState(blockpos, iblockstate.with(HorizontalFacingBlock.field_24496, face), 3);
+                        world.setBlockState(blockpos, iblockstate.with(HorizontalFacingBlock.FACING, face), 3);
                     }
                 }
                 // Send block update to the block that just have been rotated.
@@ -91,7 +91,7 @@ public class BetterDispenser {
         });
         
         // Block fill bottle of water. XCOM-CARPET
-        DispenserBlock.field_24325.put(Items.GLASS_BOTTLE, new ItemDispenserBehavior()
+        DispenserBlock.CUSTOM_BEHAVIORS.put(Items.GLASS_BOTTLE, new ItemDispenserBehavior()
         {
             private final ItemDispenserBehavior dispenseBehavior = new ItemDispenserBehavior();
             public ItemStack dispenseSilently(BlockPointer source, ItemStack stack)
@@ -107,7 +107,7 @@ public class BetterDispenser {
                 Material material = iblockstate.getMaterial();
                 ItemStack itemstack;
 
-                if (Material.WATER.equals(material) && block instanceof AbstractFluidBlock && iblockstate.get(AbstractFluidBlock.field_24556) == 0)
+                if (Material.WATER.equals(material) && block instanceof AbstractFluidBlock && iblockstate.get(AbstractFluidBlock.LEVEL) == 0)
                 {
                     itemstack = PotionUtil.setPotion(new ItemStack(Items.POTION), Potions.WATER);
                 }
@@ -135,10 +135,10 @@ public class BetterDispenser {
         });
         
         // Chest/hopper/tnt/furnnace Minecart thingy XCOM-CARPET
-        DispenserBlock.field_24325.put(Item.fromBlock(Blocks.CHEST), new BehaviorDispenseMinecart(AbstractMinecartEntity.Type.CHEST));
-        DispenserBlock.field_24325.put(Item.fromBlock(Blocks.HOPPER), new BehaviorDispenseMinecart(AbstractMinecartEntity.Type.HOPPER));
-        DispenserBlock.field_24325.put(Item.fromBlock(Blocks.FURNACE), new BehaviorDispenseMinecart(AbstractMinecartEntity.Type.FURNACE));
-        DispenserBlock.field_24325.put(Item.fromBlock(Blocks.TNT), new BehaviorDispenseMinecart(AbstractMinecartEntity.Type.TNT));
+        DispenserBlock.CUSTOM_BEHAVIORS.put(Item.fromBlock(Blocks.CHEST), new BehaviorDispenseMinecart(AbstractMinecartEntity.Type.CHEST));
+        DispenserBlock.CUSTOM_BEHAVIORS.put(Item.fromBlock(Blocks.HOPPER), new BehaviorDispenseMinecart(AbstractMinecartEntity.Type.HOPPER));
+        DispenserBlock.CUSTOM_BEHAVIORS.put(Item.fromBlock(Blocks.FURNACE), new BehaviorDispenseMinecart(AbstractMinecartEntity.Type.FURNACE));
+        DispenserBlock.CUSTOM_BEHAVIORS.put(Item.fromBlock(Blocks.TNT), new BehaviorDispenseMinecart(AbstractMinecartEntity.Type.TNT));
         /*
          * for tnt use this in the already existing tnt code if the removal isnt used.
          *      Bootstrap.BehaviorDispenseMinecart tntDispense = new Bootstrap.BehaviorDispenseMinecart(EntityMinecart.Type.TNT);

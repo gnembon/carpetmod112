@@ -2,13 +2,13 @@ package carpet.helpers;
 
 import carpet.CarpetServer;
 import carpet.mixin.accessors.BlockAccessor;
-import carpet.mixin.accessors.ServerChunkManagerAccessor;
+import carpet.mixin.accessors.ServerChunkCacheAccessor;
 import net.minecraft.block.*;
-import net.minecraft.class_5305;
-import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.server.world.ServerChunkCache;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkCache;
 import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.WorldChunk;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,11 +53,11 @@ public class RandomTickOptimization {
         if (CarpetServer.minecraft_server.worlds == null) // worlds not loaded yet
             return;
         for (World world : CarpetServer.minecraft_server.worlds) {
-            class_5305 provider = world.getChunkManager();
-            if (!(provider instanceof ServerChunkManager))
+            ChunkCache provider = world.getChunkManager();
+            if (!(provider instanceof ServerChunkCache))
                 continue;
-            for (WorldChunk chunk : ((ServerChunkManagerAccessor) provider).getLoadedChunksMap().values()) {
-                for (ChunkSection subchunk : chunk.method_27413()) {
+            for (Chunk chunk : ((ServerChunkCacheAccessor) provider).getLoadedChunksMap().values()) {
+                for (ChunkSection subchunk : chunk.getSections()) {
                     if (subchunk != null)
                         subchunk.method_27445();
                 }

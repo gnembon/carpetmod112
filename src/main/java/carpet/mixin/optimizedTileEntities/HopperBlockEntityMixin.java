@@ -2,9 +2,9 @@ package carpet.mixin.optimizedTileEntities;
 
 import carpet.CarpetSettings;
 import carpet.helpers.BlockEntityOptimizer;
+import net.minecraft.block.entity.AbstractContainerBlockEntity;
 import net.minecraft.block.entity.Hopper;
 import net.minecraft.block.entity.HopperBlockEntity;
-import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.inventory.Inventory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -56,7 +56,7 @@ public abstract class HopperBlockEntityMixin implements BlockEntityOptimizer.Laz
         // Push falls asleep if the container it would push into is full and
         // is an actual tile entity (not a minecart). This is because minecarts do not cause comparator updates and would keep the
         // hopper in a sleeping push state when leaving or emptying
-        pushSleeping = output instanceof AbstractParentElement;
+        pushSleeping = output instanceof AbstractContainerBlockEntity;
     }
 
     @Inject(method = "extract(Lnet/minecraft/block/entity/Hopper;)Z", at = @At(value = "RETURN", ordinal = 0), slice = @Slice(
@@ -67,7 +67,7 @@ public abstract class HopperBlockEntityMixin implements BlockEntityOptimizer.Laz
         // is an actual tile entity (not a minecart). This is because minecarts do not cause comparator updates and would keep the
         // hopper in a sleeping pull state when leaving or filling up
         if (hopper instanceof HopperBlockEntityMixin) {
-            ((HopperBlockEntityMixin) hopper).pullSleeping = input instanceof AbstractParentElement;
+            ((HopperBlockEntityMixin) hopper).pullSleeping = input instanceof AbstractContainerBlockEntity;
         }
     }
 
@@ -76,7 +76,7 @@ public abstract class HopperBlockEntityMixin implements BlockEntityOptimizer.Laz
         // There is a non-empty inventory above the hopper, but for some reason the hopper cannot suck
         // items from it. Therefore the hopper pulling should sleep (if the inventory is not a minecart).
         if (hopper instanceof HopperBlockEntityMixin) {
-            ((HopperBlockEntityMixin) hopper).pullSleeping = CarpetSettings.optimizedTileEntities && HopperBlockEntity.getInputInventory(hopper) instanceof AbstractParentElement;
+            ((HopperBlockEntityMixin) hopper).pullSleeping = CarpetSettings.optimizedTileEntities && HopperBlockEntity.getInputInventory(hopper) instanceof AbstractContainerBlockEntity;
         }
     }
 }

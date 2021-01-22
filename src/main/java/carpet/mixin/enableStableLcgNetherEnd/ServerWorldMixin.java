@@ -1,10 +1,10 @@
 package carpet.mixin.enableStableLcgNetherEnd;
 
 import carpet.CarpetSettings;
-import net.minecraft.class_1268;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelProperties;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,7 +16,7 @@ import java.util.Random;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin extends World {
-    protected ServerWorldMixin(class_1268 levelProperties, LevelProperties levelProperties2, Dimension dimension, Profiler profiler, boolean isClient) {
+    protected ServerWorldMixin(WorldSaveHandler levelProperties, LevelProperties levelProperties2, Dimension dimension, Profiler profiler, boolean isClient) {
         super(levelProperties, levelProperties2, dimension, profiler, isClient);
     }
 

@@ -5,11 +5,11 @@ import java.util.*;
 import javax.annotation.Nullable;
 
 import carpet.mixin.accessors.OverworldChunkGeneratorAccessor;
-import carpet.mixin.accessors.ServerChunkManagerAccessor;
+import carpet.mixin.accessors.ServerChunkCacheAccessor;
 import carpet.mixin.accessors.WorldAccessor;
 import carpet.mixin.accessors.ServerWorldAccessor;
 import carpet.utils.Messenger;
-import carpet.utils.extensions.ExtendedFloatingIslandsChunkGenerator;
+import carpet.utils.extensions.ExtendedEndChunkGenerator;
 import carpet.utils.extensions.ExtendedWorld;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
@@ -21,6 +21,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.Material;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.EntityData;
 import net.minecraft.entity.EntityType;
@@ -29,7 +30,7 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.ZombieVillagerEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.server.world.ServerChunkCache;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.WeightedPicker;
@@ -38,9 +39,9 @@ import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.ChunkManager;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkGenerator;
 import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.WorldChunk;
 import net.minecraft.world.gen.chunk.OverworldChunkGenerator;
 
 public class CommandRNG extends CommandCarpetBase {
@@ -70,14 +71,14 @@ public class CommandRNG extends CommandCarpetBase {
      * @param args   The arguments that were passed
      */
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException {
         if (!command_enabled("commandRNG", sender)) return;
         if (args.length <=0) throw new class_6182(method_29275(sender));
         if ("seed".equalsIgnoreCase(args[0])) {
             try {
                 World world = sender.getEntityWorld();
 
-                ChunkManager gen = ((ServerChunkManagerAccessor) world.getChunkManager()).getChunkGenerator();
+                ChunkGenerator gen = ((ServerChunkCacheAccessor) world.getChunkManager()).getChunkGenerator();
 
                 if (gen instanceof OverworldChunkGenerator) {
                     int x;
@@ -107,7 +108,7 @@ public class CommandRNG extends CommandCarpetBase {
                         }
                     }
 
-                    ((OverworldChunkGeneratorAccessor) gen).getWoodlandMansionGenerator().method_27580(world, x, z, null);
+                    ((OverworldChunkGeneratorAccessor) gen).getWoodlandMansionFeature().generate(world, x, z, null);
                     method_28710(sender, this,
                             String.format("Seed at chunk coords: %d %d seed: %d", x, z, ((ExtendedWorld) world).getRandSeed()));
                 }
@@ -163,13 +164,13 @@ public class CommandRNG extends CommandCarpetBase {
 
             if (world instanceof ServerWorld) {
                 int count = 0;
-                for (Iterator<WorldChunk> iterator = ((ServerWorldAccessor) world).getPlayerChunkMap().method_33585(); iterator
+                for (Iterator<Chunk> iterator = ((ServerWorldAccessor) world).getPlayerChunkMap().method_33585(); iterator
                         .hasNext() && chunkCount < iters; world.profiler.pop()) {
-                    WorldChunk chunk = iterator.next();
+                    Chunk chunk = iterator.next();
                     if (iters != Integer.MAX_VALUE) {
                         chunkCount++;
-                        x = chunk.field_25365;
-                        z = chunk.field_25366;
+                        x = chunk.x;
+                        z = chunk.z;
                     }
                     count++;
                 }
@@ -208,17 +209,17 @@ public class CommandRNG extends CommandCarpetBase {
 
             if (world instanceof ServerWorld) {
                 int count = 0;
-                for (Iterator<WorldChunk> iterator = ((ServerWorldAccessor) world).getPlayerChunkMap().method_33585(); iterator
+                for (Iterator<Chunk> iterator = ((ServerWorldAccessor) world).getPlayerChunkMap().method_33585(); iterator
                         .hasNext() && chunkCount < iters; world.profiler.pop()) {
-                    WorldChunk chunk = iterator.next();
+                    Chunk chunk = iterator.next();
                     if (iters != Integer.MAX_VALUE) {
                         chunkCount++;
-                        x = chunk.field_25365;
-                        z = chunk.field_25366;
+                        x = chunk.x;
+                        z = chunk.z;
                     }
-                    if (!check || (x == chunk.field_25365 && z == chunk.field_25366)) {
-                        for (ChunkSection section : chunk.method_27413()) {
-                            if (section != WorldChunk.EMPTY_SECTION) {
+                    if (!check || (x == chunk.x && z == chunk.z)) {
+                        for (ChunkSection section : chunk.getSections()) {
+                            if (section != Chunk.EMPTY_SECTION) {
                                 for (int i = 0; i < 16; ++i) {
                                     for (int j = 0; j < 16; ++j) {
                                         for (int k = 0; k < 16; ++k) {
@@ -273,8 +274,8 @@ public class CommandRNG extends CommandCarpetBase {
                 }
             }
         } else if ("getEndChunkSeed".equalsIgnoreCase(args[0])) {
-            ServerChunkManager chunkProvider = server.getWorldById(1).getChunkManager();
-            ExtendedFloatingIslandsChunkGenerator chunkGeneratorEnd = ((ExtendedFloatingIslandsChunkGenerator) ((ServerChunkManagerAccessor) chunkProvider).getChunkGenerator());
+            ServerChunkCache chunkProvider = server.getWorldById(1).getChunkManager();
+            ExtendedEndChunkGenerator chunkGeneratorEnd = ((ExtendedEndChunkGenerator) ((ServerChunkCacheAccessor) chunkProvider).getChunkGenerator());
             long seed = chunkGeneratorEnd.getLastRandomSeed();
             if (chunkGeneratorEnd.wasRandomSeedUsed()) {
                 sender.sendSystemMessage(new LiteralText("The ChunkGeneratorEnd seed " + seed + " was already used for population and is currently random!"));
@@ -283,8 +284,8 @@ public class CommandRNG extends CommandCarpetBase {
             }
         } else if ("setEndChunkSeed".equalsIgnoreCase(args[0])) {
             if (args.length == 2 || (args.length == 3 && "once".equalsIgnoreCase(args[2]))) {
-                ServerChunkManager chunkProvider = server.getWorldById(1).getChunkManager();
-                ExtendedFloatingIslandsChunkGenerator chunkGeneratorEnd = ((ExtendedFloatingIslandsChunkGenerator) ((ServerChunkManagerAccessor) chunkProvider).getChunkGenerator());
+                ServerChunkCache chunkProvider = server.getWorldById(1).getChunkManager();
+                ExtendedEndChunkGenerator chunkGeneratorEnd = ((ExtendedEndChunkGenerator) ((ServerChunkCacheAccessor) chunkProvider).getChunkGenerator());
                 long seed = method_28738(args[1]);
                 chunkGeneratorEnd.setRandomSeedUsed(false);
                 chunkGeneratorEnd.setEndChunkSeed(seed);
@@ -523,7 +524,7 @@ public class CommandRNG extends CommandCarpetBase {
         } else {
             BlockPos blockpos = pos.down();
 
-            if (!worldIn.getBlockState(blockpos).method_27211()) {
+            if (!worldIn.getBlockState(blockpos).isOpaqueFullCube()) {
                 return false;
             } else {
                 Block block = worldIn.getBlockState(blockpos).getBlock();
@@ -535,11 +536,11 @@ public class CommandRNG extends CommandCarpetBase {
     }
 
     public static boolean isValidEmptySpawnBlock(BlockState state) {
-        return !state.method_27206() && !state.method_27208() && !state.getMaterial().isLiquid() && !AbstractRailBlock.isRail(state);
+        return !state.isSolidFullCube() && !state.emitsRedstonePowe() && !state.getMaterial().isLiquid() && !AbstractRailBlock.isRail(state);
     }
 
     private static BlockPos getRandomChunkPosition(World worldIn, Random rand, int x, int z) {
-        WorldChunk chunk = worldIn.method_25975(x, z);
+        Chunk chunk = worldIn.method_25975(x, z);
         int i = x * 16 + rand.nextInt(16);
         int j = z * 16 + rand.nextInt(16);
         int k = MathHelper.roundUp(chunk.method_27405(new BlockPos(i, 0, j)) + 1, 16);

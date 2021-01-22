@@ -49,7 +49,7 @@ public class Waypoint implements Comparable<Waypoint> {
     }
 
     public String getFullName() {
-        return getDimension().method_27531() + ":" + name;
+        return getDimension().getSaveDir() + ":" + name;
     }
 
     @Override
@@ -154,7 +154,7 @@ public class Waypoint implements Comparable<Waypoint> {
     }
 
     public static File getWaypointFile(World world) {
-        String filename = "waypoints" + world.dimension.getType().getSuffix() + ".json";
+        String filename = "waypoints" + world.dimension.getType().getPersistentStateSuffix() + ".json";
         return new File(world.method_25960().method_28318(), filename);
     }
 
@@ -205,7 +205,7 @@ public class Waypoint implements Comparable<Waypoint> {
             for (Waypoint w : waypoints) {
                 out.name(w.name);
                 out.beginObject();
-                out.name("dimension").value(w.world.dimension.getType().method_27531());
+                out.name("dimension").value(w.world.dimension.getType().getSaveDir());
                 out.name("x").value(w.x);
                 out.name("y").value(w.y);
                 out.name("z").value(w.z);

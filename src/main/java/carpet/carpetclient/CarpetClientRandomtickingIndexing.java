@@ -7,7 +7,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -53,11 +53,11 @@ public class CarpetClientRandomtickingIndexing {
     public static void sendRandomtickingChunkOrder(World world, class_6380 playerChunkMap) {
         CompoundTag compound = new CompoundTag();
         ListTag nbttaglist = new ListTag();
-        for (Iterator<WorldChunk> iterator = playerChunkMap.method_33585(); iterator.hasNext(); ) {
-            WorldChunk c = iterator.next();
+        for (Iterator<Chunk> iterator = playerChunkMap.method_33585(); iterator.hasNext(); ) {
+            Chunk c = iterator.next();
             CompoundTag chunkData = new CompoundTag();
-            chunkData.putInt("x", c.field_25365);
-            chunkData.putInt("z", c.field_25366);
+            chunkData.putInt("x", c.x);
+            chunkData.putInt("z", c.z);
             nbttaglist.add(chunkData);
         }
         compound.put("list", nbttaglist);

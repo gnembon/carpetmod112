@@ -17,8 +17,8 @@ import carpet.logging.LogHandler;
 import carpet.logging.Logger;
 import carpet.logging.LoggerRegistry;
 import carpet.utils.Messenger;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -38,7 +38,7 @@ public class CommandLog extends CommandCarpetBase {
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandLog", sender)) return;
         PlayerEntity player = null;
@@ -197,7 +197,7 @@ public class CommandLog extends CommandCarpetBase {
                     if (args.length >= 4) {
                         handler = LogHandler.createHandler(args[3], ArrayUtils.subarray(args, 4, args.length));
                         if (handler == null) {
-                            throw new class_6175("Invalid handler");
+                            throw new CommandException("Invalid handler");
                         }
                     }
 
@@ -249,7 +249,7 @@ public class CommandLog extends CommandCarpetBase {
                 handler = LogHandler.createHandler(args[3], ArrayUtils.subarray(args, 4, args.length));
                 if (handler == null)
                 {
-                    throw new class_6175("Invalid handler");
+                    throw new CommandException("Invalid handler");
                 }
             }
             boolean subscribed = true;

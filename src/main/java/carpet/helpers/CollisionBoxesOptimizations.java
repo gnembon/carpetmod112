@@ -14,7 +14,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.border.WorldBorder;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
 
 public class CollisionBoxesOptimizations
 {
@@ -46,7 +46,7 @@ public class CollisionBoxesOptimizations
                 {
                     if (((WorldAccessor) world).invokeIsChunkLoaded(cx, cz, false))
                     {
-                        WorldChunk chunk = world.method_25975(cx, cz);
+                        Chunk chunk = world.method_25975(cx, cz);
                         final int xMin = Math.max(cx << 4, startX);
                         final int zMin = Math.max(cz << 4, startZ);
                         final int xMax = Math.min((cx << 4) + 15, endX - 1);

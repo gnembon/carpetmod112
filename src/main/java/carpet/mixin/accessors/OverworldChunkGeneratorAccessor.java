@@ -7,5 +7,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(OverworldChunkGenerator.class)
 public interface OverworldChunkGeneratorAccessor {
-    @Accessor("field_25719") WoodlandMansionFeature getWoodlandMansionGenerator();
+    @Accessor WoodlandMansionFeature getWoodlandMansionFeature();
 }

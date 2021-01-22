@@ -1,7 +1,7 @@
 package carpet.commands;
 
 import carpet.worldedit.WorldEditBridge;
-import net.minecraft.class_6175;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -17,7 +17,7 @@ public class CommandRemoveEntity extends KillCommand {
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (args.length == 0)
         {

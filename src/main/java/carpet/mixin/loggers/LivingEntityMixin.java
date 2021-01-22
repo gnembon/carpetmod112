@@ -78,7 +78,7 @@ public abstract class LivingEntityMixin {
     @Redirect(method = "applyDamage", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/LivingEntity;applyArmorToDamage(Lnet/minecraft/entity/damage/DamageSource;F)F"))
     private float applyArmorCalculationsAndLog(LivingEntity entity, DamageSource source, float damage) {
         float after = applyArmorToDamage(source, damage);
-        DamageReporter.modify_damage((LivingEntity) (Object) this, source, damage, after, String.format("Armour %.1f, Toughness %.1f", (float) this.getArmor(), this.getAttributeInstance(EntityAttributes.ARMOR_TOUGHNESS).getValue()));
+        DamageReporter.modify_damage((LivingEntity) (Object) this, source, damage, after, String.format("Armour %.1f, Toughness %.1f", (float) this.getArmor(), this.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS).getValue()));
         return after;
     }
 

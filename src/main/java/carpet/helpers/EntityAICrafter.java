@@ -665,7 +665,7 @@ public class EntityAICrafter extends Goal {
 	 * on the saved data.
 	 */
 	private void updateCareerID() {
-		if (((VillagerEntityAccessor) villager).getCareerId() == 0) {
+		if (((VillagerEntityAccessor) villager).getCareer() == 0) {
 			randomiseStats();
 		} else {
 			decodeVillager();
@@ -727,7 +727,7 @@ public class EntityAICrafter extends Goal {
 	 * Decodes the stats from saved data and sets the stats of the villager.
 	 */
 	private void decodeVillager() {
-		int taskEncoder = ((VillagerEntityAccessor) villager).getCareerId();
+		int taskEncoder = ((VillagerEntityAccessor) villager).getCareer();
 		int foodEncoder = ((VillagerEntityAccessor) villager).getCareerLevel();
 
 		for (int i = 0; i < 3; i++) {
@@ -762,7 +762,7 @@ public class EntityAICrafter extends Goal {
 		int taskEncoder = tasks[0] + tasks[1] * 100 + tasks[2] * 10000 + food[2] * 1000000 + currentTask * 100000000;
 		int foodEncoder = food[0] + food[1] * 10;
 
-		((VillagerEntityAccessor) villager).setCareerId(taskEncoder);
+		((VillagerEntityAccessor) villager).setCareer(taskEncoder);
 		((VillagerEntityAccessor) villager).setCareerLevel(foodEncoder);
 	}
 
@@ -812,8 +812,8 @@ public class EntityAICrafter extends Goal {
 		} else {
 			if (eatFood()) {
 				VillagerEntityAccessor acc = (VillagerEntityAccessor) villager;
-				if (acc.getWealth() < 12000000) {
-					acc.setWealth(acc.getWealth() + 1);
+				if (acc.getRiches() < 12000000) {
+					acc.setRiches(acc.getRiches() + 1);
 				}
 				craftingCooldown--;
 				encodeVillager();
@@ -861,23 +861,23 @@ public class EntityAICrafter extends Goal {
 	private void setName() {
 		String s = null;
 		VillagerEntityAccessor acc = (VillagerEntityAccessor) villager;
-		if (acc.getWealth() == 12000000) {
+		if (acc.getRiches() == 12000000) {
 			s = "Grandmaster";
-		} else if (acc.getWealth() > 8000000) {
+		} else if (acc.getRiches() > 8000000) {
 			s = "Meister";
-		} else if (acc.getWealth() > 4000000) {
+		} else if (acc.getRiches() > 4000000) {
 			s = "Craftsman";
-		} else if (acc.getWealth() > 2000000) {
+		} else if (acc.getRiches() > 2000000) {
 			s = "Journeyman";
-		} else if (acc.getWealth() > 1000000) {
+		} else if (acc.getRiches() > 1000000) {
 			s = "Apprentice";
-		} else if (acc.getWealth() > 500000) {
+		} else if (acc.getRiches() > 500000) {
 			s = "Novice";
-		} else if (acc.getWealth() > tier3Unlock) {
+		} else if (acc.getRiches() > tier3Unlock) {
 			s = "Casual";
-		} else if (acc.getWealth() > tier2Unlock) {
+		} else if (acc.getRiches() > tier2Unlock) {
 			s = "Nooblet";
-		} else if (acc.getWealth() > 1000) {
+		} else if (acc.getRiches() > 1000) {
 			s = "Nitwit";
 		}
 
@@ -911,7 +911,7 @@ public class EntityAICrafter extends Goal {
 	 * of the villager.
 	 */
 	private void calcCooldown() {
-		int welt = ((VillagerEntityAccessor) villager).getWealth();
+		int welt = ((VillagerEntityAccessor) villager).getRiches();
 		if (welt < 0) {
 			welt = 1;
 		}
@@ -1089,7 +1089,7 @@ public class EntityAICrafter extends Goal {
 		DefaultedList<Ingredient> list = recipe.getPreviewInputs();
 
 		for (Ingredient ig : list) {
-			ItemStack[] stack = ((IngredientAccessor) ig).getMatchingStacks();
+			ItemStack[] stack = ((IngredientAccessor) ig).getStacks();
 			if (stack.length > 0) {
 				ItemStack is = stack[0];
 				ItemStack is2 = itemIsInMap(map, is);
@@ -1135,7 +1135,7 @@ public class EntityAICrafter extends Goal {
 		int itemCount = 0;
 		DefaultedList<Ingredient> list = currentTaskRecipe().getPreviewInputs();
 		for (Ingredient ig : list) {
-			for (ItemStack is : ((IngredientAccessor) ig).getMatchingStacks()) {
+			for (ItemStack is : ((IngredientAccessor) ig).getStacks()) {
 				if (is.getItem() == item) {
 					itemCount++;
 				}
@@ -1288,7 +1288,7 @@ public class EntityAICrafter extends Goal {
 	 *         unlocked based on the crafting experience.
 	 */
 	private int getUnlockedLevel() {
-		int wealth = ((VillagerEntityAccessor) villager).getWealth();
+		int wealth = ((VillagerEntityAccessor) villager).getRiches();
 		if (wealth < tier2Unlock) {
 			return 1;
 		} else if (wealth < tier3Unlock) {
@@ -1508,7 +1508,7 @@ public class EntityAICrafter extends Goal {
 	private boolean craftingItemForPickup(Item item, Recipe irecipe) {
 		DefaultedList<Ingredient> list = irecipe.getPreviewInputs();
 		for (Ingredient ig : list) {
-			for (ItemStack is : ((IngredientAccessor) ig).getMatchingStacks()) {
+			for (ItemStack is : ((IngredientAccessor) ig).getStacks()) {
 				if (is.getItem() == item) {
 					return true;
 				}
@@ -1589,7 +1589,7 @@ public class EntityAICrafter extends Goal {
 			sb.append("Crafting Cooldown(ticks)/Batch Size: ").append(cooldown).append("/").append(batchSize).append("\n");
 			sb.append("Food consumption per craft: ").append(food[2]).append("\n");
 			sb.append("Food preference: ").append(foods[food[0]].getName(new ItemStack(foods[food[0]]))).append("\nFood dislike: ").append(foods[food[1]].getName(new ItemStack(foods[food[1]]))).append("\n");
-			sb.append("Crafting experience: ").append(((VillagerEntityAccessor) villager).getWealth()).append("\n");
+			sb.append("Crafting experience: ").append(((VillagerEntityAccessor) villager).getRiches()).append("\n");
 	
 			sb.append("Inventory: \n");
 			for (int j = 0; j < villagerInventory.getInvSize(); ++j) {

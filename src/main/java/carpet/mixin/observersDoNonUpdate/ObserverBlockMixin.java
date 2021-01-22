@@ -13,10 +13,10 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ObserverBlock.class)
 public class ObserverBlockMixin {
-    @Shadow @Final public static BooleanProperty field_24607;
+    @Shadow @Final public static BooleanProperty POWERED;
 
     @Redirect(method = "getPlacementState", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;with(Lnet/minecraft/state/property/Property;Ljava/lang/Comparable;)Lnet/minecraft/block/BlockState;"))
     private <T extends Comparable<T>, V extends T> BlockState noUpdateOnPlace(BlockState state, Property<T> property, V value) {
-        return state.with(property, value).with(field_24607, CarpetSettings.observersDoNonUpdate);
+        return state.with(property, value).with(POWERED, CarpetSettings.observersDoNonUpdate);
     }
 }

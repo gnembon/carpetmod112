@@ -37,7 +37,7 @@ public class NoteBlockMixin {
         if(CarpetSettings.noteBlockImitationOf1_13) world.updateNeighborsAlways(pos, (NoteBlock) (Object) this, true);
     }
 
-    @Inject(method = "neighborUpdate", at = @At(value = "FIELD", target = "Lnet/minecraft/class_5287;field_25152:Z"))
+    @Inject(method = "neighborUpdate", at = @At(value = "FIELD", target = "Lnet/minecraft/block/entity/NoteBlockEntity;powered:Z"))
     private void onPowerChange(BlockState state, World world, BlockPos pos, Block block, BlockPos fromPos, CallbackInfo ci) {
         // Dual-edge redstone power change sends block updates and updates observers
         if(CarpetSettings.noteBlockImitationOf1_13) world.updateNeighborsAlways(pos, (NoteBlock) (Object) this, true);

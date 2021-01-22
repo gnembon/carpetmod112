@@ -4,11 +4,11 @@ import carpet.CarpetSettings;
 import carpet.helpers.ScheduledBlockEventSerializer;
 import carpet.utils.extensions.WorldWithBlockEventSerializer;
 import net.minecraft.block.Block;
-import net.minecraft.class_1268;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldSaveHandler;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelProperties;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ServerWorldMixin extends World implements WorldWithBlockEventSerializer {
     protected ScheduledBlockEventSerializer blockEventSerializer;
 
-    protected ServerWorldMixin(class_1268 levelProperties, LevelProperties levelProperties2, Dimension dimension, Profiler profiler, boolean isClient) {
+    protected ServerWorldMixin(WorldSaveHandler levelProperties, LevelProperties levelProperties2, Dimension dimension, Profiler profiler, boolean isClient) {
         super(levelProperties, levelProperties2, dimension, profiler, isClient);
     }
 

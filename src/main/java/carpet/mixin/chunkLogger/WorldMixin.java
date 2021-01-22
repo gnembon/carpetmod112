@@ -5,7 +5,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -24,8 +24,8 @@ public class WorldMixin {
         CarpetClientChunkLogger.resetReason();
     }
 
-    @Redirect(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/WorldChunk;remove(Lnet/minecraft/entity/Entity;)V"))
-    private void logOnRemoveEntity(WorldChunk chunk, Entity entity) {
+    @Redirect(method = "tickBlockEntities", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/chunk/Chunk;remove(Lnet/minecraft/entity/Entity;)V"))
+    private void logOnRemoveEntity(Chunk chunk, Entity entity) {
         CarpetClientChunkLogger.setReason(() -> "Removing entity from chunk: " + entity.getName());
     }
 }

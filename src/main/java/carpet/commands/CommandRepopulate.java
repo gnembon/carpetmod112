@@ -2,13 +2,13 @@ package carpet.commands;
 
 import carpet.mixin.accessors.WorldAccessor;
 import carpet.utils.extensions.RepopulatableChunk;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
 import javax.annotation.Nullable;
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +29,7 @@ public class CommandRepopulate extends CommandCarpetBase {
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandRepopulate", sender))
             return;
@@ -40,7 +40,7 @@ public class CommandRepopulate extends CommandCarpetBase {
         int chunkX = method_28715(args[0]);
         int chunkZ = method_28715(args[1]);
         boolean isloaded = ((WorldAccessor) sender.getEntityWorld()).invokeIsChunkLoaded(chunkX, chunkZ, false);
-        WorldChunk chunk = sender.getEntityWorld().method_25975(chunkX, chunkZ);
+        Chunk chunk = sender.getEntityWorld().method_25975(chunkX, chunkZ);
         ((RepopulatableChunk) chunk).setUnpopulated();
         if (isloaded){
             sender.sendSystemMessage(new LiteralText("Marked currently loaded chunk " + chunkX + " " + chunkZ + " for repopulation!"));

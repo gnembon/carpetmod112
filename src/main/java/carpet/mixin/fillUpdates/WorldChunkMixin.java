@@ -4,7 +4,7 @@ import carpet.utils.extensions.ExtendedWorldChunk;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 import javax.annotation.Nullable;
 
-@Mixin(WorldChunk.class)
+@Mixin(Chunk.class)
 public abstract class WorldChunkMixin implements ExtendedWorldChunk {
     @Shadow @Nullable public abstract BlockState method_27373(BlockPos pos, BlockState state);
 

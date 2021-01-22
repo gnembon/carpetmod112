@@ -18,7 +18,7 @@ import java.util.Random;
 
 @Mixin(SpongeBlock.class)
 public class SpongeBlockMixin extends Block {
-    @Shadow @Final public static BooleanProperty field_24805;
+    @Shadow @Final public static BooleanProperty WET;
 
     protected SpongeBlockMixin(Material materialIn) {
         super(materialIn);
@@ -37,14 +37,14 @@ public class SpongeBlockMixin extends Block {
             if (world.getBlockState(neighbor).getMaterial() == Material.WATER) {
                 touchesWater = true;
             }
-            if (world.getBlockState(neighbor).getBlock() == Blocks.SPONGE && world.getBlockState(neighbor).get(field_24805)) {
+            if (world.getBlockState(neighbor).getBlock() == Blocks.SPONGE && world.getBlockState(neighbor).get(WET)) {
                 touchesWet = true;
             }
         }
-        if (state.get(field_24805) && !touchesWater && world.isSkyVisible(pos.up()) && world.isDay() && !world.hasRain(pos.up())) {
-            world.setBlockState(pos, state.with(field_24805, Boolean.FALSE), 2);
-        } else if (!state.get(field_24805) && (touchesWet || touchesWater || world.hasRain(pos.up())) && random.nextInt(3) == 0) {
-            world.setBlockState(pos, state.with(field_24805, Boolean.TRUE), 2);
+        if (state.get(WET) && !touchesWater && world.isSkyVisible(pos.up()) && world.isDay() && !world.hasRain(pos.up())) {
+            world.setBlockState(pos, state.with(WET, Boolean.FALSE), 2);
+        } else if (!state.get(WET) && (touchesWet || touchesWater || world.hasRain(pos.up())) && random.nextInt(3) == 0) {
+            world.setBlockState(pos, state.with(WET, Boolean.TRUE), 2);
         }
     }
 }

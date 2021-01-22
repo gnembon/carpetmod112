@@ -14,12 +14,12 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.passive.OcelotEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.server.world.ServerChunkCache;
 import net.minecraft.text.Text;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -105,7 +105,7 @@ public class SpawnReporter
     }
     public static List<Text> print_general_mobcaps(World world)
     {
-        String name = world.dimension.getType().method_27531();
+        String name = world.dimension.getType().getSaveDir();
         int did = world.dimension.getType().getRawId();
         return printMobcapsForDimension(world, did, name);
     }
@@ -382,7 +382,7 @@ public class SpawnReporter
     {
         List<Text> rep = new ArrayList<>();
         int x = pos.getX(); int y = pos.getY(); int z = pos.getZ();
-        WorldChunk chunk = worldIn.getWorldChunk(pos);
+        Chunk chunk = worldIn.getWorldChunk(pos);
         int max_chunk = MathHelper.roundUp(chunk.method_27405(new BlockPos(x, 0, z)) + 1, 16);
         int lc = max_chunk > 0 ? max_chunk : chunk.method_27410() + 16 - 1;
         String where = (y >= lc) ? "above" : "below";
@@ -391,7 +391,7 @@ public class SpawnReporter
         for (SpawnGroup enumcreaturetype : SpawnGroup.values())
         {
             String type_code = String.format("%s", enumcreaturetype).substring(0, 3);
-            List<Biome.SpawnEntry> lst = ((ServerChunkManager)worldIn.getChunkManager()).method_33449(enumcreaturetype, pos);
+            List<Biome.SpawnEntry> lst = ((ServerChunkCache)worldIn.getChunkManager()).method_33449(enumcreaturetype, pos);
             if (lst != null && !lst.isEmpty())
             {
                 for (Biome.SpawnEntry animal : lst)

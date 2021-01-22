@@ -17,7 +17,7 @@ public class ServerPlayNetworkHandlerMixin {
     @Shadow @Final private MinecraftServer server;
 
     @ModifyConstant(method = "onCustomPayload", constant = {@Constant(intValue = -32), @Constant(intValue = 32)}, slice = @Slice(
-        from = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/StructureBlockBlockEntity;method_27084(Ljava/lang/String;)V"),
+        from = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/StructureBlockBlockEntity;setName(Ljava/lang/String;)V"),
         to = @At(value = "INVOKE", target = "Lnet/minecraft/block/entity/StructureBlockBlockEntity;setSize(Lnet/minecraft/util/math/BlockPos;)V")
     ))
     private int structureBlockLimit(int limit) {

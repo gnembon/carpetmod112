@@ -4,8 +4,8 @@ import carpet.CarpetSettings;
 import carpet.helpers.EntityPlayerActionPack;
 import carpet.patches.FakeServerPlayerEntity;
 import carpet.utils.extensions.ActionPackOwner;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.MinecraftServer;
@@ -38,7 +38,7 @@ public class CommandPlayer extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandPlayer", sender)) return;
         if (args.length < 2)
@@ -131,7 +131,7 @@ public class CommandPlayer extends CommandCarpetBase
                 throw new class_6182("player names can only be 3 to 16 chars long");
             }
             if (isWhitelistedPlayer(server, playerName) && !sender.allowCommandExecution(2, "gamemode")) {
-                throw new class_6175("You are not allowed to spawn a whitelisted player");
+                throw new CommandException("You are not allowed to spawn a whitelisted player");
             }
             Vec3d vec3d = sender.getPosVector();
             double d0 = vec3d.x;
@@ -175,7 +175,7 @@ public class CommandPlayer extends CommandCarpetBase
             {
                 gamemode = method_28719(args[8],0,3);
                 if (gamemode == 1 && !sender.allowCommandExecution(2, "gamemode")) {
-                    throw new class_6175("You are not allowed to spawn a creative player");
+                    throw new CommandException("You are not allowed to spawn a creative player");
                 }
             }
             FakeServerPlayerEntity.createFake(playerName, server, d0, d1, d2, yaw, pitch, dimension, gamemode );
@@ -296,7 +296,7 @@ public class CommandPlayer extends CommandCarpetBase
                 throw new class_6182("player names can only be 3 to 16 chars long");
             }
             if (isWhitelistedPlayer(server, playerName) && !sender.allowCommandExecution(2, "gamemode")) {
-                throw new class_6175("You are not allowed to spawn a whitelisted player");
+                throw new CommandException("You are not allowed to spawn a whitelisted player");
             }
             FakeServerPlayerEntity.create(playerName, server);
             return;

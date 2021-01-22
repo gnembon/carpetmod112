@@ -19,21 +19,21 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import carpet.mixin.accessors.ThreadedAnvilChunkStorageAccessor;
-import carpet.mixin.accessors.ServerChunkManagerAccessor;
+import carpet.mixin.accessors.ServerChunkCacheAccessor;
 import carpet.mixin.accessors.MinecraftServerAccessor;
 import carpet.utils.extensions.WorldWithTickingAreas;
 import net.minecraft.class_5318;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import net.minecraft.class_5305;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.server.world.ServerChunkCache;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.server.world.ThreadedAnvilChunkStorage;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.ChunkCache;
 
 public abstract class TickingArea
 {
@@ -112,12 +112,12 @@ public abstract class TickingArea
         {
             removeAllTickingAreas(world);
             
-            class_5305 chunkProvider = world.getChunkManager();
-            if (!(chunkProvider instanceof ServerChunkManager))
+            ChunkCache chunkProvider = world.getChunkManager();
+            if (!(chunkProvider instanceof ServerChunkCache))
             {
                 continue;
             }
-            class_5318 chunkLoader = ((ServerChunkManagerAccessor) chunkProvider).getChunkLoader();
+            class_5318 chunkLoader = ((ServerChunkCacheAccessor) chunkProvider).getChunkLoader();
             if (!(chunkLoader instanceof ThreadedAnvilChunkStorage))
             {
                 continue;
@@ -168,10 +168,10 @@ public abstract class TickingArea
     {
         for (World world : server.worlds)
         {
-            class_5305 chunkProvider = world.getChunkManager();
-            if (!(chunkProvider instanceof ServerChunkManager))
+            ChunkCache chunkProvider = world.getChunkManager();
+            if (!(chunkProvider instanceof ServerChunkCache))
                 continue;
-            class_5318 chunkLoader = ((ServerChunkManagerAccessor) chunkProvider).getChunkLoader();
+            class_5318 chunkLoader = ((ServerChunkCacheAccessor) chunkProvider).getChunkLoader();
             if (!(chunkLoader instanceof ThreadedAnvilChunkStorage))
                 continue;
             

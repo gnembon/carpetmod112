@@ -6,7 +6,7 @@ import carpet.mixin.accessors.EntityTrackerAccessor;
 import carpet.mixin.accessors.ServerWorldAccessor;
 import carpet.utils.Messenger;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.class_6175;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -31,7 +31,7 @@ public class CommandDebugCarpet extends CommandCarpetBase {
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException {
         if("tracker".equalsIgnoreCase(args[0])) {
             for(EntityTrackerEntry e : ((EntityTrackerAccessor) ((ServerWorld) sender.getEntityWorld()).getEntityTracker()).getEntries()){
                 sender.sendSystemMessage(Messenger.s(sender, e.method_33550().toString()));

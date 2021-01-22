@@ -7,10 +7,10 @@ import com.google.common.collect.Lists;
 
 import carpet.CarpetSettings;
 import carpet.utils.TickingArea;
-import net.minecraft.class_6175;
-import net.minecraft.class_6178;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
+import net.minecraft.command.InvalidNumberException;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.math.BlockPos;
@@ -39,7 +39,7 @@ public class CommandTickingArea extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (!command_enabled("tickingAreas", sender))
             return;
@@ -66,14 +66,14 @@ public class CommandTickingArea extends CommandCarpetBase
         }
     }
     
-    private static ColumnPos parseChunkPos(CommandSource sender, String[] args, int index) throws class_6178
+    private static ColumnPos parseChunkPos(CommandSource sender, String[] args, int index) throws InvalidNumberException
     {
         int x = (int) Math.round(method_28702(sender.getBlockPos().getX() >> 4, args[index], false).method_28750());
         int z = (int) Math.round(method_28702(sender.getBlockPos().getZ() >> 4, args[index + 1], false).method_28750());
         return new ColumnPos(x, z);
     }
     
-    private void addTickingArea(CommandSource sender, String[] args) throws class_6175
+    private void addTickingArea(CommandSource sender, String[] args) throws CommandException
     {
         if (args.length < 2)
             throw new class_6182(USAGE_ADD);
@@ -125,7 +125,7 @@ public class CommandTickingArea extends CommandCarpetBase
         method_28710(sender, this, "Added ticking area");
     }
     
-    private void removeTickingArea(CommandSource sender, String[] args) throws class_6175
+    private void removeTickingArea(CommandSource sender, String[] args) throws CommandException
     {
         if (args.length < 2)
             throw new class_6182(USAGE_REMOVE);
@@ -143,7 +143,7 @@ public class CommandTickingArea extends CommandCarpetBase
                 ColumnPos pos = parseChunkPos(sender, args, 1);
                 removed = TickingArea.removeTickingAreas(sender.getEntityWorld(), pos.x, pos.z);
             }
-            catch (class_6175 e)
+            catch (CommandException e)
             {
                 byName = true;
             }
@@ -156,16 +156,16 @@ public class CommandTickingArea extends CommandCarpetBase
         if (removed)
             method_28710(sender, this, "Removed ticking area");
         else
-            throw new class_6175("Couldn't remove ticking area");
+            throw new CommandException("Couldn't remove ticking area");
     }
     
-    private void removeAllTickingAreas(CommandSource sender, String[] args) throws class_6175
+    private void removeAllTickingAreas(CommandSource sender, String[] args) throws CommandException
     {
         TickingArea.removeAllTickingAreas(sender.getEntityWorld());
         method_28710(sender, this, "Removed all ticking areas");
     }
     
-    private void listTickingAreas(CommandSource sender, String[] args) throws class_6175
+    private void listTickingAreas(CommandSource sender, String[] args) throws CommandException
     {
         if (args.length > 1 && "all-dimensions".equals(args[1]))
         {
@@ -185,7 +185,7 @@ public class CommandTickingArea extends CommandCarpetBase
         if (world.dimension.hasVisibleSky() && !CarpetSettings.disableSpawnChunks)
             sender.sendSystemMessage(new LiteralText("Spawn chunks are enabled"));
         
-        sender.sendSystemMessage(new LiteralText("Ticking areas in " + world.dimension.getType().method_27531() + ":"));
+        sender.sendSystemMessage(new LiteralText("Ticking areas in " + world.dimension.getType().getSaveDir() + ":"));
         
         for (TickingArea area : TickingArea.getTickingAreas(world))
         {

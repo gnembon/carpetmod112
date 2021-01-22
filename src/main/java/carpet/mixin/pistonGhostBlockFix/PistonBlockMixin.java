@@ -30,7 +30,7 @@ public class PistonBlockMixin {
                     PistonBlockEntity te = (PistonBlockEntity) tileentity;
                     ExtendedPistonBlockEntityGhostBlockFix ext = (ExtendedPistonBlockEntityGhostBlockFix) te;
                     boolean facingMatch = te.getFacing() == facing;
-                    boolean extending = te.method_27159();
+                    boolean extending = te.isExtending();
                     boolean progressMatch = ext.getLastProgress() < 0.5F;
                     if (facingMatch && extending && progressMatch
                             && te.getWorld().getTime() == ext.getLastTicked()

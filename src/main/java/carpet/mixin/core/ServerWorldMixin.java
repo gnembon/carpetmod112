@@ -1,13 +1,13 @@
 package carpet.mixin.core;
 
 import carpet.helpers.TickSpeed;
-import net.minecraft.class_1268;
 import net.minecraft.class_6380;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.SpawnHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.WorldSaveHandler;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.dimension.Dimension;
 import net.minecraft.world.level.LevelProperties;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,7 +21,7 @@ import java.util.Iterator;
 
 @Mixin(value = ServerWorld.class, priority = 1001)
 public abstract class ServerWorldMixin extends World {
-    protected ServerWorldMixin(class_1268 levelProperties, LevelProperties levelProperties2, Dimension dimension, Profiler profiler, boolean isClient) {
+    protected ServerWorldMixin(WorldSaveHandler levelProperties, LevelProperties levelProperties2, Dimension dimension, Profiler profiler, boolean isClient) {
         super(levelProperties, levelProperties2, dimension, profiler, isClient);
     }
 
@@ -57,12 +57,12 @@ public abstract class ServerWorldMixin extends World {
     }
 
     @Redirect(method = "tickChunk", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_6380;method_33585()Ljava/util/Iterator;", ordinal = 1))
-    private Iterator<WorldChunk> getChunkIterator(class_6380 map) {
-        Iterator<WorldChunk> iterator = map.method_33585();
+    private Iterator<Chunk> getChunkIterator(class_6380 map) {
+        Iterator<Chunk> iterator = map.method_33585();
         if (!TickSpeed.process_entities) {
             while (iterator.hasNext()) {
                 this.profiler.push("getChunk");
-                WorldChunk chunk = iterator.next();
+                Chunk chunk = iterator.next();
                 this.profiler.swap("checkNextLight");
                 chunk.method_27420();
                 this.profiler.swap("tickChunk");

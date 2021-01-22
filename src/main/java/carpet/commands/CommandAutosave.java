@@ -6,8 +6,8 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -25,7 +25,7 @@ public class CommandAutosave extends CommandCarpetBase {
 	}
 
 	@Override
-	public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
+	public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException {
 		if (!command_enabled("commandAutosave", sender)) return;
 		
 		if(args.length < 1)
@@ -92,7 +92,7 @@ public class CommandAutosave extends CommandCarpetBase {
 				}
 			}
 			else {
-				throw new class_6175(String.format("gametick %d not in interval %d %d",afterAutosave, start, end));
+				throw new CommandException(String.format("gametick %d not in interval %d %d",afterAutosave, start, end));
 			}
 		}
 		else {

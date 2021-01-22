@@ -51,7 +51,7 @@ public class PistonBlockMixin extends FacingBlock {
             }
         }
         BlockState movingBlock = Blocks.PISTON_EXTENSION.getDefaultState().with(FACING, direction)
-                .with(PistonHelper.OPACITY, Math.min(currentState.method_27191(), 15))
+                .with(PistonHelper.OPACITY, Math.min(currentState.getOpacity(), 15))
                 .with(PistonHelper.LIGHT, currentState.getLuminance());
         worldIn.setBlockState(currentPos, movingBlock, 20);
         if (remove){

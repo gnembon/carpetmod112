@@ -15,12 +15,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PistonBlock.class)
 public class PistonBlockMixin {
-    @Shadow @Final public static BooleanProperty field_25225;
+    @Shadow @Final public static BooleanProperty EXTENDED;
 
     @Inject(method = "method_27136", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;addBlockAction(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/Block;II)V", ordinal = 1))
     private void onRetract(World worldIn, BlockPos pos, BlockState state, CallbackInfo ci) {
         if (CarpetSettings.doubleRetraction) {
-            worldIn.setBlockState(pos, state.with(field_25225, false), 2);
+            worldIn.setBlockState(pos, state.with(EXTENDED, false), 2);
         }
     }
 }

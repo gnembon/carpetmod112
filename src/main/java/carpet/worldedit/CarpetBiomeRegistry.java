@@ -54,7 +54,7 @@ class CarpetBiomeRegistry implements BiomeRegistry {
         Map<Integer, Biome> biomes = HashBiMap.create();
         Map<Integer, BiomeData> biomeData = new HashMap<Integer, BiomeData>();
 
-        for (Biome biome : Biome.field_23677) {
+        for (Biome biome : Biome.REGISTRY) {
             if ((biome == null) || (biomes.containsValue(biome))) {
                 continue;
             }

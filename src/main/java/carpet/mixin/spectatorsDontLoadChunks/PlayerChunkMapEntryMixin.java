@@ -5,8 +5,8 @@ import carpet.carpetclient.CarpetClientChunkLogger;
 import carpet.utils.ChunkLoading;
 import net.minecraft.class_4615;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerChunkManager;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.server.world.ServerChunkCache;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,8 +16,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public class PlayerChunkMapEntryMixin {
     @Shadow private boolean field_31800;
 
-    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerChunkManager;method_33452(II)Lnet/minecraft/world/chunk/WorldChunk;"))
-    private WorldChunk loadChunk(ServerChunkManager provider, int x, int z) {
+    @Redirect(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerChunkCache;method_33452(II)Lnet/minecraft/world/chunk/Chunk;"))
+    private Chunk loadChunk(ServerChunkCache provider, int x, int z) {
         if (CarpetSettings.spectatorsDontLoadChunks) {
             ServerPlayerEntity player = ChunkLoading.INITIAL_PLAYER_FOR_CHUNK_MAP_ENTRY.get();
             if (player != null && player.isSpectator()) return null;

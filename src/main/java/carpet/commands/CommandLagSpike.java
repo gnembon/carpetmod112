@@ -2,8 +2,8 @@ package carpet.commands;
 
 import carpet.helpers.LagSpikeHelper;
 import com.google.common.collect.Collections2;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.MinecraftDedicatedServer;
@@ -31,7 +31,7 @@ public class CommandLagSpike extends CommandCarpetBase {
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException {
         if (!command_enabled("commandLagspike", sender)) {
             return;
         }
@@ -61,7 +61,7 @@ public class CommandLagSpike extends CommandCarpetBase {
             try {
                 dimension = args.length > 4 ? DimensionType.method_27530(args[3]) : DimensionType.OVERWORLD;
             } catch (IllegalArgumentException e) {
-                throw new class_6175("Invalid dimension: " + args[3]);
+                throw new CommandException("Invalid dimension: " + args[3]);
             }
         } else {
             dimension = null;
@@ -72,18 +72,18 @@ public class CommandLagSpike extends CommandCarpetBase {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T extends Enum<T>> T parseEnumUnchecked(String arg, Class<? extends Enum<?>> clazz) throws class_6175 {
+    private static <T extends Enum<T>> T parseEnumUnchecked(String arg, Class<? extends Enum<?>> clazz) throws CommandException {
         return parseEnum(arg, (Class<T>) clazz);
     }
 
-    private static <T extends Enum<T>> T parseEnum(String arg, Class<T> clazz) throws class_6175 {
+    private static <T extends Enum<T>> T parseEnum(String arg, Class<T> clazz) throws CommandException {
         arg = arg.toUpperCase(Locale.ROOT);
         for (T val : clazz.getEnumConstants()) {
             if (val.name().equals(arg)) {
                 return val;
             }
         }
-        throw new class_6175("Invalid value: " + arg);
+        throw new CommandException("Invalid value: " + arg);
     }
 
     private static Collection<String> getEnumCompletions(Class<? extends Enum<?>> clazz) {
@@ -98,7 +98,7 @@ public class CommandLagSpike extends CommandCarpetBase {
             LagSpikeHelper.TickPhase phase;
             try {
                 phase = parseEnum(args[1], LagSpikeHelper.TickPhase.class);
-            } catch (class_6175 e) {
+            } catch (CommandException e) {
                 return Collections.emptyList();
             }
 
@@ -107,7 +107,7 @@ public class CommandLagSpike extends CommandCarpetBase {
             }
 
             if (args.length == 4 && phase.isDimensionApplicable()) {
-                return method_28731(args, Collections2.transform(Arrays.asList(DimensionType.values()), dimensionType -> dimensionType != null ? dimensionType.method_27531() : null));
+                return method_28731(args, Collections2.transform(Arrays.asList(DimensionType.values()), dimensionType -> dimensionType != null ? dimensionType.getSaveDir() : null));
             }
         }
 

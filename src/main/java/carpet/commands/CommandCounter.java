@@ -10,8 +10,8 @@ import javax.annotation.Nullable;
 import carpet.CarpetSettings;
 import carpet.helpers.HopperCounter;
 import carpet.utils.Messenger;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.DyeColor;
@@ -38,7 +38,7 @@ public class CommandCounter extends CommandCarpetBase
      * Callback for when the command is executed
      */
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (CarpetSettings.hopperCounters == CarpetSettings.HopperCounters.off && !CarpetSettings.cactusCounter){
             msg(sender, Messenger.m(null, "Need cactusCounter or hopperCounters to be enabled to use this command."));

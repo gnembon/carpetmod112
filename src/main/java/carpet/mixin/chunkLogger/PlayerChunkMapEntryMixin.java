@@ -4,9 +4,9 @@ import carpet.carpetclient.CarpetClientChunkLogger;
 import net.minecraft.class_4615;
 import net.minecraft.class_6380;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.server.world.ServerChunkCache;
 import net.minecraft.util.math.ColumnPos;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -30,8 +30,8 @@ public class PlayerChunkMapEntryMixin {
         CarpetClientChunkLogger.logger.log(this.field_31792.method_33577(), field_31794.x, field_31794.z, CarpetClientChunkLogger.Event.PLAYER_LEAVES);
     }
 
-    @Redirect(method = "method_33567", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerChunkManager;method_27347(II)Lnet/minecraft/world/chunk/WorldChunk;"))
-    private WorldChunk provideChunk(ServerChunkManager provider, int x, int z) {
+    @Redirect(method = "method_33567", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerChunkCache;method_27347(II)Lnet/minecraft/world/chunk/Chunk;"))
+    private Chunk provideChunk(ServerChunkCache provider, int x, int z) {
         try {
             CarpetClientChunkLogger.setReason("Player loading new chunks and generating");
             return provider.method_27347(x, z);

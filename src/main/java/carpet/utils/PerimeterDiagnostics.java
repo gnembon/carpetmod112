@@ -123,7 +123,7 @@ public class PerimeterDiagnostics
                     }
                     else
                     {
-                        if (iblockstate_down.method_27211())
+                        if (iblockstate_down.isOpaqueFullCube())
                         {
                             Block block = iblockstate_down.getBlock();
                             boolean flag = block != Blocks.BEDROCK && block != Blocks.BARRIER;

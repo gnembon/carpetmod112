@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(RepeaterBlock.class)
 public class RepeaterBlockMixin extends AbstractRedstoneGateBlockMixin {
-    @Shadow @Final public static IntProperty field_24733;
+    @Shadow @Final public static IntProperty DELAY;
 
     @Override
     protected int getDelay(BlockState state, World world, BlockPos pos) {
@@ -29,6 +29,6 @@ public class RepeaterBlockMixin extends AbstractRedstoneGateBlockMixin {
             }
         }
 
-        return state.get(field_24733) * delay;
+        return state.get(DELAY) * delay;
     }
 }

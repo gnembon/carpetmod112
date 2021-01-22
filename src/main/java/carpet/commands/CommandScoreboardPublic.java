@@ -1,11 +1,11 @@
 package carpet.commands;
 
 import carpet.CarpetSettings;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.scoreboard.Scoreboard;
-import net.minecraft.scoreboard.ScoreboardCriterions;
+import net.minecraft.scoreboard.ScoreboardCriterion;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.ScoreboardCommand;
 import net.minecraft.util.math.BlockPos;
@@ -37,7 +37,7 @@ public class CommandScoreboardPublic extends ScoreboardCommand {
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException {
         if (!CarpetSettings.commandPublicScoreboard) return;
 
         if (args.length < 1) {
@@ -91,7 +91,7 @@ public class CommandScoreboardPublic extends ScoreboardCommand {
 
                 if ("add".equalsIgnoreCase(args[1])) {
                     if (args.length == 4) {
-                        Set<String> set = ScoreboardCriterions.field_26748.keySet();
+                        Set<String> set = ScoreboardCriterion.OBJECTIVES.keySet();
                         return method_28731(args, set);
                     }
                 } else if ("remove".equalsIgnoreCase(args[1])) {

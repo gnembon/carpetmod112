@@ -19,26 +19,26 @@ public class IsPoweredHelper {
         if (block instanceof AirBlock) {
             return false;
         } else if (block instanceof AbstractButtonBlock) {
-            return state.get(AbstractButtonBlock.field_24240);
+            return state.get(AbstractButtonBlock.POWERED);
         } else if (block instanceof DispenserBlock) {
             return world.isReceivingRedstonePower(pos) || world.isReceivingRedstonePower(pos.up());
         } else if (block instanceof LeverBlock) {
-            return state.get(LeverBlock.field_24533);
+            return state.get(LeverBlock.POWERED);
         } else if (block instanceof ObserverBlock) {
-            return state.get(ObserverBlock.field_24607);
+            return state.get(ObserverBlock.POWERED);
         } else if (block instanceof PistonBlock) {
             return ((PistonBlockAccessor) block).invokeShouldExtend(world, pos, state.get(FacingBlock.FACING));
         } else if (block instanceof WeightedPressurePlateBlock) {
-            return state.get(WeightedPressurePlateBlock.field_25004) > 0;
+            return state.get(WeightedPressurePlateBlock.POWER) > 0;
         } else if (block instanceof PressurePlateBlock) {
-            return state.get(PressurePlateBlock.field_24645);
+            return state.get(PressurePlateBlock.POWERED);
         } else if (block instanceof DetectorRailBlock) {
-            return state.get(DetectorRailBlock.field_24305);
+            return state.get(DetectorRailBlock.POWERED);
         } else if (block instanceof PoweredRailBlock) {
             return state.get(PoweredRailBlock.POWERED);
         } else if (block instanceof ComparatorBlock) {
-            if (state.get(ComparatorBlock.field_24288) == ComparatorBlock.ComparatorMode.COMPARE) {
-                return state.get(ComparatorBlock.field_24287);
+            if (state.get(ComparatorBlock.MODE) == ComparatorBlock.ComparatorMode.COMPARE) {
+                return state.get(ComparatorBlock.POWERED);
             } else {
                 return ((ComparatorBlockEntity) source.getBlockEntity(pos)).getOutputSignal() > 0;
             }
@@ -47,9 +47,9 @@ public class IsPoweredHelper {
         } else if (block instanceof RedstoneTorchBlock) {
             return block == Blocks.REDSTONE_TORCH;
         } else if (block instanceof RedstoneWireBlock) {
-            return state.get(RedstoneWireBlock.field_24710) > 0;
+            return state.get(RedstoneWireBlock.POWER) > 0;
         } else if (block instanceof TripwireHookBlock) {
-            return state.get(TripwireHookBlock.field_24954);
+            return state.get(TripwireHookBlock.POWERED);
         } else {
             return world.isReceivingRedstonePower(pos);
         }

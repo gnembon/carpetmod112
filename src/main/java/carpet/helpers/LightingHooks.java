@@ -7,7 +7,6 @@ package carpet.helpers;
 import javax.annotation.Nullable;
 import carpet.mixin.accessors.DirectionAccessor;
 import carpet.utils.extensions.NewLightChunk;
-import net.minecraft.class_5305;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.ShortTag;
@@ -18,8 +17,9 @@ import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.Direction.AxisDirection;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.ChunkCache;
 import net.minecraft.world.chunk.ChunkSection;
-import net.minecraft.world.chunk.WorldChunk;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,7 +34,7 @@ public class LightingHooks
     
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public static void onLoad(final World world, final WorldChunk chunk)
+    public static void onLoad(final World world, final Chunk chunk)
     {
         initChunkLighting(world, chunk);
         initNeighborLight(world, chunk);
@@ -53,9 +53,9 @@ public class LightingHooks
         readNeighborLightChecksFromNBT(chunk, nbt);
     }*/
 
-    public static void fillSkylightColumn(final WorldChunk chunk, final int x, final int z)
+    public static void fillSkylightColumn(final Chunk chunk, final int x, final int z)
     {
-        final ChunkSection[] extendedBlockStorage = chunk.method_27413();
+        final ChunkSection[] extendedBlockStorage = chunk.getSections();
 
         final int height = chunk.method_27386(x, z);
 
@@ -63,7 +63,7 @@ public class LightingHooks
         {
             final ChunkSection blockStorage = extendedBlockStorage[j];
 
-            if (blockStorage == WorldChunk.EMPTY_SECTION)
+            if (blockStorage == Chunk.EMPTY_SECTION)
                 continue;
 
             final int yMin = Math.max(j << 4, height);
@@ -75,7 +75,7 @@ public class LightingHooks
         chunk.markDirty();
     }
 
-    public static void initChunkLighting(final World world, final WorldChunk chunk)
+    public static void initChunkLighting(final World world, final Chunk chunk)
     {
         if (chunk.method_27428() || ((NewLightChunk) chunk).getPendingNeighborLightInits() != 0)
             return;
@@ -84,18 +84,18 @@ public class LightingHooks
 
         chunk.markDirty();
 
-        final int xBase = chunk.field_25365 << 4;
-        final int zBase = chunk.field_25366 << 4;
+        final int xBase = chunk.x << 4;
+        final int zBase = chunk.z << 4;
 
         final PooledMutable pos = PooledMutable.get();
 
-        final ChunkSection[] extendedBlockStorage = chunk.method_27413();
+        final ChunkSection[] extendedBlockStorage = chunk.getSections();
 
         for (int j = 0; j < extendedBlockStorage.length; ++j)
         {
             final ChunkSection blockStorage = extendedBlockStorage[j];
 
-            if (blockStorage == WorldChunk.EMPTY_SECTION)
+            if (blockStorage == Chunk.EMPTY_SECTION)
                 continue;
 
             for (int x = 0; x < 16; ++x)
@@ -139,7 +139,7 @@ public class LightingHooks
         }
     }
 
-    private static void initNeighborLight(final World world, final WorldChunk chunk, final WorldChunk nChunk, final Direction nDir)
+    private static void initNeighborLight(final World world, final Chunk chunk, final Chunk nChunk, final Direction nDir)
     {
         final int flag = 1 << nDir.getHorizontal();
 
@@ -173,8 +173,8 @@ public class LightingHooks
         final int xMax = xMin + 15 * (zOffset & 1);
         final int zMax = zMin + 15 * (xOffset & 1);
 
-        final int xBase = nChunk.field_25365 << 4;
-        final int zBase = nChunk.field_25366 << 4;
+        final int xBase = nChunk.x << 4;
+        final int zBase = nChunk.z << 4;
 
         final PooledMutable pos = PooledMutable.get();
 
@@ -211,13 +211,13 @@ public class LightingHooks
         pos.free();
     }
 
-    public static void initNeighborLight(final World world, final WorldChunk chunk)
+    public static void initNeighborLight(final World world, final Chunk chunk)
     {
-        final class_5305 provider = world.getChunkManager();
+        final ChunkCache provider = world.getChunkManager();
 
         for (final Direction dir : DirectionAccessor.getHorizontals())
         {
-            final WorldChunk nChunk = provider.method_27346(chunk.field_25365 + dir.getOffsetX(), chunk.field_25366 + dir.getOffsetZ());
+            final Chunk nChunk = provider.method_27346(chunk.x + dir.getOffsetX(), chunk.z + dir.getOffsetZ());
 
             if (nChunk == null)
                 continue;
@@ -241,7 +241,7 @@ public class LightingHooks
             chunk.pendingNeighborLightInits = nbt.getShort(neighborLightInitsKey);
     }*/
 
-    public static void initSkylightForSection(final World world, final WorldChunk chunk, final ChunkSection section)
+    public static void initSkylightForSection(final World world, final Chunk chunk, final ChunkSection section)
     {
         if (world.dimension.hasSkyLight())
         {
@@ -261,7 +261,7 @@ public class LightingHooks
         }
     }
 
-    public static void relightSkylightColumns(final World world, final WorldChunk chunk, @Nullable int[] oldHeightMap)
+    public static void relightSkylightColumns(final World world, final Chunk chunk, @Nullable int[] oldHeightMap)
     {
         if (!world.dimension.hasSkyLight())
             return;
@@ -276,19 +276,19 @@ public class LightingHooks
         }
     }
 
-    public static void relightSkylightColumn(final World world, final WorldChunk chunk, final int x, final int z, final int height1, final int height2)
+    public static void relightSkylightColumn(final World world, final Chunk chunk, final int x, final int z, final int height1, final int height2)
     {
         final int yMin = Math.min(height1, height2);
         final int yMax = Math.max(height1, height2) - 1;
 
-        final ChunkSection[] sections = chunk.method_27413();
+        final ChunkSection[] sections = chunk.getSections();
 
-        final int xBase = (chunk.field_25365 << 4) + x;
-        final int zBase = (chunk.field_25366 << 4) + z;
+        final int xBase = (chunk.x << 4) + x;
+        final int zBase = (chunk.z << 4) + z;
 
         scheduleRelightChecksForColumn(world, LightType.SKY, xBase, zBase, yMin, yMax);
 
-        if (sections[yMin >> 4] == WorldChunk.EMPTY_SECTION && yMin > 0)
+        if (sections[yMin >> 4] == Chunk.EMPTY_SECTION && yMin > 0)
         {
             world.method_26095(LightType.SKY, new BlockPos(xBase, yMin - 1, zBase));
         }
@@ -297,7 +297,7 @@ public class LightingHooks
 
         for (int sec = yMax >> 4; sec >= yMin >> 4; --sec)
         {
-            if (sections[sec] == WorldChunk.EMPTY_SECTION)
+            if (sections[sec] == Chunk.EMPTY_SECTION)
             {
                 emptySections |= 1 << sec;
             }
@@ -312,7 +312,7 @@ public class LightingHooks
 
                 final boolean neighborColumnExists =
                     (((x + xOffset) | (z + zOffset)) & 16) == 0 //Checks whether the position is at the specified border (the 16 bit is set for both 15+1 and 0-1)
-                        || world.getChunkManager().method_27346(chunk.field_25365 + xOffset, chunk.field_25366 + zOffset) != null;
+                        || world.getChunkManager().method_27346(chunk.x + xOffset, chunk.z + zOffset) != null;
 
                 if (neighborColumnExists)
                 {
@@ -361,12 +361,12 @@ public class LightingHooks
         }
     }
 
-    public static void flagSecBoundaryForUpdate(final WorldChunk chunk, final BlockPos pos, final LightType lightType, final Direction dir, final EnumBoundaryFacing boundaryFacing)
+    public static void flagSecBoundaryForUpdate(final Chunk chunk, final BlockPos pos, final LightType lightType, final Direction dir, final EnumBoundaryFacing boundaryFacing)
     {
         flagChunkBoundaryForUpdate(chunk, (short) (1 << (pos.getY() >> 4)), lightType, dir, getAxisDirection(dir, pos.getX(), pos.getZ()), boundaryFacing);
     }
 
-    public static void flagChunkBoundaryForUpdate(final WorldChunk chunk, final short sectionMask, final LightType lightType, final Direction dir, final AxisDirection axisDirection, final EnumBoundaryFacing boundaryFacing)
+    public static void flagChunkBoundaryForUpdate(final Chunk chunk, final short sectionMask, final LightType lightType, final Direction dir, final AxisDirection axisDirection, final EnumBoundaryFacing boundaryFacing)
     {
         initNeighborLightChecks((NewLightChunk) chunk);
         ((NewLightChunk) chunk).getNeighborLightChecks()[getFlagIndex(lightType, dir, axisDirection, boundaryFacing)] |= sectionMask;
@@ -388,14 +388,14 @@ public class LightingHooks
         return ((dir.getAxis() == Axis.X ? z : x) & 15) < 8 ? AxisDirection.NEGATIVE : AxisDirection.POSITIVE;
     }
 
-    public static void scheduleRelightChecksForChunkBoundaries(final World world, final WorldChunk chunk)
+    public static void scheduleRelightChecksForChunkBoundaries(final World world, final Chunk chunk)
     {
         for (final Direction dir : DirectionAccessor.getHorizontals())
         {
             final int xOffset = dir.getOffsetX();
             final int zOffset = dir.getOffsetZ();
 
-            final WorldChunk nChunk = world.getChunkManager().method_27346(chunk.field_25365 + xOffset, chunk.field_25366 + zOffset);
+            final Chunk nChunk = world.getChunkManager().method_27346(chunk.x + xOffset, chunk.z + zOffset);
 
             if (nChunk == null)
             {
@@ -422,7 +422,7 @@ public class LightingHooks
         }
     }
 
-    private static void mergeFlags(final LightType lightType, final WorldChunk inChunk, final WorldChunk outChunk, final Direction dir, final AxisDirection axisDir)
+    private static void mergeFlags(final LightType lightType, final Chunk inChunk, final Chunk outChunk, final Direction dir, final AxisDirection axisDir)
     {
         if (((NewLightChunk) outChunk).getNeighborLightChecks() == null)
         {
@@ -438,7 +438,7 @@ public class LightingHooks
         //no need to call Chunk.setModified() since checks are not deleted from outChunk
     }
 
-    private static void scheduleRelightChecksForBoundary(final World world, final WorldChunk chunk, WorldChunk nChunk, WorldChunk sChunk, final LightType lightType, final int xOffset, final int zOffset, final AxisDirection axisDir)
+    private static void scheduleRelightChecksForBoundary(final World world, final Chunk chunk, Chunk nChunk, Chunk sChunk, final LightType lightType, final int xOffset, final int zOffset, final AxisDirection axisDir)
     {
         if (((NewLightChunk) chunk).getNeighborLightChecks() == null)
         {
@@ -456,7 +456,7 @@ public class LightingHooks
 
         if (nChunk == null)
         {
-            nChunk = world.getChunkManager().method_27346(chunk.field_25365 + xOffset, chunk.field_25366 + zOffset);
+            nChunk = world.getChunkManager().method_27346(chunk.x + xOffset, chunk.z + zOffset);
 
             if (nChunk == null)
             {
@@ -466,7 +466,7 @@ public class LightingHooks
 
         if (sChunk == null)
         {
-            sChunk = world.getChunkManager().method_27346(chunk.field_25365 + (zOffset != 0 ? axisDir.offset() : 0), chunk.field_25366 + (xOffset != 0 ? axisDir.offset() : 0));
+            sChunk = world.getChunkManager().method_27346(chunk.x + (zOffset != 0 ? axisDir.offset() : 0), chunk.z + (xOffset != 0 ? axisDir.offset() : 0));
 
             if (sChunk == null)
             {
@@ -488,8 +488,8 @@ public class LightingHooks
 
         //Get the area to check
         //Start in the corner...
-        int xMin = chunk.field_25365 << 4;
-        int zMin = chunk.field_25366 << 4;
+        int xMin = chunk.x << 4;
+        int zMin = chunk.z << 4;
 
         //move to other side of chunk if the direction is positive
         if ((xOffset | zOffset) > 0)
@@ -528,7 +528,7 @@ public class LightingHooks
 
     public static final String neighborLightChecksKey = "NeighborLightChecks";
 
-    private static void writeNeighborLightChecksToNBT(final WorldChunk chunk, final CompoundTag nbt)
+    private static void writeNeighborLightChecksToNBT(final Chunk chunk, final CompoundTag nbt)
     {
         if (((NewLightChunk) chunk).getNeighborLightChecks() == null)
         {
@@ -554,7 +554,7 @@ public class LightingHooks
         }
     }
 
-    private static void readNeighborLightChecksFromNBT(final WorldChunk chunk, final CompoundTag nbt)
+    private static void readNeighborLightChecksFromNBT(final Chunk chunk, final CompoundTag nbt)
     {
         if (nbt.contains(neighborLightChecksKey, 9))
         {
@@ -571,7 +571,7 @@ public class LightingHooks
             }
             else
             {
-            	LOGGER.warn("Chunk field {} had invalid length, ignoring it (chunk coordinates: {} {})", neighborLightChecksKey, chunk.field_25365, chunk.field_25366);
+            	LOGGER.warn("Chunk field {} had invalid length, ignoring it (chunk coordinates: {} {})", neighborLightChecksKey, chunk.x, chunk.z);
             }
         }
     }

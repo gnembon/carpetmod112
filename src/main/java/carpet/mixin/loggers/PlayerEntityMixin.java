@@ -47,7 +47,7 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         float modified = applyArmorToDamage(source, damage);
         if (LoggerRegistry.__damage) {
             DamageReporter.modify_damage(this, source, damage, modified,
-                String.format("armour %.1f and toughness %.1f", (float)this.getArmor(), (float)this.getAttributeInstance(EntityAttributes.ARMOR_TOUGHNESS).getValue()));
+                String.format("armour %.1f and toughness %.1f", (float)this.getArmor(), (float)this.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS).getValue()));
         }
         return modified;
     }

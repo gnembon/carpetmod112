@@ -6,8 +6,8 @@ import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
 import carpet.helpers.HopperCounter;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.entity.player.PlayerEntity;
@@ -36,7 +36,7 @@ public class CommandSpawn extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandSpawn", sender)) return;
         if (args.length == 0)
@@ -49,7 +49,7 @@ public class CommandSpawn extends CommandCarpetBase
             BlockPos blockpos = method_28713(sender, args, 1, false);
             if (!world.canSetBlock(blockpos))
             {
-                throw new class_6175("commands.setblock.outOfWorld");
+                throw new CommandException("commands.setblock.outOfWorld");
             }
             else
             {

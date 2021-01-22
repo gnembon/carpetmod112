@@ -75,6 +75,6 @@ public class WoolTool
     {
         BlockState state = worldIn.getBlockState(pos);
         if (state.getBlock() != Blocks.WOOL) return null;
-        return state.get(ColoredBlock.field_24283);
+        return state.get(ColoredBlock.COLOR);
     }
 }

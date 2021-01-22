@@ -25,7 +25,7 @@ public class SummonCommandMixin {
         if (!world.hasRain(bp)) return new LightningEntity(world, x, y,z, effectOnly);
 
         LocalDifficulty difficulty = world.getLocalDifficulty(bp);
-        if (world.getGameRules().getBoolean("doMobSpawning") && world.random.nextDouble() < (double)difficulty.getLocalDifficulty() * 0.01D) {
+        if (world.getGameRules().getBoolRule("doMobSpawning") && world.random.nextDouble() < (double)difficulty.getLocalDifficulty() * 0.01D) {
             SkeletonHorseEntity horse = new SkeletonHorseEntity(world);
             horse.setTrapped(true);
             horse.setBreedingAge(0);

@@ -2,8 +2,8 @@ package carpet.commands;
 
 import carpet.CarpetSettings;
 import carpet.helpers.OptimizedTNT;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
@@ -28,7 +28,7 @@ public class CommandTNT extends CommandCarpetBase{
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175 {
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException {
         int x;
         int y;
         int z;

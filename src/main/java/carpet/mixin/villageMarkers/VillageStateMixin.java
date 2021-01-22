@@ -2,21 +2,21 @@ package carpet.mixin.villageMarkers;
 
 import carpet.carpetclient.CarpetClientMarkers;
 import carpet.utils.extensions.ExtendedVillageCollection;
-import net.minecraft.class_2795;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.World;
+import net.minecraft.world.storage.VillageState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(class_2795.class)
-public class VillageCollectionMixin implements ExtendedVillageCollection {
+@Mixin(VillageState.class)
+public class VillageStateMixin implements ExtendedVillageCollection {
     @Shadow private World field_33667;
     private boolean updateMarkers;
 
-    @Inject(method = "method_35113", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_2795;method_35127()V", shift = At.Shift.AFTER))
+    @Inject(method = "method_35113", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/storage/VillageState;method_35127()V", shift = At.Shift.AFTER))
     private void updateMarkers(CallbackInfo ci) {
         if (updateMarkers) {
             CarpetClientMarkers.updateClientVillageMarkers(field_33667);
@@ -24,7 +24,7 @@ public class VillageCollectionMixin implements ExtendedVillageCollection {
         }
     }
 
-    @Inject(method = "method_35123", at = @At(value = "INVOKE", target = "Lnet/minecraft/class_2795;markDirty()V"))
+    @Inject(method = "method_35123", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/storage/VillageState;markDirty()V"))
     private void updateOnRemove(CallbackInfo ci) {
         updateMarkers = true;
     }

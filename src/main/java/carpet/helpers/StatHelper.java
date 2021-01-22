@@ -15,10 +15,10 @@ import net.minecraft.scoreboard.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.stat.ItemStat;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatHandler;
-import net.minecraft.class_2590;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.UserCache;
@@ -86,7 +86,7 @@ public class StatHelper {
 
     public static void initialize(Scoreboard scoreboard, MinecraftServer server, ScoreboardObjective objective) {
         LOGGER.info("Initializing " + objective);
-        ScoreboardCriterions criteria = objective.getDisplayName();
+        ScoreboardCriterion criteria = objective.getDisplayName();
         if (!(criteria instanceof class_5569)) return;
         Stat stat = ((ScoreCriteriaStatAccessor) criteria).getStat();
         for (Map.Entry<UUID, StatHandler> statEntry : getAllStatistics(server).entrySet()) {
@@ -132,7 +132,7 @@ public class StatHelper {
         void store(int stateId, Stat stat);
     }
 
-    private static void registerSubStats(class_2590 baseStat, StatStorage storage, Function<Text, TranslatableText> textFun) {
+    private static void registerSubStats(ItemStat baseStat, StatStorage storage, Function<Text, TranslatableText> textFun) {
         Item item = ((StatCraftingAccessor) baseStat).getItem();
         int id = Item.getRawId(item);
         if (item.hasVariants()) {
@@ -151,23 +151,23 @@ public class StatHelper {
         }
     }
 
-    public static void addCraftStats(class_2590 baseStat) {
+    public static void addCraftStats(ItemStat baseStat) {
         registerSubStats(baseStat, CRAFT_META_STATS::put, text -> new TranslatableText("stat.craftItem", text));
     }
 
-    public static void addMineStats(class_2590 baseStat) {
+    public static void addMineStats(ItemStat baseStat) {
         registerSubStats(baseStat, (state, stat) -> BLOCK_STATE_STATS[state] = stat, text -> new TranslatableText("stat.mineBlock", text));
     }
 
-    public static void addUseStats(class_2590 baseStat) {
+    public static void addUseStats(ItemStat baseStat) {
         registerSubStats(baseStat, OBJECT_USE_META_STATS::put, text -> new TranslatableText("stat.useItem", text));
     }
 
-    public static void addPickedUpStats(class_2590 baseStat) {
+    public static void addPickedUpStats(ItemStat baseStat) {
         registerSubStats(baseStat, OBJECTS_PICKED_UP_META_STATS::put, text -> new TranslatableText("stat.pickup", text));
     }
 
-    public static void addDroppedStats(class_2590 baseStat) {
+    public static void addDroppedStats(ItemStat baseStat) {
         registerSubStats(baseStat, OBJECTS_DROPPED_META_STATS::put, text -> new TranslatableText("stat.drop", text));
     }
 }

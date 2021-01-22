@@ -7,5 +7,5 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(Ingredient.class)
 public interface IngredientAccessor {
-    @Accessor("field_23366") ItemStack[] getMatchingStacks();
+    @Accessor ItemStack[] getStacks();
 }

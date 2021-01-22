@@ -9,8 +9,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(PumpkinBlock.class)
 public class PumpkinBlockMixin {
-    @Redirect(method = "canReplace", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;hasSolidTopSurface()Z"))
+    @Redirect(method = "canReplace", at = @At(value = "INVOKE", target = "Lnet/minecraft/block/BlockState;isTopSolidFullSquare()Z"))
     private boolean allowMidAir(BlockState state) {
-        return CarpetSettings.relaxedBlockPlacement || state.hasSolidTopSurface();
+        return CarpetSettings.relaxedBlockPlacement || state.isTopSolidFullSquare();
     }
 }

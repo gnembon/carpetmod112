@@ -22,8 +22,8 @@ import carpet.mixin.accessors.StructureManagerAccessor;
 import org.apache.logging.log4j.LogManager;
 import net.minecraft.SharedConstants;
 import net.minecraft.block.Blocks;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.structure.Structure;
@@ -58,7 +58,7 @@ public class CommandStructure extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandStructure", sender))
             return;
@@ -82,7 +82,7 @@ public class CommandStructure extends CommandCarpetBase
         }
     }
     
-    private void loadStructure(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    private void loadStructure(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (args.length < 2)
             throw new class_6182(USAGE_LOAD);
@@ -91,12 +91,12 @@ public class CommandStructure extends CommandCarpetBase
         
         String structureName = args[1];
 
-        for (char illegal : SharedConstants.field_30776)
+        for (char illegal : SharedConstants.INVALID_CHARS_IDENTIFIER)
             structureName = structureName.replace(illegal, '_');
         StructureManager manager = server.worlds[0].getStructureManager();
         Structure template = manager.method_27994(server, new Identifier(structureName));
         if (template == null)
-            throw new class_6175("Template \"" + args[1] + "\" doesn't exist");
+            throw new CommandException("Template \"" + args[1] + "\" doesn't exist");
         
         BlockPos origin = sender.getBlockPos();
         if (args.length >= 5)
@@ -119,7 +119,7 @@ public class CommandStructure extends CommandCarpetBase
                 mirror = BlockMirror.FRONT_BACK;
                 break;
             default:
-                throw new class_6175("Unknown mirror: " + args[5]);
+                throw new CommandException("Unknown mirror: " + args[5]);
             }
         }
         
@@ -141,7 +141,7 @@ public class CommandStructure extends CommandCarpetBase
                 rotation = BlockRotation.COUNTERCLOCKWISE_90;
                 break;
             default:
-                throw new class_6175("Unknown rotation: " + args[6]);
+                throw new CommandException("Unknown rotation: " + args[6]);
             }
         }
         
@@ -178,7 +178,7 @@ public class CommandStructure extends CommandCarpetBase
         method_28710(sender, this, "Successfully loaded structure " + args[1]);
     }
     
-    private void saveStructure(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    private void saveStructure(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (args.length < 8)
             throw new class_6182(USAGE_SAVE);
@@ -199,7 +199,7 @@ public class CommandStructure extends CommandCarpetBase
         }
         
         String structureName = args[1];
-        for (char illegal : SharedConstants.field_30776)
+        for (char illegal : SharedConstants.INVALID_CHARS_IDENTIFIER)
             structureName = structureName.replace(illegal, '_');
         StructureManager manager = server.worlds[0].getStructureManager();
         Structure template = manager.method_27992(server, new Identifier(structureName));
@@ -210,7 +210,7 @@ public class CommandStructure extends CommandCarpetBase
         method_28710(sender, this, "Successfully saved structure " + structureName);
     }
     
-    private void listStructure(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    private void listStructure(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         StructureManager manager = server.worlds[0].getStructureManager();
         List<String> templates = listStructures(manager);
@@ -320,7 +320,7 @@ public class CommandStructure extends CommandCarpetBase
                         replaced = true;
                     }
                 }
-                catch (class_6175 e)
+                catch (CommandException e)
                 {
                 }
                 if (!replaced)
@@ -384,7 +384,7 @@ public class CommandStructure extends CommandCarpetBase
         }
     }
     
-    private static String[] replaceQuotes(String[] args) throws class_6175
+    private static String[] replaceQuotes(String[] args) throws CommandException
     {
         String structureName = args[1];
         if (structureName.startsWith("\""))
@@ -394,7 +394,7 @@ public class CommandStructure extends CommandCarpetBase
                 structureName += " " + args[i++];
             }
             if (!structureName.endsWith("\""))
-                throw new class_6175("Unbalanced \"\" quotes");
+                throw new CommandException("Unbalanced \"\" quotes");
             structureName = structureName.substring(1, structureName.length() - 1);
             String[] newArgs = new String[args.length - (i - 2)];
             newArgs[0] = args[0];

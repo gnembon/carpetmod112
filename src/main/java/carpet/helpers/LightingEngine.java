@@ -14,7 +14,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.LightType;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -76,7 +76,7 @@ public class LightingEngine {
     //Iteration state data
     //Cache position to avoid allocation of new object each time
     private final Mutable curPos = new Mutable();
-    private final WorldChunk[] neighborsChunk = new WorldChunk[6];
+    private final Chunk[] neighborsChunk = new Chunk[6];
     private final Mutable[] neighborsPos = new Mutable[6];
     private final long[] neighborsLongPos = new long[6];
     private final int[] neighborsLight = new int[6];
@@ -85,7 +85,7 @@ public class LightingEngine {
     //Stored light type to reduce amount of method parameters
     private LightType lightType;
     private PooledLongQueue curQueue;
-    private WorldChunk curChunk;
+    private Chunk curChunk;
     private long curChunkIdentifier;
     private long curData;
     //Cached data about neighboring blocks (of tempPos)
@@ -127,8 +127,8 @@ public class LightingEngine {
         return (y << sY) | (x + (1 << lX - 1) << sX) | (z + (1 << lZ - 1) << sZ);
     }
 
-    private static BlockState posToState(final BlockPos pos, final WorldChunk chunk) {
-        return chunk.method_27361(pos.getX(), pos.getY(), pos.getZ());
+    private static BlockState posToState(final BlockPos pos, final Chunk chunk) {
+        return chunk.getBlockState(pos.getX(), pos.getY(), pos.getZ());
     }
 
     /**
@@ -245,7 +245,7 @@ public class LightingEngine {
                     this.fetchNeighborDataFromCur();
 
                     for (int i = 0; i < 6; ++i) {
-                        final WorldChunk nChunk = this.neighborsChunk[i];
+                        final Chunk nChunk = this.neighborsChunk[i];
 
                         if (nChunk == null) {
                             LightingHooks.flagSecBoundaryForUpdate(this.curChunk, this.curPos, this.lightType, DirectionAccessor.getValues()[i], LightingHooks.EnumBoundaryFacing.OUT);
@@ -324,7 +324,7 @@ public class LightingEngine {
 
             final long nChunkIdentifier = nLongPos & mChunk;
 
-            final WorldChunk nChunk = this.neighborsChunk[i] = nChunkIdentifier == this.curChunkIdentifier ? this.curChunk : this.posToChunk(nPos);
+            final Chunk nChunk = this.neighborsChunk[i] = nChunkIdentifier == this.curChunkIdentifier ? this.curChunk : this.posToChunk(nPos);
 
             if (nChunk != null) {
                 this.neighborsLight[i] = this.posToCachedLight(nPos, nChunk);
@@ -367,7 +367,7 @@ public class LightingEngine {
         for (int i = 0; i < 6; ++i) {
             final Mutable nPos = this.neighborsPos[i];
 
-            final WorldChunk nChunk = this.neighborsChunk[i];
+            final Chunk nChunk = this.neighborsChunk[i];
 
             if (nChunk == null) {
                 LightingHooks.flagSecBoundaryForUpdate(this.curChunk, this.curPos, this.lightType, DirectionAccessor.getValues()[i], LightingHooks.EnumBoundaryFacing.OUT);
@@ -389,7 +389,7 @@ public class LightingEngine {
     /**
      * Enqueues the pos for brightening and sets its light value to <code>newLight</code>
      */
-    private void enqueueBrightening(final BlockPos pos, final long longPos, final int newLight, final WorldChunk chunk) {
+    private void enqueueBrightening(final BlockPos pos, final long longPos, final int newLight, final Chunk chunk) {
         this.queuedBrightenings[newLight].add(longPos);
         chunk.method_27365(this.lightType, pos, newLight);
     }
@@ -397,7 +397,7 @@ public class LightingEngine {
     /**
      * Enqueues the pos for darkening and sets its light value to 0
      */
-    private void enqueueDarkening(final BlockPos pos, final long longPos, final int oldLight, final WorldChunk chunk) {
+    private void enqueueDarkening(final BlockPos pos, final long longPos, final int oldLight, final Chunk chunk) {
         this.queuedDarkenings[oldLight].add(longPos);
         chunk.method_27365(this.lightType, pos, 0);
     }
@@ -426,7 +426,7 @@ public class LightingEngine {
         return true;
     }
 
-    private int posToCachedLight(final Mutable pos, final WorldChunk chunk) {
+    private int posToCachedLight(final Mutable pos, final Chunk chunk) {
         return ((NewLightChunk) chunk).getCachedLightFor(this.lightType, pos);
     }
 
@@ -450,7 +450,7 @@ public class LightingEngine {
     }
 
     private int posToOpac(final BlockPos pos, final BlockState state) {
-        return MathHelper.clamp(state.method_27191(), 1, MAX_LIGHT);
+        return MathHelper.clamp(state.getOpacity(), 1, MAX_LIGHT);
     }
 
     //PooledLongQueue code
@@ -460,11 +460,11 @@ public class LightingEngine {
         return posToState(this.curPos, this.curChunk);
     }
 
-    private WorldChunk posToChunk(final BlockPos pos) {
+    private Chunk posToChunk(final BlockPos pos) {
         return this.world.getChunkManager().method_27346(pos.getX() >> 4, pos.getZ() >> 4);
     }
 
-    private WorldChunk curToChunk() {
+    private Chunk curToChunk() {
         return this.posToChunk(this.curPos);
     }
 

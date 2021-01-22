@@ -4,7 +4,7 @@ package carpet.helpers;
 import carpet.mixin.accessors.CraftingInventoryAccessor;
 import carpet.mixin.accessors.HopperBlockEntityAccessor;
 import com.google.common.collect.Lists;
-import net.minecraft.client.gui.AbstractParentElement;
+import net.minecraft.block.entity.AbstractContainerBlockEntity;
 import net.minecraft.container.Container;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -31,7 +31,7 @@ import java.util.Optional;
  * Auto crafting table tile entity class enabling autocrafting. When carpet rule enabled that tile
  * crafting table turns into a automatic crafting table where it can be used to automatically craft items.
  */
-public class CraftingTableBlockEntity extends AbstractParentElement implements SidedInventory
+public class CraftingTableBlockEntity extends AbstractContainerBlockEntity implements SidedInventory
 {
     private static final int[] OUTPUT_SLOTS = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
     private static final int[] INPUT_SLOTS = {1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -90,12 +90,12 @@ public class CraftingTableBlockEntity extends AbstractParentElement implements S
     }
 
     @Override
-    public String method_29611() {
+    public String getName() {
         return null;
     }
 
     @Override
-    public boolean method_34200() {
+    public boolean hasCustomName() {
         return false;
     }
 

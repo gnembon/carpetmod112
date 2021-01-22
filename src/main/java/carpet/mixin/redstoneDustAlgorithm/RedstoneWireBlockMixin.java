@@ -23,7 +23,7 @@ import java.util.List;
 
 @Mixin(RedstoneWireBlock.class)
 public abstract class RedstoneWireBlockMixin {
-    @Shadow @Final public static IntProperty field_24710;
+    @Shadow @Final public static IntProperty POWER;
     @Shadow protected abstract BlockState method_26769(World worldIn, BlockPos pos, BlockState state);
     @Shadow protected abstract int method_26761(World worldIn, BlockPos pos, int strength);
 
@@ -63,7 +63,7 @@ public abstract class RedstoneWireBlockMixin {
         power = maxCurrentStrength - 1;
         if (fromNeighbors > power) power = fromNeighbors;
         if (i != power) {
-            state = state.with(field_24710, power);
+            state = state.with(POWER, power);
 
             if (world.getBlockState(pos1) == iblockstate) {
                 world.setBlockState(pos1, state, 2);

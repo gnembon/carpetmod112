@@ -608,7 +608,7 @@ public class EntityPlayerActionPack
                     iblockstate.getBlock().onBlockBreakStart(world, loc, player);
                 }
 
-                if (flag && iblockstate.method_27178(player, world, loc) >= 1.0F)
+                if (flag && iblockstate.calcBlockBreakingDelta(player, world, loc) >= 1.0F)
                 {
                     this.onPlayerDestroyBlock(loc);
                 }
@@ -659,7 +659,7 @@ public class EntityPlayerActionPack
             }
             else
             {
-                this.curBlockDamageMP += iblockstate.method_27178(player, world, posBlock);
+                this.curBlockDamageMP += iblockstate.calcBlockBreakingDelta(player, world, posBlock);
 
                 if (this.curBlockDamageMP >= 1.0F)
                 {

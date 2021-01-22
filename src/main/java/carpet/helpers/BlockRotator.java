@@ -29,7 +29,7 @@ public class BlockRotator
         {
             return block.getDefaultState()
                 .with(FacingBlock.FACING, Direction.byId((int)hitX - 2))
-                .with(ObserverBlock.field_24607, CarpetSettings.observersDoNonUpdate);
+                .with(ObserverBlock.POWERED, CarpetSettings.observersDoNonUpdate);
         }
         return null;
     }
@@ -45,13 +45,13 @@ public class BlockRotator
             {
                 facing = placer.getHorizontalFacing().getOpposite();
             }
-            return block.getDefaultState().with(HorizontalFacingBlock.field_24496, facing);
+            return block.getDefaultState().with(HorizontalFacingBlock.FACING, facing);
         }
         else if (block instanceof ObserverBlock)
         {
             return block.getDefaultState()
                     .with(FacingBlock.FACING, Direction.byId((int)hitX - 2))
-                    .with(ObserverBlock.field_24607, CarpetSettings.observersDoNonUpdate);
+                    .with(ObserverBlock.POWERED, CarpetSettings.observersDoNonUpdate);
         }
         else if (block instanceof RepeaterBlock)
         {
@@ -61,16 +61,16 @@ public class BlockRotator
                 facing = placer.getHorizontalFacing().getOpposite();
             }
             return block.getDefaultState()
-                    .with(HorizontalFacingBlock.field_24496, facing)
-                    .with(RepeaterBlock.field_24733, MathHelper.clamp((((int) hitX) / 10) + 1, 1, 4))
-                    .with(RepeaterBlock.field_24732, Boolean.FALSE);
+                    .with(HorizontalFacingBlock.FACING, facing)
+                    .with(RepeaterBlock.DELAY, MathHelper.clamp((((int) hitX) / 10) + 1, 1, 4))
+                    .with(RepeaterBlock.LOCKED, Boolean.FALSE);
         }
         else if (block instanceof TrapdoorBlock)
         {
             return block.getDefaultState()
                     .with(TrapdoorBlock.FACING, Direction.byId((((int)hitX) % 10) - 2))
                     .with(TrapdoorBlock.OPEN, Boolean.FALSE)
-                    .with(TrapdoorBlock.field_24932, (hitX > 10) ? TrapdoorBlock.class_5272.field_24938 : TrapdoorBlock.class_5272.field_24939)
+                    .with(TrapdoorBlock.field_24932, (hitX > 10) ? TrapdoorBlock.Side.TOP : TrapdoorBlock.Side.BOTTOM)
                     .with(TrapdoorBlock.OPEN, worldIn.isReceivingRedstonePower(pos));
         }
         else if (block instanceof ComparatorBlock)
@@ -82,55 +82,55 @@ public class BlockRotator
             }
             ComparatorBlock.ComparatorMode m = (hitX > 10)?ComparatorBlock.ComparatorMode.SUBTRACT: ComparatorBlock.ComparatorMode.COMPARE;
             return block.getDefaultState()
-                    .with(HorizontalFacingBlock.field_24496, facing)
-                    .with(ComparatorBlock.field_24287, Boolean.FALSE)
-                    .with(ComparatorBlock.field_24288, m);
+                    .with(HorizontalFacingBlock.FACING, facing)
+                    .with(ComparatorBlock.POWERED, Boolean.FALSE)
+                    .with(ComparatorBlock.MODE, m);
         }
         else if (block instanceof DispenserBlock)
         {
             return block.getDefaultState()
                     .with(DispenserBlock.FACING, Direction.byId((int)hitX - 2))
-                    .with(DispenserBlock.field_24324, Boolean.FALSE);
+                    .with(DispenserBlock.TRIGGERED, Boolean.FALSE);
         }
         else if (block instanceof PistonBlock)
         {
             return block.getDefaultState()
                     .with(FacingBlock.FACING,Direction.byId((int)hitX - 2) )
-                    .with(PistonBlock.field_25225, Boolean.FALSE);
+                    .with(PistonBlock.EXTENDED, Boolean.FALSE);
         }
         else if (block instanceof StairsBlock)
         {
             return block.getPlacementState(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
                     .with(StairsBlock.FACING, Direction.byId((((int)hitX) % 10) - 2))
-                    .with(StairsBlock.field_24830, ( hitX > 10)?StairsBlock.BlockHalf.TOP : StairsBlock.BlockHalf.BOTTOM);
+                    .with(StairsBlock.HALF, ( hitX > 10)?StairsBlock.BlockHalf.TOP : StairsBlock.BlockHalf.BOTTOM);
         }
         else if (block instanceof FenceGateBlock)
         {
             return block.getPlacementState(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
-                    .with(FenceGateBlock.field_24496, Direction.byId((((int)hitX) % 10) - 2))
-                    .with(FenceGateBlock.field_24402, hitX > 10);
+                    .with(FenceGateBlock.FACING, Direction.byId((((int)hitX) % 10) - 2))
+                    .with(FenceGateBlock.OPEN, hitX > 10);
         }
         else if (block instanceof PumpkinBlock)
         {
             return block.getPlacementState(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
-                    .with(FenceGateBlock.field_24496, Direction.byId((((int)hitX) % 10) - 2));
+                    .with(FenceGateBlock.FACING, Direction.byId((((int)hitX) % 10) - 2));
         }
         else if (block instanceof ChestBlock)
         {
             return block.getPlacementState(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
-                    .with(FenceGateBlock.field_24496, Direction.byId((((int)hitX) % 10) - 2));
+                    .with(FenceGateBlock.FACING, Direction.byId((((int)hitX) % 10) - 2));
         }
         else if (block instanceof EnderChestBlock)
         {
             return block.getPlacementState(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
-                    .with(FenceGateBlock.field_24496, Direction.byId((((int)hitX) % 10) - 2));
+                    .with(FenceGateBlock.FACING, Direction.byId((((int)hitX) % 10) - 2));
         }
         else if (block instanceof DoorBlock)
         {
             return block.getPlacementState(worldIn, pos, facing, hitX, hitY, hitZ, meta, placer)
                     .with(DoorBlock.FACING, Direction.byId((((int)hitX) % 10) - 2))
-                    .with(DoorBlock.field_24338, hitX % 100 < 10 ? DoorBlock.DoorHinge.LEFT : DoorBlock.DoorHinge.RIGHT)
-                    .with(DoorBlock.field_24337, hitX > 100);
+                    .with(DoorBlock.HINGE, hitX % 100 < 10 ? DoorBlock.DoorHinge.LEFT : DoorBlock.DoorHinge.RIGHT)
+                    .with(DoorBlock.OPEN, hitX > 100);
         }
         return null;
     }
@@ -156,28 +156,28 @@ public class BlockRotator
         }
         else if (block instanceof PistonBlock)
         {
-            if (!state.get(PistonBlock.field_25225))
+            if (!state.get(PistonBlock.EXTENDED))
                 worldIn.setBlockState(pos, state.with(FacingBlock.FACING, state.get(FacingBlock.FACING).getOpposite()), 130);
         }
         else if (block instanceof SlabBlock)
         {
             if (!((SlabBlock) block).method_26650())
             {
-                if (state.get(SlabBlock.field_24481) == SlabBlock.class_5189.field_24484)
+                if (state.get(SlabBlock.HALF) == SlabBlock.Half.TOP)
                 {
-                    worldIn.setBlockState(pos, state.with(SlabBlock.field_24481, SlabBlock.class_5189.field_24485), 130);
+                    worldIn.setBlockState(pos, state.with(SlabBlock.HALF, SlabBlock.Half.BOTTOM), 130);
                 }
                 else
                 {
-                    worldIn.setBlockState(pos, state.with(SlabBlock.field_24481, SlabBlock.class_5189.field_24484), 130);
+                    worldIn.setBlockState(pos, state.with(SlabBlock.HALF, SlabBlock.Half.TOP), 130);
                 }
             }
         }
         else if (block instanceof HopperBlock)
         {
-            if (state.get(HopperBlock.field_24489) != Direction.DOWN)
+            if (state.get(HopperBlock.FACING) != Direction.DOWN)
             {
-                worldIn.setBlockState(pos, state.with(HopperBlock.field_24489, state.get(HopperBlock.field_24489).rotateYClockwise()), 130);
+                worldIn.setBlockState(pos, state.with(HopperBlock.FACING, state.get(HopperBlock.FACING).rotateYClockwise()), 130);
             }
         }
         else if (block instanceof StairsBlock)
@@ -185,13 +185,13 @@ public class BlockRotator
             //LOG.error(String.format("hit with facing: %s, at side %.1fX, X %.1fY, Y %.1fZ",facing, hitX, hitY, hitZ));
             if ((facing == Direction.UP && hitY == 1.0f) || (facing == Direction.DOWN && hitY == 0.0f))
             {
-                if (state.get(StairsBlock.field_24830) == StairsBlock.BlockHalf.TOP)
+                if (state.get(StairsBlock.HALF) == StairsBlock.BlockHalf.TOP)
                 {
-                    worldIn.setBlockState(pos, state.with(StairsBlock.field_24830, StairsBlock.BlockHalf.BOTTOM), 130);
+                    worldIn.setBlockState(pos, state.with(StairsBlock.HALF, StairsBlock.BlockHalf.BOTTOM), 130);
                 }
                 else
                 {
-                    worldIn.setBlockState(pos, state.with(StairsBlock.field_24830, StairsBlock.BlockHalf.TOP), 130);
+                    worldIn.setBlockState(pos, state.with(StairsBlock.HALF, StairsBlock.BlockHalf.TOP), 130);
                 }
             }
             else

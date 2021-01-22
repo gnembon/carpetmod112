@@ -10,7 +10,7 @@ package carpet.carpetclient;
 import carpet.CarpetServer;
 import carpet.CarpetSettings;
 import carpet.helpers.StackTraceDeobfuscator;
-import carpet.mixin.accessors.ServerChunkManagerAccessor;
+import carpet.mixin.accessors.ServerChunkCacheAccessor;
 import carpet.mixin.accessors.PlayerChunkMapAccessor;
 import carpet.utils.LRUCache;
 import com.google.common.collect.AbstractIterator;
@@ -22,14 +22,14 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerChunkManager;
+import net.minecraft.server.world.ServerChunkCache;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.PacketByteBuf;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ColumnPos;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Supplier;
@@ -174,14 +174,14 @@ public class CarpetClientChunkLogger {
         ArrayList<ChunkLog> forNewClient = new ArrayList<>();
         int dimension = -1;
         for (World w : server.worlds) {
-            ServerChunkManager provider = (ServerChunkManager) (w.getChunkManager());
+            ServerChunkCache provider = (ServerChunkCache) (w.getChunkManager());
             dimension++;
-            for (WorldChunk c : provider.method_33445()) {
-                forNewClient.add(new ChunkLog(c.field_25365, c.field_25366, dimension, Event.LOADING, null, null));
-                if (((ServerChunkManagerAccessor) provider).getDroppedChunks().contains(ColumnPos.method_25891(c.field_25365, c.field_25366))) {
-                    forNewClient.add(new ChunkLog(c.field_25365, c.field_25366, dimension, Event.QUEUE_UNLOAD, null, null));
+            for (Chunk c : provider.method_33445()) {
+                forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.LOADING, null, null));
+                if (((ServerChunkCacheAccessor) provider).getDroppedChunks().contains(ColumnPos.method_25891(c.x, c.z))) {
+                    forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.QUEUE_UNLOAD, null, null));
                     if (!c.field_25367) {
-                        forNewClient.add(new ChunkLog(c.field_25365, c.field_25366, dimension, Event.CANCEL_UNLOAD, null, null));
+                        forNewClient.add(new ChunkLog(c.x, c.z, dimension, Event.CANCEL_UNLOAD, null, null));
                     }
                 }
             }

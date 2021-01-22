@@ -182,13 +182,13 @@ public class EntityInfo
 			lst.add(String.format(" - Despawn timer: %s", makeTime(elb.getDespawnCounter())));
 
             lst.add(String.format(" - Health: %.2f/%.2f", elb.getHealth(), elb.getMaxHealth()));
-			if (elb.getAttributeInstance(EntityAttributes.ARMOR).getValue() > 0.0)
+			if (elb.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).getValue() > 0.0)
 			{
-				lst.add(String.format(" - Armour: %.1f",elb.getAttributeInstance(EntityAttributes.ARMOR).getValue()));
+				lst.add(String.format(" - Armour: %.1f",elb.getAttributeInstance(EntityAttributes.GENERIC_ARMOR).getValue()));
 			}
-			if (elb.getAttributeInstance(EntityAttributes.ARMOR_TOUGHNESS).getValue() > 0.0)
+			if (elb.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS).getValue() > 0.0)
 			{
-				lst.add(String.format(" - Toughness: %.1f",elb.getAttributeInstance(EntityAttributes.ARMOR_TOUGHNESS).getValue()));
+				lst.add(String.format(" - Toughness: %.1f",elb.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS).getValue()));
 			}
 			//lst.add(String.format(" - Base speed: %.1fb/s",get_speed(elb.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).getAttributeValue())));
 
@@ -231,7 +231,7 @@ public class EntityInfo
 			if (e instanceof MobEntity)
             {
 				MobEntity el = (MobEntity)elb;
-				lst.add(String.format(" - Follow range: %.1f",el.getAttributeInstance(EntityAttributes.FOLLOW_RANGE).getValue()));
+				lst.add(String.format(" - Follow range: %.1f",el.getAttributeInstance(EntityAttributes.GENERIC_FOLLOW_RANGE).getValue()));
 
 				lst.add(String.format(" - Movement speed factor: %.2f", el.getMoveControl().getSpeed()));
 
@@ -297,17 +297,17 @@ public class EntityInfo
 							{
 								lst.add(String.format(" - Inventory:%s", inventory_content));
 							}
-							if (((VillagerEntityAccessor) ev).getWealth()>0)
+							if (((VillagerEntityAccessor) ev).getRiches()>0)
 							{
-								lst.add(String.format(" - Wealth: %d emeralds", ((VillagerEntityAccessor) ev).getWealth()));
+								lst.add(String.format(" - Wealth: %d emeralds", ((VillagerEntityAccessor) ev).getRiches()));
 							}
 						}
 						if (e instanceof HorseBaseEntity)
 						{
 							HorseBaseEntity ah = (HorseBaseEntity) e;
 							lst.add(String.format(" - Horse Speed: %.2f b/s (%.1f%%%%)",
-								get_speed(elb.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).getValue()),
-								get_horse_speed_percent(elb.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).getValue())
+								get_speed(elb.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).getValue()),
+								get_horse_speed_percent(elb.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).getValue())
 								));
 							lst.add(String.format(" - Horse Jump: %.2f b/s (%.1f%%%%)",
 								get_horse_jump(ah.getJumpStrength()),
@@ -317,7 +317,7 @@ public class EntityInfo
 					}
 					if (e instanceof HostileEntity)
 					{
-						lst.add(String.format(" - Base attack: %.1f",elb.getAttributeInstance(EntityAttributes.ATTACK_DAMAGE).getValue()));
+						lst.add(String.format(" - Base attack: %.1f",elb.getAttributeInstance(EntityAttributes.GENERIC_ATTACK_DAMAGE).getValue()));
 						if (e instanceof ZombieVillagerEntity)
 						{
 							ZombieVillagerEntity ezv = (ZombieVillagerEntity) e;

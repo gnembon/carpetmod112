@@ -2,8 +2,8 @@ package carpet.commands;
 
 import carpet.utils.Messenger;
 import carpet.utils.PerimeterDiagnostics;
-import net.minecraft.class_6175;
 import net.minecraft.class_6182;
+import net.minecraft.command.CommandException;
 import net.minecraft.command.CommandSource;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.mob.MobEntity;
@@ -34,7 +34,7 @@ public class CommandPerimeter extends CommandCarpetBase
     }
 
     @Override
-    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws class_6175
+    public void method_29272(MinecraftServer server, CommandSource sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandPerimeterInfo", sender)) return;
         if (args.length < 1)
@@ -66,7 +66,7 @@ public class CommandPerimeter extends CommandCarpetBase
                 entityliving = (MobEntity) ThreadedAnvilChunkStorage.method_27469(nbttagcompound, world, d0, d1+2, d2, true);
                 if (entityliving == null)
                 {
-                    throw new class_6175("Failed to test entity");
+                    throw new CommandException("Failed to test entity");
                 }
             }
             PerimeterDiagnostics.Result res = PerimeterDiagnostics.countSpots((ServerWorld) world, blockpos, entityliving);

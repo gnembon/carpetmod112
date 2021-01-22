@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Bootstrap.class)
 public class BootstrapMixin {
-    @Inject(method = "method_33302", at = @At("RETURN"))
+    @Inject(method = "setupDispenserBehavior", at = @At("RETURN"))
     private static void addBetterDispenserBehaviors(CallbackInfo ci) {
         // Carpet Dispenser addons XCOM-CARPET
         BetterDispenser.dispenserAddons();

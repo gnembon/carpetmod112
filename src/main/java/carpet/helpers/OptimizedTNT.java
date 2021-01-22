@@ -26,7 +26,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraft.world.chunk.WorldChunk;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.explosion.Explosion;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -235,10 +235,10 @@ public class OptimizedTNT
             for (BlockPos blockpos1 : e.getAffectedBlocks())
             {
                 // Use the same Chunk reference because the positions are in the same xz-column
-                WorldChunk chunk = world.method_25975(blockpos1.getX() >> 4, blockpos1.getZ() >> 4);
+                Chunk chunk = world.method_25975(blockpos1.getX() >> 4, blockpos1.getZ() >> 4);
 
                 if (chunk.getBlockState(blockpos1).getMaterial() == Material.AIR &&
-                    chunk.getBlockState(blockpos1.down()).method_27187() &&
+                    chunk.getBlockState(blockpos1.down()).isOpaque() &&
                     e.getRandom().nextInt(3) == 0)
                 {
                     world.setBlockState(blockpos1, Blocks.FIRE.getDefaultState());

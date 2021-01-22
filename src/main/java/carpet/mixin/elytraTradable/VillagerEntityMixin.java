@@ -17,21 +17,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(VillagerEntity.class)
 public abstract class VillagerEntityMixin extends PassiveEntity {
     @Shadow public abstract int getType();
-    @Shadow private int field_22464;
-    @Shadow private int field_22465;
-    @Shadow private TraderOfferList field_22458;
+    @Shadow private int career;
+    @Shadow private int careerLevel;
+    @Shadow private TraderOfferList offers;
 
     public VillagerEntityMixin(World worldIn) {
         super(worldIn);
     }
 
-    @Inject(method = "method_24926", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/passive/VillagerEntity;field_22464:I", ordinal = 2))
+    @Inject(method = "method_24926", at = @At(value = "FIELD", target = "Lnet/minecraft/entity/passive/VillagerEntity;career:I", ordinal = 2))
     private void addElytra(CallbackInfo ci) {
-        // leatherworker: profession=4, careerId=2
-        if (CarpetSettings.elytraTradable && getType() == 4 && field_22464 == 2 && field_22465 == 4) {
+        // leatherworker: profession=4, career=2
+        if (CarpetSettings.elytraTradable && getType() == 4 && career == 2 && careerLevel == 4) {
             int leatherAmount = 15 + this.random.nextInt(64 - 15 + 1);
             int emeraldAmount = 20 + this.random.nextInt(64 - 20 + 1);
-            this.field_22458.add(new TradeOffer(
+            this.offers.add(new TradeOffer(
                 new ItemStack(Items.LEATHER, leatherAmount),
                 new ItemStack(Items.EMERALD, emeraldAmount),
                 new ItemStack(Items.ELYTRA)

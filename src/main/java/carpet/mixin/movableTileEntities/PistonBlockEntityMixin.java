@@ -19,7 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PistonBlockEntity.class)
 public class PistonBlockEntityMixin extends BlockEntity implements ExtendedPistonBlockEntityMBE {
-    @Shadow private BlockState field_25261;
+    @Shadow private BlockState pushedBlock;
     private BlockEntity carriedTileEntity;
 
 
@@ -52,8 +52,8 @@ public class PistonBlockEntityMixin extends BlockEntity implements ExtendedPisto
     @Inject(method = "fromTag", at = @At("RETURN"))
     private void onDeserialize(CompoundTag compound, CallbackInfo ci) {
         if ((CarpetSettings.movableTileEntities || CarpetSettings.autocrafter) && compound.contains("carriedTileEntity", 10)) {
-            if (this.field_25261.getBlock() instanceof BlockEntityProvider)
-                this.carriedTileEntity = ((BlockEntityProvider) (this.field_25261.getBlock())).createBlockEntity(this.world, this.field_25261.getBlock().getMeta(this.field_25261));
+            if (this.pushedBlock.getBlock() instanceof BlockEntityProvider)
+                this.carriedTileEntity = ((BlockEntityProvider) (this.pushedBlock.getBlock())).createBlockEntity(this.world, this.pushedBlock.getBlock().getMeta(this.pushedBlock));
             if (carriedTileEntity != null) //Can actually be null, as BlockPistonMoving.createNewTileEntity(...) returns null
                 this.carriedTileEntity.fromTag(compound.getCompound("carriedTileEntity"));
         }
@@ -71,7 +71,7 @@ public class PistonBlockEntityMixin extends BlockEntity implements ExtendedPisto
     }
 
     private void placeBlock() {
-        this.world.setBlockState(this.pos, this.field_25261, 18); //Flag 18 => No block updates, TileEntity has to be placed first
+        this.world.setBlockState(this.pos, this.pushedBlock, 18); //Flag 18 => No block updates, TileEntity has to be placed first
         if (!this.world.isClient) {
             if (carriedTileEntity != null) {
                 this.world.removeBlockEntity(this.pos);
@@ -81,11 +81,11 @@ public class PistonBlockEntityMixin extends BlockEntity implements ExtendedPisto
             //Update neighbors, comparators and observers now (same order as setBlockState would have if flag was set to 3 (default))
             //This should not change piston behavior for vanilla-pushable blocks at all
             this.world.method_26017(pos, Blocks.PISTON_EXTENSION, true);
-            if (this.field_25261.method_27209()) {
-                this.world.updateHorizontalAdjacent(pos, this.field_25261.getBlock());
+            if (this.pushedBlock.hasComparatorOutput()) {
+                this.world.updateHorizontalAdjacent(pos, this.pushedBlock.getBlock());
             }
-            this.world.method_26099(pos, this.field_25261.getBlock());
+            this.world.method_26099(pos, this.pushedBlock.getBlock());
         }
-        this.world.updateNeighbor(this.pos, this.field_25261.getBlock(), this.pos);
+        this.world.updateNeighbor(this.pos, this.pushedBlock.getBlock(), this.pos);
     }
 }

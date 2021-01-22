@@ -17,21 +17,21 @@ import org.spongepowered.asm.mixin.Shadow;
 
 @Mixin(OverworldChunkGenerator.class)
 public class OverworldChunkGeneratorMixin implements BoundingBoxProvider {
-    @Shadow @Final private AbstractTempleFeature field_25746;
-    @Shadow @Final private VillageFeature field_25744;
-    @Shadow @Final private StrongholdFeature field_25743;
-    @Shadow @Final private MineshaftFeature field_25745;
-    @Shadow @Final private OceanMonumentFeature field_25718;
-    @Shadow @Final private WoodlandMansionFeature field_25719;
+    @Shadow @Final private AbstractTempleFeature templeFeature;
+    @Shadow @Final private VillageFeature villageFeature;
+    @Shadow @Final private StrongholdFeature strongholdFeature;
+    @Shadow @Final private MineshaftFeature mineshaftFeature;
+    @Shadow @Final private OceanMonumentFeature oceanMonumentFeature;
+    @Shadow @Final private WoodlandMansionFeature woodlandMansionFeature;
 
     public ListTag getBoundingBoxes(Entity entity) {
         ListTag boxes = new ListTag();
-        boxes.add(CarpetClientMarkers.getBoundingBoxes(field_25746, entity, CarpetClientMarkers.TEMPLE));
-        boxes.add(CarpetClientMarkers.getBoundingBoxes(field_25744, entity, CarpetClientMarkers.VILLAGE));
-        boxes.add(CarpetClientMarkers.getBoundingBoxes(field_25743, entity, CarpetClientMarkers.STRONGHOLD));
-        boxes.add(CarpetClientMarkers.getBoundingBoxes(field_25745, entity, CarpetClientMarkers.MINESHAFT));
-        boxes.add(CarpetClientMarkers.getBoundingBoxes(field_25718, entity, CarpetClientMarkers.MONUMENT));
-        boxes.add(CarpetClientMarkers.getBoundingBoxes(field_25719, entity, CarpetClientMarkers.MANSION));
+        boxes.add(CarpetClientMarkers.getBoundingBoxes(templeFeature, entity, CarpetClientMarkers.TEMPLE));
+        boxes.add(CarpetClientMarkers.getBoundingBoxes(villageFeature, entity, CarpetClientMarkers.VILLAGE));
+        boxes.add(CarpetClientMarkers.getBoundingBoxes(strongholdFeature, entity, CarpetClientMarkers.STRONGHOLD));
+        boxes.add(CarpetClientMarkers.getBoundingBoxes(mineshaftFeature, entity, CarpetClientMarkers.MINESHAFT));
+        boxes.add(CarpetClientMarkers.getBoundingBoxes(oceanMonumentFeature, entity, CarpetClientMarkers.MONUMENT));
+        boxes.add(CarpetClientMarkers.getBoundingBoxes(woodlandMansionFeature, entity, CarpetClientMarkers.MANSION));
         return boxes;
     }
 }
