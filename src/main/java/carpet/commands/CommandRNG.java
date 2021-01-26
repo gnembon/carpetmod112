@@ -448,7 +448,7 @@ public class CommandRNG extends CommandCarpetBase {
                                 break;
                             } else {
                                 try {
-                                    sb.append("MobType: " + EntityType.getName(biome$spawnlistentry.field_23703.getConstructor(World.class).newInstance(worldServerIn)) + "\n");
+                                    sb.append("MobType: " + EntityType.getName(biome$spawnlistentry.mob.getConstructor(World.class).newInstance(worldServerIn)) + "\n");
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
@@ -462,7 +462,7 @@ public class CommandRNG extends CommandCarpetBase {
                         MobEntity entityliving;
 
                         try {
-                            entityliving = biome$spawnlistentry.field_23703.getConstructor(World.class)
+                            entityliving = biome$spawnlistentry.mob.getConstructor(World.class)
                                     .newInstance(worldServerIn);
                         } catch (Exception exception) {
                             return;

@@ -176,7 +176,7 @@ class CarpetWorld extends AbstractWorld {
     @Override
     public BaseBiome getBiome(Vector2D position) {
         checkNotNull(position);
-        return new BaseBiome(Biome.method_26235(getWorld().getBiome(new BlockPos(position.getBlockX(), 0, position.getBlockZ()))));
+        return new BaseBiome(Biome.getRawId(getWorld().getBiome(new BlockPos(position.getBlockX(), 0, position.getBlockZ()))));
     }
 
     @Override

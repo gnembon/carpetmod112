@@ -159,7 +159,7 @@ public class PerimeterDiagnostics
             sle = null;
             for (Biome.SpawnEntry sle: worldServer.getChunkManager().method_33449(ctype, pos))
             {
-                if (el.getClass() == sle.field_23703)
+                if (el.getClass() == sle.mob)
                 {
                     this.sle = sle;
                     break;
@@ -171,7 +171,7 @@ public class PerimeterDiagnostics
             }
         }
 
-        if (SpawnHelper.method_26213(class_2278.method_34819(sle.field_23703), worldServer, pos))
+        if (SpawnHelper.method_26213(class_2278.method_34819(sle.mob), worldServer, pos))
         {
             el.refreshPositionAndAngles((float)pos.getX() + 0.5F, (float)pos.getY(), (float)pos.getZ()+0.5F, 0.0F, 0.0F);
             return el.canMobSpawn() && el.canSpawn();

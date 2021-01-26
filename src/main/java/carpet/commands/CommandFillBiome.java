@@ -54,7 +54,7 @@ public class CommandFillBiome extends CommandCarpetBase
         Biome biome;
         try
         {
-            biome = Biome.method_26230(Integer.parseInt(args[4]));
+            biome = Biome.byRawId(Integer.parseInt(args[4]));
         }
         catch (NumberFormatException e)
         {
@@ -64,7 +64,7 @@ public class CommandFillBiome extends CommandCarpetBase
         {
             throw new CommandException("Unknown biome " + args[4]);
         }
-        byte biomeId = (byte) (Biome.method_26235(biome) & 255);
+        byte biomeId = (byte) (Biome.getRawId(biome) & 255);
         
         ServerWorld world = (ServerWorld) sender.getEntityWorld();
         if (!world.setBlockState(new BlockPos(minX, 0, minZ), new BlockPos(maxX, 0, maxZ)))

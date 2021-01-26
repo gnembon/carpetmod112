@@ -396,7 +396,7 @@ public class SpawnReporter
             {
                 for (Biome.SpawnEntry animal : lst)
                 {
-                    boolean canspawn = SpawnHelper.method_26213(class_2278.method_34819(animal.field_23703), worldIn, pos);
+                    boolean canspawn = SpawnHelper.method_26213(class_2278.method_34819(animal.mob), worldIn, pos);
                     int will_spawn = -1;
                     boolean fits = false;
                     boolean fits1 = false;
@@ -404,7 +404,7 @@ public class SpawnReporter
                     MobEntity entityliving;
                     try
                     {
-                        entityliving = animal.field_23703.getConstructor(World.class).newInstance(worldIn);
+                        entityliving = animal.mob.getConstructor(World.class).newInstance(worldIn);
                     }
                     catch (Exception exception)
                     {
@@ -448,7 +448,7 @@ public class SpawnReporter
                             
                             try
                             {
-                                entityliving = animal.field_23703.getConstructor(new Class[] {World.class}).newInstance(new Object[] {worldIn});
+                                entityliving = animal.mob.getConstructor(new Class[] {World.class}).newInstance(new Object[] {worldIn});
                             }
                             catch (Exception exception)
                             {
