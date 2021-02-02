@@ -286,17 +286,17 @@
                  }
 +                catch (ThrowableSuppression e)
 +                {
-+                    Messenger.print_server_message(this, "You just caused a server crash in world tick.");
++                    Messenger.print_server_message(this, "You just caused a server crash in world tick. Cause: "+e.getMessage());
 +                }
                  catch (Throwable throwable1)
                  {
                      CrashReport crashreport = CrashReport.func_85055_a(throwable1, "Exception ticking world");
                      worldserver.func_72914_a(crashreport);
 -                    throw new ReportedException(crashreport);
-+                    if(!CarpetSettings.updateSuppressionCrashFix) {
++                    if(!CarpetSettings.updateSuppressionCrashFix || !(crashreport.func_71505_b() instanceof ThrowableSuppression)) {
 +                        throw new ReportedException(crashreport);
 +                    } else {
-+                        Messenger.print_server_message(this, "You just caused a server crash in world tick.");
++                        Messenger.print_server_message(this, "You just caused a server crash in world tick. Cause: "+crashreport.func_71505_b().getMessage());
 +                    }
                  }
  
@@ -306,7 +306,7 @@
                  }
 +                catch (ThrowableSuppression e)
 +                {
-+                    Messenger.print_server_message(this, "You just caused a server crash in update entities.");
++                    Messenger.print_server_message(this, "You just caused a server crash in update entities. Cause: "+e.getMessage());
 +                }
                  catch (Throwable throwable)
                  {
@@ -316,7 +316,7 @@
 +                    if(!CarpetSettings.updateSuppressionCrashFix) {
 +                        throw new ReportedException(crashreport1);
 +                    } else {
-+                        Messenger.print_server_message(this, "You just caused a server crash in update entities.");
++                        Messenger.print_server_message(this, "You just caused a server crash in update entities. Cause: "+crashreport1.func_71505_b().getMessage());
 +                    }
                  }
  

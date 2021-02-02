@@ -739,7 +739,7 @@ public class CarpetSettings
     @Rule(desc = "Players go invisible when dying or using portals.", category = FIX)
     public static boolean playersTurningInvisibleFix;
 
-    @Rule(desc = "Fixes updates suppression causing server crashes.", category = FIX)
+    @Rule(desc = "Fixes updates suppression causing server crashes. Also fixes instant scheduling crashes", category = FIX)
     public static boolean updateSuppressionCrashFix;
 
     @Rule(desc = "Fixes double tile tick scheduling", category = FIX)
