@@ -1,0 +1,45 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFalling.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFalling.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.block;
+ 
+ import java.util.Random;
++
++import carpet.CarpetSettings;
++import carpet.helpers.LazyChunkBehaviorHelper;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -50,12 +53,27 @@
+ 
+             if (!field_149832_M && p_176503_1_.func_175707_a(p_176503_2_.func_177982_a(-32, -32, -32), p_176503_2_.func_177982_a(32, 32, 32)))
+             {
+-                if (!p_176503_1_.field_72995_K)
+-                {
+-                    EntityFallingBlock entityfallingblock = new EntityFallingBlock(p_176503_1_, (double)p_176503_2_.func_177958_n() + 0.5D, (double)p_176503_2_.func_177956_o(), (double)p_176503_2_.func_177952_p() + 0.5D, p_176503_1_.func_180495_p(p_176503_2_));
+-                    this.func_149829_a(entityfallingblock);
+-                    p_176503_1_.func_72838_d(entityfallingblock);
++                if(!CarpetSettings.commandLazyChunkBehavior || LazyChunkBehaviorHelper.shouldUpdateFallingBlock(p_176503_1_, p_176503_2_.func_177958_n(), p_176503_2_.func_177952_p())) {
++                    if (!p_176503_1_.field_72995_K) {
++                        EntityFallingBlock entityfallingblock = new EntityFallingBlock(p_176503_1_, (double) p_176503_2_.func_177958_n() + 0.5D, (double) p_176503_2_.func_177956_o(), (double) p_176503_2_.func_177952_p() + 0.5D, p_176503_1_.func_180495_p(p_176503_2_));
++                        this.func_149829_a(entityfallingblock);
++                        p_176503_1_.func_72838_d(entityfallingblock);
++                    }
+                 }
++                else {
++                    p_176503_1_.func_175698_g(p_176503_2_);
++                    BlockPos blockpos;
++
++                    for (blockpos = p_176503_2_.func_177977_b(); func_185759_i(p_176503_1_.func_180495_p(blockpos)) && blockpos.func_177956_o() > 0; blockpos = blockpos.func_177977_b())
++                    {
++                        ;
++                    }
++
++                    if (blockpos.func_177956_o() > 0)
++                    {
++                        p_176503_1_.func_175656_a(blockpos.func_177984_a(), this.func_176223_P());
++                    }
++                }
+             }
+             else
+             {

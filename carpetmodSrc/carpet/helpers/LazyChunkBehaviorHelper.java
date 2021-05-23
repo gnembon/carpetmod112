@@ -48,4 +48,9 @@ public class LazyChunkBehaviorHelper {
         Chunk chunk = world.getChunk(entityIn.getPosition().getX() >> 4, entityIn.getPosition().getZ() >> 4);
         return !containsLazyChunk(chunk);
     }
+
+    public static boolean shouldUpdateFallingBlock(World worldIn, int x, int z) {
+        Chunk chunk = worldIn.getChunk(x >> 4, z >> 4);
+        return !containsLazyChunk(chunk);
+    }
 }
