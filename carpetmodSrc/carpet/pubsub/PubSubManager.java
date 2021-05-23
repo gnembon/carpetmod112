@@ -38,15 +38,22 @@ public final class PubSubManager {
      */
     public PubSubNode getOrCreateNode(String name) {
         synchronized (knownNodes) {
-            return knownNodes.computeIfAbsent(name, name1 -> {
-                String[] path = name1.split("\\.");
-                PubSubNode node = ROOT.getOrCreateChildNode(path);
-                for (PubSubNode n = node; n != ROOT; n = n.parent) {
-                    knownNodes.put(n.fullName, n);
-                }
-                return node;
-            });
+            PubSubNode node = knownNodes.get(name);
+            if (node == null) {
+                String[] path = name.split("\\.");
+                node = addKnownNode(ROOT.getOrCreateChildNode(path));
+            }
+            return node;
         }
+    }
+
+    public PubSubNode addKnownNode(PubSubNode node) {
+        synchronized (knownNodes) {
+            for (PubSubNode n = node; n != ROOT; n = n.parent) {
+                knownNodes.put(n.fullName, n);
+            }
+        }
+        return node;
     }
 
     public void subscribe(PubSubNode node, PubSubSubscriber subscriber) {
