@@ -22,37 +22,22 @@
  public class BlockDragonEgg extends Block
  {
      protected static final AxisAlignedBB field_185660_a = new AxisAlignedBB(0.0625D, 0.0D, 0.0625D, 0.9375D, 1.0D, 0.9375D);
-@@ -48,11 +56,27 @@
+@@ -48,11 +56,10 @@
      {
          if (BlockFalling.func_185759_i(p_180683_1_.func_180495_p(p_180683_2_.func_177977_b())) && p_180683_2_.func_177956_o() >= 0)
          {
 -            int i = 32;
  
-             if (!BlockFalling.field_149832_M && p_180683_1_.func_175707_a(p_180683_2_.func_177982_a(-32, -32, -32), p_180683_2_.func_177982_a(32, 32, 32)))
-             {
+-            if (!BlockFalling.field_149832_M && p_180683_1_.func_175707_a(p_180683_2_.func_177982_a(-32, -32, -32), p_180683_2_.func_177982_a(32, 32, 32)))
+-            {
 -                p_180683_1_.func_72838_d(new EntityFallingBlock(p_180683_1_, (double)((float)p_180683_2_.func_177958_n() + 0.5F), (double)p_180683_2_.func_177956_o(), (double)((float)p_180683_2_.func_177952_p() + 0.5F), this.func_176223_P()));
-+                 if(!CarpetSettings.commandLazyChunkBehavior || LazyChunkBehaviorHelper.shouldUpdateFallingBlock(p_180683_1_, p_180683_2_.func_177958_n(), p_180683_2_.func_177952_p())){
-+                     p_180683_1_.func_72838_d(new EntityFallingBlock(p_180683_1_, (double)((float)p_180683_2_.func_177958_n() + 0.5F), (double)p_180683_2_.func_177956_o(), (double)((float)p_180683_2_.func_177952_p() + 0.5F), this.func_176223_P()));
-+                 }
-+                 else {
-+                     p_180683_1_.func_175698_g(p_180683_2_);
-+                     BlockPos blockpos;
-+
-+                     for (blockpos = p_180683_2_; BlockFalling.func_185759_i(p_180683_1_.func_180495_p(blockpos)) && blockpos.func_177956_o() > 0; blockpos = blockpos.func_177977_b())
-+                     {
-+                         ;
-+                     }
-+
-+                     if (blockpos.func_177956_o() > 0)
-+                     {
-+                         p_180683_1_.func_180501_a(blockpos, this.func_176223_P(), 2);
-+                     }
-+                 }
-+
++            if ((!BlockFalling.field_149832_M && p_180683_1_.func_175707_a(p_180683_2_.func_177982_a(-32, -32, -32), p_180683_2_.func_177982_a(32, 32, 32)))
++                    && (!CarpetSettings.commandLazyChunkBehavior || LazyChunkBehaviorHelper.shouldUpdate(p_180683_1_, p_180683_2_))) {
++                p_180683_1_.func_72838_d(new EntityFallingBlock(p_180683_1_, (double) ((float) p_180683_2_.func_177958_n() + 0.5F), (double) p_180683_2_.func_177956_o(), (double) ((float) p_180683_2_.func_177952_p() + 0.5F), this.func_176223_P()));
              }
              else
              {
-@@ -74,10 +98,48 @@
+@@ -74,10 +81,48 @@
  
      public boolean func_180639_a(World p_180639_1_, BlockPos p_180639_2_, IBlockState p_180639_3_, EntityPlayer p_180639_4_, EnumHand p_180639_5_, EnumFacing p_180639_6_, float p_180639_7_, float p_180639_8_, float p_180639_9_)
      {

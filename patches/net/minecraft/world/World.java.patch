@@ -454,14 +454,14 @@
              if (p_72866_1_.func_184218_aH())
              {
 -                p_72866_1_.func_70098_U();
-+                if(!CarpetSettings.commandLazyChunkBehavior || LazyChunkBehaviorHelper.shouldUpdateEntity(p_72866_1_)) {
++                if(!CarpetSettings.commandLazyChunkBehavior || LazyChunkBehaviorHelper.shouldUpdate(p_72866_1_)) {
 +                    p_72866_1_.func_70098_U();
 +                }
              }
              else
              {
 -                p_72866_1_.func_70071_h_();
-+                if(!CarpetSettings.commandLazyChunkBehavior || LazyChunkBehaviorHelper.shouldUpdateEntity(p_72866_1_)) {
++                if(!CarpetSettings.commandLazyChunkBehavior || LazyChunkBehaviorHelper.shouldUpdate(p_72866_1_)) {
 +                    p_72866_1_.func_70071_h_();
 +                }
              }
