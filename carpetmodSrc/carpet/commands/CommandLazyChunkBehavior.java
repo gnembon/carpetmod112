@@ -38,15 +38,16 @@ public class CommandLazyChunkBehavior extends CommandCarpetBase{
     private void list(ICommandSender sender, String[] args) throws CommandException{
         if (args.length != 1)
         {
-            throw new WrongUsageException(getUsage(sender), new Object[0]);
+            throw new WrongUsageException(getUsage(sender));
         }
         LazyChunkBehaviorHelper.listLazyChunks(sender);
     }
     private void removeAll(ICommandSender sender, String[] args) throws CommandException{
         if (args.length != 1)
         {
-            throw new WrongUsageException(getUsage(sender), new Object[0]);
+            throw new WrongUsageException(getUsage(sender));
         }
+
         LazyChunkBehaviorHelper.removeAll();
         TextComponentString text = new TextComponentString("All chunks have been removed." );
         text.getStyle().setColor(TextFormatting.RED);
@@ -57,7 +58,7 @@ public class CommandLazyChunkBehavior extends CommandCarpetBase{
 
         if (args.length != 3)
         {
-            throw new WrongUsageException(getUsage(sender), new Object[0]);
+            throw new WrongUsageException(getUsage(sender));
         }
         int chunkX = parseInt(args[1]);
         int chunkZ = parseInt(args[2]);
@@ -73,12 +74,14 @@ public class CommandLazyChunkBehavior extends CommandCarpetBase{
 
         if (args.length != 3)
         {
-            throw new WrongUsageException(getUsage(sender), new Object[0]);
+            throw new WrongUsageException(getUsage(sender));
         }
+
         int chunkX = parseInt(args[1]);
         int chunkZ = parseInt(args[2]);
         World world = sender.getEntityWorld();
         Chunk chunk = world.getChunk(chunkX, chunkZ);
+
         LazyChunkBehaviorHelper.removeLazyChunk(chunk);
         TextComponentString text = new TextComponentString("Chunk " + chunkX + ", " + chunkZ + " in world " + chunk.getWorld().provider.getDimensionType() + " has been removed." );
         text.getStyle().setColor(TextFormatting.RED);
@@ -94,8 +97,9 @@ public class CommandLazyChunkBehavior extends CommandCarpetBase{
     {
         if (!command_enabled("CommandLazyChunkBehavior", sender)) return;
 
-        if(args.length<1 || args.length>3){
-            throw new WrongUsageException(getUsage(sender), new Object[0]);
+        if(args.length < 1 || args.length > 3){
+            throw new WrongUsageException(getUsage(sender));
+
         }
         switch (args[0]){
             case "list":
@@ -112,6 +116,7 @@ public class CommandLazyChunkBehavior extends CommandCarpetBase{
         }
     }
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
+
         int chunkX = sender.getPosition().getX() >> 4;
         int chunkZ = sender.getPosition().getZ() >> 4;
 
