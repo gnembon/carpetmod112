@@ -83,22 +83,20 @@
              chunk.field_189550_d = false;
          }
  
-@@ -89,13 +117,33 @@
+@@ -89,13 +117,31 @@
  
          if (chunk == null)
          {
 +            if(CarpetProfiler.lastQuestProfiler) {
-+                CarpetProfiler.profileLastQuest.get().push(-8000000000L);
-+                CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
-+                CarpetProfiler.profileLastQuest.get().push((long)p_186028_1_);
-+                CarpetProfiler.profileLastQuest.get().push((long)p_186028_2_);
++                CarpetProfiler.profileLastQuest.get().add(CarpetProfiler.LOAD_CHUNK);
++                CarpetProfiler.profileLastQuest.get().add(System.nanoTime());
++                CarpetProfiler.profileLastQuest.get().add((long)p_186028_1_);
++                CarpetProfiler.profileLastQuest.get().add((long)p_186028_2_);
 +            }
              chunk = this.func_73239_e(p_186028_1_, p_186028_2_);
 +            if(CarpetProfiler.lastQuestProfiler) {
-+                CarpetProfiler.profileLastQuest.get().push(-9000000000L);
-+                CarpetProfiler.profileLastQuest.get().push(System.nanoTime());
-+                CarpetProfiler.profileLastQuest.get().push((long)p_186028_1_);
-+                CarpetProfiler.profileLastQuest.get().push((long)p_186028_2_);
++                CarpetProfiler.profileLastQuest.get().add(CarpetProfiler.CHUNK_LOADED);
++                CarpetProfiler.profileLastQuest.get().add(System.nanoTime());
 +            }
  
              if (chunk != null)
@@ -117,7 +115,7 @@
              }
          }
  
-@@ -113,6 +161,11 @@
+@@ -113,6 +159,11 @@
              try
              {
                  chunk = this.field_186029_c.func_185932_a(p_186025_1_, p_186025_2_);
@@ -129,7 +127,7 @@
              }
              catch (Throwable throwable)
              {
-@@ -123,7 +176,7 @@
+@@ -123,7 +174,7 @@
                  crashreportcategory.func_71507_a("Generator", this.field_186029_c);
                  throw new ReportedException(crashreport);
              }
@@ -138,16 +136,26 @@
              this.field_73244_f.put(i, chunk);
              chunk.func_76631_c();
              chunk.func_186030_a(this, this.field_186029_c);
-@@ -185,6 +238,8 @@
+@@ -168,6 +219,8 @@
+ 
+     private void func_73242_b(Chunk p_73242_1_)
+     {
++        if(CarpetSettings.disableChunkSaveToDisk)
++            return;
+         try
+         {
+             p_73242_1_.func_177432_b(this.field_73251_h.func_82737_E());
+@@ -185,6 +238,9 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
++
 +        // NewLight PHIPRO-CARPET
 +        if (CarpetSettings.newLight) this.field_73251_h.lightingEngine.procLightUpdates();
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -222,8 +277,12 @@
+@@ -222,8 +278,12 @@
      {
          if (!this.field_73251_h.field_73058_d)
          {
@@ -161,7 +169,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -231,16 +290,47 @@
+@@ -231,16 +291,47 @@
                      Long olong = iterator.next();
                      Chunk chunk = (Chunk)this.field_73244_f.get(olong);
  
@@ -210,7 +218,7 @@
  
              this.field_73247_e.func_75817_a();
          }
-@@ -283,9 +373,17 @@
+@@ -283,9 +374,17 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
      }

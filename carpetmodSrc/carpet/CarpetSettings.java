@@ -955,6 +955,9 @@ public class CarpetSettings
     @Rule(desc = "Disables placement of the bedrock item", category = FEATURE)
     public static boolean disableBedrockPlacement = false;
 
+    @Rule(desc = "Disable chunk save to disk. Extremely dangerous, do not turn on unless you know what you are doing", category = EXPERIMENTAL)
+    public static boolean disableChunkSaveToDisk = false;
+
     // ===== API ===== //
 
     /**
