@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFalling.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFalling.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.block;
+ 
+ import java.util.Random;
++
++import carpet.CarpetSettings;
++import carpet.helpers.LazyChunkBehaviorHelper;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.creativetab.CreativeTabs;
+@@ -48,7 +51,8 @@
+         {
+             int i = 32;
+ 
+-            if (!field_149832_M && p_176503_1_.func_175707_a(p_176503_2_.func_177982_a(-32, -32, -32), p_176503_2_.func_177982_a(32, 32, 32)))
++            if ((!field_149832_M && p_176503_1_.func_175707_a(p_176503_2_.func_177982_a(-32, -32, -32), p_176503_2_.func_177982_a(32, 32, 32)) )
++                    && (!CarpetSettings.commandLazyChunkBehavior || LazyChunkBehaviorHelper.shouldUpdate(p_176503_1_, p_176503_2_)))
+             {
+                 if (!p_176503_1_.field_72995_K)
+                 {
