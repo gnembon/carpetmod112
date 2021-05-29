@@ -25,6 +25,7 @@ import carpet.patches.BlockWool;
 import carpet.utils.TickingArea;
 import carpet.worldedit.WorldEditBridge;
 import net.minecraft.block.BlockFalling;
+import net.minecraft.command.NumberInvalidException;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -87,10 +88,15 @@ public class CarpetSettings
     })
     public static boolean commandBlockInfo = true;
 
-    @Rule(desc = "Enables /loadchunk command", category = COMMANDS, extra = {
-            "Loads a chunk remotely"
+    @Rule(desc = "Enables /chunk command", category = COMMANDS, extra = {
+            "chunk info command"
     })
-    public static boolean commandLoadChunk = true;
+    public static boolean commandChunk = true;
+
+    @Rule(desc = "Enables /loadedChunks command", category = COMMANDS, extra = {
+            "Get information of the loaded chunks hashmap"
+    })
+    public static boolean commandLoadedChunks = true;
 
     @Rule(desc = "Enables /entityinfo command", category = COMMANDS, extra = {
             "Also enables yellow carpet placement action if 'carpets' rule is turned on as well"
