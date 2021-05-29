@@ -41,84 +41,27 @@ public class CommandLoadedChunks extends CommandCarpetBase
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
     {
         if (!command_enabled("commandLoadedChunks", sender)) return;
-
-        world = sender.getEntityWorld();
-        ChunkProviderServer provider = (ChunkProviderServer) world.getChunkProvider();
-        Long2ObjectOpenHashMap<Chunk> loadedChunks = (Long2ObjectOpenHashMap<Chunk>) provider.loadedChunks;
+        if (args.length == 0) throw new WrongUsageException(getUsage(sender));
 
         try {
             switch (args[0]){
                 case "size":
-                    sender.sendMessage(new TextComponentString(String.format("Hashmap size is %d, %.2f", loadedChunks.size(), getFillLevel(loadedChunks) )));
+                    size(server, sender, args);
                     break;
                 case "search":
+                    if (args.length != 3) throw new WrongUsageException(getUsage(sender));
                     search(sender, parseChunkPosition(args[1], sender.getPosition().getX()), parseChunkPosition(args[2], sender.getPosition().getZ()));
                     break;
                 case "remove":
+                    if (args.length != 3) throw new WrongUsageException(getUsage(sender));
                     remove(sender, parseChunkPosition(args[1], sender.getPosition().getX()), parseChunkPosition(args[2], sender.getPosition().getZ()));
                     break;
                 case "add":
+                    if (args.length != 3) throw new WrongUsageException(getUsage(sender));
                     add(sender, parseChunkPosition(args[1], sender.getPosition().getX()), parseChunkPosition(args[2], sender.getPosition().getZ()));
                     break;
                 case "inspect":
-                    Object[] chunks = getValues(loadedChunks);
-                    int mask = getMask(loadedChunks);
-                    Integer start = 0, end = chunks.length;
-                    Optional<Long> keyClass = Optional.empty();
-                    for (int i = 1; i < args.length; i++){
-                        switch (args[i]){
-                            case "from":
-                                start = Integer.valueOf(args[++i]);
-                                break;
-                            case "to":
-                                end = Integer.valueOf(args[++i]);;
-                                break;
-                            case "class":
-                                keyClass = Optional.of(Long.valueOf(args[++i]));
-                                break;
-                            default:
-                                throw new WrongUsageException(getUsage(sender));
-                        }
-                    }
-                    ArrayList<String> inspections = new ArrayList<>();
-                    String last = "";
-                    int lastN = 0;
-                    for (int i = start; (i & mask) != (end & mask); i++) {
-                        Chunk chunk = (Chunk) chunks[i & mask];
-                        if(keyClass.isPresent()){
-                            if(chunk == null){
-                                if(!last.equals("null")){
-                                    if(lastN > 0)
-                                        inspections.add(String.format("... %d %s", lastN, last));
-                                    last = "null";
-                                    lastN = 0;
-                                }
-                                lastN++;
-                                continue;
-                            }
-                            if(getKeyClass(chunk, mask) != keyClass.get()){
-                                if(last != "chunks"){
-                                    if(lastN > 0)
-                                        inspections.add(String.format("... %d %s", lastN, last));
-                                    last = "chunks";
-                                    lastN = 0;
-                                }
-                                lastN++;
-                                continue;
-                            }
-                        }
-                        if(last != ""){
-                            if(lastN > 0)
-                                inspections.add(String.format("... %d %s", lastN, last));
-                            last = "";
-                            lastN = 0;
-                        }
-                        String formatted = formatChunk(chunk, i & mask, mask);
-                        inspections.add(formatted);
-
-                    }
-                    String result = inspections.stream().collect(Collectors.joining(", ", "[", "]"));
-                    sender.sendMessage(new TextComponentString(result));
+                    inspect(server, sender, args);
                     break;
                 default:
                     throw new WrongUsageException(getUsage(sender));
@@ -128,6 +71,80 @@ public class CommandLoadedChunks extends CommandCarpetBase
             throw new CommandException(exception.getMessage());
         }
 
+    }
+
+    protected Long2ObjectOpenHashMap<Chunk> getLoadedChunks (ICommandSender sender){
+        world = sender.getEntityWorld();
+        ChunkProviderServer provider = (ChunkProviderServer) world.getChunkProvider();
+        return (Long2ObjectOpenHashMap<Chunk>) provider.loadedChunks;
+    }
+
+    protected void size(MinecraftServer server, ICommandSender sender, String[] args)
+            throws CommandException, NoSuchFieldException, IllegalAccessException {
+        Long2ObjectOpenHashMap<Chunk> loadedChunks = this.getLoadedChunks(sender);
+        sender.sendMessage(new TextComponentString(String.format("Hashmap size is %d, %.2f", loadedChunks.size(), getFillLevel(loadedChunks))));
+    }
+
+    protected void inspect(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException, NoSuchFieldException, IllegalAccessException {
+        Long2ObjectOpenHashMap<Chunk> loadedChunks = this.getLoadedChunks(sender);
+        Object[] chunks = getValues(loadedChunks);
+        int mask = getMask(loadedChunks);
+        Integer start = 0, end = chunks.length;
+        Optional<Long> keyClass = Optional.empty();
+        for (int i = 1; i < args.length; i++){
+            switch (args[i]){
+                case "from":
+                    start = Integer.valueOf(args[++i]);
+                    break;
+                case "to":
+                    end = Integer.valueOf(args[++i]);;
+                    break;
+                case "class":
+                    keyClass = Optional.of(Long.valueOf(args[++i]));
+                    break;
+                default:
+                    throw new WrongUsageException(getUsage(sender));
+            }
+        }
+        ArrayList<String> inspections = new ArrayList<>();
+        String last = "";
+        int lastN = 0;
+        for (int i = start; (i & mask) != (end & mask); i++) {
+            Chunk chunk = (Chunk) chunks[i & mask];
+            if(keyClass.isPresent()){
+                if(chunk == null){
+                    if(!last.equals("null")){
+                        if(lastN > 0)
+                            inspections.add(String.format("... %d %s", lastN, last));
+                        last = "null";
+                        lastN = 0;
+                    }
+                    lastN++;
+                    continue;
+                }
+                if(getKeyClass(chunk, mask) != keyClass.get()){
+                    if(last != "chunks"){
+                        if(lastN > 0)
+                            inspections.add(String.format("... %d %s", lastN, last));
+                        last = "chunks";
+                        lastN = 0;
+                    }
+                    lastN++;
+                    continue;
+                }
+            }
+            if(last != ""){
+                if(lastN > 0)
+                    inspections.add(String.format("... %d %s", lastN, last));
+                last = "";
+                lastN = 0;
+            }
+            String formatted = formatChunk(chunk, i & mask, mask);
+            inspections.add(formatted);
+
+        }
+        String result = inspections.stream().collect(Collectors.joining(", ", "[", "]"));
+        sender.sendMessage(new TextComponentString(result));
     }
 
     protected void search(ICommandSender sender, int chunkX, int chunkZ) throws NoSuchFieldException, IllegalAccessException {
