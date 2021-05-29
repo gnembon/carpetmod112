@@ -56,5 +56,8 @@ public abstract class CommandCarpetBase extends CommandBase
         return true;
     }
 
+    protected int parseChunkPosition(String arg, int base) throws NumberInvalidException {
+        return arg.equals("~") ? base >> 4 : parseInt(arg);
+    }
 
 }
