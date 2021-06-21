@@ -1,6 +1,7 @@
 package carpet.commands;
 
 import carpet.CarpetServer;
+import carpet.commands.lifetime.CommandLifeTime;
 import narcolepticfrog.rsmm.MeterCommand;
 import net.minecraft.command.CommandHandler;
 
@@ -21,6 +22,7 @@ public class CarpetCommands {
         handler.registerCommand(new CommandGrow());
         handler.registerCommand(new CommandLagSpike());
         handler.registerCommand(new CommandLazyChunkBehavior());
+        handler.registerCommand(new CommandLifeTime());
         handler.registerCommand(new CommandLight());
         handler.registerCommand(new CommandLoadChunk());
         handler.registerCommand(new CommandLog());
