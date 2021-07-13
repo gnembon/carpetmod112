@@ -973,6 +973,8 @@ public class CarpetSettings
     @Rule(desc = "Disables placement of the bedrock item", category = FEATURE)
     public static boolean disableBedrockPlacement = false;
 
+    @Rule(desc = "Changes default tnt fuse.", category = CREATIVE, validator = "validatePositive", options = {"70", "80", "100"})
+    public static int tntFuseLength = 80;
     // ===== API ===== //
 
     /**
