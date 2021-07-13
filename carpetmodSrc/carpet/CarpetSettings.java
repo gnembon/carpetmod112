@@ -99,7 +99,7 @@ public class CarpetSettings
     @Rule(desc = "Enables /lazychunkbehavior command", category = COMMANDS, extra = {
             "Makes a chunk act like a lazy chunk for entities and falling sand"
     })
-    
+
     public static boolean commandEntityInfo = true;
 
     @Rule(desc = "Enables /unload command to inspect chunk unloading order", category = COMMANDS)
@@ -154,6 +154,11 @@ public class CarpetSettings
 
     @Rule(desc = "Reduces the permition level to kick players for everyone.", category = COMMANDS)
     public static boolean publicKick;
+
+    @Rule(desc = "Enables /lifetime for tracking entities lifetime etc.", category = COMMANDS, extra = {
+            "rule optimizedDespawnRange is suggested to be enabled to avoid 0gt immediately despawn spamming"
+    })
+    public static boolean commandLifeTime = true;
 
     // ===== CREATIVE TOOLS ===== //
 
