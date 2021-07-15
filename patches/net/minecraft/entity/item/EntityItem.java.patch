@@ -7,8 +7,8 @@
 +
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
-+import carpet.commands.lifetime.removal.LiteralRemovalReason;
-+import carpet.commands.lifetime.removal.MobPickupRemovalReason;
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
++import carpet.helpers.lifetime.removal.MobPickupRemovalReason;
 +import carpet.helpers.HopperCounter;
 +import carpet.logging.LoggerRegistry;
 +import carpet.logging.logHelpers.ItemLogHelper;

@@ -3,7 +3,7 @@
 @@ -1,5 +1,6 @@
  package net.minecraft.entity.item;
  
-+import carpet.commands.lifetime.spawning.LiteralSpawningReason;
++import carpet.helpers.lifetime.spawning.LiteralSpawningReason;
  import net.minecraft.entity.EntityLivingBase;
  import net.minecraft.entity.projectile.EntityThrowable;
  import net.minecraft.init.PotionTypes;

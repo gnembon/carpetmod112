@@ -3,7 +3,7 @@
 @@ -1,5 +1,6 @@
  package net.minecraft.entity.player;
  
-+import carpet.commands.lifetime.spawning.MobDropSpawningReason;
++import carpet.helpers.lifetime.spawning.MobDropSpawningReason;
  import com.google.common.base.Predicate;
  import com.google.common.collect.Lists;
  import com.mojang.authlib.GameProfile;

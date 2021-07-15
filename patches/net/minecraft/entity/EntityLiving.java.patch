@@ -3,8 +3,8 @@
 @@ -1,5 +1,7 @@
  package net.minecraft.entity;
  
-+import carpet.commands.lifetime.removal.LiteralRemovalReason;
-+import carpet.commands.lifetime.removal.MobPickupRemovalReason;
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
++import carpet.helpers.lifetime.removal.MobPickupRemovalReason;
  import com.google.common.collect.Maps;
  import java.util.Arrays;
  import java.util.Map;

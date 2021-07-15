@@ -5,7 +5,7 @@
  import java.util.Random;
  import javax.annotation.Nullable;
 +
-+import carpet.commands.lifetime.removal.LiteralRemovalReason;
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
  import net.minecraft.entity.EntityFlying;
  import net.minecraft.entity.EntityLiving;
  import net.minecraft.entity.EntityLivingBase;

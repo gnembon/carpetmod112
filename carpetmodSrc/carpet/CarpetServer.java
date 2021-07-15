@@ -1,6 +1,6 @@
 package carpet;
 
-import carpet.commands.lifetime.LifeTimeTracker;
+import carpet.helpers.lifetime.LifeTimeTracker;
 import carpet.helpers.StackTraceDeobfuscator;
 import carpet.network.PluginChannelManager;
 import carpet.network.ToggleableChannelHandler;

@@ -5,7 +5,7 @@
  import java.util.List;
  import javax.annotation.Nullable;
 +
-+import carpet.commands.lifetime.spawning.LiteralSpawningReason;
++import carpet.helpers.lifetime.spawning.LiteralSpawningReason;
  import net.minecraft.command.CommandBase;
  import net.minecraft.command.CommandException;
  import net.minecraft.command.ICommandSender;

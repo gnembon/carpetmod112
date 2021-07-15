@@ -1,8 +1,8 @@
-package carpet.commands.lifetime;
+package carpet.helpers.lifetime;
 
-import carpet.commands.lifetime.utils.LifeTimeTrackerUtil;
-import carpet.commands.lifetime.utils.SpecificDetailMode;
-import carpet.commands.lifetime.utils.TextUtil;
+import carpet.helpers.lifetime.utils.LifeTimeTrackerUtil;
+import carpet.helpers.lifetime.utils.SpecificDetailMode;
+import carpet.helpers.lifetime.utils.TextUtil;
 import carpet.utils.Messenger;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.minecraft.command.ICommandSender;
@@ -160,7 +160,7 @@ public class LifeTimeTracker extends AbstractTracker
         return this.doWhenTracking(source, () -> this.printTrackingResultSpecificInner(source, entityTypeString, detailModeString, realtime));
     }
 
-    protected int showHelp(ICommandSender source)
+    public int showHelp(ICommandSender source)
     {
         String docLink = "https://github.com/TISUnion/TISCarpet113/blob/TIS-Server/docs/Features.md#lifetime";
         source.sendMessage(Messenger.c(

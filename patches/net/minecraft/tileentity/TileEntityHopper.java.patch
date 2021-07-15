@@ -6,7 +6,7 @@
  import javax.annotation.Nullable;
 +
 +import carpet.carpetclient.CarpetClientChunkLogger;
-+import carpet.commands.lifetime.removal.LiteralRemovalReason;
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
 +import carpet.helpers.TileEntityCraftingTable;
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockChest;

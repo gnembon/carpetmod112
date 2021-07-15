@@ -1,4 +1,4 @@
-package carpet.commands.lifetime.spawning;
+package carpet.helpers.lifetime.spawning;
 
 import carpet.utils.Messenger;
 import net.minecraft.util.text.ITextComponent;

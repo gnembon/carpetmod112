@@ -1,4 +1,4 @@
-package carpet.commands.lifetime.removal;
+package carpet.helpers.lifetime.removal;
 
 import carpet.utils.Messenger;
 import net.minecraft.util.text.ITextComponent;

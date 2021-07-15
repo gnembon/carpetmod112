@@ -1,6 +1,6 @@
-package carpet.commands.lifetime.spawning;
+package carpet.helpers.lifetime.spawning;
 
-import carpet.commands.lifetime.utils.TextUtil;
+import carpet.helpers.lifetime.utils.TextUtil;
 import carpet.utils.Messenger;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;

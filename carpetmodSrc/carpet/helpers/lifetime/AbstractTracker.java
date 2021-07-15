@@ -1,7 +1,7 @@
-package carpet.commands.lifetime;
+package carpet.helpers.lifetime;
 
 import carpet.CarpetServer;
-import carpet.commands.lifetime.utils.GameUtil;
+import carpet.helpers.lifetime.utils.GameUtil;
 import carpet.utils.Messenger;
 import net.minecraft.command.ICommandSender;
 

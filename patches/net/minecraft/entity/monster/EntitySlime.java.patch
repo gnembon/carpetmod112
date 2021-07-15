@@ -5,8 +5,8 @@
  
  import javax.annotation.Nullable;
 +
-+import carpet.commands.lifetime.removal.LiteralRemovalReason;
-+import carpet.commands.lifetime.spawning.LiteralSpawningReason;
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
++import carpet.helpers.lifetime.spawning.LiteralSpawningReason;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLiving;
  import net.minecraft.entity.EntityLivingBase;

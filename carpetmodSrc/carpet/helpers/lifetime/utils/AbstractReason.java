@@ -1,4 +1,4 @@
-package carpet.commands.lifetime.utils;
+package carpet.helpers.lifetime.utils;
 
 import net.minecraft.util.text.ITextComponent;
 

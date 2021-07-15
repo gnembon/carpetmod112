@@ -1,11 +1,11 @@
-package carpet.commands.lifetime.trackeddata;
+package carpet.helpers.lifetime.trackeddata;
 
-import carpet.commands.lifetime.removal.RemovalReason;
-import carpet.commands.lifetime.spawning.SpawningReason;
-import carpet.commands.lifetime.utils.AbstractReason;
-import carpet.commands.lifetime.utils.CounterUtil;
-import carpet.commands.lifetime.utils.LifeTimeStatistic;
-import carpet.commands.lifetime.utils.TextUtil;
+import carpet.helpers.lifetime.removal.RemovalReason;
+import carpet.helpers.lifetime.spawning.SpawningReason;
+import carpet.helpers.lifetime.utils.AbstractReason;
+import carpet.helpers.lifetime.utils.CounterUtil;
+import carpet.helpers.lifetime.utils.LifeTimeStatistic;
+import carpet.helpers.lifetime.utils.TextUtil;
 import carpet.utils.Messenger;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;

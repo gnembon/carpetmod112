@@ -4,15 +4,15 @@
  package net.minecraft.entity;
  
 +import carpet.carpetclient.CarpetClientChunkLogger;
-+import carpet.commands.lifetime.LifeTimeTracker;
-+import carpet.commands.lifetime.removal.DeathRemovalReason;
-+import carpet.commands.lifetime.removal.LiteralRemovalReason;
-+import carpet.commands.lifetime.removal.RemovalReason;
-+import carpet.commands.lifetime.removal.TransDimensionRemovalReason;
-+import carpet.commands.lifetime.spawning.MobDropSpawningReason;
-+import carpet.commands.lifetime.spawning.SpawningReason;
-+import carpet.commands.lifetime.spawning.TransDimensionSpawningReason;
-+import carpet.commands.lifetime.utils.GameUtil;
++import carpet.helpers.lifetime.LifeTimeTracker;
++import carpet.helpers.lifetime.removal.DeathRemovalReason;
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
++import carpet.helpers.lifetime.removal.RemovalReason;
++import carpet.helpers.lifetime.removal.TransDimensionRemovalReason;
++import carpet.helpers.lifetime.spawning.MobDropSpawningReason;
++import carpet.helpers.lifetime.spawning.SpawningReason;
++import carpet.helpers.lifetime.spawning.TransDimensionSpawningReason;
++import carpet.helpers.lifetime.utils.GameUtil;
 +import carpet.patches.EntityPlayerMPFake;
  import com.google.common.collect.Iterables;
  import com.google.common.collect.Lists;

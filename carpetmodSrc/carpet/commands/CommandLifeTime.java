@@ -1,8 +1,8 @@
-package carpet.commands.lifetime;
+package carpet.commands;
 
 import carpet.CarpetSettings;
-import carpet.commands.CommandCarpetBase;
-import carpet.commands.lifetime.utils.SpecificDetailMode;
+import carpet.helpers.lifetime.LifeTimeTracker;
+import carpet.helpers.lifetime.utils.SpecificDetailMode;
 import carpet.utils.Messenger;
 import com.google.common.collect.Lists;
 import net.minecraft.command.CommandException;

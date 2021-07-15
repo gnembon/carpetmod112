@@ -3,7 +3,7 @@
 @@ -1,5 +1,8 @@
  package net.minecraft.world;
  
-+import carpet.commands.lifetime.LifeTimeWorldTracker;
++import carpet.helpers.lifetime.LifeTimeWorldTracker;
 +import carpet.helpers.NextTickListEntryFix;
 +import carpet.helpers.ScheduledBlockEventSerializer;
  import com.google.common.collect.Lists;

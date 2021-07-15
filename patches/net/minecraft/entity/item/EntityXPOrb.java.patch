@@ -3,8 +3,8 @@
 @@ -1,5 +1,7 @@
  package net.minecraft.entity.item;
  
-+import carpet.commands.lifetime.removal.LiteralRemovalReason;
-+import carpet.commands.lifetime.removal.MobPickupRemovalReason;
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
++import carpet.helpers.lifetime.removal.MobPickupRemovalReason;
  import net.minecraft.block.material.Material;
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.Entity;

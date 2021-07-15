@@ -3,7 +3,7 @@
 @@ -1,5 +1,6 @@
  package net.minecraft.entity.monster;
  
-+import carpet.commands.lifetime.removal.LiteralRemovalReason;
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
  import net.minecraft.enchantment.EnchantmentHelper;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityCreature;

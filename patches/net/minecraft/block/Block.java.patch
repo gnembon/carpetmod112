@@ -5,7 +5,7 @@
  
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
-+import carpet.commands.lifetime.spawning.LiteralSpawningReason;
++import carpet.helpers.lifetime.spawning.LiteralSpawningReason;
 +import carpet.logging.LoggerRegistry;
  import com.google.common.collect.Sets;
  import com.google.common.collect.UnmodifiableIterator;

@@ -1,6 +1,6 @@
-package carpet.commands.lifetime.spawning;
+package carpet.helpers.lifetime.spawning;
 
-import carpet.commands.lifetime.utils.LifeTimeTrackerUtil;
+import carpet.helpers.lifetime.utils.LifeTimeTrackerUtil;
 import carpet.utils.Messenger;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.text.ITextComponent;

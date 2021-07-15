@@ -1,6 +1,6 @@
-package carpet.commands.lifetime.removal;
+package carpet.helpers.lifetime.removal;
 
-import carpet.commands.lifetime.utils.TextUtil;
+import carpet.helpers.lifetime.utils.TextUtil;
 import carpet.utils.Messenger;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.text.ITextComponent;

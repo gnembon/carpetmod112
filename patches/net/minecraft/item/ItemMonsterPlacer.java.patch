@@ -5,7 +5,7 @@
  import java.util.UUID;
  import javax.annotation.Nullable;
 +
-+import carpet.commands.lifetime.spawning.LiteralSpawningReason;
++import carpet.helpers.lifetime.spawning.LiteralSpawningReason;
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockLiquid;
  import net.minecraft.block.state.IBlockState;
