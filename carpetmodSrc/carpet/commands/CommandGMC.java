@@ -5,7 +5,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import carpet.CarpetSettings;
-import carpet.logging.LoggerRegistry;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -77,7 +76,7 @@ public class CommandGMC extends CommandCarpetBase
             entityplayer.storeCameraData(hasNightvision);
             GameType gametype = GameType.parseGameTypeWithDefault("spectator", GameType.NOT_SET);
             entityplayer.setGameType(gametype);
-            if(!hasNightvision && !LoggerRegistry.getLogger("normalCameraVision").subscribed(entityplayer)) {
+            if(!hasNightvision) {
                 PotionEffect potioneffect = new PotionEffect(nightvision, 999999, 0, false, false);
                 entityplayer.addPotionEffect(potioneffect);
             }
