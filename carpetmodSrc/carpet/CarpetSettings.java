@@ -225,6 +225,9 @@ public class CarpetSettings
     @Rule(desc = "Enables controlable TNT jump angle RNG for debuging.", category = TNT)
     public static boolean TNTAdjustableRandomAngle;
 
+    @Rule(desc = "/tp will teleport the players across dimensions", category = CREATIVE)
+    public static boolean tpAcrossDimensions = true;
+
     @Rule(desc = "Allows to place blocks in different orientations. Requires Carpet Client", category = CREATIVE, extra = {
             "Also prevents rotations upon placement of dispensers and furnaces",
             "when placed into a world by commands"
