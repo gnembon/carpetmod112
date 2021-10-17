@@ -44,7 +44,7 @@
 +    public static int explosionSound = 0;
 +
 +    // For explosion logger CARPET-SYLKOS
-+    private ExplosionLogHelper logHelper = null;
++    public ExplosionLogHelper logHelper = null;
 +
      public Explosion(World p_i45754_1_, Entity p_i45754_2_, double p_i45754_3_, double p_i45754_5_, double p_i45754_7_, float p_i45754_9_, boolean p_i45754_10_, boolean p_i45754_11_)
      {
@@ -104,9 +104,9 @@
          }
 +
 +        // Logs explosion CARPET-SYLKOS
-+
-+        logHelper.onExplosionDone(this.field_77287_j.func_72820_D());
-+
++        if(LoggerRegistry.__explosions) {
++            this.logHelper.onExplosionDone(this.field_77287_j.func_72820_D());
++        }
      }
  
      public Map<EntityPlayer, Vec3d> func_77277_b()

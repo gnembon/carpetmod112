@@ -249,6 +249,10 @@ public class OptimizedTNT
                 }
             }
         }
+
+        if(LoggerRegistry.__explosions) {
+            e.logHelper.onExplosionDone(e.world.getWorldTime());
+        }
     }
 
     private static void removeFast(List<Entity> lst, int index) {
