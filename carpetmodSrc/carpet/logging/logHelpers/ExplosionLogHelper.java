@@ -28,7 +28,7 @@ public class ExplosionLogHelper {
     }
 
     public void onExplosionDone(long gametime) {
-        if(!(lastGametime==gametime)) {
+        if(lastGametime != gametime) {
             explosionCountInCurrentGT = 1;
             explosionCountInCurrentPos = 0;
             previousPosition = pos;
