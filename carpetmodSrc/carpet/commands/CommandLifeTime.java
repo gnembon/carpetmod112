@@ -2,13 +2,18 @@ package carpet.commands;
 
 import carpet.CarpetSettings;
 import carpet.helpers.lifetime.LifeTimeTracker;
+import carpet.helpers.lifetime.filter.EntityFilterManager;
 import carpet.helpers.lifetime.utils.SpecificDetailMode;
 import carpet.utils.Messenger;
 import com.google.common.collect.Lists;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.EntitySelector;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
@@ -31,8 +36,9 @@ public class CommandLifeTime extends CommandCarpetBase
     @Override
     public String getUsage(ICommandSender sender)
     {
-        return "/lifetime tracking [<start|stop|restart|realtime>]\n" +
-                "/lifetime <entity_type> [<life_time|spawning|removal> [<realtime>]]";
+        return "/lifetime tracking [start|stop|restart|realtime]\n" +
+                "/lifetime filter <entity_type> [set <selector>|clear]\n" +
+                "/lifetime <entity_type> [life_time|spawning|removal [realtime]]";
     }
 
     @Override
@@ -52,6 +58,9 @@ public class CommandLifeTime extends CommandCarpetBase
             {
                 case "tracking":
                     this.executeTracking(server, sender, args);
+                    break;
+                case "filter":
+                    this.setFilter(server, sender, args);
                     break;
                 case "help":
                     tracker.showHelp(sender);
@@ -85,7 +94,54 @@ public class CommandLifeTime extends CommandCarpetBase
                 tracker.reportTracking(sender, true);
                 break;
             default:
-                throw new WrongUsageException("unknown command: " + args[1]);
+                throw new WrongUsageException("Unknown command: " + args[1]);
+        }
+    }
+
+    private void setFilter(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException
+    {
+        if (args.length == 1)  // lifetime filter
+        {
+            EntityFilterManager.getInstance().displayAllFilters(sender);
+            return;
+        }
+        String entityTypeString = args[1];
+        Class<? extends Entity> entityType = null;
+        if (!entityTypeString.equals("global"))
+        {
+            entityType = EntityList.REGISTRY.getObject(new ResourceLocation(entityTypeString));
+            if (entityType == null)
+            {
+                throw new WrongUsageException("Unknown entity type: " + entityTypeString);
+            }
+        }
+        if (args.length < 3)  // lifetime filter <entity_type>
+        {
+            EntityFilterManager.getInstance().displayFilter(sender, entityType);
+            return;
+        }
+        switch (args[2])
+        {
+            case "set":
+                if (args.length < 4)
+                {
+                    throw new WrongUsageException("Entity selector is required");
+                }
+                String selectorString = args[3];
+                if (EntitySelector.isSelector(selectorString))
+                {
+                    EntityFilterManager.getInstance().setEntityFilter(sender, entityType, selectorString);
+                }
+                else
+                {
+                    throw new WrongUsageException("Invalid entity selector");
+                }
+                break;
+            case "clear":
+                EntityFilterManager.getInstance().setEntityFilter(sender, entityType, null);
+                break;
+            default:
+                throw new WrongUsageException("Unknown command: " + args[2]);
         }
     }
 
@@ -125,12 +181,26 @@ public class CommandLifeTime extends CommandCarpetBase
         {
             List<String> suggestions = Lists.newArrayList(entityTypes);
             suggestions.add("tracking");
+            suggestions.add("filter");
             suggestions.add("help");
             return getListOfStringsMatchingLastWord(args, suggestions);
         }
         else if (args.length == 2 && args[0].equals("tracking"))
         {
             return getListOfStringsMatchingLastWord(args, "start", "stop", "restart", "realtime");
+        }
+        else if (args.length >= 2 && args[0].equals("filter"))
+        {
+            if (args.length == 2)
+            {
+                List<String> suggestions = EntityList.REGISTRY.getKeys().stream().map(ResourceLocation::getPath).collect(Collectors.toList());
+                suggestions.add("global");
+                return getListOfStringsMatchingLastWord(args, suggestions);
+            }
+            else if (args.length == 3)
+            {
+                return getListOfStringsMatchingLastWord(args, "set", "clear");
+            }
         }
         else if (args.length >= 2 && entityTypes.contains(args[0]))
         {

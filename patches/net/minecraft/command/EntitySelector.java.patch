@@ -1,0 +1,122 @@
+--- ../src-base/minecraft/net/minecraft/command/EntitySelector.java
++++ ../src-work/minecraft/net/minecraft/command/EntitySelector.java
+@@ -40,7 +40,8 @@
+ 
+ public class EntitySelector
+ {
+-    private static final Pattern field_82389_a = Pattern.compile("^@([pares])(?:\\[([^ ]*)\\])?$");
++    // CM lifetime tracker make public
++    public static final Pattern field_82389_a = Pattern.compile("^@([pares])(?:\\[([^ ]*)\\])?$");
+     private static final Splitter field_190828_b = Splitter.on(',').omitEmptyStrings();
+     private static final Splitter field_190829_c = Splitter.on('=').limit(2);
+     private static final Set<String> field_190830_d = Sets.<String>newHashSet();
+@@ -242,7 +243,8 @@
+         }
+     }
+ 
+-    private static List<Predicate<Entity>> func_179663_a(Map<String, String> p_179663_0_, String p_179663_1_)
++    // CM lifetime tracker make public
++    public static List<Predicate<Entity>> func_179663_a(Map<String, String> p_179663_0_, String p_179663_1_)
+     {
+         String s = func_179651_b(p_179663_0_, field_190849_w);
+ 
+@@ -270,7 +272,8 @@
+         }
+     }
+ 
+-    private static List<Predicate<Entity>> func_179648_b(Map<String, String> p_179648_0_)
++    // CM lifetime tracker make public
++    public static List<Predicate<Entity>> func_179648_b(Map<String, String> p_179648_0_)
+     {
+         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
+         final int i = func_179653_a(p_179648_0_, field_190834_h, -1);
+@@ -298,7 +301,8 @@
+         return list;
+     }
+ 
+-    private static List<Predicate<Entity>> func_179649_c(Map<String, String> p_179649_0_)
++    // CM lifetime tracker make public
++    public static List<Predicate<Entity>> func_179649_c(Map<String, String> p_179649_0_)
+     {
+         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
+         String s = func_179651_b(p_179649_0_, field_190846_t);
+@@ -349,7 +353,8 @@
+         }
+     }
+ 
+-    private static List<Predicate<Entity>> func_179659_d(Map<String, String> p_179659_0_)
++    // CM lifetime tracker make public
++    public static List<Predicate<Entity>> func_179659_d(Map<String, String> p_179659_0_)
+     {
+         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
+         String s = func_179651_b(p_179659_0_, field_190847_u);
+@@ -385,7 +390,8 @@
+         return list;
+     }
+ 
+-    private static List<Predicate<Entity>> func_184952_c(final ICommandSender p_184952_0_, Map<String, String> p_184952_1_)
++    // CM lifetime tracker make public
++    public static List<Predicate<Entity>> func_184952_c(final ICommandSender p_184952_0_, Map<String, String> p_184952_1_)
+     {
+         final Map<String, Integer> map = func_96560_a(p_184952_1_);
+         return (map.isEmpty() ? Collections.emptyList() : Lists.newArrayList(new Predicate<Entity>()
+@@ -445,7 +451,8 @@
+         }));
+     }
+ 
+-    private static List<Predicate<Entity>> func_179647_f(Map<String, String> p_179647_0_)
++    // CM lifetime tracker make public
++    public static List<Predicate<Entity>> func_179647_f(Map<String, String> p_179647_0_)
+     {
+         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
+         String s = func_179651_b(p_179647_0_, field_190848_v);
+@@ -471,7 +478,8 @@
+         return list;
+     }
+ 
+-    private static List<Predicate<Entity>> func_184951_f(Map<String, String> p_184951_0_)
++    // CM lifetime tracker make public
++    public static List<Predicate<Entity>> func_184951_f(Map<String, String> p_184951_0_)
+     {
+         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
+         String s = func_179651_b(p_184951_0_, field_190850_x);
+@@ -508,7 +516,8 @@
+         return list;
+     }
+ 
+-    private static List<Predicate<Entity>> func_180698_a(Map<String, String> p_180698_0_, final Vec3d p_180698_1_)
++    // CM lifetime tracker make public
++    public static List<Predicate<Entity>> func_180698_a(Map<String, String> p_180698_0_, final Vec3d p_180698_1_)
+     {
+         double d0 = (double)func_179653_a(p_180698_0_, field_190832_f, -1);
+         double d1 = (double)func_179653_a(p_180698_0_, field_190831_e, -1);
+@@ -543,7 +552,8 @@
+         }
+     }
+ 
+-    private static List<Predicate<Entity>> func_179662_g(Map<String, String> p_179662_0_)
++    // CM lifetime tracker make public
++    public static List<Predicate<Entity>> func_179662_g(Map<String, String> p_179662_0_)
+     {
+         List<Predicate<Entity>> list = Lists.<Predicate<Entity>>newArrayList();
+ 
+@@ -735,7 +745,8 @@
+         return new BlockPos(func_179653_a(p_179664_0_, field_190835_i, p_179664_1_.func_177958_n()), func_179653_a(p_179664_0_, field_190836_j, p_179664_1_.func_177956_o()), func_179653_a(p_179664_0_, field_190837_k, p_179664_1_.func_177952_p()));
+     }
+ 
+-    private static Vec3d func_189210_b(Map<String, String> p_189210_0_, Vec3d p_189210_1_)
++    // CM lifetime tracker make public
++    public static Vec3d func_189210_b(Map<String, String> p_189210_0_, Vec3d p_189210_1_)
+     {
+         return new Vec3d(func_189211_a(p_189210_0_, field_190835_i, p_189210_1_.field_72450_a, true), func_189211_a(p_189210_0_, field_190836_j, p_189210_1_.field_72448_b, false), func_189211_a(p_189210_0_, field_190837_k, p_189210_1_.field_72449_c, true));
+     }
+@@ -806,7 +817,8 @@
+         return field_82389_a.matcher(p_82378_0_).matches();
+     }
+ 
+-    private static Map<String, String> func_82381_h(@Nullable String p_82381_0_) throws CommandException
++    // CM lifetime tracker make public
++    public static Map<String, String> func_82381_h(@Nullable String p_82381_0_) throws CommandException
+     {
+         Map<String, String> map = Maps.<String, String>newHashMap();
+ 

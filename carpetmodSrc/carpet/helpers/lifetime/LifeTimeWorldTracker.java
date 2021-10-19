@@ -1,5 +1,6 @@
 package carpet.helpers.lifetime;
 
+import carpet.helpers.lifetime.filter.EntityFilterManager;
 import carpet.helpers.lifetime.removal.RemovalReason;
 import carpet.helpers.lifetime.spawning.SpawningReason;
 import carpet.helpers.lifetime.trackeddata.BasicTrackedData;
@@ -143,7 +144,13 @@ public class LifeTimeWorldTracker
                             TextUtil.getFancyText(
                                     null,
                                     Messenger.s(null, LifeTimeTrackerUtil.getEntityTypeDescriptor(entityType)),
-                                    Messenger.s(null, "Click to show detail"),
+                                    Messenger.c(
+                                            "w Filter: ",
+                                            EntityFilterManager.getInstance().getEntityFilterText(entityType),
+                                            "g  / [G] ",
+                                            EntityFilterManager.getInstance().getEntityFilterText(null),
+                                            "w \nClick to show detail"
+                                    ),
                                     new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, currentCommandBase)
                             ),
                             "g ] ",
@@ -200,6 +207,14 @@ public class LifeTimeWorldTracker
 
     private void printSpecific(long ticks, Class<? extends Entity> specificType, BasicTrackedData specificData, SpecificDetailMode detailMode, List<ITextComponent> result)
     {
+        result.add(Messenger.c(
+                "c Filter: ",
+                EntityFilterManager.getInstance().getEntityFilterText(specificType),
+                "g  / ",
+                TextUtil.getFancyText("g", Messenger.s(null, "[G]"), Messenger.s(null, "Global"), null),
+                "g  ",
+                EntityFilterManager.getInstance().getEntityFilterText(null)
+        ));
         boolean showLifeTime = detailMode == null || detailMode == SpecificDetailMode.LIFE_TIME;
         boolean showSpawning = detailMode == null || detailMode == SpecificDetailMode.SPAWNING;
         boolean showRemoval = detailMode == null || detailMode == SpecificDetailMode.REMOVAL;

@@ -1,10 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/entity/Entity.java
 +++ ../src-work/minecraft/net/minecraft/entity/Entity.java
-@@ -1,5 +1,16 @@
+@@ -1,5 +1,17 @@
  package net.minecraft.entity;
  
 +import carpet.carpetclient.CarpetClientChunkLogger;
 +import carpet.helpers.lifetime.LifeTimeTracker;
++import carpet.helpers.lifetime.filter.EntityFilterManager;
 +import carpet.helpers.lifetime.removal.DeathRemovalReason;
 +import carpet.helpers.lifetime.removal.LiteralRemovalReason;
 +import carpet.helpers.lifetime.removal.RemovalReason;
@@ -17,7 +18,7 @@
  import com.google.common.collect.Iterables;
  import com.google.common.collect.Lists;
  import com.google.common.collect.Sets;
-@@ -81,6 +92,10 @@
+@@ -81,6 +93,10 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -28,7 +29,7 @@
  public abstract class Entity implements ICommandSender
  {
      private static final Logger field_184243_a = LogManager.getLogger();
-@@ -136,7 +151,7 @@
+@@ -136,7 +152,7 @@
      private int field_190534_ay;
      protected boolean field_70171_ac;
      public int field_70172_ad;
@@ -37,7 +38,7 @@
      protected boolean field_70178_ae;
      protected EntityDataManager field_70180_af;
      protected static final DataParameter<Byte> field_184240_ax = EntityDataManager.<Byte>func_187226_a(Entity.class, DataSerializers.field_187191_a);
-@@ -168,6 +183,9 @@
+@@ -168,6 +184,9 @@
      private final double[] field_191505_aI;
      private long field_191506_aJ;
  
@@ -47,7 +48,7 @@
      public Entity(World p_i1582_1_)
      {
          this.field_145783_c = field_70152_a++;
-@@ -201,6 +219,9 @@
+@@ -201,6 +220,9 @@
          this.field_70180_af.func_187214_a(field_184234_aB, Boolean.valueOf(false));
          this.field_70180_af.func_187214_a(field_189655_aD, Boolean.valueOf(false));
          this.func_70088_a();
@@ -57,7 +58,7 @@
      }
  
      public int func_145782_y()
-@@ -267,6 +288,18 @@
+@@ -267,6 +289,18 @@
  
      public void func_70106_y()
      {
@@ -76,7 +77,7 @@
          this.field_70128_L = true;
      }
  
-@@ -278,6 +311,14 @@
+@@ -278,6 +312,14 @@
      {
          if (p_70105_1_ != this.field_70130_N || p_70105_2_ != this.field_70131_O)
          {
@@ -91,7 +92,7 @@
              float f = this.field_70130_N;
              this.field_70130_N = p_70105_1_;
              this.field_70131_O = p_70105_2_;
-@@ -299,7 +340,8 @@
+@@ -299,7 +341,8 @@
          }
      }
  
@@ -101,7 +102,7 @@
      {
          this.field_70177_z = p_70101_1_ % 360.0F;
          this.field_70125_A = p_70101_2_ % 360.0F;
-@@ -492,6 +534,8 @@
+@@ -492,6 +535,8 @@
  
      protected void func_70076_C()
      {
@@ -110,7 +111,7 @@
          this.func_70106_y();
      }
  
-@@ -508,6 +552,12 @@
+@@ -508,6 +553,12 @@
  
      public void func_70091_d(MoverType p_70091_1_, double p_70091_2_, double p_70091_4_, double p_70091_6_)
      {
@@ -123,7 +124,7 @@
          if (this.field_70145_X)
          {
              this.func_174826_a(this.func_174813_aQ().func_72317_d(p_70091_2_, p_70091_4_, p_70091_6_));
-@@ -654,12 +704,28 @@
+@@ -654,12 +705,28 @@
                  }
              }
  
@@ -153,7 +154,7 @@
  
                  for (int l = list1.size(); k < l; ++k)
                  {
-@@ -672,6 +738,9 @@
+@@ -672,6 +739,9 @@
              if (p_70091_2_ != 0.0D)
              {
                  int j5 = 0;
@@ -163,7 +164,7 @@
  
                  for (int l5 = list1.size(); j5 < l5; ++j5)
                  {
-@@ -687,6 +756,9 @@
+@@ -687,6 +757,9 @@
              if (p_70091_6_ != 0.0D)
              {
                  int k5 = 0;
@@ -173,7 +174,7 @@
  
                  for (int i6 = list1.size(); k5 < i6; ++k5)
                  {
-@@ -1140,6 +1212,8 @@
+@@ -1140,6 +1213,8 @@
  
      public boolean func_70072_I()
      {
@@ -182,7 +183,7 @@
          if (this.func_184187_bx() instanceof EntityBoat)
          {
              this.field_70171_ac = false;
-@@ -1159,6 +1233,7 @@
+@@ -1159,6 +1234,7 @@
          {
              this.field_70171_ac = false;
          }
@@ -190,7 +191,7 @@
  
          return this.field_70171_ac;
      }
-@@ -1533,6 +1608,9 @@
+@@ -1533,6 +1609,9 @@
  
          if (!this.field_70128_L && s != null && !this.func_184218_aH())
          {
@@ -200,7 +201,7 @@
              p_70039_1_.func_74778_a("id", s);
              this.func_189511_e(p_70039_1_);
              return true;
-@@ -1543,6 +1621,19 @@
+@@ -1543,6 +1622,19 @@
          }
      }
  
@@ -220,7 +221,7 @@
      public static void func_190533_a(DataFixer p_190533_0_)
      {
          p_190533_0_.func_188258_a(FixTypes.ENTITY, new IDataWalker()
-@@ -1619,6 +1710,11 @@
+@@ -1619,6 +1711,11 @@
                  p_189511_1_.func_74782_a("Tags", nbttaglist);
              }
  
@@ -232,7 +233,7 @@
              this.func_70014_b(p_189511_1_);
  
              if (this.func_184207_aI())
-@@ -1663,19 +1759,19 @@
+@@ -1663,19 +1760,19 @@
              this.field_70181_x = nbttaglist2.func_150309_d(1);
              this.field_70179_y = nbttaglist2.func_150309_d(2);
  
@@ -263,7 +264,7 @@
              }
  
              this.field_70165_t = nbttaglist.func_150309_d(0);
-@@ -1744,6 +1840,17 @@
+@@ -1744,6 +1841,17 @@
              {
                  this.func_70107_b(this.field_70165_t, this.field_70163_u, this.field_70161_v);
              }
@@ -281,7 +282,7 @@
          }
          catch (Throwable throwable)
          {
-@@ -1817,6 +1924,7 @@
+@@ -1817,6 +1925,7 @@
          {
              EntityItem entityitem = new EntityItem(this.field_70170_p, this.field_70165_t, this.field_70163_u + (double)p_70099_2_, this.field_70161_v, p_70099_1_);
              entityitem.func_174869_p();
@@ -289,7 +290,7 @@
              this.field_70170_p.func_72838_d(entityitem);
              return entityitem;
          }
-@@ -1908,7 +2016,12 @@
+@@ -1908,7 +2017,12 @@
  
      public double func_70042_X()
      {
@@ -302,7 +303,7 @@
      }
  
      public boolean func_184220_m(Entity p_184220_1_)
-@@ -1966,6 +2079,18 @@
+@@ -1966,6 +2080,18 @@
          }
      }
  
@@ -321,7 +322,7 @@
      protected void func_184200_o(Entity p_184200_1_)
      {
          if (p_184200_1_.func_184187_bx() != this)
-@@ -2367,6 +2492,7 @@
+@@ -2367,6 +2493,7 @@
                  this.field_71093_bK = 0;
              }
  
@@ -329,7 +330,7 @@
              this.field_70170_p.func_72900_e(this);
              this.field_70128_L = false;
              this.field_70170_p.field_72984_F.func_76320_a("reposition");
-@@ -2398,7 +2524,10 @@
+@@ -2398,7 +2525,10 @@
                  float f = this.field_70177_z;
                  this.func_70012_b(d0, this.field_70163_u, d1, 90.0F, 0.0F);
                  Teleporter teleporter = worldserver1.func_85176_s();
@@ -340,7 +341,7 @@
                  blockpos = new BlockPos(this);
              }
  
-@@ -2420,6 +2549,7 @@
+@@ -2420,6 +2550,7 @@
                      entity.func_174828_a(blockpos, entity.field_70177_z, entity.field_70125_A);
                  }
  
@@ -348,7 +349,7 @@
                  boolean flag = entity.field_98038_p;
                  entity.field_98038_p = true;
                  worldserver1.func_72838_d(entity);
-@@ -2578,6 +2708,10 @@
+@@ -2578,6 +2709,10 @@
  
      public EnumFacing func_174811_aO()
      {
@@ -359,7 +360,7 @@
          return EnumFacing.func_176731_b(MathHelper.func_76128_c((double)(this.field_70177_z * 4.0F / 360.0F) + 0.5D) & 3);
      }
  
-@@ -2886,4 +3020,105 @@
+@@ -2886,4 +3021,105 @@
      {
          return 1;
      }
@@ -429,7 +430,7 @@
 +
 +    public void recordSpawning(SpawningReason reason)
 +    {
-+        if (this.doLifeTimeTracking && !this.recordedSpawning && this.field_70170_p instanceof WorldServer)
++        if (this.doLifeTimeTracking && !this.recordedSpawning && this.field_70170_p instanceof WorldServer && EntityFilterManager.getInstance().test(this))
 +        {
 +            if (this instanceof EntityLiving && !GameUtil.countsTowardsMobcap(this))
 +            {
