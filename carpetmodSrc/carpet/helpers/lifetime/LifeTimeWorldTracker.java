@@ -25,7 +25,7 @@ import java.util.*;
 public class LifeTimeWorldTracker
 {
     private final WorldServer world;
-    private final Map<Class <? extends Entity>, BasicTrackedData> dataMap = Maps.newHashMap();
+    private final Map<Class<? extends Entity>, BasicTrackedData> dataMap = Maps.newHashMap();
     // a counter which accumulates when spawning stage occurs
     // it's used to determine life time
     private long spawnStageCounter;
@@ -35,7 +35,7 @@ public class LifeTimeWorldTracker
         this.world = world;
     }
 
-    public Map<Class <? extends Entity>, BasicTrackedData> getDataMap()
+    public Map<Class<? extends Entity>, BasicTrackedData> getDataMap()
     {
         return this.dataMap;
     }
@@ -93,7 +93,7 @@ public class LifeTimeWorldTracker
         return list;
     }
 
-    protected int print(ICommandSender source, long ticks, Class <? extends Entity> specificType, SpecificDetailMode detailMode)
+    protected int print(ICommandSender source, long ticks, Class<? extends Entity> specificType, SpecificDetailMode detailMode)
     {
         // existence check
         BasicTrackedData specificData = this.dataMap.get(specificType);
@@ -132,7 +132,7 @@ public class LifeTimeWorldTracker
         this.dataMap.entrySet().stream().
                 sorted(Collections.reverseOrder(Comparator.comparingLong(a -> a.getValue().getSpawningCount()))).
                 forEach((entry) -> {
-                    Class <? extends Entity> entityType = entry.getKey();
+                    Class<? extends Entity> entityType = entry.getKey();
                     BasicTrackedData data = entry.getValue();
                     List<ITextComponent> spawningReasons = data.getSpawningReasonsTexts(ticks, true);
                     List<ITextComponent> removalReasons = data.getRemovalReasonsTexts(ticks, true);
@@ -198,7 +198,7 @@ public class LifeTimeWorldTracker
                 });
     }
 
-    private void printSpecific(long ticks, Class <? extends Entity> specificType, BasicTrackedData specificData, SpecificDetailMode detailMode, List<ITextComponent> result)
+    private void printSpecific(long ticks, Class<? extends Entity> specificType, BasicTrackedData specificData, SpecificDetailMode detailMode, List<ITextComponent> result)
     {
         boolean showLifeTime = detailMode == null || detailMode == SpecificDetailMode.LIFE_TIME;
         boolean showSpawning = detailMode == null || detailMode == SpecificDetailMode.SPAWNING;

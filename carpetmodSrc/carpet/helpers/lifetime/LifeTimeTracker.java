@@ -120,7 +120,7 @@ public class LifeTimeTracker extends AbstractTracker
 
     private void printTrackingResultSpecificInner(ICommandSender source, String entityTypeString, String detailModeString, boolean realtime)
     {
-        Optional<Class <? extends Entity>> entityTypeOptional = LifeTimeTrackerUtil.getEntityTypeFromName(entityTypeString);
+        Optional<Class<? extends Entity>> entityTypeOptional = LifeTimeTrackerUtil.getEntityTypeFromName(entityTypeString);
         if (entityTypeOptional.isPresent())
         {
             SpecificDetailMode detailMode = null;
@@ -138,7 +138,7 @@ public class LifeTimeTracker extends AbstractTracker
             }
 
             long ticks = this.sendTrackedTime(source, realtime);
-            Class <? extends Entity> entityType = entityTypeOptional.get();
+            Class<? extends Entity> entityType = entityTypeOptional.get();
             Messenger.s(source, "Life time result for " + LifeTimeTrackerUtil.getEntityTypeDescriptor(entityType));
             SpecificDetailMode finalDetailMode = detailMode;
             int count = this.trackers.values().stream().

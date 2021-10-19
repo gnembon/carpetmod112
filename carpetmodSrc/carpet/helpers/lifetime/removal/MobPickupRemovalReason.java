@@ -10,9 +10,9 @@ import java.util.Objects;
 // for item entity and xp orb entity
 public class MobPickupRemovalReason extends RemovalReason
 {
-    private final Class <? extends Entity> pickerType;
+    private final Class<? extends Entity> pickerType;
 
-    public MobPickupRemovalReason(Class <? extends Entity> pickerType)
+    public MobPickupRemovalReason(Class<? extends Entity> pickerType)
     {
         this.pickerType = pickerType;
     }

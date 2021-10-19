@@ -10,9 +10,9 @@ import java.util.Objects;
 // for item entity and xp orb entity
 public class MobDropSpawningReason extends SpawningReason
 {
-    private final Class <? extends Entity> providerType;
+    private final Class<? extends Entity> providerType;
 
-    public MobDropSpawningReason(Class <? extends Entity> providerType)
+    public MobDropSpawningReason(Class<? extends Entity> providerType)
     {
         this.providerType = providerType;
     }

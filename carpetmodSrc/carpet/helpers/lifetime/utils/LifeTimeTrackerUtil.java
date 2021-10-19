@@ -17,7 +17,7 @@ public class LifeTimeTrackerUtil
         return entity instanceof EntityLiving || entity instanceof EntityItem || entity instanceof EntityXPOrb;
     }
 
-    public static String getEntityTypeDescriptor(Class <? extends Entity> entityType)
+    public static String getEntityTypeDescriptor(Class<? extends Entity> entityType)
     {
         if (EntityPlayer.class.isAssignableFrom(entityType))
         {
@@ -27,7 +27,7 @@ public class LifeTimeTrackerUtil
         return resourceLocation != null ? resourceLocation.getPath() : entityType.getSimpleName();
     }
 
-    public static Optional<Class <? extends Entity>> getEntityTypeFromName(String name)
+    public static Optional<Class<? extends Entity>> getEntityTypeFromName(String name)
     {
         ResourceLocation resourcelocation = new ResourceLocation(name);
         return Optional.ofNullable(EntityList.REGISTRY.getObject(resourcelocation));
