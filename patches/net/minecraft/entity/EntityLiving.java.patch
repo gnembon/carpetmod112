@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -56,6 +56,9 @@
+@@ -1,5 +1,7 @@
+ package net.minecraft.entity;
+ 
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
++import carpet.helpers.lifetime.removal.MobPickupRemovalReason;
+ import com.google.common.collect.Maps;
+ import java.util.Arrays;
+ import java.util.Map;
+@@ -56,6 +58,9 @@
  import net.minecraft.world.storage.loot.LootContext;
  import net.minecraft.world.storage.loot.LootTable;
  
@@ -10,7 +18,7 @@
  public abstract class EntityLiving extends EntityLivingBase
  {
      private static final DataParameter<Byte> field_184654_a = EntityDataManager.<Byte>func_187226_a(EntityLiving.class, DataSerializers.field_187191_a);
-@@ -192,11 +195,19 @@
+@@ -192,11 +197,19 @@
  
      public void func_70642_aH()
      {
@@ -34,7 +42,7 @@
          }
      }
  
-@@ -408,6 +419,10 @@
+@@ -408,6 +421,10 @@
  
              p_70014_1_.func_74782_a("Leash", nbttagcompound2);
          }
@@ -45,7 +53,39 @@
  
          p_70014_1_.func_74757_a("LeftHanded", this.func_184638_cS());
  
-@@ -1414,4 +1429,33 @@
+@@ -669,6 +686,9 @@
+                     this.field_184655_bs[entityequipmentslot.func_188454_b()] = 2.0F;
+             }
+ 
++            this.recordRemoval(LiteralRemovalReason.PERSISTENT);  // CM lifetime tracker
++            p_175445_1_.recordRemoval(new MobPickupRemovalReason(this.getClass()));  // CM lifetime tracker
++
+             this.field_82179_bU = true;
+             this.func_71001_a(p_175445_1_, itemstack.func_190916_E());
+             p_175445_1_.func_70106_y();
+@@ -704,11 +724,13 @@
+ 
+                 if (this.func_70692_ba() && d3 > 16384.0D)
+                 {
++                    this.recordRemoval(LiteralRemovalReason.DESPAWN_IMMEDIATELY);  // CM lifetime tracker
+                     this.func_70106_y();
+                 }
+ 
+                 if (this.field_70708_bq > 600 && this.field_70146_Z.nextInt(800) == 0 && d3 > 1024.0D && this.func_70692_ba())
+                 {
++                    this.recordRemoval(LiteralRemovalReason.DESPAWN_RANDOMLY);  // CM lifetime tracker
+                     this.func_70106_y();
+                 }
+                 else if (d3 < 1024.0D)
+@@ -1140,6 +1162,7 @@
+ 
+     public void func_110163_bv()
+     {
++        this.recordRemoval(LiteralRemovalReason.PERSISTENT);  // CM lifetime tracker
+         this.field_82179_bU = true;
+     }
+ 
+@@ -1414,4 +1437,33 @@
          IN_AIR,
          IN_WATER;
      }

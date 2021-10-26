@@ -1,0 +1,22 @@
+--- ../src-base/minecraft/net/minecraft/entity/item/EntityExpBottle.java
++++ ../src-work/minecraft/net/minecraft/entity/item/EntityExpBottle.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.item;
+ 
++import carpet.helpers.lifetime.spawning.LiteralSpawningReason;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.projectile.EntityThrowable;
+ import net.minecraft.init.PotionTypes;
+@@ -47,7 +48,11 @@
+             {
+                 int j = EntityXPOrb.func_70527_a(i);
+                 i -= j;
+-                this.field_70170_p.func_72838_d(new EntityXPOrb(this.field_70170_p, this.field_70165_t, this.field_70163_u, this.field_70161_v, j));
++                // CM lifetime tracker
++//                this.world.spawnEntity(new EntityXPOrb(this.world, this.posX, this.posY, this.posZ, j));
++                EntityXPOrb entityXPOrb = new EntityXPOrb(this.field_70170_p, this.field_70165_t, this.field_70163_u, this.field_70161_v, j);
++                entityXPOrb.recordSpawning(LiteralSpawningReason.ITEM);
++                this.field_70170_p.func_72838_d(entityXPOrb);
+             }
+ 
+             this.func_70106_y();

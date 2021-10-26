@@ -1,16 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityHopper.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityHopper.java
-@@ -2,6 +2,9 @@
+@@ -2,6 +2,10 @@
  
  import java.util.List;
  import javax.annotation.Nullable;
 +
 +import carpet.carpetclient.CarpetClientChunkLogger;
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
 +import carpet.helpers.TileEntityCraftingTable;
  import net.minecraft.block.Block;
  import net.minecraft.block.BlockChest;
  import net.minecraft.block.BlockHopper;
-@@ -28,12 +31,21 @@
+@@ -28,12 +32,21 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
  
@@ -33,7 +34,7 @@
      public static void func_189683_a(DataFixer p_189683_0_)
      {
          p_189683_0_.func_188258_a(FixTypes.BLOCK_ENTITY, new ItemStackDataLists(TileEntityHopper.class, new String[] {"Items"}));
-@@ -132,14 +144,44 @@
+@@ -132,14 +145,44 @@
              {
                  boolean flag = false;
  
@@ -83,7 +84,7 @@
                  }
  
                  if (flag)
-@@ -191,10 +233,42 @@
+@@ -191,10 +234,42 @@
  
      private boolean func_145883_k()
      {
@@ -126,7 +127,7 @@
              return false;
          }
          else
-@@ -203,6 +277,10 @@
+@@ -203,6 +278,10 @@
  
              if (this.func_174919_a(iinventory, enumfacing))
              {
@@ -137,7 +138,7 @@
                  return false;
              }
              else
-@@ -297,7 +375,10 @@
+@@ -297,7 +376,10 @@
  
      public static boolean func_145891_a(IHopper p_145891_0_)
      {
@@ -148,7 +149,7 @@
  
          if (iinventory != null)
          {
-@@ -305,6 +386,14 @@
+@@ -305,6 +387,14 @@
  
              if (func_174917_b(iinventory, enumfacing))
              {
@@ -163,7 +164,7 @@
                  return false;
              }
  
-@@ -333,6 +422,13 @@
+@@ -333,6 +423,13 @@
                      }
                  }
              }
@@ -177,7 +178,7 @@
          }
          else
          {
-@@ -352,6 +448,11 @@
+@@ -352,6 +449,11 @@
      {
          ItemStack itemstack = p_174915_1_.func_70301_a(p_174915_2_);
  
@@ -189,7 +190,15 @@
          if (!itemstack.func_190926_b() && func_174921_b(p_174915_1_, itemstack, p_174915_2_, p_174915_3_))
          {
              ItemStack itemstack1 = itemstack.func_77946_l();
-@@ -499,6 +600,14 @@
+@@ -384,6 +486,7 @@
+ 
+             if (itemstack1.func_190926_b())
+             {
++                p_145898_2_.recordRemoval(LiteralRemovalReason.HOPPER);  // CM lifetime tracker
+                 flag = true;
+                 p_145898_2_.func_70106_y();
+             }
+@@ -499,6 +602,14 @@
          return func_145893_b(this.func_145831_w(), this.func_96107_aA() + (double)enumfacing.func_82601_c(), this.func_96109_aB() + (double)enumfacing.func_96559_d(), this.func_96108_aC() + (double)enumfacing.func_82599_e());
      }
  
@@ -204,7 +213,7 @@
      public static IInventory func_145884_b(IHopper p_145884_0_)
      {
          return func_145893_b(p_145884_0_.func_145831_w(), p_145884_0_.func_96107_aA(), p_145884_0_.func_96109_aB() + 1.0D, p_145884_0_.func_96108_aC());
-@@ -546,7 +655,7 @@
+@@ -546,7 +657,7 @@
          return iinventory;
      }
  
@@ -213,7 +222,7 @@
      {
          if (p_145894_0_.func_77973_b() != p_145894_1_.func_77973_b())
          {
-@@ -611,4 +720,15 @@
+@@ -611,4 +722,15 @@
      {
          return this.field_145900_a;
      }

@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/command/server/CommandSummon.java
 +++ ../src-work/minecraft/net/minecraft/command/server/CommandSummon.java
-@@ -22,6 +22,13 @@
+@@ -3,6 +3,8 @@
+ import java.util.Collections;
+ import java.util.List;
+ import javax.annotation.Nullable;
++
++import carpet.helpers.lifetime.spawning.LiteralSpawningReason;
+ import net.minecraft.command.CommandBase;
+ import net.minecraft.command.CommandException;
+ import net.minecraft.command.ICommandSender;
+@@ -22,6 +24,13 @@
  import net.minecraft.world.World;
  import net.minecraft.world.chunk.storage.AnvilChunkLoader;
  
@@ -14,7 +23,7 @@
  public class CommandSummon extends CommandBase
  {
      public String func_71517_b()
-@@ -63,6 +70,8 @@
+@@ -63,6 +72,8 @@
              }
  
              World world = p_184881_2_.func_130014_f_();
@@ -23,7 +32,7 @@
  
              if (!world.func_175667_e(blockpos))
              {
-@@ -70,7 +79,33 @@
+@@ -70,7 +81,33 @@
              }
              else if (EntityList.field_191307_a.equals(new ResourceLocation(s)))
              {
@@ -58,7 +67,13 @@
                  func_152373_a(p_184881_2_, this, "commands.summon.success", new Object[0]);
              }
              else
-@@ -108,6 +143,8 @@
+@@ -104,10 +141,14 @@
+                 {
+                     entity.func_70012_b(d0, d1, d2, entity.field_70177_z, entity.field_70125_A);
+ 
++                    entity.recordSpawning(LiteralSpawningReason.COMMAND);  // CM lifetime tracker
++
+                     if (!flag && entity instanceof EntityLiving)
                      {
                          ((EntityLiving)entity).func_180482_a(world.func_175649_E(new BlockPos(entity)), (IEntityLivingData)null);
                      }

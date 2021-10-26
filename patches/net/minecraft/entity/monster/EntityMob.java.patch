@@ -1,6 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/entity/monster/EntityMob.java
 +++ ../src-work/minecraft/net/minecraft/entity/monster/EntityMob.java
-@@ -19,6 +19,8 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.monster;
+ 
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityCreature;
+@@ -19,6 +20,8 @@
  import net.minecraft.world.EnumSkyBlock;
  import net.minecraft.world.World;
  
@@ -9,7 +16,7 @@
  public abstract class EntityMob extends EntityCreature implements IMob
  {
      public EntityMob(World p_i1738_1_)
-@@ -32,6 +34,9 @@
+@@ -32,6 +35,9 @@
          return SoundCategory.HOSTILE;
      }
  
@@ -19,7 +26,15 @@
      public void func_70636_d()
      {
          this.func_82168_bl();
-@@ -90,10 +95,16 @@
+@@ -51,6 +57,7 @@
+ 
+         if (!this.field_70170_p.field_72995_K && this.field_70170_p.func_175659_aa() == EnumDifficulty.PEACEFUL)
+         {
++            this.recordRemoval(LiteralRemovalReason.DESPAWN_DIFFICULTY);  // CM lifetime tracker
+             this.func_70106_y();
+         }
+     }
+@@ -90,10 +97,16 @@
          float f = (float)this.func_110148_a(SharedMonsterAttributes.field_111264_e).func_111126_e();
          int i = 0;
  

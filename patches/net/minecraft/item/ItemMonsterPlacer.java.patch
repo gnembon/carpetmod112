@@ -1,0 +1,19 @@
+--- ../src-base/minecraft/net/minecraft/item/ItemMonsterPlacer.java
++++ ../src-work/minecraft/net/minecraft/item/ItemMonsterPlacer.java
+@@ -3,6 +3,8 @@
+ import java.util.List;
+ import java.util.UUID;
+ import javax.annotation.Nullable;
++
++import carpet.helpers.lifetime.spawning.LiteralSpawningReason;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockLiquid;
+ import net.minecraft.block.state.IBlockState;
+@@ -235,6 +237,7 @@
+                     entityliving.field_70759_as = entityliving.field_70177_z;
+                     entityliving.field_70761_aq = entityliving.field_70177_z;
+                     entityliving.func_180482_a(p_77840_0_.func_175649_E(new BlockPos(entityliving)), (IEntityLivingData)null);
++                    entity.recordSpawning(LiteralSpawningReason.ITEM);  // CM lifetime tracker
+                     p_77840_0_.func_72838_d(entity);
+                     entityliving.func_70642_aH();
+                 }

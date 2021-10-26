@@ -1,9 +1,10 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -1,14 +1,14 @@
+@@ -1,14 +1,15 @@
  package net.minecraft.world.chunk.storage;
  
 -import com.google.common.collect.Maps;
++import carpet.helpers.lifetime.spawning.LiteralSpawningReason;
 +import com.google.common.collect.Maps; //CM unused import
  import java.io.DataInputStream;
  import java.io.DataOutputStream;
@@ -18,7 +19,7 @@
  import javax.annotation.Nullable;
  import net.minecraft.block.Block;
  import net.minecraft.entity.Entity;
-@@ -34,12 +34,62 @@
+@@ -34,12 +35,62 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -84,7 +85,7 @@
      private final DataFixer field_193416_e;
      private boolean field_183014_e;
  
-@@ -53,7 +103,8 @@
+@@ -53,7 +104,8 @@
      public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
      {
          ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
@@ -94,7 +95,7 @@
  
          if (nbttagcompound == null)
          {
-@@ -73,7 +124,10 @@
+@@ -73,7 +125,10 @@
      public boolean func_191063_a(int p_191063_1_, int p_191063_2_)
      {
          ChunkPos chunkpos = new ChunkPos(p_191063_1_, p_191063_2_);
@@ -106,7 +107,7 @@
          return nbttagcompound != null ? true : RegionFileCache.func_191064_f(this.field_75825_d, p_191063_1_, p_191063_2_);
      }
  
-@@ -132,37 +186,63 @@
+@@ -132,37 +187,63 @@
  
      protected void func_75824_a(ChunkPos p_75824_1_, NBTTagCompound p_75824_2_)
      {
@@ -182,7 +183,7 @@
                      try
                      {
                          this.func_183013_b(chunkpos, nbttagcompound);
-@@ -171,17 +251,19 @@
+@@ -171,17 +252,19 @@
                      {
                          field_151505_a.error("Failed to save chunk", (Throwable)exception);
                      }
@@ -211,7 +212,7 @@
      }
  
      private void func_183013_b(ChunkPos p_183013_1_, NBTTagCompound p_183013_2_) throws IOException
-@@ -249,7 +331,8 @@
+@@ -249,7 +332,8 @@
          });
      }
  
@@ -221,7 +222,7 @@
      {
          p_75820_3_.func_74768_a("xPos", p_75820_1_.field_76635_g);
          p_75820_3_.func_74768_a("zPos", p_75820_1_.field_76647_h);
-@@ -295,6 +378,10 @@
+@@ -295,6 +379,10 @@
          }
  
          p_75820_3_.func_74782_a("Sections", nbttaglist);
@@ -232,7 +233,7 @@
          p_75820_3_.func_74773_a("Biomes", p_75820_1_.func_76605_m());
          p_75820_1_.func_177409_g(false);
          NBTTagList nbttaglist1 = new NBTTagList();
-@@ -383,6 +470,11 @@
+@@ -383,6 +471,11 @@
  
          chunk.func_76602_a(aextendedblockstorage);
  
@@ -244,3 +245,14 @@
          if (p_75823_2_.func_150297_b("Biomes", 7))
          {
              chunk.func_76616_a(p_75823_2_.func_74770_j("Biomes"));
+@@ -521,6 +614,10 @@
+ 
+     public static void func_186052_a(Entity p_186052_0_, World p_186052_1_)
+     {
++        // CM lifetime tracker
++        // this method is only used in MobSpawnerBaseLogic
++        p_186052_0_.recordSpawning(LiteralSpawningReason.SPAWNER);
++
+         if (p_186052_1_.func_72838_d(p_186052_0_) && p_186052_0_.func_184207_aI())
+         {
+             for (Entity entity : p_186052_0_.func_184188_bt())

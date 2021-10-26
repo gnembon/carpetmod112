@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityXPOrb.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityXPOrb.java
-@@ -14,16 +14,24 @@
+@@ -1,5 +1,7 @@
+ package net.minecraft.entity.item;
+ 
++import carpet.helpers.lifetime.removal.LiteralRemovalReason;
++import carpet.helpers.lifetime.removal.MobPickupRemovalReason;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.enchantment.EnchantmentHelper;
+ import net.minecraft.entity.Entity;
+@@ -14,16 +16,24 @@
  import net.minecraft.util.math.MathHelper;
  import net.minecraft.world.World;
  
@@ -26,7 +34,7 @@
      public EntityXPOrb(World p_i1585_1_, double p_i1585_2_, double p_i1585_4_, double p_i1585_6_, int p_i1585_8_)
      {
          super(p_i1585_1_);
-@@ -34,8 +42,26 @@
+@@ -34,8 +44,26 @@
          this.field_70181_x = (double)((float)(Math.random() * 0.2D) * 2.0F);
          this.field_70179_y = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D) * 2.0F);
          this.field_70530_e = p_i1585_8_;
@@ -53,7 +61,7 @@
      protected boolean func_70041_e_()
      {
          return false;
-@@ -113,6 +139,20 @@
+@@ -113,6 +141,20 @@
          }
  
          this.func_70091_d(MoverType.SELF, this.field_70159_w, this.field_70181_x, this.field_70179_y);
@@ -74,7 +82,23 @@
          float f = 0.98F;
  
          if (this.field_70122_E)
-@@ -186,7 +226,8 @@
+@@ -134,6 +176,7 @@
+ 
+         if (this.field_70531_b >= 6000)
+         {
++            this.recordRemoval(LiteralRemovalReason.DESPAWN_TIMEOUT);  // CM lifetime tracker
+             this.func_70106_y();
+         }
+     }
+@@ -161,6 +204,7 @@
+ 
+             if (this.field_70529_d <= 0)
+             {
++                this.setDeathDamageSource(p_70097_1_);  // CM lifetime tracker
+                 this.func_70106_y();
+             }
+ 
+@@ -186,8 +230,10 @@
      {
          if (!this.field_70170_p.field_72995_K)
          {
@@ -82,5 +106,7 @@
 +            //CM added ORed condition
 +            if (this.field_70532_c == 0 && (p_70100_1_.field_71090_bL == 0 || CarpetSettings.xpNoCooldown) )
              {
++                this.recordRemoval(new MobPickupRemovalReason(p_70100_1_.getClass()));  // CM lifetime tracker
                  p_70100_1_.field_71090_bL = 2;
                  p_70100_1_.func_71001_a(this, 1);
+                 ItemStack itemstack = EnchantmentHelper.func_92099_a(Enchantments.field_185296_A, p_70100_1_);

@@ -1,6 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLivingBase.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLivingBase.java
-@@ -75,6 +75,9 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity;
+ 
++import carpet.helpers.lifetime.spawning.MobDropSpawningReason;
+ import com.google.common.base.Objects;
+ import com.google.common.collect.Maps;
+ import java.util.Collection;
+@@ -75,6 +76,9 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -10,7 +17,7 @@
  public abstract class EntityLivingBase extends Entity
  {
      private static final Logger field_190632_a = LogManager.getLogger();
-@@ -151,6 +154,10 @@
+@@ -151,6 +155,10 @@
      private DamageSource field_189750_bF;
      private long field_189751_bG;
  
@@ -21,7 +28,7 @@
      public void func_174812_G()
      {
          this.func_70097_a(DamageSource.field_76380_i, Float.MAX_VALUE);
-@@ -168,6 +175,8 @@
+@@ -168,6 +176,8 @@
          this.field_70177_z = (float)(Math.random() * (Math.PI * 2D));
          this.field_70759_as = this.field_70177_z;
          this.field_70138_W = 0.6F;
@@ -30,7 +37,21 @@
      }
  
      protected void func_70088_a()
-@@ -401,6 +410,7 @@
+@@ -383,7 +393,12 @@
+                 {
+                     int j = EntityXPOrb.func_70527_a(i);
+                     i -= j;
+-                    this.field_70170_p.func_72838_d(new EntityXPOrb(this.field_70170_p, this.field_70165_t, this.field_70163_u, this.field_70161_v, j));
++
++                    // CM lifetime tracker
++//                    this.world.spawnEntity(new EntityXPOrb(this.world, this.posX, this.posY, this.posZ, j));
++                    EntityXPOrb entityXPOrb = new EntityXPOrb(this.field_70170_p, this.field_70165_t, this.field_70163_u, this.field_70161_v, j);
++                    entityXPOrb.recordSpawning(new MobDropSpawningReason(this.getClass()));
++                    this.field_70170_p.func_72838_d(entityXPOrb);
+                 }
+             }
+ 
+@@ -401,6 +416,7 @@
  
      protected boolean func_146066_aG()
      {
@@ -38,7 +59,7 @@
          return !this.func_70631_g_();
      }
  
-@@ -741,8 +751,16 @@
+@@ -741,8 +757,16 @@
              }
              else
              {
@@ -57,7 +78,7 @@
              }
          }
      }
-@@ -813,6 +831,11 @@
+@@ -813,6 +837,11 @@
          {
              p_70688_1_.func_188419_a().func_111187_a(this, this.func_110140_aT(), p_70688_1_.func_76458_c());
          }
@@ -69,7 +90,7 @@
      }
  
      public void func_70691_i(float p_70691_1_)
-@@ -847,14 +870,20 @@
+@@ -847,14 +876,20 @@
          }
          else
          {
@@ -91,7 +112,7 @@
                  return false;
              }
              else
-@@ -864,6 +893,7 @@
+@@ -864,6 +899,7 @@
                  if ((p_70097_1_ == DamageSource.field_82728_o || p_70097_1_ == DamageSource.field_82729_p) && !this.func_184582_a(EntityEquipmentSlot.HEAD).func_190926_b())
                  {
                      this.func_184582_a(EntityEquipmentSlot.HEAD).func_77972_a((int)(p_70097_2_ * 4.0F + this.field_70146_Z.nextFloat() * p_70097_2_ * 2.0F), this);
@@ -99,7 +120,7 @@
                      p_70097_2_ *= 0.75F;
                  }
  
-@@ -872,6 +902,7 @@
+@@ -872,6 +908,7 @@
                  if (p_70097_2_ > 0.0F && this.func_184583_d(p_70097_1_))
                  {
                      this.func_184590_k(p_70097_2_);
@@ -107,7 +128,7 @@
                      p_70097_2_ = 0.0F;
  
                      if (!p_70097_1_.func_76352_a())
-@@ -894,9 +925,10 @@
+@@ -894,9 +931,10 @@
                  {
                      if (p_70097_2_ <= this.field_110153_bc)
                      {
@@ -119,7 +140,7 @@
                      this.func_70665_d(p_70097_1_, p_70097_2_ - this.field_110153_bc);
                      this.field_110153_bc = p_70097_2_;
                      flag1 = false;
-@@ -1009,6 +1041,11 @@
+@@ -1009,6 +1047,11 @@
                  {
                      this.func_184581_c(p_70097_1_);
                  }
@@ -131,7 +152,16 @@
  
                  boolean flag2 = !flag || p_70097_2_ > 0.0F;
  
-@@ -1345,6 +1382,7 @@
+@@ -1145,6 +1188,8 @@
+     {
+         if (!this.field_70729_aU)
+         {
++            this.setDeathDamageSource(p_70645_1_);  // CM lifetime tracker
++
+             Entity entity = p_70645_1_.func_76346_g();
+             EntityLivingBase entitylivingbase = this.func_94060_bK();
+ 
+@@ -1345,6 +1390,7 @@
                  int i = (this.func_70660_b(MobEffects.field_76429_m).func_76458_c() + 1) * 5;
                  int j = 25 - i;
                  float f = p_70672_2_ * (float)j;
@@ -139,7 +169,7 @@
                  p_70672_2_ = f / 25.0F;
              }
  
-@@ -1358,7 +1396,10 @@
+@@ -1358,7 +1404,10 @@
  
                  if (k > 0)
                  {
@@ -150,7 +180,7 @@
                  }
  
                  return p_70672_2_;
-@@ -1370,15 +1411,21 @@
+@@ -1370,15 +1419,21 @@
      {
          if (!this.func_180431_b(p_70665_1_))
          {
@@ -172,7 +202,7 @@
                  this.func_70606_j(f1 - p_70665_2_);
                  this.func_110142_aN().func_94547_a(p_70665_1_, f1, p_70665_2_);
                  this.func_110149_m(this.func_110139_bj() - p_70665_2_);
-@@ -1828,7 +1875,10 @@
+@@ -1828,7 +1883,10 @@
                              }
                          }
  
@@ -183,7 +213,7 @@
  
                          if (this.field_70123_F && this.func_70617_f_())
                          {
-@@ -2306,6 +2356,9 @@
+@@ -2306,6 +2364,9 @@
  
      protected void func_85033_bc()
      {
@@ -193,7 +223,7 @@
          List<Entity> list = this.field_70170_p.func_175674_a(this, this.func_174813_aQ(), EntitySelectors.func_188442_a(this));
  
          if (!list.isEmpty())
-@@ -2330,8 +2383,13 @@
+@@ -2330,8 +2391,13 @@
                  }
              }
  
@@ -208,7 +238,7 @@
                  Entity entity = list.get(l);
                  this.func_82167_n(entity);
              }
-@@ -2366,6 +2424,11 @@
+@@ -2366,6 +2432,11 @@
      {
          this.field_70703_bu = p_70637_1_;
      }
