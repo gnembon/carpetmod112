@@ -12,6 +12,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           java-version: 8
+          distribution: temurin
       - name: Cache Gradle Packages
         uses: actions/cache@v2
         with:
