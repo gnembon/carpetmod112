@@ -54,8 +54,8 @@ jobs:
         env:
           VERSION: ${{ steps.vars.outputs.tag }}
         run: |
-          yes | ./gradlew setupCarpetmod
-          yes | ./gradlew createRelease
+          yes | ./gradlew --info --stacktrace setupCarpetmod
+          yes | ./gradlew --info --stacktrace createRelease
           mv build/distributions/Carpetmod_dev.zip build/distributions/Carpet_$VERSION.zip
 
       - name: Upload Release Asset

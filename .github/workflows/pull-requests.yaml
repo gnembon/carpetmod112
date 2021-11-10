@@ -23,8 +23,8 @@ jobs:
         run: chmod +x gradlew
       - name: Build gradle
         run: |
-          yes | ./gradlew setupCarpetmod
-          yes | ./gradlew createRelease
+          yes | ./gradlew --info --stacktrace setupCarpetmod
+          yes | ./gradlew --info --stacktrace createRelease
 
       - uses: actions/upload-artifact@v2
         with:
