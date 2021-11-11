@@ -25,7 +25,7 @@ jobs:
     outputs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
 
-    build:
+  build:
     runs-on: ubuntu-latest
 
     steps:
