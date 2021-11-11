@@ -22,9 +22,11 @@ jobs:
       - name: Grant execute permissions to gradlew
         run: chmod +x gradlew
       - name: Build gradle
+        env:
+          SKIP_PROMPT: true
         run: |
-          yes | ./gradlew --info --stacktrace setupCarpetmod
-          yes | ./gradlew --info --stacktrace createRelease
+          ./gradlew --info --stacktrace setupCarpetmod
+          ./gradlew --info --stacktrace createRelease
 
       - uses: actions/upload-artifact@v2
         with:

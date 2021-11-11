@@ -143,6 +143,8 @@ gradle.taskGraph.whenReady
 
 void warnOverwrite()
 {
+	if (System.getenv("SKIP_PROMPT") != null)
+		return 
 	ant.input(message: 'WARNING: this will overwrite your working changes. Continue? (y/n)', addproperty: 'answer', defaultValue: 'y')
 	def answer = ant.properties.answer.toLowerCase()
 	if (answer != 'y' && answer != 'yes')
