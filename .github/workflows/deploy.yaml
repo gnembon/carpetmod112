@@ -26,8 +26,9 @@ jobs:
       release_url: ${{ steps.create_release.outputs.upload_url }}
 
   build:
+    name: Build Carpetmod
     runs-on: ubuntu-latest
-
+    needs: release
     steps:
       - uses: actions/checkout@v2
 
