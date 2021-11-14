@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/World.java
 +++ ../src-work/minecraft/net/minecraft/world/World.java
-@@ -4,13 +4,11 @@
+@@ -4,14 +4,13 @@
  import com.google.common.base.MoreObjects;
  import com.google.common.base.Predicate;
  import com.google.common.collect.Lists;
@@ -17,9 +17,11 @@
 +import java.util.concurrent.atomic.AtomicLong;
 +
  import javax.annotation.Nullable;
++
  import net.minecraft.advancements.AdvancementManager;
  import net.minecraft.advancements.FunctionManager;
-@@ -60,10 +58,21 @@
+ import net.minecraft.block.Block;
+@@ -60,10 +59,21 @@
  import net.minecraft.world.storage.WorldSavedData;
  import net.minecraft.world.storage.loot.LootTableManager;
  
@@ -42,7 +44,7 @@
      public final List<Entity> field_72996_f = Lists.<Entity>newArrayList();
      protected final List<Entity> field_72997_g = Lists.<Entity>newArrayList();
      public final List<TileEntity> field_147482_g = Lists.<TileEntity>newArrayList();
-@@ -75,7 +84,7 @@
+@@ -75,7 +85,7 @@
      protected final IntHashMap<Entity> field_175729_l = new IntHashMap<Entity>();
      private final long field_73001_c = 16777215L;
      private int field_73008_k;
@@ -51,7 +53,7 @@
      protected final int field_73006_m = 1013904223;
      protected float field_73003_n;
      protected float field_73004_o;
-@@ -105,6 +114,13 @@
+@@ -105,6 +115,13 @@
      private final WorldBorder field_175728_M;
      int[] field_72994_J;
  
@@ -65,7 +67,7 @@
      protected World(ISaveHandler p_i45749_1_, WorldInfo p_i45749_2_, WorldProvider p_i45749_3_, Profiler p_i45749_4_, boolean p_i45749_5_)
      {
          this.field_73021_x = Lists.newArrayList(this.field_184152_t);
-@@ -119,6 +135,7 @@
+@@ -119,6 +136,7 @@
          this.field_73011_w = p_i45749_3_;
          this.field_72995_K = p_i45749_5_;
          this.field_175728_M = p_i45749_3_.func_177501_r();
@@ -73,7 +75,7 @@
      }
  
      public World func_175643_b()
-@@ -269,7 +286,7 @@
+@@ -269,7 +287,7 @@
          }
      }
  
@@ -82,7 +84,7 @@
  
      public Chunk func_175726_f(BlockPos p_175726_1_)
      {
-@@ -286,6 +303,16 @@
+@@ -286,6 +304,16 @@
          return this.func_175680_a(p_190526_1_, p_190526_2_, false) ? true : this.field_73020_y.func_191062_e(p_190526_1_, p_190526_2_);
      }
  
@@ -99,7 +101,7 @@
      public boolean func_180501_a(BlockPos p_180501_1_, IBlockState p_180501_2_, int p_180501_3_)
      {
          if (this.func_189509_E(p_180501_1_))
-@@ -300,7 +327,8 @@
+@@ -300,7 +328,8 @@
          {
              Chunk chunk = this.func_175726_f(p_180501_1_);
              Block block = p_180501_2_.func_177230_c();
@@ -109,7 +111,7 @@
  
              if (iblockstate == null)
              {
-@@ -329,7 +357,8 @@
+@@ -329,7 +358,8 @@
                          this.func_175666_e(p_180501_1_, block);
                      }
                  }
@@ -119,7 +121,7 @@
                  {
                      this.func_190522_c(p_180501_1_, block);
                  }
-@@ -430,8 +459,36 @@
+@@ -430,8 +460,36 @@
          this.func_190529_b(p_190522_1_.func_177968_d(), p_190522_2_, p_190522_1_);
      }
  
@@ -156,7 +158,7 @@
          this.func_190524_a(p_175685_1_.func_177976_e(), p_175685_2_, p_175685_1_);
          this.func_190524_a(p_175685_1_.func_177974_f(), p_175685_2_, p_175685_1_);
          this.func_190524_a(p_175685_1_.func_177977_b(), p_175685_2_, p_175685_1_);
-@@ -447,6 +504,44 @@
+@@ -447,6 +505,44 @@
  
      public void func_175695_a(BlockPos p_175695_1_, Block p_175695_2_, EnumFacing p_175695_3_)
      {
@@ -201,7 +203,7 @@
          if (p_175695_3_ != EnumFacing.WEST)
          {
              this.func_190524_a(p_175695_1_.func_177976_e(), p_175695_2_, p_175695_1_);
-@@ -480,6 +575,11 @@
+@@ -480,6 +576,11 @@
  
      public void func_190524_a(BlockPos p_190524_1_, final Block p_190524_2_, BlockPos p_190524_3_)
      {
@@ -213,7 +215,7 @@
          if (!this.field_72995_K)
          {
              IBlockState iblockstate = this.func_180495_p(p_190524_1_);
-@@ -509,11 +609,21 @@
+@@ -509,11 +610,21 @@
                  CrashReportCategory.func_175750_a(crashreportcategory, p_190524_1_, iblockstate);
                  throw new ReportedException(crashreport);
              }
@@ -235,7 +237,7 @@
          if (!this.field_72995_K)
          {
              IBlockState iblockstate = this.func_180495_p(p_190529_1_);
-@@ -546,6 +656,11 @@
+@@ -546,6 +657,11 @@
                      throw new ReportedException(crashreport);
                  }
              }
@@ -247,7 +249,7 @@
          }
      }
  
-@@ -1076,6 +1191,18 @@
+@@ -1076,6 +1192,18 @@
  
      public void func_72900_e(Entity p_72900_1_)
      {
@@ -266,7 +268,7 @@
          if (p_72900_1_.func_184207_aI())
          {
              p_72900_1_.func_184226_ay();
-@@ -1098,6 +1225,18 @@
+@@ -1098,6 +1226,18 @@
  
      public void func_72973_f(Entity p_72973_1_)
      {
@@ -285,7 +287,7 @@
          p_72973_1_.func_184174_b(false);
          p_72973_1_.func_70106_y();
  
-@@ -1126,6 +1265,9 @@
+@@ -1126,6 +1266,9 @@
  
      private boolean func_191504_a(@Nullable Entity p_191504_1_, AxisAlignedBB p_191504_2_, boolean p_191504_3_, @Nullable List<AxisAlignedBB> p_191504_4_)
      {
@@ -295,7 +297,7 @@
          int i = MathHelper.func_76128_c(p_191504_2_.field_72340_a) - 1;
          int j = MathHelper.func_76143_f(p_191504_2_.field_72336_d) + 1;
          int k = MathHelper.func_76128_c(p_191504_2_.field_72338_b) - 1;
-@@ -1339,6 +1481,7 @@
+@@ -1339,6 +1482,7 @@
          this.field_72984_F.func_76320_a("entities");
          this.field_72984_F.func_76320_a("global");
  
@@ -303,7 +305,7 @@
          for (int i = 0; i < this.field_73007_j.size(); ++i)
          {
              Entity entity = this.field_73007_j.get(i);
-@@ -1370,6 +1513,9 @@
+@@ -1370,6 +1514,9 @@
                  this.field_73007_j.remove(i--);
              }
          }
@@ -313,7 +315,7 @@
  
          this.field_72984_F.func_76318_c("remove");
          this.field_72996_f.removeAll(this.field_72997_g);
-@@ -1393,11 +1539,13 @@
+@@ -1393,11 +1540,13 @@
  
          this.field_72997_g.clear();
          this.func_184147_l();
@@ -327,7 +329,7 @@
              Entity entity3 = entity2.func_184187_bx();
  
              if (entity3 != null)
-@@ -1416,7 +1564,10 @@
+@@ -1416,7 +1565,10 @@
              {
                  try
                  {
@@ -339,7 +341,7 @@
                  }
                  catch (Throwable throwable1)
                  {
-@@ -1437,31 +1588,50 @@
+@@ -1437,31 +1589,50 @@
  
                  if (entity2.field_70175_ag && this.func_175680_a(l1, i2, true))
                  {
@@ -392,7 +394,7 @@
  
              if (!tileentity.func_145837_r() && tileentity.func_145830_o())
              {
-@@ -1471,12 +1641,14 @@
+@@ -1471,12 +1642,14 @@
                  {
                      try
                      {
@@ -413,7 +415,7 @@
                      }
                      catch (Throwable throwable)
                      {
-@@ -1490,16 +1662,26 @@
+@@ -1490,16 +1663,26 @@
  
              if (tileentity.func_145837_r())
              {
@@ -440,7 +442,7 @@
          this.field_147481_N = false;
          this.field_72984_F.func_76318_c("pendingBlockEntities");
  
-@@ -1528,6 +1710,8 @@
+@@ -1528,6 +1711,8 @@
  
              this.field_147484_a.clear();
          }
@@ -449,7 +451,7 @@
  
          this.field_72984_F.func_76319_b();
          this.field_72984_F.func_76319_b();
-@@ -1602,11 +1786,15 @@
+@@ -1602,11 +1787,15 @@
  
              if (p_72866_1_.func_184218_aH())
              {
@@ -467,7 +469,7 @@
              }
          }
  
-@@ -1648,7 +1836,8 @@
+@@ -1648,7 +1837,8 @@
                  this.func_72964_e(p_72866_1_.field_70176_ah, p_72866_1_.field_70164_aj).func_76608_a(p_72866_1_, p_72866_1_.field_70162_ai);
              }
  
@@ -477,7 +479,7 @@
              {
                  p_72866_1_.field_70175_ag = false;
              }
-@@ -1670,7 +1859,11 @@
+@@ -1670,7 +1860,11 @@
                  }
                  else
                  {
@@ -490,7 +492,7 @@
                  }
              }
          }
-@@ -1689,7 +1882,7 @@
+@@ -1689,7 +1883,7 @@
          {
              Entity entity4 = list.get(j2);
  
@@ -499,7 +501,7 @@
              {
                  return false;
              }
-@@ -2153,6 +2346,16 @@
+@@ -2153,6 +2347,16 @@
                          {
                              this.field_72986_A.func_76090_f(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -516,7 +518,7 @@
                      }
                      else
                      {
-@@ -2177,6 +2380,16 @@
+@@ -2177,6 +2381,16 @@
                          {
                              this.field_72986_A.func_76080_g(this.field_73012_v.nextInt(168000) + 12000);
                          }
@@ -533,7 +535,7 @@
                      }
                      else
                      {
-@@ -2387,6 +2600,11 @@
+@@ -2387,6 +2601,11 @@
  
      public boolean func_180500_c(EnumSkyBlock p_180500_1_, BlockPos p_180500_2_)
      {
@@ -545,7 +547,19 @@
          if (!this.func_175648_a(p_180500_2_, 17, false))
          {
              return false;
-@@ -2699,7 +2917,8 @@
+@@ -2547,6 +2766,11 @@
+ 
+     public List<Entity> func_175674_a(@Nullable Entity p_175674_1_, AxisAlignedBB p_175674_2_, @Nullable Predicate <? super Entity > p_175674_3_)
+     {
++        //CM start
++        if(CarpetSettings.fastMovingEntityOptimization && Math.abs(p_175674_2_.field_72336_d-p_175674_2_.field_72340_a)+Math.abs(p_175674_2_.field_72334_f-p_175674_2_.field_72339_c)>1000){ //only use the optimized code if the BB is sufficiently large
++            return this.getEntitiesInAABBexcludingOptimized(p_175674_1_,p_175674_2_,p_175674_3_);
++        }
++        //CM end
+         List<Entity> list = Lists.<Entity>newArrayList();
+         int j2 = MathHelper.func_76128_c((p_175674_2_.field_72340_a - 2.0D) / 16.0D);
+         int k2 = MathHelper.func_76128_c((p_175674_2_.field_72336_d + 2.0D) / 16.0D);
+@@ -2699,7 +2923,8 @@
          IBlockState iblockstate1 = this.func_180495_p(p_190527_2_);
          AxisAlignedBB axisalignedbb = p_190527_3_ ? null : p_190527_1_.func_176223_P().func_185890_d(this, p_190527_2_);
  
@@ -555,7 +569,7 @@
          {
              return false;
          }
-@@ -3267,30 +3486,41 @@
+@@ -3267,30 +3492,41 @@
  
      public void func_175666_e(BlockPos p_175666_1_, Block p_175666_2_)
      {
@@ -612,7 +626,7 @@
      }
  
      public DifficultyInstance func_175649_E(BlockPos p_175649_1_)
-@@ -3361,4 +3591,128 @@
+@@ -3361,4 +3597,154 @@
      {
          return null;
      }
@@ -739,5 +753,31 @@
 +        }
 +
 +        return true;
++    }
++
++    public List<Entity> getEntitiesInAABBexcludingOptimized(@Nullable Entity entityIn, AxisAlignedBB boundingBox, @Nullable Predicate <? super Entity > predicate)
++    {
++        double ratio = entityIn.field_70179_y/entityIn.field_70159_w;
++        List<Entity> list = Lists.<Entity>newArrayList();
++        int minX = MathHelper.func_76128_c(((entityIn.field_70159_w < 0 ? entityIn.field_70165_t+entityIn.field_70159_w : entityIn.field_70165_t) - 2.0D) / 16.0D);
++        int maxX = MathHelper.func_76128_c(((entityIn.field_70159_w > 0 ? entityIn.field_70165_t+entityIn.field_70159_w : entityIn.field_70165_t) + 2.0D) / 16.0D);
++        int minZ = MathHelper.func_76128_c(((entityIn.field_70179_y < 0 ? entityIn.field_70161_v+entityIn.field_70179_y : entityIn.field_70161_v) - 2.0D) / 16.0D);
++        int maxZ = MathHelper.func_76128_c(((entityIn.field_70179_y > 0 ? entityIn.field_70161_v+entityIn.field_70179_y : entityIn.field_70161_v) + 2.0D) / 16.0D);
++        System.out.println(minX + ", " + maxX);
++        for (int x = minX; x <= maxX; ++x)
++        {
++            int z1 = MathHelper.func_76128_c(x*ratio)+minZ;
++            int z2 = MathHelper.func_76143_f(x*ratio)+minZ;
++            if (this.func_175680_a(x, z1, true))
++            {
++                this.func_72964_e(x, z1).func_177414_a(entityIn, boundingBox, list, predicate);
++            }
++            if (this.func_175680_a(x, z2, true) && z2 != z1)
++            {
++                this.func_72964_e(x, z2).func_177414_a(entityIn, boundingBox, list, predicate);
++            }
++        }
++
++        return list;
 +    }
  }
