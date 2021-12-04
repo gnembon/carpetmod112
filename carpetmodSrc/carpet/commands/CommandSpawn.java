@@ -151,7 +151,7 @@ public class CommandSpawn extends CommandCarpetBase
                 player = (EntityPlayer)sender;
             }
             TickSpeed.tickrate_advance(player, warp, null, sender);
-            notifyCommandListener(sender, this, String.format("Started spawn test for %d ticks", warp));
+            notifyCommandListener(sender, this, String.format("Started spawn test2 for %d ticks", warp));
             return;
             
         }

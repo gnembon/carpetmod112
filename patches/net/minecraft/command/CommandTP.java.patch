@@ -1,6 +1,15 @@
 --- ../src-base/minecraft/net/minecraft/command/CommandTP.java
 +++ ../src-work/minecraft/net/minecraft/command/CommandTP.java
-@@ -13,6 +13,10 @@
+@@ -5,6 +5,8 @@
+ import java.util.List;
+ import java.util.Set;
+ import javax.annotation.Nullable;
++
++import carpet.helpers.TeleportHelper;
+ import net.minecraft.entity.Entity;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.player.EntityPlayerMP;
+@@ -13,6 +15,10 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.util.math.MathHelper;
  
@@ -11,7 +20,7 @@
  public class CommandTP extends CommandBase
  {
      public String func_71517_b()
-@@ -38,6 +42,17 @@
+@@ -38,6 +44,17 @@
          }
          else
          {
@@ -29,3 +38,18 @@
              int i = 0;
              Entity entity;
  
+@@ -73,7 +90,13 @@
+             else
+             {
+                 Entity entity1 = func_184885_b(p_184881_1_, p_184881_2_, p_184881_3_[p_184881_3_.length - 1]);
+-
++                // CM
++                if(CarpetSettings.tpAcrossDimensions && (entity1.field_70170_p != entity.field_70170_p)){
++                    if(entity1 instanceof EntityPlayerMP && entity instanceof EntityPlayerMP){
++                        TeleportHelper.changeDimensions((EntityPlayerMP) entity, (EntityPlayerMP) entity1);
++                    }
++                }
++                // CM END
+                 if (entity1.field_70170_p != entity.field_70170_p)
+                 {
+                     throw new CommandException("commands.tp.notSameDimension", new Object[0]);

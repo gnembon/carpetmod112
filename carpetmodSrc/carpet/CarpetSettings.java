@@ -25,7 +25,6 @@ import carpet.patches.BlockWool;
 import carpet.utils.TickingArea;
 import carpet.worldedit.WorldEditBridge;
 import net.minecraft.block.BlockFalling;
-import net.minecraft.command.NumberInvalidException;
 import net.minecraft.init.Blocks;
 import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -45,7 +44,7 @@ public class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v21_05_29";
+    public static final String carpetVersion = "v21_11_10";
     public static final String minecraftVersion = "1.12.2";
     public static final String mcpMappings = "39-1.12";
 
@@ -230,6 +229,9 @@ public class CarpetSettings
 
     @Rule(desc = "Enables controlable TNT jump angle RNG for debuging.", category = TNT)
     public static boolean TNTAdjustableRandomAngle;
+
+    @Rule(desc = "/tp will teleport the players across dimensions", category = CREATIVE)
+    public static boolean tpAcrossDimensions = true;
 
     @Rule(desc = "Allows to place blocks in different orientations. Requires Carpet Client", category = CREATIVE, extra = {
             "Also prevents rotations upon placement of dispensers and furnaces",
@@ -479,6 +481,9 @@ public class CarpetSettings
     @Rule(desc = "When true, the game acts as if a permaloader is running", category = CREATIVE)
     public static boolean simulatePermaloader = false;
 
+    @Rule(desc = "Prevent the rehash chunk from ever leaving the save queue", category = CREATIVE)
+    public static boolean preventRehashChunkWrite = false;
+
     // ===== FIXES ===== //
     /*
      * Rules in this category should end with the "Fix" suffix
@@ -589,7 +594,7 @@ public class CarpetSettings
 
     @Rule(desc = "Redstone dust algorithm", category = {EXPERIMENTAL, OPTIMIZATIONS}, extra = {
             "Fast redstone dust by Theosib",
-            "Random redstone dust to test if your contraption is locational"
+            "Random redstone dust to test2 if your contraption is locational"
     })
     public static RedstoneDustAlgorithm redstoneDustAlgorithm = RedstoneDustAlgorithm.vanilla;
     public static enum RedstoneDustAlgorithm {
@@ -978,6 +983,12 @@ public class CarpetSettings
 
     @Rule(desc = "Disables placement of the bedrock item", category = FEATURE)
     public static boolean disableBedrockPlacement = false;
+
+    @Rule(desc = "Changes default tnt fuse.", category = CREATIVE, validator = "validatePositive", options = {"70", "80", "100"})
+    public static int tntFuseLength = 80;
+
+    @Rule(desc = "Removes tnt applying velocity to other entities.", category = CREATIVE)
+    public static boolean removeTNTVelocity = false;
 
     // ===== API ===== //
 

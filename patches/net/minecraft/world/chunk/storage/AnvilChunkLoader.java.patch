@@ -1,30 +1,30 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/storage/AnvilChunkLoader.java
-@@ -1,14 +1,14 @@
+@@ -1,14 +1,13 @@
  package net.minecraft.world.chunk.storage;
  
 -import com.google.common.collect.Maps;
-+import com.google.common.collect.Maps; //CM unused import
++import carpet.utils.Data;
++
  import java.io.DataInputStream;
  import java.io.DataOutputStream;
  import java.io.File;
  import java.io.IOException;
 -import java.util.Collections;
-+import java.util.Collections; //CM unused import
  import java.util.List;
  import java.util.Map;
 -import java.util.Set;
-+import java.util.Set; //CM unused import
  import javax.annotation.Nullable;
  import net.minecraft.block.Block;
  import net.minecraft.entity.Entity;
-@@ -34,12 +34,62 @@
+@@ -34,12 +33,67 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
 +import java.util.HashMap;
 +import java.util.Iterator;
 +import carpet.CarpetSettings;
++import test.AccurateTimer;
 +
  public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
  {
@@ -51,6 +51,10 @@
 +        Iterator<Map.Entry<ChunkPos, NBTTagCompound>> iter =
 +                field_75828_a.entrySet().iterator();
 +        Map.Entry<ChunkPos, NBTTagCompound> entry = iter.next();
++        if (CarpetSettings.preventRehashChunkWrite && entry.getKey().field_77276_a == -26 && entry.getKey().field_77275_b == 9) {
++            if (!iter.hasNext()) return null;
++            entry = iter.next();
++        }
 +        iter.remove();
 +        chunksInWrite.put(entry.getKey(), entry.getValue());
 +        return entry;
@@ -84,17 +88,41 @@
      private final DataFixer field_193416_e;
      private boolean field_183014_e;
  
-@@ -53,7 +103,8 @@
+@@ -53,27 +107,41 @@
      public Chunk func_75815_a(World p_75815_1_, int p_75815_2_, int p_75815_3_) throws IOException
      {
          ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
 -        NBTTagCompound nbttagcompound = this.field_75828_a.get(chunkpos);
 +        //NBTTagCompound nbttagcompound = this.chunksToRemove.get(chunkpos);
++        if(p_75815_2_==Data.rehashChunkX&&p_75815_3_==Data.rehashChunkZ){
++            Data.reloadChunkFromQueueStartTime = AccurateTimer.rdtsc();
++        }
 +        NBTTagCompound nbttagcompound = reloadChunkFromRemoveQueues(chunkpos);  // new for MC-119971
  
          if (nbttagcompound == null)
          {
-@@ -73,7 +124,10 @@
++            if(p_75815_2_==Data.rehashChunkX&&p_75815_3_==Data.rehashChunkZ){
++                Data.dataInputStreamStart = AccurateTimer.rdtsc();
++            }
+             DataInputStream datainputstream = RegionFileCache.func_76549_c(this.field_75825_d, p_75815_2_, p_75815_3_);
+ 
+             if (datainputstream == null)
+             {
+                 return null;
+             }
+-
++            if(p_75815_2_==Data.rehashChunkX&&p_75815_3_==Data.rehashChunkZ){
++                Data.dataFixerStart = AccurateTimer.rdtsc();
++            }
+             nbttagcompound = this.field_193416_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
+         }
+-
++        if(p_75815_2_==Data.rehashChunkX&&p_75815_3_==Data.rehashChunkZ){
++            Data.checkedReadStart = AccurateTimer.rdtsc();
++        }
+         return this.func_75822_a(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
+     }
+ 
      public boolean func_191063_a(int p_191063_1_, int p_191063_2_)
      {
          ChunkPos chunkpos = new ChunkPos(p_191063_1_, p_191063_2_);
@@ -106,7 +134,7 @@
          return nbttagcompound != null ? true : RegionFileCache.func_191064_f(this.field_75825_d, p_191063_1_, p_191063_2_);
      }
  
-@@ -132,37 +186,63 @@
+@@ -132,37 +200,63 @@
  
      protected void func_75824_a(ChunkPos p_75824_1_, NBTTagCompound p_75824_2_)
      {
@@ -182,7 +210,7 @@
                      try
                      {
                          this.func_183013_b(chunkpos, nbttagcompound);
-@@ -171,17 +251,19 @@
+@@ -171,17 +265,19 @@
                      {
                          field_151505_a.error("Failed to save chunk", (Throwable)exception);
                      }
@@ -211,7 +239,7 @@
      }
  
      private void func_183013_b(ChunkPos p_183013_1_, NBTTagCompound p_183013_2_) throws IOException
-@@ -249,7 +331,8 @@
+@@ -249,7 +345,8 @@
          });
      }
  
@@ -221,7 +249,7 @@
      {
          p_75820_3_.func_74768_a("xPos", p_75820_1_.field_76635_g);
          p_75820_3_.func_74768_a("zPos", p_75820_1_.field_76647_h);
-@@ -295,6 +378,10 @@
+@@ -295,6 +392,10 @@
          }
  
          p_75820_3_.func_74782_a("Sections", nbttaglist);
@@ -232,7 +260,7 @@
          p_75820_3_.func_74773_a("Biomes", p_75820_1_.func_76605_m());
          p_75820_1_.func_177409_g(false);
          NBTTagList nbttaglist1 = new NBTTagList();
-@@ -383,6 +470,11 @@
+@@ -383,6 +484,11 @@
  
          chunk.func_76602_a(aextendedblockstorage);
  

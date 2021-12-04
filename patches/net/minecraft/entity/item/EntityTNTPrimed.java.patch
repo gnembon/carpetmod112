@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/entity/item/EntityTNTPrimed.java
 +++ ../src-work/minecraft/net/minecraft/entity/item/EntityTNTPrimed.java
-@@ -11,17 +11,36 @@
+@@ -11,17 +11,43 @@
  import net.minecraft.util.EnumParticleTypes;
  import net.minecraft.world.World;
  
@@ -31,13 +31,21 @@
      public EntityTNTPrimed(World p_i1729_1_)
      {
          super(p_i1729_1_);
-         this.field_70516_a = 80;
+-        this.field_70516_a = 80;
++
++        if (LoggerRegistry.__tnt && logHelper == null)
++        {
++            logHelper = new TNTLogHelper();
++            logHelper.onPrimed(this.field_70165_t,this.field_70163_u,this.field_70161_v,0);
++        }
++
++        this.field_70516_a = CarpetSettings.tntFuseLength; //CM Vanilla default is 80gt
 +        mergedTNT = 1;
 +        mergeBool = false;
          this.field_70156_m = true;
          this.field_70178_ae = true;
          this.func_70105_a(0.98F, 0.98F);
-@@ -31,10 +50,26 @@
+@@ -31,11 +57,27 @@
      {
          this(p_i1730_1_);
          this.func_70107_b(p_i1730_2_, p_i1730_4_, p_i1730_6_);
@@ -45,6 +53,7 @@
 -        this.field_70159_w = (double)(-((float)Math.sin((double)f)) * 0.02F);
 -        this.field_70181_x = 0.20000000298023224D;
 -        this.field_70179_y = (double)(-((float)Math.cos((double)f)) * 0.02F);
+-        this.func_184534_a(80);
 +        float f = 0F;
 +        if(!CarpetSettings.tntPrimerMomentumRemoved){
 +            if(!CarpetSettings.TNTAdjustableRandomAngle){
@@ -65,10 +74,11 @@
 +            logHelper.onPrimed(p_i1730_2_, p_i1730_4_, p_i1730_6_, f);
 +        }
 +        // ----- Carpet End ----- //
-         this.func_184534_a(80);
++        this.func_184534_a(CarpetSettings.tntFuseLength); //CM Vanilla default is 80gt
          this.field_70169_q = p_i1730_2_;
          this.field_70167_r = p_i1730_4_;
-@@ -68,18 +103,73 @@
+         this.field_70166_s = p_i1730_6_;
+@@ -68,18 +110,73 @@
              this.field_70181_x -= 0.03999999910593033D;
          }
  
@@ -143,7 +153,7 @@
          --this.field_70516_a;
  
          if (this.field_70516_a <= 0)
-@@ -100,8 +190,14 @@
+@@ -100,8 +197,14 @@
  
      private void func_70515_d()
      {
@@ -159,7 +169,7 @@
      }
  
      protected void func_70014_b(NBTTagCompound p_70014_1_)
-@@ -148,4 +244,12 @@
+@@ -148,4 +251,12 @@
      {
          return this.field_70516_a;
      }

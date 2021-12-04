@@ -1,0 +1,20 @@
+--- ../src-base/minecraft/net/minecraft/command/AdvancementCommand.java
++++ ../src-work/minecraft/net/minecraft/command/AdvancementCommand.java
+@@ -193,7 +193,7 @@
+         }
+         else
+         {
+-            func_152373_a(p_192554_1_, this, "commands.advancement.test.criterion.success", new Object[] {p_192554_2_.func_70005_c_(), p_192554_3_.func_192067_g(), p_192554_4_});
++            func_152373_a(p_192554_1_, this, "commands.advancement.test2.criterion.success", new Object[] {p_192554_2_.func_70005_c_(), p_192554_3_.func_192067_g(), p_192554_4_});
+         }
+     }
+ 
+@@ -207,7 +207,7 @@
+         }
+         else
+         {
+-            func_152373_a(p_192552_1_, this, "commands.advancement.test.advancement.success", new Object[] {p_192552_2_.func_70005_c_(), p_192552_3_.func_192067_g()});
++            func_152373_a(p_192552_1_, this, "commands.advancement.test2.advancement.success", new Object[] {p_192552_2_.func_70005_c_(), p_192552_3_.func_192067_g()});
+         }
+     }
+ 

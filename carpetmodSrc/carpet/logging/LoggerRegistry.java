@@ -47,10 +47,12 @@ public class LoggerRegistry
     public static boolean __instantComparators;
     public static boolean __items;
     public static boolean __rng;
+    public static boolean __explosions;
     public static boolean __recipes;
     public static boolean __damageDebug;
     public static boolean __invisDebug;
     public static boolean __carefulBreak;
+    public static boolean __normalCameraVision;
 
     public static void initLoggers(MinecraftServer server)
     {
@@ -65,6 +67,7 @@ public class LoggerRegistry
         registerLogger("instantComparators", new Logger(server, "instantComparators", "all", new String[]{"all", "tileTick", "buggy"}, LogHandler.CHAT));
         registerLogger("items",new Logger(server, "items", "brief", new String[]{"brief", "full"}, LogHandler.CHAT));
         registerLogger("rng", new Logger(server, "rng", null, null, LogHandler.CHAT));
+        registerLogger("explosions", new Logger(server, "explosions", "compact", new String[]{"brief", "full", "compact"}, LogHandler.CHAT));
 
         registerLogger("autosave", new Logger(server, "autosave", null, null, LogHandler.HUD));
         registerLogger("tps", new Logger(server, "tps", null, null, LogHandler.HUD));
@@ -77,6 +80,7 @@ public class LoggerRegistry
         registerDebugger("invisDebug", new Logger(server, "invisDebug", null, null, LogHandler.CHAT));
 
         registerGeneric("carefulBreak", new Logger(server, "carefulBreak", null, null, LogHandler.CHAT));
+        registerGeneric("normalCameraVision", new Logger(server, "normalCameraVision", null, null, LogHandler.CHAT));
     }
 
     private static File getSaveFile(MinecraftServer server) { return server.getActiveAnvilConverter().getFile(server.getFolderName(), "loggerData.json"); }

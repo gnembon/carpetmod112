@@ -35,3 +35,12 @@
              }
  
              func_152373_a(p_184908_1_, this, "commands.scoreboard.objectives.add.success", new Object[] {s});
+@@ -1046,7 +1047,7 @@
+ 
+                 if (score.func_96652_c() >= i && score.func_96652_c() <= j)
+                 {
+-                    func_152373_a(p_184907_1_, this, "commands.scoreboard.players.test.success", new Object[] {score.func_96652_c(), i, j});
++                    func_152373_a(p_184907_1_, this, "commands.scoreboard.players.test2.success", new Object[] {score.func_96652_c(), i, j});
+                 }
+                 else
+                 {

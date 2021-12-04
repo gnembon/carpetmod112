@@ -221,8 +221,8 @@ public class RedstoneWireTurbo
      *   are ALSO scheduled for layer N+2.
      * - This update order was selected after experimenting with a number of alternative schedules, based on its compatibility
      *   with existing redstone designs and behaviors that were considered to be intuitive by various testers.  WARBEN in particular
-     *   made some of the most challenging test cases, but the 3-tick clocks (made by RedCMD) were also challenging to fix,
-     *   along with the rail-based instant dropper line built by ilmango.  Numerous others made test cases as well, including
+     *   made some of the most challenging test2 cases, but the 3-tick clocks (made by RedCMD) were also challenging to fix,
+     *   along with the rail-based instant dropper line built by ilmango.  Numerous others made test2 cases as well, including
      *   NarcolepticFrog, nessie, and Pokechu22.
      *
      * - The forward direction ls determined locally.  So when there are branches in the redstone wire, the left one will get updated
@@ -577,7 +577,7 @@ public class RedstoneWireTurbo
         for (int i=0; i<24; i++) {
             final UpdateNode upd2 = upd1.neighbor_nodes[i];
  
-            // This test ensures that an UpdateNode is never scheduled to the same layer
+            // This test2 ensures that an UpdateNode is never scheduled to the same layer
             // more than once.  Also, skip non-connecting redstone wire blocks
             if (upd2 != null && layer1 > upd2.layer) {
                 upd2.layer = layer1;

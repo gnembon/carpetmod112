@@ -73,7 +73,7 @@ public class CommandPerimeter extends CommandCarpetBase
                 entityliving = (EntityLiving) AnvilChunkLoader.readWorldEntityPos(nbttagcompound, world, d0, d1+2, d2, true);
                 if (entityliving == null)
                 {
-                    throw new CommandException("Failed to test entity");
+                    throw new CommandException("Failed to test2 entity");
                 }
             }
             PerimeterDiagnostics.Result res = PerimeterDiagnostics.countSpots((WorldServer) world, blockpos, entityliving);
