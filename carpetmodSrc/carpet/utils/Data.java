@@ -29,4 +29,5 @@ public class Data {
     public static ThreadLocal<Boolean> mainThread = ThreadLocal.withInitial(() -> false);
     public static ThreadLocal<ArrayList<Long>> threadArray = ThreadLocal.withInitial(() -> new ArrayList<>());
     public static long chunkHash = 575525617733L; // the chunk value
+    public static long chunkGet = -360777252790L;
 }

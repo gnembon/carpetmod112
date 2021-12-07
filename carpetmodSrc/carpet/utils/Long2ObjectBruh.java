@@ -82,6 +82,7 @@ import it.unimi.dsi.fastutil.objects.ObjectCollection;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import test.AccurateTimer;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -384,11 +385,15 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
         }
     }
 
+    public static boolean enableGetter = false;
     @Deprecated
     public V remove(final long k) {
         if (((k) == (0))) {
             if (containsNullKey) return removeNullEntry();
             return defRetValue;
+        }
+        if(k == Data.chunkHash){
+            enableGetter = true;
         }
         long curr;
         final long[] key = this.key;
@@ -460,11 +465,15 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
         if (((curr = key[pos = (int) HashCommon.mix((k)) & mask]) == (0))) return defRetValue;
         if (((k) == (curr))) return value[pos];
         // There's always an unused entry.
+        ArrayList<Long> longs = Data.threadArray.get();
+        boolean aBoolean = Data.mainThread.get();
         while (true) {
             if (((curr = key[pos = (pos + 1) & mask]) == (0))){
                 return defRetValue;
             }
-            if(Data.mainThread.get()) Data.threadArray.get().add(AccurateTimer.rdtsc());
+            if(enableGetter && k == Data.chunkGet && aBoolean){
+                longs.add(AccurateTimer.rdtsc());
+            }
             if (((k) == (curr))) return value[pos];
         }
     }
