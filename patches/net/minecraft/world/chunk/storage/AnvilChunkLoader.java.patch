@@ -4,7 +4,7 @@
  package net.minecraft.world.chunk.storage;
  
 -import com.google.common.collect.Maps;
-+import carpet.utils.Data;
++import carpet.utils.FallingBlockData;
 +
  import java.io.DataInputStream;
  import java.io.DataOutputStream;
@@ -94,15 +94,15 @@
          ChunkPos chunkpos = new ChunkPos(p_75815_2_, p_75815_3_);
 -        NBTTagCompound nbttagcompound = this.field_75828_a.get(chunkpos);
 +        //NBTTagCompound nbttagcompound = this.chunksToRemove.get(chunkpos);
-+        if(p_75815_2_==Data.rehashChunkX&&p_75815_3_==Data.rehashChunkZ){
-+            Data.reloadChunkFromQueueStartTime = AccurateTimer.rdtsc();
++        if(p_75815_2_== FallingBlockData.rehashChunkX&&p_75815_3_== FallingBlockData.rehashChunkZ){
++            FallingBlockData.reloadChunkFromQueueStartTime = AccurateTimer.rdtsc();
 +        }
 +        NBTTagCompound nbttagcompound = reloadChunkFromRemoveQueues(chunkpos);  // new for MC-119971
  
          if (nbttagcompound == null)
          {
-+            if(p_75815_2_==Data.rehashChunkX&&p_75815_3_==Data.rehashChunkZ){
-+                Data.dataInputStreamStart = AccurateTimer.rdtsc();
++            if(p_75815_2_== FallingBlockData.rehashChunkX&&p_75815_3_== FallingBlockData.rehashChunkZ){
++                FallingBlockData.dataInputStreamStart = AccurateTimer.rdtsc();
 +            }
              DataInputStream datainputstream = RegionFileCache.func_76549_c(this.field_75825_d, p_75815_2_, p_75815_3_);
  
@@ -111,14 +111,14 @@
                  return null;
              }
 -
-+            if(p_75815_2_==Data.rehashChunkX&&p_75815_3_==Data.rehashChunkZ){
-+                Data.dataFixerStart = AccurateTimer.rdtsc();
++            if(p_75815_2_== FallingBlockData.rehashChunkX&&p_75815_3_== FallingBlockData.rehashChunkZ){
++                FallingBlockData.dataFixerStart = AccurateTimer.rdtsc();
 +            }
              nbttagcompound = this.field_193416_e.func_188257_a(FixTypes.CHUNK, CompressedStreamTools.func_74794_a(datainputstream));
          }
 -
-+        if(p_75815_2_==Data.rehashChunkX&&p_75815_3_==Data.rehashChunkZ){
-+            Data.checkedReadStart = AccurateTimer.rdtsc();
++        if(p_75815_2_== FallingBlockData.rehashChunkX&&p_75815_3_== FallingBlockData.rehashChunkZ){
++            FallingBlockData.checkedReadStart = AccurateTimer.rdtsc();
 +        }
          return this.func_75822_a(p_75815_1_, p_75815_2_, p_75815_3_, nbttagcompound);
      }

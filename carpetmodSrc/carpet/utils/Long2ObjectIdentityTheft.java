@@ -106,7 +106,15 @@ import java.util.NoSuchElementException;
  * @see Hash
  * @see HashCommon
  */
-public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements java.io.Serializable, Cloneable, Hash {
+
+/*
+ * We at the carpetmod team understand the suffering of millions of families
+ * having their spouses suddenly and inexplicable vanish into thin air and assume
+ * a different identity. But we don't condone this behaviour. Although we do
+ * imitate the behavior of hashmaps and therefor we have imitated this hashmap
+ * to inject our botox into it, so it looks nicer.
+ */
+public class Long2ObjectIdentityTheft<V> extends AbstractLong2ObjectMap<V> implements java.io.Serializable, Cloneable, Hash {
     private static final long serialVersionUID = 0L;
     private static final boolean ASSERTS = false;
     /** The array of keys. */
@@ -148,7 +156,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
      *            the load factor.
      */
     @SuppressWarnings("unchecked")
-    public Long2ObjectBruh(final int expected, final float f) {
+    public Long2ObjectIdentityTheft(final int expected, final float f) {
         if (f <= 0 || f > 1) throw new IllegalArgumentException("Load factor must be greater than 0 and smaller than or equal to 1");
         if (expected < 0) throw new IllegalArgumentException("The expected number of elements must be nonnegative");
         this.f = f;
@@ -166,7 +174,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
      * @param expected
      *            the expected number of elements in the hash map.
      */
-    public Long2ObjectBruh(final int expected) {
+    public Long2ObjectIdentityTheft(final int expected) {
         this(expected, DEFAULT_LOAD_FACTOR);
     }
 
@@ -175,7 +183,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
      * {@link Hash#DEFAULT_INITIAL_SIZE} entries and
      * {@link Hash#DEFAULT_LOAD_FACTOR} as load factor.
      */
-    public Long2ObjectBruh() {
+    public Long2ObjectIdentityTheft() {
         this(DEFAULT_INITIAL_SIZE, DEFAULT_LOAD_FACTOR);
     }
 
@@ -187,7 +195,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
      * @param f
      *            the load factor.
      */
-    public Long2ObjectBruh(final Map<? extends Long, ? extends V> m, final float f) {
+    public Long2ObjectIdentityTheft(final Map<? extends Long, ? extends V> m, final float f) {
         this(m.size(), f);
         putAll(m);
     }
@@ -199,7 +207,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
      * @param m
      *            a {@link Map} to be copied into the new hash map.
      */
-    public Long2ObjectBruh(final Map<? extends Long, ? extends V> m) {
+    public Long2ObjectIdentityTheft(final Map<? extends Long, ? extends V> m) {
         this(m, DEFAULT_LOAD_FACTOR);
     }
 
@@ -211,7 +219,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
      * @param f
      *            the load factor.
      */
-    public Long2ObjectBruh(final Long2ObjectMap<V> m, final float f) {
+    public Long2ObjectIdentityTheft(final Long2ObjectMap<V> m, final float f) {
         this(m.size(), f);
         putAll(m);
     }
@@ -223,7 +231,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
      * @param m
      *            a type-specific map to be copied into the new hash map.
      */
-    public Long2ObjectBruh(final Long2ObjectMap<V> m) {
+    public Long2ObjectIdentityTheft(final Long2ObjectMap<V> m) {
         this(m, DEFAULT_LOAD_FACTOR);
     }
 
@@ -239,7 +247,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
      * @throws IllegalArgumentException
      *             if <code>k</code> and <code>v</code> have different lengths.
      */
-    public Long2ObjectBruh(final long[] k, final V[] v, final float f) {
+    public Long2ObjectIdentityTheft(final long[] k, final V[] v, final float f) {
         this(k.length, f);
         if (k.length != v.length) throw new IllegalArgumentException("The key array and the value array have different lengths (" + k.length + " and " + v.length + ")");
         for (int i = 0; i < k.length; i++)
@@ -257,7 +265,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
      * @throws IllegalArgumentException
      *             if <code>k</code> and <code>v</code> have different lengths.
      */
-    public Long2ObjectBruh(final long[] k, final V[] v) {
+    public Long2ObjectIdentityTheft(final long[] k, final V[] v) {
         this(k, v, DEFAULT_LOAD_FACTOR);
     }
 
@@ -366,8 +374,8 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
             pos = ((last = pos) + 1) & mask;
             for (;;) {
                 if (((curr = key[pos]) == (0))) {
-                    if(key[last] == Data.chunkHash){
-                        Data.removeEnd = AccurateTimer.rdtsc();
+                    if(key[last] == FallingBlockData.chunkHash){
+                        FallingBlockData.removeEnd = AccurateTimer.rdtsc();
                     }
                     key[last] = (0);
                     value[last] = null;
@@ -377,8 +385,8 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
                 if (last <= pos ? last >= slot || slot > pos : last >= slot && slot > pos) break;
                 pos = (pos + 1) & mask;
             }
-            if(key[last] == Data.chunkHash){
-                Data.removeEnd = AccurateTimer.rdtsc();
+            if(key[last] == FallingBlockData.chunkHash){
+                FallingBlockData.removeEnd = AccurateTimer.rdtsc();
             }
             key[last] = curr;
             value[last] = value[pos];
@@ -392,7 +400,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
             if (containsNullKey) return removeNullEntry();
             return defRetValue;
         }
-        if(k == Data.chunkHash){
+        if(k == FallingBlockData.chunkHash){
             enableGetter = true;
         }
         long curr;
@@ -416,8 +424,8 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
 
     public V remove(final Object ok) {
         final long k = ((((Long) (ok)).longValue()));
-        if(k == Data.chunkHash){
-            Data.removeStart = AccurateTimer.rdtsc();
+        if(k == FallingBlockData.chunkHash){
+            FallingBlockData.removeStart = AccurateTimer.rdtsc();
         }
         if (((k) == (0))) {
             if (containsNullKey) return (removeNullEntry());
@@ -465,13 +473,13 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
         if (((curr = key[pos = (int) HashCommon.mix((k)) & mask]) == (0))) return defRetValue;
         if (((k) == (curr))) return value[pos];
         // There's always an unused entry.
-        ArrayList<Long> longs = Data.threadArray.get();
-        boolean aBoolean = Data.mainThread.get();
+        ArrayList<Long> longs = FallingBlockData.threadArray.get();
+        boolean aBoolean = FallingBlockData.mainThread.get();
         while (true) {
             if (((curr = key[pos = (pos + 1) & mask]) == (0))){
                 return defRetValue;
             }
-            if(enableGetter && k == Data.chunkGet && aBoolean){
+            if(enableGetter && k == FallingBlockData.chunkGet && aBoolean){
                 longs.add(AccurateTimer.rdtsc());
             }
             if (((k) == (curr))) return value[pos];
@@ -633,7 +641,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
          * A boolean telling us whether we should return the entry with the null
          * key.
          */
-        boolean mustReturnNullKey = Long2ObjectBruh.this.containsNullKey;
+        boolean mustReturnNullKey = Long2ObjectIdentityTheft.this.containsNullKey;
         /**
          * A lazily allocated list containing keys of entries that have wrapped
          * around the table because of removals.
@@ -651,7 +659,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
                 mustReturnNullKey = false;
                 return last = n;
             }
-            final long key[] = Long2ObjectBruh.this.key;
+            final long key[] = Long2ObjectIdentityTheft.this.key;
             for (;;) {
                 if (--pos < 0) {
                     // We are just enumerating elements from the wrapped list.
@@ -677,7 +685,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
             // Shift entries with the same hash.
             int last, slot;
             long curr;
-            final long[] key = Long2ObjectBruh.this.key;
+            final long[] key = Long2ObjectIdentityTheft.this.key;
             for (;;) {
                 pos = ((last = pos) + 1) & mask;
                 for (;;) {
@@ -707,7 +715,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
             } else if (pos >= 0) shiftKeys(last);
             else {
                 // We're removing wrapped entries.
-                Long2ObjectBruh.this.remove(wrapped.getLong(-pos - 1));
+                Long2ObjectIdentityTheft.this.remove(wrapped.getLong(-pos - 1));
                 last = -1; // Note that we must not decrement size
                 return;
             }
@@ -763,9 +771,9 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
             if (e.getKey() == null || !(e.getKey() instanceof Long)) return false;
             final long k = ((((Long) (e.getKey())).longValue()));
             final V v = ((V) e.getValue());
-            if (((k) == (0))) return Long2ObjectBruh.this.containsNullKey && ((value[n]) == null ? (v) == null : (value[n]).equals(v));
+            if (((k) == (0))) return Long2ObjectIdentityTheft.this.containsNullKey && ((value[n]) == null ? (v) == null : (value[n]).equals(v));
             long curr;
-            final long[] key = Long2ObjectBruh.this.key;
+            final long[] key = Long2ObjectIdentityTheft.this.key;
             int pos;
             // The starting point.
             if (((curr = key[pos = (int) HashCommon.mix((k)) & mask]) == (0))) return false;
@@ -793,7 +801,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
                 return false;
             }
             long curr;
-            final long[] key = Long2ObjectBruh.this.key;
+            final long[] key = Long2ObjectIdentityTheft.this.key;
             int pos;
             // The starting point.
             if (((curr = key[pos = (int) HashCommon.mix((k)) & mask]) == (0))) return false;
@@ -820,7 +828,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
         }
 
         public void clear() {
-            Long2ObjectBruh.this.clear();
+            Long2ObjectIdentityTheft.this.clear();
         }
     }
 
@@ -867,12 +875,12 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
 
         public boolean rem(long k) {
             final int oldSize = size;
-            Long2ObjectBruh.this.remove(k);
+            Long2ObjectIdentityTheft.this.remove(k);
             return size != oldSize;
         }
 
         public void clear() {
-            Long2ObjectBruh.this.clear();
+            Long2ObjectIdentityTheft.this.clear();
         }
     }
 
@@ -915,7 +923,7 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
             }
 
             public void clear() {
-                Long2ObjectBruh.this.clear();
+                Long2ObjectIdentityTheft.this.clear();
             }
         };
         return values;
@@ -1044,10 +1052,10 @@ public class Long2ObjectBruh<V> extends AbstractLong2ObjectMap<V> implements jav
      * @return a deep copy of this map.
      */
     @SuppressWarnings("unchecked")
-    public Long2ObjectBruh<V> clone() {
-        Long2ObjectBruh<V> c;
+    public Long2ObjectIdentityTheft<V> clone() {
+        Long2ObjectIdentityTheft<V> c;
         try {
-            c = (Long2ObjectBruh<V>) super.clone();
+            c = (Long2ObjectIdentityTheft<V>) super.clone();
         } catch (CloneNotSupportedException cantHappen) {
             throw new InternalError();
         }

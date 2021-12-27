@@ -1,7 +1,7 @@
 package carpet.commands;
 
 import carpet.CarpetSettings;
-import carpet.utils.Long2ObjectBruh;
+import carpet.utils.Long2ObjectIdentityTheft;
 import it.unimi.dsi.fastutil.HashCommon;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -48,7 +48,7 @@ public class CommandLoadedChunks extends CommandCarpetBase
 
         world = sender.getEntityWorld();
         ChunkProviderServer provider = (ChunkProviderServer) world.getChunkProvider();
-        Long2ObjectBruh<Chunk> loadedChunks = provider.loadedChunks;
+        Long2ObjectIdentityTheft<Chunk> loadedChunks = provider.loadedChunks;
 
         try {
             switch (args[0]){
@@ -154,7 +154,7 @@ public class CommandLoadedChunks extends CommandCarpetBase
     }
 
     protected void search(ICommandSender sender, int chunkX, int chunkZ) throws NoSuchFieldException, IllegalAccessException {
-        Long2ObjectBruh<Chunk> loadedChunks = (Long2ObjectBruh<Chunk>) ((ChunkProviderServer) world.getChunkProvider()).loadedChunks;
+        Long2ObjectIdentityTheft<Chunk> loadedChunks = (Long2ObjectIdentityTheft<Chunk>) ((ChunkProviderServer) world.getChunkProvider()).loadedChunks;
         Object[] chunks = getValues(loadedChunks);
         int mask = getMask(loadedChunks);
         for (int i = 0; i < chunks.length; i++) {
@@ -177,7 +177,7 @@ public class CommandLoadedChunks extends CommandCarpetBase
             return;
         }
         Chunk chunk = tempChunks.get(hash);
-        Long2ObjectBruh<Chunk> loadedChunks = getLoadedChunks();
+        Long2ObjectIdentityTheft<Chunk> loadedChunks = getLoadedChunks();
         loadedChunks.put(hash, chunk);
         sender.sendMessage(new TextComponentString(String.format("Chunk (%d, %d) has been added back", x, z)));
     }
@@ -185,7 +185,7 @@ public class CommandLoadedChunks extends CommandCarpetBase
     protected void remove(ICommandSender sender, int x, int z) {
         long hash = ChunkPos.asLong(x, z);
 
-        Long2ObjectBruh<Chunk> loadedChunks = getLoadedChunks();
+        Long2ObjectIdentityTheft<Chunk> loadedChunks = getLoadedChunks();
         if(!loadedChunks.containsKey(hash)){
             sender.sendMessage(new TextComponentString(String.format("Chunk (%d, %d) is not in loaded list", x, z)));
         }
@@ -194,9 +194,9 @@ public class CommandLoadedChunks extends CommandCarpetBase
         sender.sendMessage(new TextComponentString(String.format("Chunk (%d, %d) has been removed", x, z)));
     }
 
-    protected Long2ObjectBruh<Chunk> getLoadedChunks(){
+    protected Long2ObjectIdentityTheft<Chunk> getLoadedChunks(){
         ChunkProviderServer provider = (ChunkProviderServer) world.getChunkProvider();
-        return (Long2ObjectBruh<Chunk>) provider.loadedChunks;
+        return (Long2ObjectIdentityTheft<Chunk>) provider.loadedChunks;
     }
 
     public String formatChunk(Chunk chunk, int pos, int mask){
@@ -227,24 +227,24 @@ public class CommandLoadedChunks extends CommandCarpetBase
         return HashCommon.mix(ChunkPos.asLong(chunk.x, chunk.z)) & mask;
     }
 
-    public static int getMaxField(Long2ObjectBruh hashMap) throws NoSuchFieldException, IllegalAccessException {
-        Field maxFill = Long2ObjectBruh.class.getDeclaredField("maxFill");
+    public static int getMaxField(Long2ObjectIdentityTheft hashMap) throws NoSuchFieldException, IllegalAccessException {
+        Field maxFill = Long2ObjectIdentityTheft.class.getDeclaredField("maxFill");
         maxFill.setAccessible(true);
         return (int) maxFill.get(hashMap);
     }
 
-    public static int getMask(Long2ObjectBruh hashMap) throws NoSuchFieldException, IllegalAccessException {
-        Field mask = Long2ObjectBruh.class.getDeclaredField("mask");
+    public static int getMask(Long2ObjectIdentityTheft hashMap) throws NoSuchFieldException, IllegalAccessException {
+        Field mask = Long2ObjectIdentityTheft.class.getDeclaredField("mask");
         mask.setAccessible(true);
         return (int) mask.get(hashMap);
     }
 
-    public static float getFillLevel(Long2ObjectBruh hashMap) throws NoSuchFieldException, IllegalAccessException {
+    public static float getFillLevel(Long2ObjectIdentityTheft hashMap) throws NoSuchFieldException, IllegalAccessException {
         return (float) hashMap.size() / getMaxField(hashMap);
     }
 
-    public static Object[] getValues(Long2ObjectBruh hashMap) throws NoSuchFieldException, IllegalAccessException {
-        Field value = Long2ObjectBruh.class.getDeclaredField("value");
+    public static Object[] getValues(Long2ObjectIdentityTheft hashMap) throws NoSuchFieldException, IllegalAccessException {
+        Field value = Long2ObjectIdentityTheft.class.getDeclaredField("value");
         value.setAccessible(true);
         return (Object[]) value.get(hashMap);
     }

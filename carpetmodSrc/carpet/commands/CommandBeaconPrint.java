@@ -1,6 +1,6 @@
 package carpet.commands;
 
-import carpet.utils.Data;
+import carpet.utils.FallingBlockData;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -39,20 +39,20 @@ public class CommandBeaconPrint extends CommandCarpetBase {
         System.out.println("clearconsole");
         long accesses = 0;
         TreeMap<Long, Integer> map = new TreeMap<>();
-        for(ArrayList<Long> list : Data.times){
+        for(ArrayList<Long> list : FallingBlockData.times){
             for (long time : list){
                 map.put(time, 0);
             }
             accesses+=list.size();
         }
-        Data.times.clear();
+        FallingBlockData.times.clear();
 
-        for(Long l : Data.glassArrivalTimes){
+        for(Long l : FallingBlockData.glassArrivalTimes){
             map.put(l, 1);
         }
-        Data.glassArrivalTimes.clear();
+        FallingBlockData.glassArrivalTimes.clear();
 
-        map.put(Data.removeEnd, 9);
+        map.put(FallingBlockData.removeEnd, 9);
 
         int glassCounter = 0;
         String out = "\n";
@@ -73,13 +73,13 @@ public class CommandBeaconPrint extends CommandCarpetBase {
                 }
             } else if (type == 9) {
                 out = out + "Glass before: " + glassCounter + "\n";
-                out = out + "Removed time: " + AccurateTimer.delta(minTime, Data.removeEnd) + "\n";
+                out = out + "Removed time: " + AccurateTimer.delta(minTime, FallingBlockData.removeEnd) + "\n";
                 count = 3;
                 glassCounter = 0;
             }
         }
         out = out + "Glass after: " + glassCounter + "\n";
-        out = out + "Remove delta: " + (AccurateTimer.delta(minTime, Data.removeEnd) - AccurateTimer.delta(minTime, Data.removeStart));
+        out = out + "Remove delta: " + (AccurateTimer.delta(minTime, FallingBlockData.removeEnd) - AccurateTimer.delta(minTime, FallingBlockData.removeStart));
         System.out.println(out);
     }
 }

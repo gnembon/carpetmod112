@@ -1,12 +1,9 @@
 package carpet.utils;
 
-import carpet.CarpetSettings;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
-public class Data {
+public class FallingBlockData {
     //setup: -26, 9
     //test2: 1071, 1000
     //setup: -26, 9

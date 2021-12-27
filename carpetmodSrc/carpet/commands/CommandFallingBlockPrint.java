@@ -1,6 +1,6 @@
 package carpet.commands;
 
-import carpet.utils.Data;
+import carpet.utils.FallingBlockData;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
@@ -9,7 +9,7 @@ import accuratetimer.AccurateTimer;
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-public class CommandPrint extends CommandCarpetBase {
+public class CommandFallingBlockPrint extends CommandCarpetBase {
 
     public static String[] messages = new String[]{
             "",//0
@@ -25,7 +25,7 @@ public class CommandPrint extends CommandCarpetBase {
 
     @Override
     public String getName() {
-        return "printData";
+        return "printFalling";
     }
 
     @Override
@@ -38,37 +38,37 @@ public class CommandPrint extends CommandCarpetBase {
         System.out.println("clearconsole");
         long accesses = 0;
         TreeMap<Long, Integer> map = new TreeMap<>();
-        for(ArrayList<Long> list : Data.times){
-            for (long time : list){
+        for(ArrayList<Long> list : FallingBlockData.times) {
+            for (long time : list) {
                 map.put(time, 0);
             }
             accesses+=list.size();
         }
-        Data.times.clear();
+        FallingBlockData.times.clear();
 
-        for(Long l : Data.glassArrivalTimes){
+        for(Long l : FallingBlockData.glassArrivalTimes) {
             map.put(l, 1);
         }
-        Data.glassArrivalTimes.clear();
-        map.put(Data.reloadChunkFromQueueStartTime, 2);
-        map.put(Data.dataInputStreamStart, 3);
-        map.put(Data.dataFixerStart, 4);
-        map.put(Data.checkedReadStart, 5);
-        map.put(Data.recreateStructuresStart, 6);
-        map.put(Data.chunkInsertStart, 7);
-        map.put(Data.chunkLoadEnd, 8);
+        FallingBlockData.glassArrivalTimes.clear();
+        map.put(FallingBlockData.reloadChunkFromQueueStartTime, 2);
+        map.put(FallingBlockData.dataInputStreamStart, 3);
+        map.put(FallingBlockData.dataFixerStart, 4);
+        map.put(FallingBlockData.checkedReadStart, 5);
+        map.put(FallingBlockData.recreateStructuresStart, 6);
+        map.put(FallingBlockData.chunkInsertStart, 7);
+        map.put(FallingBlockData.chunkLoadEnd, 8);
         System.out.println(accesses + " async chunk accesses");
 
         long minTime = 0;
-        if(map.size() != 0){
+        if(map.size() != 0) {
             minTime = map.keySet().iterator().next();
         }
 
         String out = "\n__________";
         int asyncAccessCount = 0;
-        for (long time : map.keySet()){
+        for (long time : map.keySet()) {
             int type = map.get(time);
-            if(type==0){
+            if(type==0) {
                 asyncAccessCount++;
             } else {
                 if(asyncAccessCount!=0) {
@@ -78,7 +78,7 @@ public class CommandPrint extends CommandCarpetBase {
                 asyncAccessCount = 0;
             }
         }
-        if(asyncAccessCount!=0){
+        if(asyncAccessCount!=0) {
             out += "\n" + asyncAccessCount + " async accesses";
         }
         out += "\n__________";
