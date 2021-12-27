@@ -1,4 +1,4 @@
-package test;
+package accuratetimer;
 
 import it.unimi.dsi.fastutil.HashCommon;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;

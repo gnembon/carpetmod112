@@ -1,4 +1,4 @@
-package test;
+package accuratetimer;
 
 import java.io.File;
 import java.util.Locale;

@@ -80,7 +80,7 @@ import it.unimi.dsi.fastutil.objects.AbstractObjectCollection;
 import it.unimi.dsi.fastutil.objects.AbstractObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectCollection;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
-import test.AccurateTimer;
+import accuratetimer.AccurateTimer;
 
 import java.util.ArrayList;
 import java.util.Arrays;

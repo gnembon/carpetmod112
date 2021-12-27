@@ -4,7 +4,7 @@ import carpet.utils.Data;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
-import test.AccurateTimer;
+import accuratetimer.AccurateTimer;
 
 import java.util.ArrayList;
 import java.util.TreeMap;

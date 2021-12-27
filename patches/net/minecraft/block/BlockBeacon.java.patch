@@ -12,8 +12,8 @@
  import net.minecraft.world.chunk.Chunk;
  
 +import carpet.CarpetSettings;
-+import test.AccurateTimer;
-+import test.Test;
++import accuratetimer.AccurateTimer;
++import accuratetimer.Test;
 +
 +import java.util.ArrayList;
 +

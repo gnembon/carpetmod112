@@ -11,7 +11,7 @@
  import it.unimi.dsi.fastutil.objects.ObjectIterator;
  import java.io.IOException;
  import java.util.Collection;
-@@ -27,15 +26,27 @@
+@@ -27,15 +26,26 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -20,9 +20,8 @@
 +import carpet.carpetclient.CarpetClientChunkLogger;
 +import net.minecraft.entity.Entity;
 +import net.minecraft.server.management.PlayerChunkMapEntry;
-+import test.AccurateTimer;
-+import test.CustomHashMap;
-+import test.LastQuestInCode;
++import accuratetimer.AccurateTimer;
++import accuratetimer.LastQuestInCode;
 +
  public class ChunkProviderServer implements IChunkProvider
  {
@@ -43,7 +42,7 @@
      public ChunkProviderServer(WorldServer p_i46838_1_, IChunkLoader p_i46838_2_, IChunkGenerator p_i46838_3_)
      {
          this.field_73251_h = p_i46838_1_;
-@@ -50,8 +61,18 @@
+@@ -50,8 +60,18 @@
  
      public void func_189549_a(Chunk p_189549_1_)
      {
@@ -63,7 +62,7 @@
              this.field_73248_b.add(Long.valueOf(ChunkPos.func_77272_a(p_189549_1_.field_76635_g, p_189549_1_.field_76647_h)));
              p_189549_1_.field_189550_d = true;
          }
-@@ -59,6 +80,7 @@
+@@ -59,6 +79,7 @@
  
      public void func_73240_a()
      {
@@ -71,7 +70,7 @@
          ObjectIterator objectiterator = this.field_73244_f.values().iterator();
  
          while (objectiterator.hasNext())
-@@ -76,6 +98,11 @@
+@@ -76,6 +97,11 @@
  
          if (chunk != null)
          {
@@ -83,7 +82,7 @@
              chunk.field_189550_d = false;
          }
  
-@@ -85,17 +112,36 @@
+@@ -85,17 +111,36 @@
      @Nullable
      public Chunk func_186028_c(int p_186028_1_, int p_186028_2_)
      {
@@ -120,7 +119,7 @@
              }
          }
  
-@@ -108,32 +154,44 @@
+@@ -108,32 +153,44 @@
  
          if (chunk == null)
          {
@@ -172,7 +171,7 @@
      {
          try
          {
-@@ -185,6 +243,8 @@
+@@ -185,6 +242,8 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
@@ -181,7 +180,7 @@
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -222,25 +282,62 @@
+@@ -222,25 +281,62 @@
      {
          if (!this.field_73251_h.field_73058_d)
          {
@@ -246,7 +245,7 @@
  
              this.field_73247_e.func_75817_a();
          }
-@@ -283,9 +380,17 @@
+@@ -283,9 +379,17 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
      }

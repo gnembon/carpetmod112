@@ -24,7 +24,7 @@
 +import java.util.HashMap;
 +import java.util.Iterator;
 +import carpet.CarpetSettings;
-+import test.AccurateTimer;
++import accuratetimer.AccurateTimer;
 +
  public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO
  {

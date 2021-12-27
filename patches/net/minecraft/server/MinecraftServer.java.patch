@@ -26,9 +26,9 @@
 +import carpet.carpetclient.CarpetClientChunkLogger;
 +import carpet.helpers.LagSpikeHelper;
 +import carpet.helpers.TickSpeed;
-+import test.AccurateTimer;
-+import test.LastQuestInCode;
-+import test.Test;
++import accuratetimer.AccurateTimer;
++import accuratetimer.LastQuestInCode;
++import accuratetimer.Test;
 +
  public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
  {

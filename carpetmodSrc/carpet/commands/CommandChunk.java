@@ -12,8 +12,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
-import test.AccurateTimer;
-import test.Test;
+import accuratetimer.AccurateTimer;
+import accuratetimer.Test;
 
 import javax.annotation.Nullable;
 import java.text.NumberFormat;
