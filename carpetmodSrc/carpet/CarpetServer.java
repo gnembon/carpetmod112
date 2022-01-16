@@ -1,6 +1,7 @@
 package carpet;
 
 import carpet.helpers.StackTraceDeobfuscator;
+import carpet.network.FileAccess;
 import carpet.network.PluginChannelManager;
 import carpet.network.ToggleableChannelHandler;
 import carpet.patches.EntityPlayerMPFake;
@@ -51,6 +52,8 @@ public class CarpetServer // static for now - easier to handle all around the co
         rsmmServer = new RSMMServer(server);
         rsmmChannel = new ToggleableChannelHandler(pluginChannels, rsmmServer.createChannelHandler(), false);
         wecuiChannel = new ToggleableChannelHandler(pluginChannels, WorldEditBridge.createChannelHandler(), false);
+
+        pluginChannels.register(new FileAccess());
     }
     public static void onServerLoaded(MinecraftServer server)
     {
