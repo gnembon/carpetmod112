@@ -71,13 +71,22 @@
              chunk.field_189550_d = false;
          }
  
-@@ -93,9 +120,17 @@
+@@ -93,9 +120,26 @@
  
              if (chunk != null)
              {
 +            	// ChunkLogger - 0x-CARPET
 +                if(CarpetClientChunkLogger.logger.enabled) {
 +                	CarpetClientChunkLogger.logger.log(this.field_73251_h,p_186028_1_,p_186028_2_,CarpetClientChunkLogger.Event.LOADING);
++                }
++
++                // Fix for chunks not updating after async updates CARPET-PUNCHSTER
++                if(CarpetSettings.asyncPacketUpdatesFix) {
++                    PlayerChunkMapEntry entry = field_73251_h.field_73063_M.func_187301_b(p_186028_1_, p_186028_2_);
++                    if (entry != null && entry.field_187286_f != null) {
++                        entry.field_187286_f = chunk;
++                        entry.func_187272_b();
++                    }
 +                }
 +            	
                  this.field_73244_f.put(ChunkPos.func_77272_a(p_186028_1_, p_186028_2_), chunk);
@@ -89,7 +98,7 @@
              }
          }
  
-@@ -113,6 +148,11 @@
+@@ -113,6 +157,11 @@
              try
              {
                  chunk = this.field_186029_c.func_185932_a(p_186025_1_, p_186025_2_);
@@ -101,7 +110,7 @@
              }
              catch (Throwable throwable)
              {
-@@ -123,7 +163,7 @@
+@@ -123,7 +172,7 @@
                  crashreportcategory.func_71507_a("Generator", this.field_186029_c);
                  throw new ReportedException(crashreport);
              }
@@ -110,7 +119,7 @@
              this.field_73244_f.put(i, chunk);
              chunk.func_76631_c();
              chunk.func_186030_a(this, this.field_186029_c);
-@@ -185,6 +225,8 @@
+@@ -185,6 +234,8 @@
  
      public boolean func_186027_a(boolean p_186027_1_)
      {
@@ -119,7 +128,7 @@
          int i = 0;
          List<Chunk> list = Lists.newArrayList(this.field_73244_f.values());
  
-@@ -222,8 +264,12 @@
+@@ -222,8 +273,12 @@
      {
          if (!this.field_73251_h.field_73058_d)
          {
@@ -133,7 +142,7 @@
                  Iterator<Long> iterator = this.field_73248_b.iterator();
  
                  for (int i = 0; i < 100 && iterator.hasNext(); iterator.remove())
-@@ -231,16 +277,47 @@
+@@ -231,16 +286,47 @@
                      Long olong = iterator.next();
                      Chunk chunk = (Chunk)this.field_73244_f.get(olong);
  
@@ -182,7 +191,7 @@
  
              this.field_73247_e.func_75817_a();
          }
-@@ -283,9 +360,17 @@
+@@ -283,9 +369,17 @@
      {
          return this.field_73244_f.containsKey(ChunkPos.func_77272_a(p_73149_1_, p_73149_2_));
      }

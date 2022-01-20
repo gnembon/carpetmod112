@@ -481,6 +481,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "Fixes the async packet bugs related to asynch observer updates.", category = FIX)
+    public static boolean asyncPacketUpdatesFix;
+
     @Rule(desc = "Fixes the pearl bugs removing them when players relog, similar fix to mc1.15.", category = FIX)
     public static boolean fixedPearlBugs;
 
