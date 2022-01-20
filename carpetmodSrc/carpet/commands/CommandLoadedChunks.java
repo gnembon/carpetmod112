@@ -2,8 +2,8 @@ package carpet.commands;
 
 
 import carpet.CarpetSettings;
-import carpet.helpers.CustomHashMap;
 import it.unimi.dsi.fastutil.HashCommon;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -50,8 +50,6 @@ public class CommandLoadedChunks extends CommandCarpetBase
         if (args.length == 0) throw new WrongUsageException(getUsage(sender));
 
         world = sender.getEntityWorld();
-        ChunkProviderServer provider = (ChunkProviderServer) world.getChunkProvider();
-        CustomHashMap<Chunk> loadedChunks = (CustomHashMap<Chunk>) provider.loadedChunks;
 
         try {
             switch (args[0]){
@@ -77,9 +75,10 @@ public class CommandLoadedChunks extends CommandCarpetBase
                     String fileName = "loadedchunks-" + new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss-SSSS").format(new Date()) + ".csv";
                     try (PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(fileName)))) {
                         pw.println("index,key,x,z,hash");
-                        long[] keys = loadedChunks.getKey();
-                        Object[] values = loadedChunks.getValues();
-                        for (int i = 0, n = loadedChunks.getHashSize(); i <= n; i++) {
+                        long[] keys = (long[]) getPrivateMethods(world, "key");
+                        Object[] values = (Object[]) getPrivateMethods(world, "value");
+                        int getHashSize = (int) getPrivateMethods(world, "n");
+                        for (int i = 0, n = getHashSize; i <= n; i++) {
                             long key = keys[i];
                             Chunk val = (Chunk) values[i];
                             if (val == null) {
@@ -100,6 +99,19 @@ public class CommandLoadedChunks extends CommandCarpetBase
             throw new CommandException(exception.getMessage());
         }
 
+    }
+
+    private Object getPrivateMethods(World world, String name){
+        ChunkProviderServer provider = (ChunkProviderServer) world.getChunkProvider();
+        Long2ObjectOpenHashMap<Chunk> loadedChunks = (Long2ObjectOpenHashMap<Chunk>) provider.loadedChunks;
+        try {
+            Field f = loadedChunks.getClass().getDeclaredField(name);
+            f.setAccessible(true);
+            return f.get(loadedChunks);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     protected Long2ObjectOpenHashMap<Chunk> getLoadedChunks (ICommandSender sender){

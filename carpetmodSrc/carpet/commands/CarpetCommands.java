@@ -43,6 +43,7 @@ public class CarpetCommands {
         handler.registerCommand(new CommandUnload13());
         handler.registerCommand(new CommandUpdateCarpet());
         handler.registerCommand(new CommandWaypoint());
+        handler.registerCommand(new CommandChunk());
         handler.registerCommand(new CommandLoadedChunks());
         handler.registerCommand(new CommandZetBlock());
 

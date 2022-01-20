@@ -25,7 +25,7 @@ public class CommandChunk extends CommandCarpetBase
 
     public String getUsage(ICommandSender sender)
     {
-        return "Usage: chunk <X> <Z> <load | info | unload>";
+        return "Usage: chunk <load | info | unload> <X> <Z>";
     }
 
     public String getName()
@@ -45,12 +45,12 @@ public class CommandChunk extends CommandCarpetBase
             throw new WrongUsageException(getUsage(sender));
         }
 
-        int chunkX = parseChunkPosition(args[0], sender.getPosition().getX());
-        int chunkZ = parseChunkPosition(args[1], sender.getPosition().getZ());
-
         world = sender.getEntityWorld();
         try {
-            switch (args[2]){
+            int chunkX = parseChunkPosition(args[1], sender.getPosition().getX());
+            int chunkZ = parseChunkPosition(args[2], sender.getPosition().getZ());
+
+            switch (args[0]){
                 case "load":
                     world.getChunk(chunkX, chunkZ);
                     sender.sendMessage(new TextComponentString("Chunk " + chunkX + ", " + chunkZ + " loaded"));
@@ -98,11 +98,11 @@ public class CommandChunk extends CommandCarpetBase
         int chunkZ = sender.getPosition().getZ() >> 4;
 
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, Integer.toString(chunkX), "~");
-        } else if (args.length == 2) {
-            return getListOfStringsMatchingLastWord(args, Integer.toString(chunkZ), "~");
-        } else if (args.length == 3) {
             return getListOfStringsMatchingLastWord(args, "info", "load", "unload");
+        } else if (args.length == 2) {
+            return getListOfStringsMatchingLastWord(args, Integer.toString(chunkX), "~");
+        } else if (args.length == 3) {
+            return getListOfStringsMatchingLastWord(args, Integer.toString(chunkZ), "~");
         } else {
             return Collections.emptyList();
         }
