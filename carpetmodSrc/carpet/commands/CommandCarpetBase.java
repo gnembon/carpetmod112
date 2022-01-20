@@ -4,6 +4,7 @@ import carpet.CarpetSettings;
 import carpet.utils.Messenger;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.NumberInvalidException;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.ITextComponent;
@@ -56,5 +57,8 @@ public abstract class CommandCarpetBase extends CommandBase
         return true;
     }
 
+    protected int parseChunkPosition(String arg, int base) throws NumberInvalidException {
+        return arg.equals("~") ? base >> 4 : parseInt(arg);
+    }
 
 }

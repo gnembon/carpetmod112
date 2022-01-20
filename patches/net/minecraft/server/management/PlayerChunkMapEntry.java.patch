@@ -18,8 +18,9 @@
      private final short[] field_187285_e = new short[64];
      @Nullable
 -    private Chunk field_187286_f;
+-    private int field_187287_g;
 +    public Chunk field_187286_f; // CM: changed to public
-     private int field_187287_g;
++    public int field_187287_g;
      private int field_187288_h;
      private long field_187289_i;
 -    private boolean field_187290_j;
