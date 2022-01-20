@@ -487,6 +487,9 @@ public class CarpetSettings
      * Rules in this category should end with the "Fix" suffix
      */
 
+    @Rule(desc = "A limiter for updates happening on the main thread to prevent crashes on instant tile tick.", category = FIX, options = {"0", "1000000", "10000000"})
+    public static int limitITTupdates = 0;
+
     @Rule(desc = "Fixes the async packet bugs related to asynch observer updates.", category = FIX)
     public static boolean asyncPacketUpdatesFix;
 

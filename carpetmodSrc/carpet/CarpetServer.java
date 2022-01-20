@@ -36,6 +36,7 @@ public class CarpetServer // static for now - easier to handle all around the co
     public static ToggleableChannelHandler rsmmChannel;
     public static ToggleableChannelHandler wecuiChannel;
     public static boolean playerInventoryStacking = false;
+    public static int limitITTCounter;
 
     private static CarpetClientServer CCServer;
 
