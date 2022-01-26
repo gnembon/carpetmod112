@@ -21,7 +21,15 @@
  import net.minecraft.block.BlockLiquid;
  import net.minecraft.block.BlockPumpkin;
  import net.minecraft.block.BlockShulkerBox;
-@@ -58,11 +64,7 @@
+@@ -16,6 +22,7 @@
+ import net.minecraft.block.BlockTNT;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
++import net.minecraft.crash.CrashReport;
+ import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
+ import net.minecraft.dispenser.BehaviorProjectileDispense;
+ import net.minecraft.dispenser.IBehaviorDispenseItem;
+@@ -58,11 +65,7 @@
  import net.minecraft.tileentity.TileEntityDispenser;
  import net.minecraft.tileentity.TileEntityShulkerBox;
  import net.minecraft.tileentity.TileEntitySkull;
@@ -34,7 +42,7 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  import net.minecraft.world.biome.Biome;
-@@ -476,6 +478,9 @@
+@@ -476,6 +479,9 @@
              }
          });
  
@@ -44,3 +52,14 @@
          for (EnumDyeColor enumdyecolor : EnumDyeColor.values())
          {
              BlockDispenser.field_149943_a.func_82595_a(Item.func_150898_a(BlockShulkerBox.func_190952_a(enumdyecolor)), new Bootstrap.BehaviorDispenseShulkerBox());
+@@ -486,6 +492,10 @@
+     {
+         if (!field_151355_a)
+         {
++            // Fix the crash report without carpet rule. DON'T PUT A GOD-DAMN CARPET RULE FOR THIS OR I WILL GET MAD!
++            // Mojang even added this in 16. CARPET-XCOM
++            CrashReport.func_85055_a(new Exception(), "Dummy");
++
+             field_151355_a = true;
+             func_179868_d();
+             SoundEvent.func_187504_b();
