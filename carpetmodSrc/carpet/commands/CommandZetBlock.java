@@ -75,90 +75,83 @@ public class CommandZetBlock extends CommandSetBlock {
 
             World world = sender.getEntityWorld();
 
-            if (!world.isBlockLoaded(blockpos))
-            {
-                throw new CommandException("commands.setblock.outOfWorld", new Object[0]);
-            }
-            else
-            {
-                NBTTagCompound nbttagcompound = new NBTTagCompound();
-                boolean flag = false;
+			NBTTagCompound nbttagcompound = new NBTTagCompound();
+			boolean flag = false;
 
-                if (args.length >= 7 && block.hasTileEntity())
-                {
-                    String s = buildString(args, 6);
+			if (args.length >= 7 && block.hasTileEntity())
+			{
+				String s = buildString(args, 6);
 
-                    try
-                    {
-                        nbttagcompound = JsonToNBT.getTagFromJson(s);
-                        flag = true;
-                    }
-                    catch (NBTException nbtexception)
-                    {
-                        throw new CommandException("commands.setblock.tagError", new Object[] {nbtexception.getMessage()});
-                    }
-                }
+				try
+				{
+					nbttagcompound = JsonToNBT.getTagFromJson(s);
+					flag = true;
+				}
+				catch (NBTException nbtexception)
+				{
+					throw new CommandException("commands.setblock.tagError", new Object[] {nbtexception.getMessage()});
+				}
+			}
 
-                EntityPlayerMP worldEditPlayer = sender instanceof EntityPlayerMP ? (EntityPlayerMP) sender : null;
-                NBTTagCompound worldEditTag = flag ? nbttagcompound : null;
+			EntityPlayerMP worldEditPlayer = sender instanceof EntityPlayerMP ? (EntityPlayerMP) sender : null;
+			NBTTagCompound worldEditTag = flag ? nbttagcompound : null;
 
-                if (args.length >= 6)
-                {
-                    if ("destroy".equals(args[5]))
-                    {
-                        WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos, Blocks.AIR.getDefaultState(), worldEditTag);
-                        CapturedDrops.setCapturingDrops(true);
-                        world.destroyBlock(blockpos, true);
-                        CapturedDrops.setCapturingDrops(false);
-                        for (EntityItem drop : CapturedDrops.getCapturedDrops())
-                            WorldEditBridge.recordEntityCreation(worldEditPlayer, world, drop);
-                        CapturedDrops.clearCapturedDrops();
+			if (args.length >= 6)
+			{
+				if ("destroy".equals(args[5]))
+				{
+					WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos, Blocks.AIR.getDefaultState(), worldEditTag);
+					CapturedDrops.setCapturingDrops(true);
+					world.destroyBlock(blockpos, true);
+					CapturedDrops.setCapturingDrops(false);
+					for (EntityItem drop : CapturedDrops.getCapturedDrops())
+						WorldEditBridge.recordEntityCreation(worldEditPlayer, world, drop);
+					CapturedDrops.clearCapturedDrops();
 
-                        if (block == Blocks.AIR)
-                        {
-                            notifyCommandListener(sender, this, "commands.setblock.success", new Object[0]);
-                            return;
-                        }
-                    }
-                    else if ("keep".equals(args[5]) && !world.isAirBlock(blockpos))
-                    {
-                        throw new CommandException("commands.setblock.noChange", new Object[0]);
-                    }
-                }
+					if (block == Blocks.AIR)
+					{
+						notifyCommandListener(sender, this, "commands.setblock.success", new Object[0]);
+						return;
+					}
+				}
+				else if ("keep".equals(args[5]) && !world.isAirBlock(blockpos))
+				{
+					throw new CommandException("commands.setblock.noChange", new Object[0]);
+				}
+			}
 
-                WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos, iblockstate, worldEditTag);
+			WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos, iblockstate, worldEditTag);
 
-                TileEntity tileentity1 = world.getTileEntity(blockpos);
+			TileEntity tileentity1 = world.getTileEntity(blockpos);
 
-                if (tileentity1 != null && tileentity1 instanceof IInventory)
-                {
-                    ((IInventory)tileentity1).clear();
-                }
+			if (tileentity1 != null && tileentity1 instanceof IInventory)
+			{
+				((IInventory)tileentity1).clear();
+			}
 
-                if (!world.setBlockState(blockpos, iblockstate, 2))
-                {
-                    throw new CommandException("commands.setblock.noChange", new Object[0]);
-                }
-                else
-                {
-                    if (flag)
-                    {
-                        TileEntity tileentity = world.getTileEntity(blockpos);
+			if (!world.setBlockState(blockpos, iblockstate, 2))
+			{
+				throw new CommandException("commands.setblock.noChange", new Object[0]);
+			}
+			else
+			{
+				if (flag)
+				{
+					TileEntity tileentity = world.getTileEntity(blockpos);
 
-                        if (tileentity != null)
-                        {
-                            nbttagcompound.setInteger("x", blockpos.getX());
-                            nbttagcompound.setInteger("y", blockpos.getY());
-                            nbttagcompound.setInteger("z", blockpos.getZ());
-                            tileentity.readFromNBT(nbttagcompound);
-                        }
-                    }
+					if (tileentity != null)
+					{
+						nbttagcompound.setInteger("x", blockpos.getX());
+						nbttagcompound.setInteger("y", blockpos.getY());
+						nbttagcompound.setInteger("z", blockpos.getZ());
+						tileentity.readFromNBT(nbttagcompound);
+					}
+				}
 
-                    world.notifyNeighborsRespectDebug(blockpos, iblockstate.getBlock(), false);
-                    sender.setCommandStat(CommandResultStats.Type.AFFECTED_BLOCKS, 1);
-                    notifyCommandListener(sender, this, "commands.setblock.success", new Object[0]);
-                }
-            }
+				world.notifyNeighborsRespectDebug(blockpos, iblockstate.getBlock(), false);
+				sender.setCommandStat(CommandResultStats.Type.AFFECTED_BLOCKS, 1);
+				notifyCommandListener(sender, this, "commands.setblock.success", new Object[0]);
+			}
         }
     }
 
