@@ -6,12 +6,16 @@ import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.command.WrongUsageException;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerChunkMapEntry;
+import net.minecraft.util.HttpUtil;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.ChunkProviderServer;
+import net.minecraft.world.gen.IChunkGenerator;
 
 import javax.annotation.Nullable;
 import java.util.Collections;
@@ -25,7 +29,7 @@ public class CommandChunk extends CommandCarpetBase
 
     public String getUsage(ICommandSender sender)
     {
-        return "Usage: chunk <load | info | unload> <X> <Z>";
+        return "Usage: chunk <load | info | unload | regen | repop | asyncrepop> <X> <Z>";
     }
 
     public String getName()
@@ -58,6 +62,15 @@ public class CommandChunk extends CommandCarpetBase
                 case "unload":
                     unload(sender, chunkX, chunkZ);
                     return;
+                case "regen":
+                    regen(sender, chunkX, chunkZ);
+                    return;
+                case "repop":
+                    repop(sender, chunkX, chunkZ);
+                    return;
+                case "asyncrepop":
+                    asyncrepop(sender, chunkX, chunkZ);
+                    return;
                 case "info":
                 default:
                     info(sender, chunkX, chunkZ);
@@ -66,6 +79,65 @@ public class CommandChunk extends CommandCarpetBase
         }catch (Exception e){
             throw new WrongUsageException(getUsage(sender));
         }
+    }
+
+    private boolean checkRepopLoaded(int x, int z){
+        return world.isChunkLoaded(x, z, false)
+                && world.isChunkLoaded(x+1, z, false)
+                && world.isChunkLoaded(x, z+1, false)
+                && world.isChunkLoaded(x+1, z+1, false);
+    }
+
+    private void regen(ICommandSender sender, int x, int z) {
+        if(!checkRepopLoaded(x, z)) {
+            sender.sendMessage(new TextComponentString(("Area not loaded for re-population")));
+        }
+
+        ChunkProviderServer chunkProvider = (ChunkProviderServer) world.getChunkProvider();
+        long i = ChunkPos.asLong(x, z);
+        chunkProvider.loadedChunks.remove(i);
+        Chunk chunk = chunkProvider.chunkGenerator.generateChunk(x, z);
+        chunkProvider.loadedChunks.put(i, chunk);
+        chunk.onLoad();
+        chunk.setTerrainPopulated(true);
+        chunk.onTick(false);
+        PlayerChunkMapEntry entry = ((WorldServer)world).playerChunkMap.getEntry(x, z);
+        if (entry != null && entry.chunk != null) {
+            entry.chunk = chunk;
+            entry.sentToPlayers = false;
+            entry.sendToPlayers();
+        }
+    }
+
+    private void repop(ICommandSender sender, int x, int z) {
+        if(!checkRepopLoaded(x, z)) {
+            sender.sendMessage(new TextComponentString(("Area not loaded for re-population")));
+        }
+
+        ChunkProviderServer chunkProvider = (ChunkProviderServer) world.getChunkProvider();
+        IChunkGenerator chunkGenerator = chunkProvider.chunkGenerator;
+        Chunk chunk = chunkProvider.loadChunk(x, z);
+        chunk.setUnpopulated();
+        chunk.populate(chunkProvider, chunkGenerator);
+    }
+
+    private void asyncrepop(ICommandSender sender, int x, int z) {
+        if(!checkRepopLoaded(x, z)) {
+            sender.sendMessage(new TextComponentString(("Area not loaded for re-population")));
+        }
+
+        HttpUtil.DOWNLOADER_EXECUTOR.submit(() -> {
+            try {
+                ChunkProviderServer chunkProvider = (ChunkProviderServer) world.getChunkProvider();
+                IChunkGenerator chunkGenerator = chunkProvider.chunkGenerator;
+                Chunk chunk = chunkProvider.loadChunk(x, z);
+                chunk.setUnpopulated();
+                chunk.populate(chunkProvider, chunkGenerator);
+                System.out.println("Chunk async repop end.");
+            } catch(Throwable e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     protected void info(ICommandSender sender, int x, int z) throws NoSuchFieldException, IllegalAccessException {
@@ -98,7 +170,7 @@ public class CommandChunk extends CommandCarpetBase
         int chunkZ = sender.getPosition().getZ() >> 4;
 
         if (args.length == 1) {
-            return getListOfStringsMatchingLastWord(args, "info", "load", "unload");
+            return getListOfStringsMatchingLastWord(args, "info", "load", "unload", "regen", "repop", "asyncrepop");
         } else if (args.length == 2) {
             return getListOfStringsMatchingLastWord(args, Integer.toString(chunkX), "~");
         } else if (args.length == 3) {
