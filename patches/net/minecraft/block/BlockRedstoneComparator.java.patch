@@ -27,7 +27,16 @@
      {
          return 2;
      }
-@@ -206,8 +210,32 @@
+@@ -155,6 +159,8 @@
+             }
+         }
+ 
++        logPowered(p_176397_1_, p_176397_2_, i > MIN_POWER); // RSMM
++
+         return i;
+     }
+ 
+@@ -206,8 +212,32 @@
                  {
                      p_176398_1_.func_175654_a(p_176398_2_, this, 2, 0);
                  }
@@ -60,7 +69,7 @@
      }
  
      private void func_176462_k(World p_176462_1_, BlockPos p_176462_2_, IBlockState p_176462_3_)
-@@ -249,6 +277,22 @@
+@@ -249,6 +279,22 @@
          }
  
          this.func_176462_k(p_180650_1_, p_180650_2_, p_180650_3_);
@@ -83,3 +92,34 @@
      }
  
      public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
+@@ -319,6 +365,30 @@
+         return this.func_176223_P().func_177226_a(field_185512_D, p_180642_8_.func_174811_aO().func_176734_d()).func_177226_a(field_176464_a, Boolean.valueOf(false)).func_177226_a(field_176463_b, BlockRedstoneComparator.Mode.COMPARE);
+     }
+ 
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return getPowerLevel(world, pos, state) > MIN_POWER;
++    }
++
++    // RSMM
++    @Override
++    public boolean logPowerChangeOnStateChange() {
++        return false;
++    }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        TileEntity blockEntity = world.func_175625_s(pos);
++
++        if (blockEntity instanceof TileEntityComparator) {
++            return ((TileEntityComparator)blockEntity).func_145996_a();
++        }
++
++        return MIN_POWER;
++    }
++
+     public static enum Mode implements IStringSerializable
+     {
+         COMPARE("compare"),

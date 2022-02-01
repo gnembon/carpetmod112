@@ -111,7 +111,7 @@ public class CarpetServer // static for now - easier to handle all around the co
     public static void tick(MinecraftServer server)
     {
         TickSpeed.tick(server);
-        if (CarpetSettings.redstoneMultimeter)
+        if (CarpetSettings.redstoneMultimeterLegacy)
         {
             TickStartEventDispatcher.dispatchEvent(server.getTickCounter());
         }

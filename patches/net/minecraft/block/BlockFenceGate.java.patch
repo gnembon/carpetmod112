@@ -1,17 +1,21 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockFenceGate.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockFenceGate.java
-@@ -20,6 +20,10 @@
+@@ -20,7 +20,13 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
+-public class BlockFenceGate extends BlockHorizontal
++import redstone.multimeter.block.MeterableBlock;
++
 +import carpet.CarpetSettings;
 +
 + import carpet.CarpetSettings;
 +
- public class BlockFenceGate extends BlockHorizontal
++public class BlockFenceGate extends BlockHorizontal implements MeterableBlock /* RSMM */
  {
      public static final PropertyBool field_176466_a = PropertyBool.func_177716_a("open");
-@@ -77,7 +81,7 @@
+     public static final PropertyBool field_176465_b = PropertyBool.func_177716_a("powered");
+@@ -77,7 +83,7 @@
  
      public boolean func_176196_c(World p_176196_1_, BlockPos p_176196_2_)
      {
@@ -20,3 +24,29 @@
      }
  
      @Nullable
+@@ -144,6 +150,8 @@
+         {
+             boolean flag = p_189540_2_.func_175640_z(p_189540_3_);
+ 
++            logPowered(p_189540_2_, p_189540_3_, flag); // RSMM
++
+             if (((Boolean)p_189540_1_.func_177229_b(field_176465_b)).booleanValue() != flag)
+             {
+                 p_189540_2_.func_180501_a(p_189540_3_, p_189540_1_.func_177226_a(field_176465_b, Boolean.valueOf(flag)).func_177226_a(field_176466_a, Boolean.valueOf(flag)), 2);
+@@ -195,4 +203,16 @@
+             return BlockFaceShape.UNDEFINED;
+         }
+     }
++
++    // RSMM
++    @Override
++    public boolean logPoweredOnBlockUpdate() {
++        return false;
++    }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176466_a);
++    }
+ }

@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDaylightDetector.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDaylightDetector.java
+@@ -25,7 +25,10 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+-public class BlockDaylightDetector extends BlockContainer
++import redstone.multimeter.block.Meterable;
++import redstone.multimeter.block.PowerSource;
++
++public class BlockDaylightDetector extends BlockContainer implements Meterable /* RSMM */, PowerSource /* RSMM */
+ {
+     public static final PropertyInteger field_176436_a = PropertyInteger.func_177719_a("power", 0, 15);
+     protected static final AxisAlignedBB field_185566_b = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.375D, 1.0D);
+@@ -173,4 +176,16 @@
+     {
+         return p_193383_4_ == EnumFacing.DOWN ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+     }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176436_a) > MIN_POWER;
++    }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176436_a);
++    }
+ }

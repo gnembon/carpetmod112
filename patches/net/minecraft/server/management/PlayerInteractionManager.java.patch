@@ -102,7 +102,7 @@
                  return flag1;
              }
          }
-@@ -402,10 +439,22 @@
+@@ -402,10 +439,23 @@
          }
          else
          {
@@ -122,6 +122,7 @@
 +                {
 +                    return EnumActionResult.PASS;
 +                }
++                ((WorldServer)field_73092_a).getMultimeter().logInteractBlock(p_187251_2_, p_187251_5_); // RSMM
                  if (iblockstate.func_177230_c().func_180639_a(p_187251_2_, p_187251_5_, iblockstate, p_187251_1_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_))
                  {
                      return EnumActionResult.SUCCESS;

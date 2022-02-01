@@ -1,15 +1,17 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneRepeater.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneRepeater.java
-@@ -20,6 +20,8 @@
+@@ -19,7 +19,10 @@
+ import net.minecraft.util.text.translation.I18n;
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
++import net.minecraft.world.WorldServer;
  
 +import carpet.CarpetSettings;
 +
  public class BlockRedstoneRepeater extends BlockRedstoneDiode
  {
      public static final PropertyBool field_176411_a = PropertyBool.func_177716_a("locked");
-@@ -64,9 +66,20 @@
+@@ -64,9 +67,20 @@
          }
      }
  
@@ -32,3 +34,32 @@
      }
  
      protected IBlockState func_180674_e(IBlockState p_180674_1_)
+@@ -95,9 +109,16 @@
+         return new ItemStack(Items.field_151107_aW);
+     }
+ 
++    // RSMM - capture return value
+     public boolean func_176405_b(IBlockAccess p_176405_1_, BlockPos p_176405_2_, IBlockState p_176405_3_)
+     {
+-        return this.func_176407_c(p_176405_1_, p_176405_2_, p_176405_3_) > 0;
++        boolean locked = this.func_176407_c(p_176405_1_, p_176405_2_, p_176405_3_) > 0;
++        // RSMM start
++        if (locked && p_176405_1_ instanceof WorldServer) {
++            logPowered((WorldServer)p_176405_1_, p_176405_2_, p_176405_3_);
++        }
++        // RSMM end
++        return locked;
+     }
+ 
+     protected boolean func_185545_A(IBlockState p_185545_1_)
+@@ -128,4 +149,10 @@
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_185512_D, field_176410_b, field_176411_a});
+     }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        return field_149914_a ? MAX_POWER : MIN_POWER;
++    }
+ }

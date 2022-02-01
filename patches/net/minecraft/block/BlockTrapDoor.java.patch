@@ -1,0 +1,41 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTrapDoor.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTrapDoor.java
+@@ -22,7 +22,9 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+-public class BlockTrapDoor extends Block
++import redstone.multimeter.block.MeterableBlock;
++
++public class BlockTrapDoor extends Block implements MeterableBlock /* RSMM */
+ {
+     public static final PropertyDirection field_176284_a = BlockHorizontal.field_185512_D;
+     public static final PropertyBool field_176283_b = PropertyBool.func_177716_a("open");
+@@ -125,6 +127,8 @@
+         {
+             boolean flag = p_189540_2_.func_175640_z(p_189540_3_);
+ 
++            logPowered(p_189540_2_, p_189540_3_, flag); // RSMM
++
+             if (flag || p_189540_4_.func_176223_P().func_185897_m())
+             {
+                 boolean flag1 = ((Boolean)p_189540_1_.func_177229_b(field_176283_b)).booleanValue();
+@@ -241,6 +245,18 @@
+         return (p_193383_4_ == EnumFacing.UP && p_193383_2_.func_177229_b(field_176285_M) == BlockTrapDoor.DoorHalf.TOP || p_193383_4_ == EnumFacing.DOWN && p_193383_2_.func_177229_b(field_176285_M) == BlockTrapDoor.DoorHalf.BOTTOM) && !((Boolean)p_193383_2_.func_177229_b(field_176283_b)).booleanValue() ? BlockFaceShape.SOLID : BlockFaceShape.UNDEFINED;
+     }
+ 
++    // RSMM
++    @Override
++    public boolean logPoweredOnBlockUpdate() {
++        return false;
++    }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176283_b);
++    }
++
+     public static enum DoorHalf implements IStringSerializable
+     {
+         TOP("top"),

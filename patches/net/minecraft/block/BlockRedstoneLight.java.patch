@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneLight.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneLight.java
+@@ -9,7 +9,9 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ 
+-public class BlockRedstoneLight extends Block
++import redstone.multimeter.block.MeterableBlock;
++
++public class BlockRedstoneLight extends Block implements MeterableBlock /* RSMM */
+ {
+     private final boolean field_150171_a;
+ 
+@@ -58,6 +60,8 @@
+     {
+         if (!p_180650_1_.field_72995_K)
+         {
++            logPowered(p_180650_1_, p_180650_2_, p_180650_3_); // RSMM
++
+             if (this.field_150171_a && !p_180650_1_.func_175640_z(p_180650_2_))
+             {
+                 p_180650_1_.func_180501_a(p_180650_2_, Blocks.field_150379_bu.func_176223_P(), 2);
+@@ -79,4 +83,10 @@
+     {
+         return new ItemStack(Blocks.field_150379_bu);
+     }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return field_150171_a;
++    }
+ }

@@ -218,7 +218,7 @@ public class RSMMServer implements StateChangeListener, PistonPushListener, Tick
 
     @Override
     public void onCustomPayload(EntityPlayerMP sender, String channel, PacketBuffer data) {
-        if (CarpetSettings.redstoneMultimeter && "RSMM".equals(channel)) {
+        if (CarpetSettings.redstoneMultimeterLegacy && "RSMM".equals(channel)) {
             RSMMSPacket packet = RSMMSPacket.fromBuffer(data);
             if (packet == null) return;
             packet.process(getOrCreateMeterGroup(sender));

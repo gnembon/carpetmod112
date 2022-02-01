@@ -1,0 +1,33 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockLever.java
++++ ../src-work/minecraft/net/minecraft/block/BlockLever.java
+@@ -23,7 +23,10 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+-public class BlockLever extends Block
++import redstone.multimeter.block.Meterable;
++import redstone.multimeter.block.PowerSource;
++
++public class BlockLever extends Block implements Meterable /* RSMM */, PowerSource /* RSMM */
+ {
+     public static final PropertyEnum<BlockLever.EnumOrientation> field_176360_a = PropertyEnum.<BlockLever.EnumOrientation>func_177709_a("facing", BlockLever.EnumOrientation.class);
+     public static final PropertyBool field_176359_b = PropertyBool.func_177716_a("powered");
+@@ -309,6 +312,18 @@
+         return BlockFaceShape.UNDEFINED;
+     }
+ 
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176359_b);
++    }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176359_b) ? MAX_POWER : MIN_POWER;
++    }
++
+     public static enum EnumOrientation implements IStringSerializable
+     {
+         DOWN_X(0, "down_x", EnumFacing.DOWN),

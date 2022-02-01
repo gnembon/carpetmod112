@@ -1,0 +1,65 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockDoor.java
++++ ../src-work/minecraft/net/minecraft/block/BlockDoor.java
+@@ -1,6 +1,8 @@
+ package net.minecraft.block;
+ 
+ import java.util.Random;
++
++import net.minecraft.block.BlockDoor.EnumDoorHalf;
+ import net.minecraft.block.material.EnumPushReaction;
+ import net.minecraft.block.material.MapColor;
+ import net.minecraft.block.material.Material;
+@@ -27,7 +29,9 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+-public class BlockDoor extends Block
++import redstone.multimeter.block.MeterableBlock;
++
++public class BlockDoor extends Block implements MeterableBlock /* RSMM */
+ {
+     public static final PropertyDirection field_176520_a = BlockHorizontal.field_185512_D;
+     public static final PropertyBool field_176519_b = PropertyBool.func_177716_a("open");
+@@ -222,6 +226,9 @@
+             {
+                 boolean flag = p_189540_2_.func_175640_z(p_189540_3_) || p_189540_2_.func_175640_z(blockpos1);
+ 
++                logPowered(p_189540_2_, p_189540_3_, flag); // RSMM
++                logPowered(p_189540_2_, blockpos1, flag); // RSMM
++
+                 if (p_189540_4_ != this && (flag || p_189540_4_.func_176223_P().func_185897_m()) && flag != ((Boolean)iblockstate1.func_177229_b(field_176522_N)).booleanValue())
+                 {
+                     p_189540_2_.func_180501_a(blockpos1, iblockstate1.func_177226_a(field_176522_N, Boolean.valueOf(flag)), 2);
+@@ -439,6 +446,32 @@
+         return BlockFaceShape.UNDEFINED;
+     }
+ 
++    // RSMM
++    @Override
++    public boolean logPoweredOnBlockUpdate() {
++        return false;
++    }
++
++    // RSMM
++    @Override
++    public boolean isPowered(World world, BlockPos pos, IBlockState state) {
++        return world.func_175640_z(pos) || world.func_175640_z(getOtherHalf(pos, state));
++    }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176519_b);
++    }
++
++    // RSMM
++    private BlockPos getOtherHalf(BlockPos pos, IBlockState state) {
++        EnumDoorHalf half = state.func_177229_b(field_176523_O);
++        EnumFacing dir = (half == EnumDoorHalf.LOWER) ? EnumFacing.UP : EnumFacing.DOWN;
++
++        return pos.func_177972_a(dir);
++    }
++
+     public static enum EnumDoorHalf implements IStringSerializable
+     {
+         UPPER,

@@ -1,15 +1,35 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRedstoneTorch.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneTorch.java
-@@ -19,6 +19,8 @@
+@@ -19,7 +19,12 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
+-public class BlockRedstoneTorch extends BlockTorch
++import redstone.multimeter.block.MeterableBlock;
++import redstone.multimeter.block.PowerSource;
++
 +import carpet.CarpetSettings;
 +
- public class BlockRedstoneTorch extends BlockTorch
++public class BlockRedstoneTorch extends BlockTorch implements MeterableBlock /* RSMM */, PowerSource /* RSMM */
  {
      private static final Map<World, List<BlockRedstoneTorch.Toggle>> field_150112_b = Maps.<World, List<BlockRedstoneTorch.Toggle>>newHashMap();
-@@ -149,7 +151,7 @@
+     private final boolean field_150113_a;
+@@ -97,10 +102,13 @@
+         return this.field_150113_a && p_180656_1_.func_177229_b(field_176596_a) != p_180656_4_ ? 15 : 0;
+     }
+ 
++    // RSMM - capture return value
+     private boolean func_176597_g(World p_176597_1_, BlockPos p_176597_2_, IBlockState p_176597_3_)
+     {
+         EnumFacing enumfacing = ((EnumFacing)p_176597_3_.func_177229_b(field_176596_a)).func_176734_d();
+-        return p_176597_1_.func_175709_b(p_176597_2_.func_177972_a(enumfacing), enumfacing);
++        boolean powered = p_176597_1_.func_175709_b(p_176597_2_.func_177972_a(enumfacing), enumfacing);
++        logPowered(p_176597_1_, p_176597_2_, powered); // RSMM
++        return powered;
+     }
+ 
+     public void func_180645_a(World p_180645_1_, BlockPos p_180645_2_, IBlockState p_180645_3_, Random p_180645_4_)
+@@ -149,7 +157,7 @@
      {
          if (!this.func_176592_e(p_189540_2_, p_189540_3_, p_189540_1_))
          {
@@ -18,3 +38,34 @@
              {
                  p_189540_2_.func_175684_a(p_189540_3_, this, this.func_149738_a(p_189540_2_));
              }
+@@ -181,6 +189,30 @@
+         return p_149667_1_ == Blocks.field_150437_az || p_149667_1_ == Blocks.field_150429_aA;
+     }
+ 
++    // RSMM
++    @Override
++    public boolean logPoweredOnBlockUpdate() {
++        return false;
++    }
++
++    // RSMM
++    @Override
++    public boolean isPowered(World world, BlockPos pos, IBlockState state) {
++        return func_176597_g(world, pos, state);
++    }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return field_150113_a;
++    }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        return field_150113_a ? MAX_POWER : MIN_POWER;
++    }
++
+     static class Toggle
+         {
+             BlockPos field_180111_a;

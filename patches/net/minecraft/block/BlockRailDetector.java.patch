@@ -1,6 +1,18 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRailDetector.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRailDetector.java
-@@ -220,6 +220,14 @@
+@@ -23,7 +23,10 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+-public class BlockRailDetector extends BlockRailBase
++import redstone.multimeter.block.Meterable;
++import redstone.multimeter.block.PowerSource;
++
++public class BlockRailDetector extends BlockRailBase implements Meterable /* RSMM */, PowerSource /* RSMM */
+ {
+     public static final PropertyEnum<BlockRailBase.EnumRailDirection> field_176573_b = PropertyEnum.<BlockRailBase.EnumRailDirection>func_177708_a("shape", BlockRailBase.EnumRailDirection.class, new Predicate<BlockRailBase.EnumRailDirection>()
+     {
+@@ -220,6 +223,14 @@
  
                  switch ((BlockRailBase.EnumRailDirection)p_185499_1_.func_177229_b(field_176573_b))
                  {
@@ -15,3 +27,20 @@
                      case ASCENDING_EAST:
                          return p_185499_1_.func_177226_a(field_176573_b, BlockRailBase.EnumRailDirection.ASCENDING_WEST);
                      case ASCENDING_WEST:
+@@ -352,4 +363,16 @@
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176573_b, field_176574_M});
+     }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176574_M);
++    }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176574_M) ? MAX_POWER : MIN_POWER;
++    }
+ }

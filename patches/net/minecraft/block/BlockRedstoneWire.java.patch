@@ -7,18 +7,23 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Sets;
  import java.util.EnumSet;
-@@ -27,6 +28,10 @@
+@@ -27,7 +28,14 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
+-public class BlockRedstoneWire extends Block
++import redstone.multimeter.block.MeterableBlock;
++import redstone.multimeter.block.PowerSource;
++
 +import carpet.CarpetSettings;
 +import carpet.helpers.RedstoneWireTurbo;
 +import java.util.Collections;
 +
- public class BlockRedstoneWire extends Block
++public class BlockRedstoneWire extends Block implements MeterableBlock /* RSMM */, PowerSource /* RSMM */
  {
      public static final PropertyEnum<BlockRedstoneWire.EnumAttachPosition> field_176348_a = PropertyEnum.<BlockRedstoneWire.EnumAttachPosition>func_177709_a("north", BlockRedstoneWire.EnumAttachPosition.class);
-@@ -35,9 +40,11 @@
+     public static final PropertyEnum<BlockRedstoneWire.EnumAttachPosition> field_176347_b = PropertyEnum.<BlockRedstoneWire.EnumAttachPosition>func_177709_a("east", BlockRedstoneWire.EnumAttachPosition.class);
+@@ -35,9 +43,11 @@
      public static final PropertyEnum<BlockRedstoneWire.EnumAttachPosition> field_176350_N = PropertyEnum.<BlockRedstoneWire.EnumAttachPosition>func_177709_a("west", BlockRedstoneWire.EnumAttachPosition.class);
      public static final PropertyInteger field_176351_O = PropertyInteger.func_177719_a("power", 0, 15);
      protected static final AxisAlignedBB[] field_185700_f = new AxisAlignedBB[] {new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.8125D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.1875D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.1875D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 0.8125D), new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.0625D, 1.0D)};
@@ -31,7 +36,7 @@
      public BlockRedstoneWire()
      {
          super(Material.field_151594_q);
-@@ -142,21 +149,26 @@
+@@ -142,21 +152,26 @@
          return p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_185896_q() || p_176196_1_.func_180495_p(p_176196_2_.func_177977_b()).func_177230_c() == Blocks.field_150426_aN;
      }
  
@@ -63,7 +68,7 @@
      {
          IBlockState iblockstate = p_176345_4_;
          int i = ((Integer)p_176345_4_.func_177229_b(field_176351_O)).intValue();
-@@ -166,54 +178,65 @@
+@@ -166,53 +181,66 @@
          int k = p_176345_1_.func_175687_A(p_176345_2_);
          this.field_150181_a = true;
  
@@ -157,11 +162,11 @@
 -        {
 -            j = k;
 -        }
--
++        logPowered(p_176345_1_, p_176345_2_, j > MIN_POWER); // RSMM
+ 
          if (i != j)
          {
-             p_176345_4_ = p_176345_4_.func_177226_a(field_176351_O, Integer.valueOf(j));
-@@ -223,11 +246,15 @@
+@@ -223,11 +251,15 @@
                  p_176345_1_.func_180501_a(p_176345_2_, p_176345_4_, 2);
              }
  
@@ -181,7 +186,7 @@
              }
          }
  
-@@ -251,7 +278,7 @@
+@@ -251,7 +283,7 @@
      {
          if (!p_176213_1_.field_72995_K)
          {
@@ -190,7 +195,7 @@
  
              for (EnumFacing enumfacing : EnumFacing.Plane.VERTICAL)
              {
-@@ -290,7 +317,7 @@
+@@ -290,7 +322,7 @@
                  p_180663_1_.func_175685_c(p_180663_2_.func_177972_a(enumfacing), this, false);
              }
  
@@ -199,7 +204,7 @@
  
              for (EnumFacing enumfacing1 : EnumFacing.Plane.HORIZONTAL)
              {
-@@ -332,7 +359,7 @@
+@@ -332,7 +364,7 @@
          {
              if (this.func_176196_c(p_189540_2_, p_189540_3_))
              {
@@ -208,7 +213,7 @@
              }
              else
              {
-@@ -354,6 +381,12 @@
+@@ -354,6 +386,12 @@
  
      public int func_180656_a(IBlockState p_180656_1_, IBlockAccess p_180656_2_, BlockPos p_180656_3_, EnumFacing p_180656_4_)
      {
@@ -221,7 +226,7 @@
          if (!this.field_150181_a)
          {
              return 0;
-@@ -361,6 +394,8 @@
+@@ -361,6 +399,8 @@
          else
          {
              int i = ((Integer)p_180656_1_.func_177229_b(field_176351_O)).intValue();
@@ -230,7 +235,7 @@
  
              if (i == 0)
              {
-@@ -398,7 +433,8 @@
+@@ -398,7 +438,8 @@
          }
      }
  
@@ -240,7 +245,7 @@
      {
          BlockPos blockpos = p_176339_2_.func_177972_a(p_176339_3_);
          IBlockState iblockstate = p_176339_1_.func_180495_p(blockpos);
-@@ -435,6 +471,12 @@
+@@ -435,6 +476,12 @@
  
      protected static boolean func_176343_a(IBlockState p_176343_0_, @Nullable EnumFacing p_176343_1_)
      {
@@ -253,3 +258,37 @@
          Block block = p_176343_0_.func_177230_c();
  
          if (block == Blocks.field_150488_af)
+@@ -514,6 +561,33 @@
+         return BlockFaceShape.UNDEFINED;
+     }
+ 
++    // RSMM
++    @Override
++    public boolean logPoweredOnBlockUpdate() {
++        return false;
++    }
++
++    // RSMM
++    // This method is only called on blocks where 'logPoweredOnBlockUpdate'
++    // returns 'true', so it does not really matter that a potentially
++    // incorrect value is returned.
++    @Override
++    public boolean isPowered(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176351_O) > MIN_POWER;
++    }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176351_O) > MIN_POWER;
++    }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176351_O);
++    }
++
+     static enum EnumAttachPosition implements IStringSerializable
+     {
+         UP("up"),
