@@ -23,3 +23,12 @@
      }
  
      public boolean func_76675_b()
+@@ -147,4 +154,8 @@
+     {
+         this.field_76685_h = p_76666_1_;
+     }
++
++    public BlockStateContainer getBlockStateContainer() {
++        return field_177488_d;
++    }
+ }

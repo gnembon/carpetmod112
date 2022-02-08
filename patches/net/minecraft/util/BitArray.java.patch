@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/util/BitArray.java
++++ ../src-work/minecraft/net/minecraft/util/BitArray.java
+@@ -65,4 +65,11 @@
+     {
+         return this.field_188148_d;
+     }
++
++    public long getMaxEntryValue(){
++        return field_188147_c;
++    }
++    public int getBitsPerEntry(){
++        return field_188146_b;
++    }
+ }
