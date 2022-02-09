@@ -1,0 +1,14 @@
+--- ../src-base/minecraft/net/minecraft/block/state/IBlockProperties.java
++++ ../src-work/minecraft/net/minecraft/block/state/IBlockProperties.java
+@@ -26,9 +26,9 @@
+ 
+     boolean func_189884_a(Entity p_189884_1_);
+ 
+-    int func_185891_c();
++    int getLightOpacity(IBlockAccess blockAccess, BlockPos pos);
+ 
+-    int func_185906_d();
++    int getLightValue(IBlockAccess world, BlockPos pos);
+ 
+     boolean func_185916_f();
+ 

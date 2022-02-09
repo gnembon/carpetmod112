@@ -1,6 +1,12 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockIce.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockIce.java
-@@ -17,6 +17,8 @@
+@@ -11,12 +11,13 @@
+ import net.minecraft.init.Blocks;
+ import net.minecraft.init.Enchantments;
+ import net.minecraft.item.ItemStack;
+-import net.minecraft.stats.StatList;
+ import net.minecraft.tileentity.TileEntity;
+ import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.EnumSkyBlock;
  import net.minecraft.world.World;
  
@@ -9,7 +15,7 @@
  public class BlockIce extends BlockBreakable
  {
      public BlockIce()
-@@ -29,7 +31,10 @@
+@@ -29,7 +30,10 @@
  
      public void func_180657_a(World p_180657_1_, EntityPlayer p_180657_2_, BlockPos p_180657_3_, IBlockState p_180657_4_, @Nullable TileEntity p_180657_5_, ItemStack p_180657_6_)
      {
@@ -21,3 +27,12 @@
          p_180657_2_.func_71020_j(0.005F);
  
          if (this.func_149700_E() && EnchantmentHelper.func_77506_a(Enchantments.field_185306_r, p_180657_6_) > 0)
+@@ -62,7 +66,7 @@
+ 
+     public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
+     {
+-        if (p_180650_1_.func_175642_b(EnumSkyBlock.BLOCK, p_180650_2_) > 11 - this.func_176223_P().func_185891_c())
++        if (p_180650_1_.func_175642_b(EnumSkyBlock.BLOCK, p_180650_2_) > 11 - this.func_176223_P().getLightOpacity(p_180650_1_, p_180650_2_))
+         {
+             this.func_185679_b(p_180650_1_, p_180650_2_);
+         }

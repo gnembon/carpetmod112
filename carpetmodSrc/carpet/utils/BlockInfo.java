@@ -178,9 +178,9 @@ public class BlockInfo
         lst.add(Messenger.s(null, String.format(" - Light in: %d, above: %d", world.getLight(pos), world.getLight(pos.up()))));
         lst.add(Messenger.s(null, String.format(" - Brightness in: %.2f, above: %.2f", world.getLightBrightness(pos), world.getLightBrightness(pos.up()))));
         lst.add(Messenger.m(null, "w  - Is opaque: ", formatBoolean(material.isOpaque())));
-        lst.add(Messenger.s(null, String.format(" - Light opacity: %d", state.getLightOpacity())));
+        lst.add(Messenger.s(null, String.format(" - Light opacity: %d", state.getLightOpacity(world, pos))));
         lst.add(Messenger.m(null, "w  - Blocks light: ", formatBoolean(material.blocksLight())));
-        lst.add(Messenger.s(null, String.format(" - Emitted light: %d", state.getLightValue())));
+        lst.add(Messenger.s(null, String.format(" - Emitted light: %d", state.getLightValue(world, pos))));
         lst.add(Messenger.m(null, "w  - Picks neighbour light value: ", formatBoolean(state.useNeighborBrightness())));
         lst.add(Messenger.s(null, ""));
         lst.add(Messenger.m(null, "w  - Causes suffocation: ", formatBoolean(state.causesSuffocation())));

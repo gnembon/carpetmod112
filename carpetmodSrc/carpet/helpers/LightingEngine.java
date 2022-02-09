@@ -441,7 +441,7 @@ public class LightingEngine {
             return this.curChunk.canSeeSky(this.curPos) ? EnumSkyBlock.SKY.defaultLightValue : 0;
         }
 
-        return MathHelper.clamp(state.getLightValue(), 0, MAX_LIGHT);
+        return MathHelper.clamp(state.getLightValue(world, curPos), 0, MAX_LIGHT);
     }
 
     private int curToOpac(final IBlockState state) {
@@ -449,7 +449,7 @@ public class LightingEngine {
     }
 
     private int posToOpac(final BlockPos pos, final IBlockState state) {
-        return MathHelper.clamp(state.getLightOpacity(), 1, MAX_LIGHT);
+        return MathHelper.clamp(state.getLightOpacity(world, pos), 1, MAX_LIGHT);
     }
 
     //PooledLongQueue code

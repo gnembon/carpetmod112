@@ -44,7 +44,7 @@
 -                        this.field_146015_k = false;
 -                        this.field_174909_f.clear();
 -                        break;
-+                        if (iblockstate.func_185891_c() >= 15 && iblockstate.func_177230_c() != Blocks.field_150357_h)
++                        if (iblockstate.getLightOpacity(field_145850_b, blockpos$mutableblockpos) >= 15 && iblockstate.func_177230_c() != Blocks.field_150357_h)
 +                        {
 +                            this.field_146015_k = false;
 +                            this.field_174909_f.clear();

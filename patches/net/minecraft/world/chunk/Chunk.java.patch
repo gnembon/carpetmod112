@@ -1,9 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/world/chunk/Chunk.java
 +++ ../src-work/minecraft/net/minecraft/world/chunk/Chunk.java
-@@ -1,12 +1,11 @@
- package net.minecraft.world.chunk;
- 
-+import carpet.CarpetServer;
+@@ -3,10 +3,8 @@
  import com.google.common.base.Predicate;
  import com.google.common.collect.Maps;
  import com.google.common.collect.Queues;
@@ -16,7 +13,7 @@
  import java.util.concurrent.ConcurrentLinkedQueue;
  import javax.annotation.Nullable;
  import net.minecraft.block.Block;
-@@ -38,6 +37,11 @@
+@@ -38,6 +36,11 @@
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -28,7 +25,7 @@
  public class Chunk
  {
      private static final Logger field_150817_t = LogManager.getLogger();
-@@ -66,13 +70,17 @@
+@@ -66,13 +69,17 @@
      private final ConcurrentLinkedQueue<BlockPos> field_177447_w;
      public boolean field_189550_d;
  
@@ -47,7 +44,7 @@
          this.field_76649_t = 4096;
          this.field_177447_w = Queues.<BlockPos>newConcurrentLinkedQueue();
          this.field_76645_j = (ClassInheritanceMultiMap[])(new ClassInheritanceMultiMap[16]);
-@@ -188,38 +196,43 @@
+@@ -188,38 +195,43 @@
  
                  if (this.field_76637_e.field_73011_w.func_191066_m())
                  {
@@ -116,7 +113,7 @@
                  }
              }
          }
-@@ -307,7 +320,13 @@
+@@ -307,7 +319,13 @@
  
      private void func_76615_h(int p_76615_1_, int p_76615_2_, int p_76615_3_)
      {
@@ -131,7 +128,7 @@
          int j = i;
  
          if (p_76615_2_ > i)
-@@ -322,66 +341,72 @@
+@@ -322,66 +340,72 @@
  
          if (j != i)
          {
@@ -249,7 +246,7 @@
              }
  
              int l1 = this.field_76634_f[p_76615_3_ << 4 | p_76615_1_];
-@@ -399,6 +424,12 @@
+@@ -399,6 +423,12 @@
                  this.field_82912_p = l1;
              }
  
@@ -262,7 +259,22 @@
              if (this.field_76637_e.field_73011_w.func_191066_m())
              {
                  for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
-@@ -478,12 +509,19 @@
+@@ -415,12 +445,12 @@
+ 
+     public int func_177437_b(BlockPos p_177437_1_)
+     {
+-        return this.func_177435_g(p_177437_1_).func_185891_c();
++        return this.func_177435_g(p_177437_1_).getLightOpacity(field_76637_e, p_177437_1_);
+     }
+ 
+     private int func_150808_b(int p_150808_1_, int p_150808_2_, int p_150808_3_)
+     {
+-        return this.func_186032_a(p_150808_1_, p_150808_2_, p_150808_3_).func_185891_c();
++        return this.func_186032_a(p_150808_1_, p_150808_2_, p_150808_3_).getLightOpacity(field_76637_e, new BlockPos(p_150808_1_, p_150808_2_, p_150808_3_));
+     }
+ 
+     public IBlockState func_177435_g(BlockPos p_177435_1_)
+@@ -478,12 +508,19 @@
          }
      }
  
@@ -285,7 +297,7 @@
          int l = k << 4 | i;
  
          if (j >= this.field_76638_b[l] - 1)
-@@ -492,15 +530,15 @@
+@@ -492,15 +529,15 @@
          }
  
          int i1 = this.field_76634_f[l];
@@ -304,7 +316,7 @@
              Block block1 = iblockstate.func_177230_c();
              ExtendedBlockStorage extendedblockstorage = this.field_76652_q[j >> 4];
              boolean flag = false;
-@@ -515,19 +553,23 @@
+@@ -515,19 +552,23 @@
                  extendedblockstorage = new ExtendedBlockStorage(j >> 4 << 4, this.field_76637_e.field_73011_w.func_191066_m());
                  this.field_76652_q[j >> 4] = extendedblockstorage;
                  flag = j >= i1;
@@ -332,7 +344,7 @@
                  }
              }
  
-@@ -537,13 +579,13 @@
+@@ -537,14 +578,14 @@
              }
              else
              {
@@ -344,11 +356,13 @@
                  else
                  {
 -                    int j1 = p_177436_2_.func_185891_c();
-+                    int j1 = state.func_185891_c();
-                     int k1 = iblockstate.func_185891_c();
+-                    int k1 = iblockstate.func_185891_c();
++                    int j1 = state.getLightOpacity(field_76637_e, pos);
++                    int k1 = iblockstate.getLightOpacity(field_76637_e, pos);
  
                      if (j1 > 0)
-@@ -558,15 +600,17 @@
+                     {
+@@ -558,15 +599,17 @@
                          this.func_76615_h(i, j, k);
                      }
  
@@ -371,7 +385,7 @@
  
                      if (tileentity != null)
                      {
-@@ -574,19 +618,30 @@
+@@ -574,19 +617,30 @@
                      }
                  }
  
@@ -407,7 +421,7 @@
                      }
  
                      if (tileentity1 != null)
-@@ -596,6 +651,9 @@
+@@ -596,6 +650,9 @@
                  }
  
                  this.field_76643_l = true;
@@ -417,7 +431,7 @@
                  return iblockstate;
              }
          }
-@@ -603,6 +661,7 @@
+@@ -603,6 +660,7 @@
  
      public int func_177413_a(EnumSkyBlock p_177413_1_, BlockPos p_177413_2_)
      {
@@ -425,7 +439,7 @@
          int i = p_177413_2_.func_177958_n() & 15;
          int j = p_177413_2_.func_177956_o();
          int k = p_177413_2_.func_177952_p() & 15;
-@@ -633,7 +692,12 @@
+@@ -633,7 +691,12 @@
          {
              extendedblockstorage = new ExtendedBlockStorage(j >> 4 << 4, this.field_76637_e.field_73011_w.func_191066_m());
              this.field_76652_q[j >> 4] = extendedblockstorage;
@@ -439,7 +453,7 @@
          }
  
          this.field_76643_l = true;
-@@ -653,6 +717,7 @@
+@@ -653,6 +716,7 @@
  
      public int func_177443_a(BlockPos p_177443_1_, int p_177443_2_)
      {
@@ -447,7 +461,7 @@
          int i = p_177443_1_.func_177958_n() & 15;
          int j = p_177443_1_.func_177956_o();
          int k = p_177443_1_.func_177952_p() & 15;
-@@ -819,6 +884,10 @@
+@@ -819,6 +883,10 @@
          {
              this.field_76637_e.func_175650_b(classinheritancemultimap);
          }
@@ -458,7 +472,7 @@
      }
  
      public void func_76623_d()
-@@ -964,13 +1033,40 @@
+@@ -964,13 +1032,40 @@
          {
              if (p_186034_1_.func_185933_a(this, this.field_76635_g, this.field_76647_h))
              {
@@ -500,7 +514,7 @@
              this.func_76630_e();
          }
      }
-@@ -1018,10 +1114,13 @@
+@@ -1018,10 +1113,13 @@
  
          this.field_150815_m = true;
  
@@ -518,7 +532,7 @@
  
          while (!this.field_177447_w.isEmpty())
          {
-@@ -1041,6 +1140,11 @@
+@@ -1041,6 +1139,11 @@
          return this.field_150815_m && this.field_76646_k && this.field_150814_l;
      }
  
@@ -530,7 +544,25 @@
      public boolean func_186035_j()
      {
          return this.field_150815_m;
-@@ -1389,4 +1493,67 @@
+@@ -1156,7 +1259,7 @@
+                         {
+                             BlockPos blockpos2 = blockpos1.func_177972_a(enumfacing);
+ 
+-                            if (this.field_76637_e.func_180495_p(blockpos2).func_185906_d() > 0)
++                            if (this.field_76637_e.func_180495_p(blockpos2).getLightValue(field_76637_e, blockpos2) > 0)
+                             {
+                                 this.field_76637_e.func_175664_x(blockpos2);
+                             }
+@@ -1287,7 +1390,7 @@
+         {
+             blockpos$mutableblockpos.func_181079_c(blockpos$mutableblockpos.func_177958_n(), l, blockpos$mutableblockpos.func_177952_p());
+ 
+-            if (this.func_177435_g(blockpos$mutableblockpos).func_185906_d() > 0)
++            if (this.func_177435_g(blockpos$mutableblockpos).getLightValue(field_76637_e, blockpos$mutableblockpos) > 0)
+             {
+                 this.field_76637_e.func_175664_x(blockpos$mutableblockpos);
+             }
+@@ -1389,4 +1492,67 @@
          QUEUED,
          CHECK;
      }

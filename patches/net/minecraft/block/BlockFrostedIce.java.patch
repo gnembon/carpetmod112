@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockFrostedIce.java
++++ ../src-work/minecraft/net/minecraft/block/BlockFrostedIce.java
+@@ -32,7 +32,7 @@
+ 
+     public void func_180650_b(World p_180650_1_, BlockPos p_180650_2_, IBlockState p_180650_3_, Random p_180650_4_)
+     {
+-        if ((p_180650_4_.nextInt(3) == 0 || this.func_185680_c(p_180650_1_, p_180650_2_) < 4) && p_180650_1_.func_175671_l(p_180650_2_) > 11 - ((Integer)p_180650_3_.func_177229_b(field_185682_a)).intValue() - p_180650_3_.func_185891_c())
++        if ((p_180650_4_.nextInt(3) == 0 || this.func_185680_c(p_180650_1_, p_180650_2_) < 4) && p_180650_1_.func_175671_l(p_180650_2_) > 11 - ((Integer)p_180650_3_.func_177229_b(field_185682_a)).intValue() - p_180650_3_.getLightOpacity(p_180650_1_, p_180650_2_))
+         {
+             this.func_185681_a(p_180650_1_, p_180650_2_, p_180650_3_, p_180650_4_, true);
+         }

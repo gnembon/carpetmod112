@@ -1,6 +1,6 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonBase.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonBase.java
-@@ -1,8 +1,12 @@
+@@ -1,8 +1,11 @@
  package net.minecraft.block;
  
  import com.google.common.collect.Lists;
@@ -9,11 +9,10 @@
  import java.util.List;
  import javax.annotation.Nullable;
 +
-+import it.unimi.dsi.fastutil.booleans.BooleanStack;
  import net.minecraft.block.material.EnumPushReaction;
  import net.minecraft.block.material.Material;
  import net.minecraft.block.properties.IProperty;
-@@ -29,6 +33,11 @@
+@@ -29,6 +32,11 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -25,7 +24,7 @@
  public class BlockPistonBase extends BlockDirectional
  {
      public static final PropertyBool field_176320_b = PropertyBool.func_177716_a("extended");
-@@ -39,6 +48,7 @@
+@@ -39,6 +47,7 @@
      protected static final AxisAlignedBB field_185652_f = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.75D, 1.0D);
      protected static final AxisAlignedBB field_185653_g = new AxisAlignedBB(0.0D, 0.25D, 0.0D, 1.0D, 1.0D, 1.0D);
      private final boolean field_150082_a;
@@ -33,7 +32,7 @@
  
      public BlockPistonBase(boolean p_i45443_1_)
      {
-@@ -99,7 +109,8 @@
+@@ -99,7 +108,8 @@
  
      public void func_180633_a(World p_180633_1_, BlockPos p_180633_2_, IBlockState p_180633_3_, EntityLivingBase p_180633_4_, ItemStack p_180633_5_)
      {
@@ -43,7 +42,7 @@
  
          if (!p_180633_1_.field_72995_K)
          {
-@@ -130,23 +141,83 @@
+@@ -130,23 +140,83 @@
  
      private void func_176316_e(World p_176316_1_, BlockPos p_176316_2_, IBlockState p_176316_3_)
      {
@@ -131,7 +130,7 @@
      {
          for (EnumFacing enumfacing : EnumFacing.values())
          {
-@@ -162,6 +233,12 @@
+@@ -162,6 +232,12 @@
          }
          else
          {
@@ -144,6 +143,16 @@
              BlockPos blockpos = p_176318_2_.func_177984_a();
  
              for (EnumFacing enumfacing1 : EnumFacing.values())
+@@ -216,7 +292,8 @@
+             }
+ 
+             p_189539_2_.func_180501_a(p_189539_3_, Blocks.field_180384_M.func_176223_P().func_177226_a(BlockPistonMoving.field_176426_a, enumfacing).func_177226_a(BlockPistonMoving.field_176425_b, this.field_150082_a ? BlockPistonExtension.EnumPistonType.STICKY : BlockPistonExtension.EnumPistonType.DEFAULT), 3);
+-            p_189539_2_.func_175690_a(p_189539_3_, BlockPistonMoving.func_185588_a(this.func_176203_a(p_189539_5_), enumfacing, false, true));
++            IBlockState stateFromMeta = this.func_176203_a(p_189539_5_);
++            p_189539_2_.func_175690_a(p_189539_3_, BlockPistonMoving.createTilePiston(stateFromMeta, enumfacing, false, true, stateFromMeta.getLightOpacity(p_189539_2_, p_189539_3_), stateFromMeta.getLightValue(p_189539_2_, p_189539_3_)));
+ 
+             if (this.field_150082_a)
+             {
 @@ -240,7 +317,11 @@
                          }
                      }
@@ -197,7 +206,7 @@
              }
  
              List<BlockPos> list2 = blockpistonstructurehelper.func_177252_d();
-@@ -358,15 +456,70 @@
+@@ -358,15 +456,73 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }
@@ -229,10 +238,12 @@
 +                // ----- RSMM End ----- //
                  IBlockState iblockstate2 = p_176319_1_.func_180495_p(blockpos3);
 -                p_176319_1_.func_180501_a(blockpos3, Blocks.field_150350_a.func_176223_P(), 2);
-                 blockpos3 = blockpos3.func_177972_a(enumfacing);
+-                blockpos3 = blockpos3.func_177972_a(enumfacing);
 -                p_176319_1_.func_180501_a(blockpos3, Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_), 4);
 -                p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false));
 +                // Added the properties of opacity and light to the moving block as to minimize light updates. CARPET-XCOM
++                int lightOpacity = 0;
++                int lightValue = 0;
 +                if(CarpetSettings.movingBlockLightOptimization){
 +                    BlockPos posOld = list.get(l);
 +                    boolean remove = true;
@@ -243,35 +254,46 @@
 +                            break;
 +                        }
 +                    }
-+                    IBlockState iBlockState = Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_)
-+                            .func_177226_a(BlockPistonMoving.OPACITY, Math.min(iblockstate2.func_185891_c(), 15))
-+                            .func_177226_a(BlockPistonMoving.LIGHT, iblockstate2.func_185906_d());
++                    lightOpacity = Math.min(iblockstate2.getLightOpacity(p_176319_1_, blockpos3), 15);
++                    lightValue = iblockstate2.getLightValue(p_176319_1_, blockpos3);
++                    IBlockState iBlockState = Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_);
++                    blockpos3 = blockpos3.func_177972_a(enumfacing);
 +                    p_176319_1_.func_180501_a(blockpos3, iBlockState, 20);
 +                    if(remove){
 +                        p_176319_1_.func_180501_a(posOld, Blocks.field_150350_a.func_176223_P(), 2);
 +                    }
 +                    p_176319_1_.func_190522_c(blockpos3, iBlockState.func_177230_c());
 +                }else{
++                    blockpos3 = blockpos3.func_177972_a(enumfacing);
 +                    p_176319_1_.func_180501_a(list.get(l), Blocks.field_150350_a.func_176223_P(), 2);
 +                    p_176319_1_.func_180501_a(blockpos3, Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_), 4);
 +                }
 +                // Movable Tile entity fix CARPET-2No2Name
 +                if(CarpetSettings.autocrafter && iblockstate2 instanceof BlockWorkbench){
-+                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false);
++                    TileEntity tilePiston = BlockPistonMoving.createTilePiston(list1.get(l), p_176319_3_, p_176319_4_, false, lightOpacity, lightValue);
 +                    ((TileEntityPiston)tilePiston).setCarriedTileEntity(list1_TileEntities.get(l));
 +                    p_176319_1_.func_175690_a(blockpos3, tilePiston);
 +                }else if(CarpetSettings.movableTileEntities && isPushableTileEntityBlock(iblockstate2.func_177230_c())){
-+                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false);
++                    TileEntity tilePiston = BlockPistonMoving.createTilePiston(list1.get(l), p_176319_3_, p_176319_4_, false, lightOpacity, lightValue);
 +                    ((TileEntityPiston)tilePiston).setCarriedTileEntity(list1_TileEntities.get(l));
 +                    p_176319_1_.func_175690_a(blockpos3, tilePiston);
 +                }else{
-+                    p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false));
++                    p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.createTilePiston(list1.get(l), p_176319_3_, p_176319_4_, false, lightOpacity, lightValue));
 +                }
 +
                  --k;
                  aiblockstate[k] = iblockstate2;
              }
-@@ -397,6 +550,8 @@
+@@ -379,7 +535,7 @@
+                 IBlockState iblockstate3 = Blocks.field_150332_K.func_176223_P().func_177226_a(BlockPistonExtension.field_176387_N, p_176319_3_).func_177226_a(BlockPistonExtension.field_176325_b, blockpistonextension$enumpistontype);
+                 IBlockState iblockstate1 = Blocks.field_180384_M.func_176223_P().func_177226_a(BlockPistonMoving.field_176426_a, p_176319_3_).func_177226_a(BlockPistonMoving.field_176425_b, this.field_150082_a ? BlockPistonExtension.EnumPistonType.STICKY : BlockPistonExtension.EnumPistonType.DEFAULT);
+                 p_176319_1_.func_180501_a(blockpos2, iblockstate1, 4);
+-                p_176319_1_.func_175690_a(blockpos2, BlockPistonMoving.func_185588_a(iblockstate3, p_176319_3_, true, true));
++                p_176319_1_.func_175690_a(blockpos2, BlockPistonMoving.createTilePiston(iblockstate3, p_176319_3_, true, true, iblockstate3.getLightOpacity(p_176319_1_, blockpos2), iblockstate3.getLightValue(p_176319_1_, blockpos2)));
+             }
+ 
+             for (int i1 = list2.size() - 1; i1 >= 0; --i1)
+@@ -397,6 +553,8 @@
                  p_176319_1_.func_175685_c(blockpos2, Blocks.field_150332_K, false);
              }
  
@@ -280,7 +302,7 @@
              return true;
          }
      }
-@@ -439,4 +594,9 @@
+@@ -439,4 +597,9 @@
          p_193383_2_ = this.func_176221_a(p_193383_2_, p_193383_1_, p_193383_3_);
          return p_193383_2_.func_177229_b(field_176387_N) != p_193383_4_.func_176734_d() && ((Boolean)p_193383_2_.func_177229_b(field_176320_b)).booleanValue() ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
      }

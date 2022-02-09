@@ -103,8 +103,8 @@ public class LightingHooks
                 {
                     for (int y = 0; y < 16; ++y)
                     {
-                        if (blockStorage.get(x, y, z).getLightValue() > 0)
-                            world.checkLightFor(EnumSkyBlock.BLOCK, pos.setPos(xBase + x, (j << 4) + y, zBase + z));
+                        if (blockStorage.get(x, y, z).getLightValue(world, pos.setPos(xBase + x, (j << 4) + y, zBase + z)) > 0)
+                            world.checkLightFor(EnumSkyBlock.BLOCK, pos);
                     }
                 }
             }

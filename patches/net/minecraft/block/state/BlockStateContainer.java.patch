@@ -1,0 +1,21 @@
+--- ../src-base/minecraft/net/minecraft/block/state/BlockStateContainer.java
++++ ../src-work/minecraft/net/minecraft/block/state/BlockStateContainer.java
+@@ -285,14 +285,14 @@
+                 return this.field_177239_a.func_189872_a(this, p_189884_1_);
+             }
+ 
+-            public int func_185891_c()
++            public int getLightOpacity(IBlockAccess blockAccess, BlockPos pos)
+             {
+-                return this.field_177239_a.func_149717_k(this);
++                return this.field_177239_a.getLightOpacity(blockAccess, pos, this);
+             }
+ 
+-            public int func_185906_d()
++            public int getLightValue(IBlockAccess world, BlockPos pos)
+             {
+-                return this.field_177239_a.func_149750_m(this);
++                return this.field_177239_a.getLightValue(world, pos, this);
+             }
+ 
+             public boolean func_185916_f()

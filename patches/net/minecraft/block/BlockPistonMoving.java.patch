@@ -1,51 +1,66 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockPistonMoving.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockPistonMoving.java
-@@ -28,15 +28,21 @@
- import net.minecraft.world.IBlockAccess;
- import net.minecraft.world.World;
- 
-+import net.minecraft.block.properties.PropertyInteger;
+@@ -3,6 +3,8 @@
+ import java.util.List;
+ import java.util.Random;
+ import javax.annotation.Nullable;
 +
- public class BlockPistonMoving extends BlockContainer
- {
-     public static final PropertyDirection field_176426_a = BlockPistonExtension.field_176387_N;
-     public static final PropertyEnum<BlockPistonExtension.EnumPistonType> field_176425_b = BlockPistonExtension.field_176325_b;
- 
-+    // Getting propertys from other sources as its apparently laggy to create your own. CARPET-XCOM
-+    public static final PropertyInteger OPACITY = BlockDaylightDetector.field_176436_a;
-+    public static final PropertyInteger LIGHT = BlockLiquid.field_176367_b;
-+
-     public BlockPistonMoving()
-     {
-         super(Material.field_76233_E);
--        this.func_180632_j(this.field_176227_L.func_177621_b().func_177226_a(field_176426_a, EnumFacing.NORTH).func_177226_a(field_176425_b, BlockPistonExtension.EnumPistonType.DEFAULT));
-+        this.func_180632_j(this.field_176227_L.func_177621_b().func_177226_a(field_176426_a, EnumFacing.NORTH).func_177226_a(field_176425_b, BlockPistonExtension.EnumPistonType.DEFAULT).func_177226_a(OPACITY, 0).func_177226_a(LIGHT, 0));
-         this.func_149711_c(-1.0F);
++import carpet.CarpetSettings;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.properties.IProperty;
+ import net.minecraft.block.properties.PropertyDirection;
+@@ -46,9 +48,12 @@
+         return null;
      }
  
-@@ -207,11 +213,24 @@
- 
-     protected BlockStateContainer func_180661_e()
+-    public static TileEntity func_185588_a(IBlockState p_185588_0_, EnumFacing p_185588_1_, boolean p_185588_2_, boolean p_185588_3_)
++    public static TileEntity createTilePiston(IBlockState blockStateIn, EnumFacing facingIn, boolean extendingIn, boolean shouldHeadBeRenderedIn, int lightOpacity, int lightValue)
      {
--        return new BlockStateContainer(this, new IProperty[] {field_176426_a, field_176425_b});
-+        // Adding the propertys to the list of allowed propertys. CARPET-XCOM
-+        return new BlockStateContainer(this, new IProperty[] {field_176426_a, field_176425_b, OPACITY, LIGHT});
+-        return new TileEntityPiston(p_185588_0_, p_185588_1_, p_185588_2_, p_185588_3_);
++        TileEntityPiston te = new TileEntityPiston(blockStateIn, facingIn, extendingIn, shouldHeadBeRenderedIn);
++        te.lightOpactiy = lightOpacity;
++        te.lightValue = lightValue;
++        return te;
      }
  
-     public BlockFaceShape func_193383_a(IBlockAccess p_193383_1_, IBlockState p_193383_2_, BlockPos p_193383_3_, EnumFacing p_193383_4_)
+     public void func_180663_b(World p_180663_1_, BlockPos p_180663_2_, IBlockState p_180663_3_)
+@@ -214,4 +219,39 @@
      {
          return BlockFaceShape.UNDEFINED;
      }
 +
-+    // Grabbing the inherited properties from the parrent block that is moved and setting it to the moving block. CARPET-XCOM
-+     @Override
-+     public int func_149717_k(IBlockState state)
-+     {
-+         return state.func_177229_b(OPACITY);
-+     }
-+     @Override
-+     public int func_149750_m(IBlockState state)
-+     {
-+         return state.func_177229_b(LIGHT);
-+     }
++    // CM: movingBlockLightOptimization
++    @Override
++    public int getLightOpacity(IBlockAccess world, BlockPos pos, IBlockState state)
++    {
++        if (!CarpetSettings.movingBlockLightOptimization)
++        {
++            return super.func_149717_k(state);
++        }
++
++        TileEntity te = world.func_175625_s(pos);
++        if (!(te instanceof TileEntityPiston))
++        {
++            return super.func_149717_k(state);
++        }
++
++        return ((TileEntityPiston) te).lightOpactiy;
++    }
++
++    @Override
++    public int getLightValue(IBlockAccess world, BlockPos pos, IBlockState state)
++    {
++        if (!CarpetSettings.movingBlockLightOptimization)
++        {
++            return super.func_149750_m(state);
++        }
++
++        TileEntity te = world.func_175625_s(pos);
++        if (!(te instanceof TileEntityPiston))
++        {
++            return super.func_149750_m(state);
++        }
++
++        return ((TileEntityPiston) te).lightValue;
++    }
  }
