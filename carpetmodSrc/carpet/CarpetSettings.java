@@ -642,9 +642,6 @@ public class CarpetSettings
     })
     public static boolean boundingBoxFix = false;
 
-    @Rule(desc = "Blocks inherit the original light opacity and light values while being pushed with a piston", category = OPTIMIZATIONS)
-    public static boolean movingBlockLightOptimization = false;
-
     @Rule(desc = "Chunk saving issues that causes entites and blocks to duplicate or disappear", category = FIX, extra = "By Theosib")
     @BugFixDefault
     public static boolean entityDuplicationFix = false;
