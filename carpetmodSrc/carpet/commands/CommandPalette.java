@@ -27,7 +27,7 @@ public class CommandPalette extends CommandCarpetBase {
      */
 
     public String getUsage(ICommandSender sender) {
-        return "Usage: palette <info | fill | size | posInfo> <X> <Y> <Z> <full | normal> <4 to 13>";
+        return "Usage: palette <bits | fill | size | posInfo> <X> <Y> <Z> <full | normal> <4-8 | 13>";
     }
 
     public String getName() {
@@ -199,27 +199,31 @@ public class CommandPalette extends CommandCarpetBase {
             int blockStateMaskL = blockStateBits & leftMask;
             int blockStateMaskR = blockStateBits & rightMask;
             sender.sendMessage(new TextComponentString("Left bit match:"));
-            for(int itr = 0; itr < Block.BLOCK_STATE_IDS.size(); itr++){
+            for (int itr = 0; itr < Block.BLOCK_STATE_IDS.size(); itr++) {
                 IBlockState ibs = Block.BLOCK_STATE_IDS.getByValue(itr);
-                if(ibs != null) {
+                if (ibs != null) {
                     int left = itr & leftMask;
-                    if(left == blockStateMaskL){
-                        String s = String.format("%"+bits+"s", Integer.toBinaryString(itr)).replace(' ', '0') + " " + ibs.toString().replace("minecraft:", "");
+                    if (left == blockStateMaskL) {
+                        String s = String.format("%" + bits + "s", Integer.toBinaryString(itr)).replace(' ', '0') + " " + ibs.toString().replace("minecraft:", "");
                         sender.sendMessage(new TextComponentString(s));
                     }
                 }
             }
             sender.sendMessage(new TextComponentString("Right bit match:"));
-            for(int itr = 0; itr < Block.BLOCK_STATE_IDS.size(); itr++){
+            for (int itr = 0; itr < Block.BLOCK_STATE_IDS.size(); itr++) {
                 IBlockState ibs = Block.BLOCK_STATE_IDS.getByValue(itr);
-                if(ibs != null) {
+                if (ibs != null) {
                     int right = itr & rightMask;
-                    if(right == blockStateMaskR){
-                        String s = String.format("%"+bits+"s", Integer.toBinaryString(itr)).replace(' ', '0') + " " + ibs.toString().replace("minecraft:", "");
+                    if (right == blockStateMaskR) {
+                        String s = String.format("%" + bits + "s", Integer.toBinaryString(itr)).replace(' ', '0') + " " + ibs.toString().replace("minecraft:", "");
                         sender.sendMessage(new TextComponentString(s));
                     }
                 }
             }
+        } else if (blockState != null && j != k) {
+            sender.sendMessage(new TextComponentString("This location doesn't share two bit arrays."));
+        } else if (blockState != null && bsc.getPalette() instanceof BlockStatePaletteRegistry) {
+            sender.sendMessage(new TextComponentString("This subchunk doesn't have enough palettes, add more palettes."));
         }
     }
 
@@ -240,7 +244,7 @@ public class CommandPalette extends CommandCarpetBase {
     private static BlockPos[] getArrayFromJK(int j, int k, int bits, BlockPos pos) {
         BlockPos basePos = new BlockPos(pos.getX() >>> 4 << 4, pos.getY() >>> 4 << 4, pos.getZ() >>> 4 << 4);
         ArrayList<BlockPos> list = new ArrayList<>();
-        for(int index = 0; index < 4096; index++){
+        for (int index = 0; index < 4096; index++) {
             int i = index * bits;
             int jj = i / 64;
             int kk = ((index + 1) * bits - 1) / 64;
@@ -274,7 +278,7 @@ public class CommandPalette extends CommandCarpetBase {
         } else if (ibsp instanceof BlockStatePaletteHashMap) {
             sender.sendMessage(new TextComponentString("Palette size: " + ((BlockStatePaletteHashMap) ibsp).paletteSize()));
         } else if (ibsp instanceof BlockStatePaletteRegistry) {
-            sender.sendMessage(new TextComponentString("Palette size MAX aka 4096"));
+            sender.sendMessage(new TextComponentString("Palette size MAX aka " + Block.BLOCK_STATE_IDS.size()));
         }
     }
 
@@ -286,7 +290,7 @@ public class CommandPalette extends CommandCarpetBase {
         } else if (args.length == 5 && (args[0].equals("posInfo") || args[0].equals("fill"))) {
             return getListOfStringsMatchingLastWord(args, "full", "normal");
         } else if (args.length == 6 && args[0].equals("fill")) {
-            return getListOfStringsMatchingLastWord(args, "4", "5", "13");
+            return getListOfStringsMatchingLastWord(args, "4", "5", "6", "7", "8", "13");
         } else if (args.length == 6 && args[0].equals("posInfo")) {
             return getListOfStringsMatchingLastWord(args, Block.REGISTRY.getKeys());
         } else {
