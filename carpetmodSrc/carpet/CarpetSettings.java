@@ -787,6 +787,9 @@ public class CarpetSettings
     @Rule(desc = "Sends invisible duplicate UUID entities to clients", category = FIX)
     public static boolean sendDuplicateEntitiesToClients = false;
 
+    @Rule(desc = "Enables best-effort saving of savestated chunks", category = FIX)
+    public static boolean saveSavestates = false;
+
     // ===== FEATURES ===== //
 
     @Rule(desc = "Enables skyblock on 1.12, all blocks but end portal frames will be removed in newly generated chunks.", category = FEATURE, extra = "WARNING! Don't turn on if not planning to play skyblock.")
