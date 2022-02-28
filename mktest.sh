@@ -69,7 +69,7 @@ else
         cp "$GRADLE_CACHE_JAR" "$MC_JAR"
     else
         echo "Downloading server ..."
-        wget "https://s3.amazonaws.com/Minecraft.Download/versions/1.12.2/minecraft_server.1.12.2.jar" -O "$MC_JAR" || { echo "failed to download MC jar" && exit 1; }
+        wget "https://launcher.mojang.com/v1/objects/886945bfb2b978778c3a0288fd7fab09d315b25f/server.jar" -O "$MC_JAR" || { echo "failed to download MC jar" && exit 1; }
         cp "$MC_JAR" "$MC_JAR.orig"
     fi
 fi
