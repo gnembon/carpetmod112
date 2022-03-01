@@ -26,3 +26,14 @@ In case you use different paths, you might need to modify the build script.
 This will leave a ready server jar file in your saves folder.
 
 It requires to have 7za installed in your paths
+### To run the server locally (Linux)
+Run `./mktest.sh -t -g` to run the modified server with generated patches as a localhost server. It requires `gradlew genPatches createRelease` to finish successfully.
+
+Add `-e` if you agree to the Minecraft Eula, `-D` if you want the server to use a deobfuscated jar, so you can read the names in crashlogs for example.
+Add `-k` if you don't want to clear the `test` folder for every run.
+
+If you want to specify your `JAVA_HOME`, add `JAVA_HOME=/folder/to/java` (with a space seperating the command) at the start of the command.
+
+Use `./mktest.sh --help` to view help that tells you more.
+
+It requires to have zip, unzip, and wget installed (most desktop distributions already have that).
