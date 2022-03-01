@@ -172,6 +172,9 @@ if [ "$run_server" == "1" ]; then
     echo "Starting server ..."
     runJava "$test_jar" --nogui
 
+    # remove the server jar, as the next test will copy a new one
+    rm -f "$test_jar"
+
     popd > /dev/null
 fi
 
