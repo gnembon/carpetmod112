@@ -83,7 +83,7 @@
 +    public ScheduledBlockEventSerializer blockEventSerializer;
 +    public static boolean loginMinecartFix = false;
 +    private final String dimensionName; // RSMM
-+    private int currentDepth; // RSMM
++    private int currentBlockEventDepth; // RSMM
 +
      public WorldServer(MinecraftServer p_i45921_1_, ISaveHandler p_i45921_2_, WorldInfo p_i45921_3_, int p_i45921_4_, Profiler p_i45921_5_)
      {
@@ -623,7 +623,7 @@
      {
 +        startTickTask(TickTask.BLOCK_EVENTS); // RSMM
 +
-+        currentDepth = 0; // RSMM
++        currentBlockEventDepth = 0; // RSMM
 +
          while (!this.field_147490_S[this.field_147489_T].isEmpty())
          {
@@ -643,7 +643,7 @@
  
              this.field_147490_S[i].clear();
 +
-+            currentDepth++;
++            currentBlockEventDepth++;
          }
 +        // [CM] Piston ghost blocks fix
 +        this.blockActionsProcessed = true;
@@ -775,7 +775,7 @@
 +    // RSMM
 +    private void onBlockEvent(BlockEventData blockEvent) {
 +        if (CarpetSettings.redstoneMultimeter) {
-+            getMultimeter().logBlockEvent(this, blockEvent, currentDepth);
++            getMultimeter().logBlockEvent(this, blockEvent, currentBlockEventDepth);
 +        }
 +    }
  }
