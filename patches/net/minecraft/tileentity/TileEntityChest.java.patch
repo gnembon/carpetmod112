@@ -1,15 +1,11 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityChest.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityChest.java
-@@ -22,8 +22,16 @@
- import net.minecraft.util.datafix.walkers.ItemStackDataLists;
+@@ -23,7 +23,12 @@
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
-+import net.minecraft.world.WorldServer;
  
 -public class TileEntityChest extends TileEntityLockableLoot implements ITickable
-+import redstone.multimeter.block.PowerSource;
-+import redstone.multimeter.server.Multimeter;
-+import redstone.multimeter.server.MultimeterServer;
++import redstone.multimeter.block.helper.BlockChestHelper;
 +
 +import carpet.CarpetSettings;
 +import carpet.helpers.TileEntityOptimizer.ILazyTileEntity;
@@ -18,7 +14,7 @@
  {
      private NonNullList<ItemStack> field_145985_p = NonNullList.<ItemStack>func_191197_a(27, ItemStack.field_190927_a);
      public boolean field_145984_a;
-@@ -46,6 +54,10 @@
+@@ -46,6 +51,10 @@
          this.field_145982_r = p_i46677_1_;
      }
  
@@ -29,7 +25,7 @@
      public int func_70302_i_()
      {
          return 27;
-@@ -203,13 +215,17 @@
+@@ -203,13 +212,17 @@
          }
          else
          {
@@ -48,7 +44,7 @@
          this.func_145979_i();
          int i = this.field_174879_c.func_177958_n();
          int j = this.field_174879_c.func_177956_o();
-@@ -235,6 +251,10 @@
+@@ -235,6 +248,10 @@
              }
          }
  
@@ -59,7 +55,7 @@
          this.field_145986_n = this.field_145989_m;
          float f1 = 0.1F;
  
-@@ -258,6 +278,10 @@
+@@ -258,6 +275,10 @@
  
          if (this.field_145987_o == 0 && this.field_145989_m > 0.0F || this.field_145987_o > 0 && this.field_145989_m < 1.0F)
          {
@@ -70,7 +66,7 @@
              float f2 = this.field_145989_m;
  
              if (this.field_145987_o > 0)
-@@ -303,6 +327,9 @@
+@@ -303,6 +324,9 @@
  
      public boolean func_145842_c(int p_145842_1_, int p_145842_2_)
      {
@@ -80,23 +76,23 @@
          if (p_145842_1_ == 1)
          {
              this.field_145987_o = p_145842_2_;
-@@ -324,6 +351,7 @@
+@@ -324,6 +348,7 @@
              }
  
              ++this.field_145987_o;
-+            onInvOpenOrClosed(true); // RSMM
++            BlockChestHelper.onInvOpenOrClosed(this, true); // RSMM
              this.field_145850_b.func_175641_c(this.field_174879_c, this.func_145838_q(), 1, this.field_145987_o);
              this.field_145850_b.func_175685_c(this.field_174879_c, this.func_145838_q(), false);
  
-@@ -339,6 +367,7 @@
+@@ -339,6 +364,7 @@
          if (!p_174886_1_.func_175149_v() && this.func_145838_q() instanceof BlockChest)
          {
              --this.field_145987_o;
-+            onInvOpenOrClosed(false); // RSMM
++            BlockChestHelper.onInvOpenOrClosed(this, false); // RSMM
              this.field_145850_b.func_175641_c(this.field_174879_c, this.func_145838_q(), 1, this.field_145987_o);
              this.field_145850_b.func_175685_c(this.field_174879_c, this.func_145838_q(), false);
  
-@@ -386,4 +415,35 @@
+@@ -386,4 +412,14 @@
      {
          return this.field_145985_p;
      }
@@ -109,26 +105,5 @@
 +    @Override
 +    public void wakeUp(){
 +        this.isSleeping = false;
-+    }
-+
-+    // RSMM
-+    private void onInvOpenOrClosed(boolean open) {
-+        if (CarpetSettings.redstoneMultimeter && !field_145850_b.field_72995_K && isTrapped()) {
-+            MultimeterServer server = ((WorldServer)field_145850_b).getMultimeterServer();
-+            Multimeter multimeter = server.getMultimeter();
-+
-+            int oldViewerCount = open ? field_145987_o - 1 : field_145987_o + 1;
-+
-+            int oldPower = BlockChest.getPowerFromViewerCount(oldViewerCount);
-+            int newPower = BlockChest.getPowerFromViewerCount(field_145987_o);
-+
-+            multimeter.logPowerChange(field_145850_b, field_174879_c, oldPower, newPower);
-+            multimeter.logActive(field_145850_b, field_174879_c, newPower > PowerSource.MIN_POWER);
-+        }
-+    }
-+
-+    // RSMM
-+    private boolean isTrapped() {
-+        return func_145980_j() == BlockChest.Type.TRAP;
 +    }
  }
