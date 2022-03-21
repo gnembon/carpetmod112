@@ -1,8 +1,10 @@
 package redstone.multimeter.interfaces;
 
+import carpet.CarpetServer;
 import carpet.CarpetSettings;
 
 import redstone.multimeter.common.TickTask;
+import redstone.multimeter.server.Multimeter;
 import redstone.multimeter.server.MultimeterServer;
 
 public interface MultimeterServerProvider extends TickTaskExecutor {
@@ -28,6 +30,11 @@ public interface MultimeterServerProvider extends TickTaskExecutor {
 		}
 	}
 	
-	public MultimeterServer getMultimeterServer();
+	default MultimeterServer getMultimeterServer() {
+		return CarpetServer.rsmmServer;
+	}
 	
+	default Multimeter getMultimeter() {
+		return CarpetServer.rsmmServer.getMultimeter();
+	}
 }

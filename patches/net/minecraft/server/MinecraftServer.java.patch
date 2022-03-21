@@ -35,11 +35,7 @@
  {
      private static final Logger field_147145_h = LogManager.getLogger();
      public static final File field_152367_a = new File("usercache.json");
-@@ -141,15 +157,18 @@
-     protected final Queue < FutureTask<? >> field_175589_i = Queues. < FutureTask<? >> newArrayDeque();
-     private Thread field_175590_aa;
-     private long field_175591_ab = func_130071_aq();
-+    private final MultimeterServer multimeterServer; // RSMM
+@@ -144,6 +160,7 @@
  
      public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
      {
@@ -47,14 +43,7 @@
          this.field_110456_c = p_i47054_2_;
          this.field_152364_T = p_i47054_4_;
          this.field_147143_S = p_i47054_5_;
-         this.field_152365_W = p_i47054_6_;
-         this.field_152366_X = p_i47054_7_;
-         this.field_71308_o = p_i47054_1_;
-+        this.multimeterServer = new MultimeterServer(this); // RSMM
-         this.field_147144_o = new NetworkSystem(this);
-         this.field_71321_q = this.func_175582_h();
-         this.field_71310_m = new AnvilSaveConverter(p_i47054_1_, p_i47054_3_);
-@@ -273,7 +292,9 @@
+@@ -273,7 +290,9 @@
  
          this.field_71318_t.func_72364_a(this.field_71305_c);
          this.func_147139_a(this.func_147135_j());
@@ -64,7 +53,7 @@
      }
  
      protected void func_71222_d()
-@@ -285,25 +306,32 @@
+@@ -285,25 +304,32 @@
          int i1 = 0;
          this.func_71192_d("menu.generatingTerrain");
          int j1 = 0;
@@ -112,7 +101,7 @@
              }
          }
  
-@@ -341,7 +369,7 @@
+@@ -341,7 +367,7 @@
  
      public abstract boolean func_183002_r();
  
@@ -121,7 +110,7 @@
      {
          this.field_71302_d = p_71216_1_;
          this.field_71303_e = p_71216_2_;
-@@ -375,6 +403,7 @@
+@@ -375,6 +401,7 @@
                  }
              }
          }
@@ -129,7 +118,7 @@
      }
  
      protected void func_71260_j()
-@@ -389,6 +418,8 @@
+@@ -389,6 +416,8 @@
          if (this.field_71318_t != null)
          {
              field_147145_h.info("Saving players");
@@ -138,7 +127,7 @@
              this.field_71318_t.func_72389_g();
              this.field_71318_t.func_72392_r();
          }
-@@ -450,18 +481,33 @@
+@@ -450,18 +479,33 @@
              {
                  this.field_175591_ab = func_130071_aq();
                  long i = 0L;
@@ -174,7 +163,7 @@
                          j = 2000L;
                          this.field_71299_R = this.field_175591_ab;
                      }
-@@ -474,6 +520,7 @@
+@@ -474,6 +518,7 @@
  
                      i += j;
                      this.field_175591_ab = k;
@@ -182,7 +171,7 @@
  
                      if (this.field_71305_c[0].func_73056_e())
                      {
-@@ -482,14 +529,33 @@
+@@ -482,14 +527,33 @@
                      }
                      else
                      {
@@ -219,7 +208,7 @@
                      this.field_71296_Q = true;
                  }
              }
-@@ -594,6 +660,15 @@
+@@ -594,6 +658,15 @@
          long i = System.nanoTime();
          ++this.field_71315_w;
  
@@ -229,13 +218,13 @@
 +            CarpetProfiler.start_tick_profiling();
 +        }
 +
-+        multimeterServer.tickStart(); // RSMM
++        CarpetServer.rsmmServer.tickStart(); // RSMM
 +        startTickTask(TickTask.TICK); // RSMM
 +
          if (this.field_71295_T)
          {
              this.field_71295_T = false;
-@@ -620,13 +695,23 @@
+@@ -620,13 +693,23 @@
              this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
          }
  
@@ -259,13 +248,13 @@
  
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
-@@ -645,12 +730,34 @@
+@@ -645,12 +728,34 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
 +
 +        endTickTask(); // RSMM
-+        multimeterServer.tickEnd(); // RSMM
++        CarpetServer.rsmmServer.tickEnd(); // RSMM
 +
 +        // ChunkLogger - 0x-CARPET
 +        if(CarpetClientChunkLogger.logger.enabled) {
@@ -294,7 +283,7 @@
          synchronized (this.field_175589_i)
          {
              while (!this.field_175589_i.isEmpty())
-@@ -658,8 +765,10 @@
+@@ -658,8 +763,10 @@
                  Util.func_181617_a(this.field_175589_i.poll(), field_147145_h);
              }
          }
@@ -305,7 +294,7 @@
  
          for (int j = 0; j < this.field_71305_c.length; ++j)
          {
-@@ -672,6 +781,7 @@
+@@ -672,6 +779,7 @@
                  {
                      return worldserver.func_72912_H().func_76065_j();
                  });
@@ -313,7 +302,7 @@
  
                  if (this.field_71315_w % 20 == 0)
                  {
-@@ -686,27 +796,46 @@
+@@ -686,27 +794,46 @@
                  {
                      worldserver.func_72835_b();
                  }
@@ -362,7 +351,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76319_b();
              }
-@@ -714,13 +843,19 @@
+@@ -714,13 +841,19 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  
@@ -382,7 +371,7 @@
  
          for (int k = 0; k < this.field_71322_p.size(); ++k)
          {
-@@ -728,6 +863,9 @@
+@@ -728,6 +861,9 @@
          }
  
          this.field_71304_b.func_76319_b();
@@ -392,7 +381,7 @@
      }
  
      public boolean func_71255_r()
-@@ -939,7 +1077,7 @@
+@@ -939,7 +1075,7 @@
  
      public String getServerModName()
      {
@@ -401,25 +390,20 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -1512,6 +1650,7 @@
+@@ -1512,6 +1648,7 @@
      {
          if (this.func_152345_ab())
          {
-+            multimeterServer.getMultimeter().reloadOptions(); // RSMM
++            CarpetServer.rsmmServer.getMultimeter().reloadOptions(); // RSMM
              this.func_184103_al().func_72389_g();
              this.field_71305_c[0].func_184146_ak().func_186522_a();
              this.func_191949_aK().func_192779_a();
-@@ -1523,4 +1662,14 @@
+@@ -1523,4 +1660,9 @@
              this.func_152344_a(this::func_193031_aM);
          }
      }
 +
 +    // RSMM
-+    @Override
-+    public MultimeterServer getMultimeterServer() {
-+        return multimeterServer;
-+    }
-+
 +    public boolean isPaused() {
 +        return false;
 +    }

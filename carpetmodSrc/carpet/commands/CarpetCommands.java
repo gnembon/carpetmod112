@@ -49,7 +49,7 @@ public class CarpetCommands {
         handler.registerCommand(new CommandZetBlock());
 
         // ----- RSMM Start ----- //
-        handler.registerCommand(new MeterCommand(CarpetServer.rsmmServer));
+        handler.registerCommand(new MeterCommand(CarpetServer.legacyRsmmServer));
         // ----- RSMM End ----- //
 
         handler.registerCommand(new MeterGroupCommand(CarpetServer.minecraft_server));

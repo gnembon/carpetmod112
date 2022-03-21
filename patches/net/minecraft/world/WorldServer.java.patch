@@ -680,7 +680,7 @@
      }
  
      @Nullable
-@@ -1299,4 +1583,98 @@
+@@ -1299,4 +1583,87 @@
              {
              }
          }
@@ -702,13 +702,7 @@
 +
 +    // RSMM
 +    @Override
-+    public MultimeterServer getMultimeterServer() {
-+        return field_73061_a.getMultimeterServer();
-+    }
-+
-+    // RSMM
-+    @Override
-+    protected void onBlockUpdate(BlockPos pos, IBlockState state) {
++    public void onBlockUpdate(BlockPos pos, IBlockState state) {
 +        if (CarpetSettings.redstoneMultimeter) {
 +            MultimeterServer server = getMultimeterServer();
 +            Multimeter multimeter = server.getMultimeter();
@@ -723,7 +717,7 @@
 +
 +    // RSMM
 +    @Override
-+    protected void onObserverUpdate(BlockPos pos) {
++    public void onObserverUpdate(BlockPos pos) {
 +        if (CarpetSettings.redstoneMultimeter) {
 +            getMultimeter().logObserverUpdate(this, pos);
 +        }
@@ -731,7 +725,7 @@
 +
 +    // RSMM
 +    @Override
-+    protected void onEntityTick(Entity entity) {
++    public void onEntityTick(Entity entity) {
 +        if (CarpetSettings.redstoneMultimeter) {
 +            getMultimeter().logEntityTick(this, entity);
 +        }
@@ -739,7 +733,7 @@
 +
 +    // RSMM
 +    @Override
-+    protected void onBlockEntityTick(TileEntity blockEntity) {
++    public void onBlockEntityTick(TileEntity blockEntity) {
 +        if (CarpetSettings.redstoneMultimeter) {
 +            getMultimeter().logBlockEntityTick(this, blockEntity);
 +        }
@@ -747,15 +741,10 @@
 +
 +    // RSMM
 +    @Override
-+    protected void onComparatorUpdate(BlockPos pos) {
++    public void onComparatorUpdate(BlockPos pos) {
 +        if (CarpetSettings.redstoneMultimeter) {
 +            getMultimeter().logComparatorUpdate(this, pos);
 +        }
-+    }
-+
-+    // RSMM
-+    public Multimeter getMultimeter() {
-+        return getMultimeterServer().getMultimeter();
 +    }
 +
 +    // RSMM

@@ -1,5 +1,10 @@
 package redstone.multimeter.interfaces;
 
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+
 import redstone.multimeter.common.TickTask;
 
 public interface TickTaskExecutor {
@@ -25,6 +30,26 @@ public interface TickTaskExecutor {
 	}
 	
 	default void swapTickTask(boolean updateTree, TickTask task, String... args) {
+		
+	}
+	
+	default void onBlockUpdate(BlockPos pos, IBlockState state) {
+		
+	}
+	
+	default void onObserverUpdate(BlockPos pos) {
+		
+	}
+	
+	default void onEntityTick(Entity entity) {
+		
+	}
+	
+	default void onBlockEntityTick(TileEntity blockEntity) {
+		
+	}
+	
+	default void onComparatorUpdate(BlockPos pos) {
 		
 	}
 }

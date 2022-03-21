@@ -651,7 +651,7 @@
      }
  
      public DifficultyInstance func_175649_E(BlockPos p_175649_1_)
-@@ -3361,4 +3605,155 @@
+@@ -3361,4 +3605,130 @@
      {
          return null;
      }
@@ -780,30 +780,5 @@
 +        }
 +
 +        return true;
-+    }
-+
-+    // RSMM
-+    protected void onBlockUpdate(BlockPos pos, IBlockState state) {
-+        
-+    }
-+
-+    // RSMM
-+    protected void onObserverUpdate(BlockPos pos) {
-+        
-+    }
-+
-+    // RSMM
-+    protected void onEntityTick(Entity entity) {
-+        
-+    }
-+
-+    // RSMM
-+    protected void onBlockEntityTick(TileEntity blockEntity) {
-+        
-+    }
-+
-+    // RSMM
-+    protected void onComparatorUpdate(BlockPos pos) {
-+        
 +    }
  }
