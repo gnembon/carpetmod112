@@ -96,6 +96,8 @@ public class CommandZetBlock extends CommandSetBlock {
 			EntityPlayerMP worldEditPlayer = sender instanceof EntityPlayerMP ? (EntityPlayerMP) sender : null;
 			NBTTagCompound worldEditTag = flag ? nbttagcompound : null;
 
+			boolean updates = true;
+
 			if (args.length >= 6)
 			{
 				if ("destroy".equals(args[5]))
@@ -118,6 +120,10 @@ public class CommandZetBlock extends CommandSetBlock {
 				{
 					throw new CommandException("commands.setblock.noChange", new Object[0]);
 				}
+				else if ("noupdate".equals(args[5]))
+				{
+					updates = false;
+				}
 			}
 
 			WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos, iblockstate, worldEditTag);
@@ -129,7 +135,7 @@ public class CommandZetBlock extends CommandSetBlock {
 				((IInventory)tileentity1).clear();
 			}
 
-			if (!world.setBlockState(blockpos, iblockstate, 2))
+			if (!world.setBlockState(blockpos, iblockstate, 2 | (updates ? 0 : 128)))
 			{
 				throw new CommandException("commands.setblock.noChange", new Object[0]);
 			}
@@ -148,7 +154,10 @@ public class CommandZetBlock extends CommandSetBlock {
 					}
 				}
 
-				world.notifyNeighborsRespectDebug(blockpos, iblockstate.getBlock(), false);
+				if (updates)
+				{
+					world.notifyNeighborsRespectDebug(blockpos, iblockstate.getBlock(), false);
+				}
 				sender.setCommandStat(CommandResultStats.Type.AFFECTED_BLOCKS, 1);
 				notifyCommandListener(sender, this, "commands.setblock.success", new Object[0]);
 			}
@@ -170,7 +179,7 @@ public class CommandZetBlock extends CommandSetBlock {
         }
         else
         {
-            return args.length == 6 ? getListOfStringsMatchingLastWord(args, new String[] {"replace", "destroy", "keep"}) : Collections.emptyList();
+            return args.length == 6 ? getListOfStringsMatchingLastWord(args, new String[] {"replace", "destroy", "keep", "noupdate"}) : Collections.emptyList();
         }
     }
 }

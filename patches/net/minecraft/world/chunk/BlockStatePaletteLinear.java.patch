@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/BlockStatePaletteLinear.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/BlockStatePaletteLinear.java
+@@ -70,4 +70,8 @@
+ 
+         return i;
+     }
++
++    public int paletteSize(){
++        return field_186045_d;
++    }
+ }

@@ -45,7 +45,7 @@ public class CarpetSettings
     public static boolean locked = false;
 
     // TODO: replace these constants at build time
-    public static final String carpetVersion = "v22_01_27";
+    public static final String carpetVersion = "v22_02_09";
     public static final String minecraftVersion = "1.12.2";
     public static final String mcpMappings = "39-1.12";
 
@@ -647,9 +647,6 @@ public class CarpetSettings
     })
     public static boolean boundingBoxFix = false;
 
-    @Rule(desc = "Blocks inherit the original light opacity and light values while being pushed with a piston", category = OPTIMIZATIONS)
-    public static boolean movingBlockLightOptimization = false;
-
     @Rule(desc = "Chunk saving issues that causes entites and blocks to duplicate or disappear", category = FIX, extra = "By Theosib")
     @BugFixDefault
     public static boolean entityDuplicationFix = false;
@@ -794,6 +791,9 @@ public class CarpetSettings
 
     @Rule(desc = "Sends invisible duplicate UUID entities to clients", category = FIX)
     public static boolean sendDuplicateEntitiesToClients = false;
+
+    @Rule(desc = "Enables best-effort saving of savestated chunks", category = FIX)
+    public static boolean saveSavestates = false;
 
     // ===== FEATURES ===== //
 

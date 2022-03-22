@@ -265,33 +265,11 @@
 +                }
 +                // ----- RSMM End ----- //
                  IBlockState iblockstate2 = p_176319_1_.func_180495_p(blockpos3);
--                p_176319_1_.func_180501_a(blockpos3, Blocks.field_150350_a.func_176223_P(), 2);
+                 p_176319_1_.func_180501_a(blockpos3, Blocks.field_150350_a.func_176223_P(), 2);
                  blockpos3 = blockpos3.func_177972_a(enumfacing);
--                p_176319_1_.func_180501_a(blockpos3, Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_), 4);
+                 p_176319_1_.func_180501_a(blockpos3, Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_), 4);
 -                p_176319_1_.func_175690_a(blockpos3, BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false));
-+                // Added the properties of opacity and light to the moving block as to minimize light updates. CARPET-XCOM
-+                if(CarpetSettings.movingBlockLightOptimization){
-+                    BlockPos posOld = list.get(l);
-+                    boolean remove = true;
-+                    for (int backwardCheck = l - 1; backwardCheck >= 0; --backwardCheck){
-+                        BlockPos blockposCheck = list.get(backwardCheck);
-+                        if(blockposCheck.func_177972_a(enumfacing).equals(posOld)){
-+                            remove = false;
-+                            break;
-+                        }
-+                    }
-+                    IBlockState iBlockState = Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_)
-+                            .func_177226_a(BlockPistonMoving.OPACITY, Math.min(iblockstate2.func_185891_c(), 15))
-+                            .func_177226_a(BlockPistonMoving.LIGHT, iblockstate2.func_185906_d());
-+                    p_176319_1_.func_180501_a(blockpos3, iBlockState, 20);
-+                    if(remove){
-+                        p_176319_1_.func_180501_a(posOld, Blocks.field_150350_a.func_176223_P(), 2);
-+                    }
-+                    p_176319_1_.func_190522_c(blockpos3, iBlockState.func_177230_c());
-+                }else{
-+                    p_176319_1_.func_180501_a(list.get(l), Blocks.field_150350_a.func_176223_P(), 2);
-+                    p_176319_1_.func_180501_a(blockpos3, Blocks.field_180384_M.func_176223_P().func_177226_a(field_176387_N, p_176319_3_), 4);
-+                }
++
 +                // Movable Tile entity fix CARPET-2No2Name
 +                if(CarpetSettings.autocrafter && iblockstate2 instanceof BlockWorkbench){
 +                    TileEntity tilePiston = BlockPistonMoving.func_185588_a(list1.get(l), p_176319_3_, p_176319_4_, false);

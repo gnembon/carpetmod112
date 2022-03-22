@@ -1,0 +1,11 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/BlockStatePaletteHashMap.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/BlockStatePaletteHashMap.java
+@@ -64,4 +64,8 @@
+ 
+         return i;
+     }
++
++    public int paletteSize(){
++        return field_186046_a.func_186810_b();
++    }
+ }

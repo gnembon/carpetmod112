@@ -49,14 +49,16 @@
                                      }
                                      else if ("keep".equals(p_184881_3_[8]))
                                      {
-@@ -137,6 +152,7 @@
+@@ -137,7 +152,8 @@
                                  {
                                      if ("hollow".equals(p_184881_3_[8]))
                                      {
+-                                        world.func_180501_a(blockpos4, Blocks.field_150350_a.func_176223_P(), 2);
 +                                        WorldEditBridge.recordBlockEdit(worldEditPlayer, world, blockpos4, Blocks.field_150350_a.func_176223_P(), worldEditTag);
-                                         world.func_180501_a(blockpos4, Blocks.field_150350_a.func_176223_P(), 2);
++                                        world.func_180501_a(blockpos4, Blocks.field_150350_a.func_176223_P(), 2 | (CarpetSettings.fillUpdates?0:128)); // CM
                                          list.add(blockpos4);
                                      }
+ 
 @@ -145,6 +161,7 @@
                                  }
                              }

@@ -35,7 +35,7 @@ First, create a clean directory (folder). For this tutorial, we call it
 ``carpet``. There, download the vanilla jar and Carpet patch.
 
 * `Download the 1.12.2 vanilla server jar
-  <https://s3.amazonaws.com/Minecraft.Download/versions/1.12.2/minecraft_server.1.12.2.jar>`_.
+  <https://launchermeta.mojang.com/v1/packages/cfd75871c03119093d7c96a6a99f21137d00c855/1.12.2.json>`_.
 * `Download the latest Carpet patch
   <https://github.com/gnembon/carpetmod/releases/latest>`_.
 

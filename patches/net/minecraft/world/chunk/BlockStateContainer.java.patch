@@ -1,0 +1,17 @@
+--- ../src-base/minecraft/net/minecraft/world/chunk/BlockStateContainer.java
++++ ../src-work/minecraft/net/minecraft/world/chunk/BlockStateContainer.java
+@@ -146,4 +146,14 @@
+     {
+         return 1 + this.field_186022_c.func_186040_a() + PacketBuffer.func_150790_a(this.field_186021_b.func_188144_b()) + this.field_186021_b.func_188143_a().length * 8;
+     }
++
++    public BitArray getStorage(){
++        return field_186021_b;
++    }
++    public IBlockStatePalette getPalette(){
++        return field_186022_c;
++    }
++    public int getBits(){
++        return field_186024_e;
++    }
+ }
