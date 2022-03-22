@@ -228,7 +228,7 @@
              }
  
              List<BlockPos> list2 = blockpistonstructurehelper.func_177252_d();
-@@ -358,15 +468,76 @@
+@@ -358,15 +468,56 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }
@@ -286,7 +286,7 @@
                  --k;
                  aiblockstate[k] = iblockstate2;
              }
-@@ -397,6 +568,8 @@
+@@ -397,6 +548,8 @@
                  p_176319_1_.func_175685_c(blockpos2, Blocks.field_150332_K, false);
              }
  
@@ -295,7 +295,7 @@
              return true;
          }
      }
-@@ -439,4 +612,27 @@
+@@ -439,4 +592,27 @@
          p_193383_2_ = this.func_176221_a(p_193383_2_, p_193383_1_, p_193383_3_);
          return p_193383_2_.func_177229_b(field_176387_N) != p_193383_4_.func_176734_d() && ((Boolean)p_193383_2_.func_177229_b(field_176320_b)).booleanValue() ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
      }
