@@ -244,7 +244,7 @@
 +        // RSMM packet handling
 +        else if (PacketManager.getPacketChannelId().equals(s))
          {
-+            field_147367_d.getMultimeterServer().getPacketHandler().onPacketReceived(p_147349_1_.func_180760_b(), field_147369_b);
++            CarpetServer.rsmmServer.getPacketHandler().onPacketReceived(p_147349_1_.func_180760_b(), field_147369_b);
 +        }
 +        else if ("MC|BEdit".equals(s))
 +        {

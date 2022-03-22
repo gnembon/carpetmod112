@@ -52,6 +52,6 @@ public class CarpetCommands {
         handler.registerCommand(new MeterCommand(CarpetServer.legacyRsmmServer));
         // ----- RSMM End ----- //
 
-        handler.registerCommand(new MeterGroupCommand(CarpetServer.minecraft_server));
+        handler.registerCommand(new MeterGroupCommand(CarpetServer.rsmmServer));
     }
 }

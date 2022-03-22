@@ -9,19 +9,18 @@
  import com.google.common.collect.Lists;
  import com.google.common.collect.Queues;
  import com.google.common.util.concurrent.Futures;
-@@ -82,11 +85,24 @@
+@@ -82,10 +85,23 @@
  import net.minecraft.world.storage.ISaveFormat;
  import net.minecraft.world.storage.ISaveHandler;
  import net.minecraft.world.storage.WorldInfo;
++
 +import redstone.multimeter.common.TickTask;
-+import redstone.multimeter.interfaces.MultimeterServerProvider;
-+import redstone.multimeter.server.MultimeterServer;
++import redstone.multimeter.helper.WorldHelper;
 +
  import org.apache.commons.lang3.Validate;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
--public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
 +import carpet.CarpetServer;
 +import carpet.CarpetSettings;
 +import carpet.carpetclient.CarpetClientChunkLogger;
@@ -31,10 +30,9 @@
 +import carpet.utils.PistonFixes;
 +import carpet.utils.TickingArea;
 +
-+public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo, MultimeterServerProvider /* RSMM */
+ public abstract class MinecraftServer implements ICommandSender, Runnable, IThreadListener, ISnooperInfo
  {
      private static final Logger field_147145_h = LogManager.getLogger();
-     public static final File field_152367_a = new File("usercache.json");
 @@ -144,6 +160,7 @@
  
      public MinecraftServer(File p_i47054_1_, Proxy p_i47054_2_, DataFixer p_i47054_3_, YggdrasilAuthenticationService p_i47054_4_, MinecraftSessionService p_i47054_5_, GameProfileRepository p_i47054_6_, PlayerProfileCache p_i47054_7_)
@@ -219,7 +217,7 @@
 +        }
 +
 +        CarpetServer.rsmmServer.tickStart(); // RSMM
-+        startTickTask(TickTask.TICK); // RSMM
++        WorldHelper.startTickTask(TickTask.TICK); // RSMM
 +
          if (this.field_71295_T)
          {
@@ -233,7 +231,7 @@
          {
 +            CarpetProfiler.start_section(null, "Autosave");
              this.field_71304_b.func_76320_a("save");
-+            startTickTask(TickTask.AUTOSAVE); // RSMM
++            WorldHelper.startTickTask(TickTask.AUTOSAVE); // RSMM
 +            this.field_71318_t.storeFakePlayerData();
              this.field_71318_t.func_72389_g();
 +            if(carpet.carpetclient.CarpetClientChunkLogger.logger.enabled)
@@ -241,7 +239,7 @@
              this.func_71267_a(true);
 +            carpet.carpetclient.CarpetClientChunkLogger.resetReason();
              this.field_71304_b.func_76319_b();
-+            endTickTask(); // RSMM
++            WorldHelper.endTickTask(); // RSMM
 +            CarpetProfiler.end_current_section();
          }
 +        LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.AUTOSAVE, LagSpikeHelper.PrePostSubPhase.POST);
@@ -253,7 +251,7 @@
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
 +
-+        endTickTask(); // RSMM
++        WorldHelper.endTickTask(); // RSMM
 +        CarpetServer.rsmmServer.tickEnd(); // RSMM
 +
 +        // ChunkLogger - 0x-CARPET
@@ -277,7 +275,7 @@
      {
 +        LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.TICK, LagSpikeHelper.PrePostSubPhase.PRE);
          this.field_71304_b.func_76320_a("jobs");
-+        startTickTask(TickTask.PACKETS); // RSMM
++        WorldHelper.startTickTask(TickTask.PACKETS); // RSMM
  
 +        LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.PLAYER, LagSpikeHelper.PrePostSubPhase.PRE);
          synchronized (this.field_175589_i)
@@ -290,7 +288,7 @@
 +        LagSpikeHelper.processLagSpikes(null, LagSpikeHelper.TickPhase.PLAYER, LagSpikeHelper.PrePostSubPhase.POST);
  
          this.field_71304_b.func_76318_c("levels");
-+        swapTickTask(TickTask.LEVELS); // RSMM
++        WorldHelper.swapTickTask(TickTask.LEVELS); // RSMM
  
          for (int j = 0; j < this.field_71305_c.length; ++j)
          {
@@ -324,9 +322,9 @@
  
                  try
                  {
-+                    startTickTask(TickTask.ENTITIES); // RSMM
++                    WorldHelper.startTickTask(TickTask.ENTITIES); // RSMM
                      worldserver.func_72939_s();
-+                    endTickTask(); // RSMM
++                    WorldHelper.endTickTask(); // RSMM
                  }
 +                catch (ThrowableSuppression e)
 +                {
@@ -357,17 +355,17 @@
  
 +        CarpetProfiler.start_section(null, "Network");
          this.field_71304_b.func_76318_c("connection");
-+        swapTickTask(TickTask.CONNECTIONS); // RSMM
++        WorldHelper.swapTickTask(TickTask.CONNECTIONS); // RSMM
          this.func_147137_ag().func_151269_c();
          this.field_71304_b.func_76318_c("players");
-+        swapTickTask(TickTask.PLAYER_PING); // RSMM
++        WorldHelper.swapTickTask(TickTask.PLAYER_PING); // RSMM
          this.field_71318_t.func_72374_b();
 +        CarpetProfiler.end_current_section();
          this.field_71304_b.func_76318_c("commandFunctions");
-+        swapTickTask(TickTask.COMMAND_FUNCTIONS); // RSMM
++        WorldHelper.swapTickTask(TickTask.COMMAND_FUNCTIONS); // RSMM
          this.func_193030_aL().func_73660_a();
          this.field_71304_b.func_76318_c("tickables");
-+        swapTickTask(TickTask.SERVER_GUI); // RSMM
++        WorldHelper.swapTickTask(TickTask.SERVER_GUI); // RSMM
  
          for (int k = 0; k < this.field_71322_p.size(); ++k)
          {
@@ -375,7 +373,7 @@
          }
  
          this.field_71304_b.func_76319_b();
-+        endTickTask(); // RSMM
++        WorldHelper.endTickTask(); // RSMM
 +
 +        PistonFixes.onEndTick();
      }

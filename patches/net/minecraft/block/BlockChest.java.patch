@@ -7,7 +7,7 @@
 -public class BlockChest extends BlockContainer
 +import redstone.multimeter.block.Meterable;
 +import redstone.multimeter.block.PowerSource;
-+import redstone.multimeter.block.helper.BlockChestHelper;
++import redstone.multimeter.helper.BlockChestHelper;
 +
 +public class BlockChest extends BlockContainer implements Meterable /* RSMM */, PowerSource /* RSMM */
  {

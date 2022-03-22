@@ -1,4 +1,4 @@
-package redstone.multimeter.block.helper;
+package redstone.multimeter.helper;
 
 import carpet.CarpetSettings;
 import net.minecraft.block.BlockChest;
@@ -43,7 +43,7 @@ public class BlockChestHelper {
 			WorldServer world = (WorldServer)chest.getWorld();
 			BlockPos pos = chest.getPos();
 
-			MultimeterServer server = world.getMultimeterServer();
+			MultimeterServer server = WorldHelper.getMultimeterServer();
 			Multimeter multimeter = server.getMultimeter();
 
 			int viewerCount = chest.numPlayersUsing;

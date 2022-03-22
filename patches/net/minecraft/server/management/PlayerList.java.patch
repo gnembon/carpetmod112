@@ -54,7 +54,7 @@
  
          p_72355_2_.func_71116_b();
 +
-+        field_72400_f.getMultimeterServer().onPlayerJoin(p_72355_2_); // RSMM
++        CarpetServer.rsmmServer.onPlayerJoin(p_72355_2_); // RSMM
      }
  
      protected void func_96456_a(ServerScoreboard p_96456_1_, EntityPlayerMP p_96456_2_)
@@ -71,7 +71,7 @@
  
      public void func_72367_e(EntityPlayerMP p_72367_1_)
      {
-+        field_72400_f.getMultimeterServer().onPlayerLeave(p_72367_1_); // RSMM
++        CarpetServer.rsmmServer.onPlayerLeave(p_72367_1_); // RSMM
 +
 +        //CM player logging off
 +        CarpetServer.playerDisconnected(p_72367_1_);

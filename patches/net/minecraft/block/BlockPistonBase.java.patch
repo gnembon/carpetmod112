@@ -13,7 +13,7 @@
  import net.minecraft.block.material.EnumPushReaction;
  import net.minecraft.block.material.Material;
  import net.minecraft.block.properties.IProperty;
-@@ -29,7 +33,15 @@
+@@ -29,7 +33,16 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
@@ -24,13 +24,14 @@
 +import net.minecraft.world.WorldServer;
 +
 +import redstone.multimeter.block.MeterableBlock;
++import redstone.multimeter.helper.WorldHelper;
 +import redstone.multimeter.server.Multimeter;
 +
 +public class BlockPistonBase extends BlockDirectional implements MeterableBlock /* RSMM */
  {
      public static final PropertyBool field_176320_b = PropertyBool.func_177716_a("extended");
      protected static final AxisAlignedBB field_185648_b = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.75D, 1.0D, 1.0D);
-@@ -39,6 +51,7 @@
+@@ -39,6 +52,7 @@
      protected static final AxisAlignedBB field_185652_f = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 0.75D, 1.0D);
      protected static final AxisAlignedBB field_185653_g = new AxisAlignedBB(0.0D, 0.25D, 0.0D, 1.0D, 1.0D, 1.0D);
      private final boolean field_150082_a;
@@ -38,7 +39,7 @@
  
      public BlockPistonBase(boolean p_i45443_1_)
      {
-@@ -99,7 +112,8 @@
+@@ -99,7 +113,8 @@
  
      public void func_180633_a(World p_180633_1_, BlockPos p_180633_2_, IBlockState p_180633_3_, EntityLivingBase p_180633_4_, ItemStack p_180633_5_)
      {
@@ -48,7 +49,7 @@
  
          if (!p_180633_1_.field_72995_K)
          {
-@@ -130,43 +144,117 @@
+@@ -130,43 +145,117 @@
  
      private void func_176316_e(World p_176316_1_, BlockPos p_176316_2_, IBlockState p_176316_3_)
      {
@@ -174,7 +175,7 @@
                  {
                      return true;
                  }
-@@ -240,7 +328,11 @@
+@@ -240,7 +329,11 @@
                          }
                      }
                  }
@@ -187,7 +188,7 @@
                  if (!flag1 && iblockstate.func_185904_a() != Material.field_151579_a && func_185646_a(iblockstate, p_189539_2_, blockpos, enumfacing.func_176734_d(), false, enumfacing) && (iblockstate.func_185905_o() == EnumPushReaction.NORMAL || block == Blocks.field_150331_J || block == Blocks.field_150320_F))
                  {
                      this.func_176319_a(p_189539_2_, p_189539_3_, enumfacing, false);
-@@ -307,7 +399,15 @@
+@@ -307,7 +400,15 @@
                      return false;
                  }
  
@@ -204,7 +205,7 @@
              }
              else
              {
-@@ -319,6 +419,14 @@
+@@ -319,6 +420,14 @@
              return false;
          }
      }
@@ -219,7 +220,7 @@
  
      private boolean func_176319_a(World p_176319_1_, BlockPos p_176319_2_, EnumFacing p_176319_3_, boolean p_176319_4_)
      {
-@@ -342,6 +450,7 @@
+@@ -342,6 +451,7 @@
              {
                  BlockPos blockpos = list.get(i);
                  list1.add(p_176319_1_.func_180495_p(blockpos).func_185899_b(p_176319_1_, blockpos));
@@ -227,7 +228,7 @@
              }
  
              List<BlockPos> list2 = blockpistonstructurehelper.func_177252_d();
-@@ -358,15 +467,76 @@
+@@ -358,15 +468,76 @@
                  --k;
                  aiblockstate[k] = iblockstate;
              }
@@ -257,7 +258,7 @@
 +                    PistonPushEventDispatcher.dispatchEvent(p_176319_1_, blockpos3, enumfacing);
 +                }
 +                if (CarpetSettings.redstoneMultimeter && !p_176319_1_.field_72995_K) {
-+                    Multimeter multimeter = ((WorldServer)p_176319_1_).getMultimeter();
++                    Multimeter multimeter = WorldHelper.getMultimeter();
 +
 +                    multimeter.logMoved(p_176319_1_, blockpos3, enumfacing);
 +                    multimeter.moveMeters(p_176319_1_, blockpos3, enumfacing);
@@ -307,7 +308,7 @@
                  --k;
                  aiblockstate[k] = iblockstate2;
              }
-@@ -397,6 +567,8 @@
+@@ -397,6 +568,8 @@
                  p_176319_1_.func_175685_c(blockpos2, Blocks.field_150332_K, false);
              }
  
@@ -316,7 +317,7 @@
              return true;
          }
      }
-@@ -439,4 +611,27 @@
+@@ -439,4 +612,27 @@
          p_193383_2_ = this.func_176221_a(p_193383_2_, p_193383_1_, p_193383_3_);
          return p_193383_2_.func_177229_b(field_176387_N) != p_193383_4_.func_176734_d() && ((Boolean)p_193383_2_.func_177229_b(field_176320_b)).booleanValue() ? BlockFaceShape.UNDEFINED : BlockFaceShape.SOLID;
      }

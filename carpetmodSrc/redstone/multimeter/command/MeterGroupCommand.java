@@ -63,8 +63,8 @@ public class MeterGroupCommand extends CommandBase {
 	private final MultimeterServer server;
 	private final Multimeter multimeter;
 	
-	public MeterGroupCommand(MinecraftServer server) {
-		this.server = server.getMultimeterServer();
+	public MeterGroupCommand(MultimeterServer server) {
+		this.server = server;
 		this.multimeter = this.server.getMultimeter();
 	}
 	
