@@ -8,16 +8,21 @@
  import net.minecraft.util.EnumFacing;
  import net.minecraft.util.Mirror;
  import net.minecraft.util.Rotation;
-@@ -15,6 +16,8 @@
+@@ -15,7 +16,12 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
+-public class BlockObserver extends BlockDirectional
++import redstone.multimeter.block.Meterable;
++import redstone.multimeter.block.PowerSource;
++
 +import carpet.CarpetSettings;
 +
- public class BlockObserver extends BlockDirectional
++public class BlockObserver extends BlockDirectional implements Meterable /* RSMM */, PowerSource /* RSMM */
  {
      public static final PropertyBool field_190963_a = PropertyBool.func_177716_a("powered");
-@@ -74,7 +77,18 @@
+ 
+@@ -74,7 +80,18 @@
          {
              if (!p_190960_2_.func_184145_b(p_190960_3_, this))
              {
@@ -37,7 +42,7 @@
              }
          }
      }
-@@ -125,7 +139,12 @@
+@@ -125,7 +142,12 @@
  
      public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
      {
@@ -51,3 +56,20 @@
      }
  
      public int func_176201_c(IBlockState p_176201_1_)
+@@ -145,4 +167,16 @@
+     {
+         return this.func_176223_P().func_177226_a(field_176387_N, EnumFacing.func_82600_a(p_176203_1_ & 7));
+     }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_190963_a);
++    }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_190963_a) ? MAX_POWER : MIN_POWER;
++    }
+ }

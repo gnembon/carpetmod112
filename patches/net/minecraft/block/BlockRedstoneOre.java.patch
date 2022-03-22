@@ -1,0 +1,24 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockRedstoneOre.java
++++ ../src-work/minecraft/net/minecraft/block/BlockRedstoneOre.java
+@@ -15,7 +15,9 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.world.World;
+ 
+-public class BlockRedstoneOre extends Block
++import redstone.multimeter.block.Meterable;
++
++public class BlockRedstoneOre extends Block implements Meterable /* RSMM */
+ {
+     private final boolean field_150187_a;
+ 
+@@ -155,4 +157,10 @@
+     {
+         return new ItemStack(Item.func_150898_a(Blocks.field_150450_ax), 1, this.func_180651_a(p_185473_3_));
+     }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return field_150187_a;
++    }
+ }

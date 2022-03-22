@@ -1,13 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityChest.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityChest.java
-@@ -23,7 +23,10 @@
+@@ -22,8 +22,11 @@
+ import net.minecraft.util.datafix.walkers.ItemStackDataLists;
  import net.minecraft.util.math.AxisAlignedBB;
  import net.minecraft.util.math.BlockPos;
- 
--public class TileEntityChest extends TileEntityLockableLoot implements ITickable
++import redstone.multimeter.helper.BlockChestHelper;
 +import carpet.CarpetSettings;
 +import carpet.helpers.TileEntityOptimizer.ILazyTileEntity;
-+
+ 
+-public class TileEntityChest extends TileEntityLockableLoot implements ITickable
 +public class TileEntityChest extends TileEntityLockableLoot implements ITickable, ILazyTileEntity
  {
      private NonNullList<ItemStack> field_145985_p = NonNullList.<ItemStack>func_191197_a(27, ItemStack.field_190927_a);
@@ -74,7 +75,23 @@
          if (p_145842_1_ == 1)
          {
              this.field_145987_o = p_145842_2_;
-@@ -386,4 +408,14 @@
+@@ -324,6 +346,7 @@
+             }
+ 
+             ++this.field_145987_o;
++            BlockChestHelper.onInvOpenOrClosed(this, true); // RSMM
+             this.field_145850_b.func_175641_c(this.field_174879_c, this.func_145838_q(), 1, this.field_145987_o);
+             this.field_145850_b.func_175685_c(this.field_174879_c, this.func_145838_q(), false);
+ 
+@@ -339,6 +362,7 @@
+         if (!p_174886_1_.func_175149_v() && this.func_145838_q() instanceof BlockChest)
+         {
+             --this.field_145987_o;
++            BlockChestHelper.onInvOpenOrClosed(this, false); // RSMM
+             this.field_145850_b.func_175641_c(this.field_174879_c, this.func_145838_q(), 1, this.field_145987_o);
+             this.field_145850_b.func_175685_c(this.field_174879_c, this.func_145838_q(), false);
+ 
+@@ -386,4 +410,14 @@
      {
          return this.field_145985_p;
      }

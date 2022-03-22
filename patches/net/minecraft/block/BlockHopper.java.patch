@@ -1,15 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockHopper.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockHopper.java
-@@ -31,6 +31,8 @@
+@@ -31,7 +31,11 @@
  import net.minecraft.world.IBlockAccess;
  import net.minecraft.world.World;
  
+-public class BlockHopper extends BlockContainer
++import redstone.multimeter.block.MeterableBlock;
++
 +import carpet.helpers.BlockRotator;
 +
- public class BlockHopper extends BlockContainer
++public class BlockHopper extends BlockContainer implements MeterableBlock /* RSMM */
  {
      public static final PropertyDirection field_176430_a = PropertyDirection.func_177712_a("facing", new Predicate<EnumFacing>()
-@@ -71,6 +73,8 @@
+     {
+@@ -71,6 +75,8 @@
      public IBlockState func_180642_a(World p_180642_1_, BlockPos p_180642_2_, EnumFacing p_180642_3_, float p_180642_4_, float p_180642_5_, float p_180642_6_, int p_180642_7_, EntityLivingBase p_180642_8_)
      {
          EnumFacing enumfacing = p_180642_3_.func_176734_d();
@@ -18,3 +22,29 @@
  
          if (enumfacing == EnumFacing.UP)
          {
+@@ -139,6 +145,8 @@
+     {
+         boolean flag = !p_176427_1_.func_175640_z(p_176427_2_);
+ 
++        logPowered(p_176427_1_, p_176427_2_, !flag); // RSMM
++
+         if (flag != ((Boolean)p_176427_3_.func_177229_b(field_176429_b)).booleanValue())
+         {
+             p_176427_1_.func_180501_a(p_176427_2_, p_176427_3_.func_177226_a(field_176429_b, Boolean.valueOf(flag)), 4);
+@@ -230,4 +238,16 @@
+     {
+         return p_193383_4_ == EnumFacing.UP ? BlockFaceShape.BOWL : BlockFaceShape.UNDEFINED;
+     }
++
++    // RSMM
++    @Override
++    public boolean logPoweredOnBlockUpdate() {
++        return false;
++    }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176429_b);
++    }
+ }

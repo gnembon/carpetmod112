@@ -299,13 +299,18 @@ public class CarpetSettings
     @SurvivalDefault
     public static boolean cactusCounter = false;
 
-    @Rule(desc = "Enables integration with redstone multimeter mod", category = {CREATIVE, SURVIVAL}, validator = "validateRedstoneMultimeter", extra = {
+    @Rule(desc = "Enables integration with NarcolepticFrog's Redstone Multimeter mod", category = {CREATIVE, SURVIVAL}, validator = "validateRedstoneMultimeterLegacy", extra = {
             "Required clients with RSMM Mod by Narcoleptic Frog. Enables multiplayer experience with RSMM Mod"
+    })
+    public static boolean redstoneMultimeterLegacy = false;
+
+    @Rule(desc = "Enables integration with the new Redstone Multimeter mod", category = {CREATIVE, SURVIVAL, COMMANDS}, extra = {
+    		"To use, the new Redstone Multimeter mod must be installed client-side as well"
     })
     public static boolean redstoneMultimeter = false;
 
-    private static boolean validateRedstoneMultimeter(boolean value) {
-        CarpetServer.rsmmChannel.setEnabled(value);
+    private static boolean validateRedstoneMultimeterLegacy(boolean value) {
+        CarpetServer.legacyRsmmChannel.setEnabled(value);
         return true;
     }
 

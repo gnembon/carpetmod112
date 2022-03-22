@@ -1,6 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockChest.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockChest.java
-@@ -67,21 +67,21 @@
+@@ -32,7 +32,11 @@
+ import net.minecraft.world.ILockableContainer;
+ import net.minecraft.world.World;
+ 
+-public class BlockChest extends BlockContainer
++import redstone.multimeter.block.Meterable;
++import redstone.multimeter.block.PowerSource;
++import redstone.multimeter.helper.BlockChestHelper;
++
++public class BlockChest extends BlockContainer implements Meterable /* RSMM */, PowerSource /* RSMM */
+ {
+     public static final PropertyDirection field_176459_a = BlockHorizontal.field_185512_D;
+     protected static final AxisAlignedBB field_185557_b = new AxisAlignedBB(0.0625D, 0.0D, 0.0D, 0.9375D, 0.875D, 0.9375D);
+@@ -67,21 +71,21 @@
  
      public AxisAlignedBB func_185496_a(IBlockState p_185496_1_, IBlockAccess p_185496_2_, BlockPos p_185496_3_)
      {
@@ -26,7 +39,7 @@
          }
      }
  
-@@ -92,7 +92,7 @@
+@@ -92,7 +96,7 @@
          for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
          {
              BlockPos blockpos = p_176213_2_.func_177972_a(enumfacing);
@@ -35,7 +48,7 @@
  
              if (iblockstate.func_177230_c() == this)
              {
-@@ -172,10 +172,10 @@
+@@ -172,10 +176,10 @@
          }
          else
          {
@@ -50,7 +63,7 @@
              EnumFacing enumfacing = (EnumFacing)p_176455_3_.func_177229_b(field_176459_a);
  
              if (iblockstate.func_177230_c() != this && iblockstate1.func_177230_c() != this)
-@@ -186,8 +186,8 @@
+@@ -186,8 +190,8 @@
                  if (iblockstate2.func_177230_c() == this || iblockstate3.func_177230_c() == this)
                  {
                      BlockPos blockpos1 = iblockstate2.func_177230_c() == this ? p_176455_2_.func_177976_e() : p_176455_2_.func_177974_f();
@@ -61,7 +74,7 @@
                      enumfacing = EnumFacing.SOUTH;
                      EnumFacing enumfacing2;
  
-@@ -219,8 +219,8 @@
+@@ -219,8 +223,8 @@
              else
              {
                  BlockPos blockpos = iblockstate.func_177230_c() == this ? p_176455_2_.func_177978_c() : p_176455_2_.func_177968_d();
@@ -72,7 +85,7 @@
                  enumfacing = EnumFacing.EAST;
                  EnumFacing enumfacing1;
  
-@@ -368,7 +368,7 @@
+@@ -368,7 +372,7 @@
          {
              for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
              {
@@ -81,7 +94,7 @@
                  {
                      return true;
                  }
-@@ -458,7 +458,7 @@
+@@ -458,7 +462,7 @@
                  for (EnumFacing enumfacing : EnumFacing.Plane.HORIZONTAL)
                  {
                      BlockPos blockpos = p_189418_2_.func_177972_a(enumfacing);
@@ -90,3 +103,40 @@
  
                      if (block == this)
                      {
+@@ -595,6 +599,36 @@
+         return BlockFaceShape.UNDEFINED;
+     }
+ 
++    // RSMM
++    @Override
++    public boolean isMeterable() {
++        return BlockChestHelper.isTrapped(this);
++    }
++
++    // RSMM
++    @Override
++    public boolean isPowerSource() {
++        return BlockChestHelper.isTrapped(this);
++    }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return BlockChestHelper.isTrapped(this) && BlockChestHelper.getPower(world, pos, state) > MIN_POWER;
++    }
++
++    // RSMM
++    @Override
++    public boolean logPowerChangeOnStateChange() {
++        return false;
++    }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        return BlockChestHelper.isTrapped(this) ? BlockChestHelper.getPower(world, pos, state) : MIN_POWER;
++    }
++
+     public static enum Type
+     {
+         BASIC,

@@ -1,6 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/world/end/DragonFightManager.java
 +++ ../src-work/minecraft/net/minecraft/world/end/DragonFightManager.java
-@@ -48,6 +48,8 @@
+@@ -45,9 +45,15 @@
+ import net.minecraft.world.gen.feature.WorldGenEndGateway;
+ import net.minecraft.world.gen.feature.WorldGenEndPodium;
+ import net.minecraft.world.gen.feature.WorldGenSpikes;
++
++import redstone.multimeter.common.TickTask;
++import redstone.multimeter.helper.WorldHelper;
++
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
  
@@ -9,7 +16,25 @@
  public class DragonFightManager
  {
      private static final Logger field_186107_a = LogManager.getLogger();
-@@ -437,6 +439,8 @@
+@@ -149,6 +155,8 @@
+ 
+     public void func_186105_b()
+     {
++        WorldHelper.startTickTask(TickTask.DRAGON_FIGHT); // RSMM
++
+         this.field_186109_c.func_186758_d(!this.field_186117_k);
+ 
+         if (++this.field_186116_j >= 20)
+@@ -244,6 +252,8 @@
+                 }
+             }
+         }
++
++        WorldHelper.endTickTask(); // RSMM
+     }
+ 
+     protected void func_186095_a(DragonSpawnManager p_186095_1_)
+@@ -437,6 +447,8 @@
              }
          }
  

@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockPressurePlateWeighted.java
++++ ../src-work/minecraft/net/minecraft/block/BlockPressurePlateWeighted.java
+@@ -14,7 +14,10 @@
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.world.World;
+ 
+-public class BlockPressurePlateWeighted extends BlockBasePressurePlate
++import redstone.multimeter.block.Meterable;
++import redstone.multimeter.block.PowerSource;
++
++public class BlockPressurePlateWeighted extends BlockBasePressurePlate implements Meterable /* RSMM */, PowerSource /* RSMM */
+ {
+     public static final PropertyInteger field_176579_a = PropertyInteger.func_177719_a("power", 0, 15);
+     private final int field_150068_a;
+@@ -85,4 +88,16 @@
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176579_a});
+     }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176579_a) > MIN_POWER;
++    }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176579_a);
++    }
+ }

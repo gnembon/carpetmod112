@@ -8,10 +8,12 @@
  import net.minecraft.inventory.IInventory;
  import net.minecraft.item.ItemBlock;
  import net.minecraft.item.ItemStack;
-@@ -26,6 +27,10 @@
+@@ -26,6 +27,12 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
++import redstone.multimeter.helper.WorldHelper;
++
 +import carpet.helpers.BlockRotator;
 +import carpet.CarpetSettings;
 +import carpet.worldedit.WorldEditBridge;
@@ -19,7 +21,7 @@
  public class PlayerInteractionManager
  {
      public World field_73092_a;
-@@ -39,6 +44,8 @@
+@@ -39,6 +46,8 @@
      private BlockPos field_180241_i = BlockPos.field_177992_a;
      private int field_73093_n;
      private int field_73094_o = -1;
@@ -28,7 +30,7 @@
  
      public PlayerInteractionManager(World p_i1524_1_)
      {
-@@ -137,6 +144,12 @@
+@@ -137,6 +146,12 @@
  
      public void func_180784_a(BlockPos p_180784_1_, EnumFacing p_180784_2_)
      {
@@ -41,7 +43,7 @@
          if (this.func_73083_d())
          {
              if (!this.field_73092_a.func_175719_a((EntityPlayer)null, p_180784_1_, p_180784_2_))
-@@ -191,6 +204,11 @@
+@@ -191,6 +206,11 @@
                  this.field_73088_d = true;
                  this.field_180240_f = p_180784_1_;
                  int i = (int)(f * 10.0F);
@@ -53,7 +55,7 @@
                  this.field_73092_a.func_175715_c(this.field_73090_b.func_145782_y(), p_180784_1_, i);
                  this.field_73094_o = i;
              }
-@@ -235,8 +253,10 @@
+@@ -235,8 +255,10 @@
      {
          IBlockState iblockstate = this.field_73092_a.func_180495_p(p_180235_1_);
          iblockstate.func_177230_c().func_176208_a(this.field_73092_a, p_180235_1_, iblockstate, this.field_73090_b);
@@ -65,7 +67,7 @@
          if (flag)
          {
              iblockstate.func_177230_c().func_176206_d(this.field_73092_a, p_180235_1_, iblockstate);
-@@ -288,7 +308,15 @@
+@@ -288,7 +310,15 @@
                  }
  
                  this.field_73092_a.func_180498_a(this.field_73090_b, 2001, p_180237_1_, Block.func_176210_f(iblockstate));
@@ -82,7 +84,7 @@
  
                  if (this.func_73083_d())
                  {
-@@ -307,10 +335,19 @@
+@@ -307,10 +337,19 @@
  
                      if (flag1 && flag)
                      {
@@ -102,7 +104,7 @@
                  return flag1;
              }
          }
-@@ -402,10 +439,22 @@
+@@ -402,10 +441,23 @@
          }
          else
          {
@@ -122,6 +124,7 @@
 +                {
 +                    return EnumActionResult.PASS;
 +                }
++                WorldHelper.getMultimeter().logInteractBlock(p_187251_2_, p_187251_5_); // RSMM
                  if (iblockstate.func_177230_c().func_180639_a(p_187251_2_, p_187251_5_, iblockstate, p_187251_1_, p_187251_4_, p_187251_6_, p_187251_7_, p_187251_8_, p_187251_9_))
                  {
                      return EnumActionResult.SUCCESS;

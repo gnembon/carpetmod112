@@ -1,15 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockDispenser.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockDispenser.java
-@@ -32,6 +32,8 @@
+@@ -32,7 +32,11 @@
  import net.minecraft.util.registry.RegistryDefaulted;
  import net.minecraft.world.World;
  
+-public class BlockDispenser extends BlockContainer
++import redstone.multimeter.block.MeterableBlock;
++
 +import carpet.CarpetSettings;
 +
- public class BlockDispenser extends BlockContainer
++public class BlockDispenser extends BlockContainer implements MeterableBlock /* RSMM */
  {
      public static final PropertyDirection field_176441_a = BlockDirectional.field_176387_N;
-@@ -54,6 +56,8 @@
+     public static final PropertyBool field_176440_b = PropertyBool.func_177716_a("triggered");
+@@ -54,6 +58,8 @@
      public void func_176213_c(World p_176213_1_, BlockPos p_176213_2_, IBlockState p_176213_3_)
      {
          super.func_176213_c(p_176213_1_, p_176213_2_, p_176213_3_);
@@ -18,7 +22,7 @@
          this.func_176438_e(p_176213_1_, p_176213_2_, p_176213_3_);
      }
  
-@@ -153,7 +157,17 @@
+@@ -153,9 +159,21 @@
  
      public void func_189540_a(IBlockState p_189540_1_, World p_189540_2_, BlockPos p_189540_3_, Block p_189540_4_, BlockPos p_189540_5_)
      {
@@ -36,8 +40,12 @@
 +        /* end */
          boolean flag1 = ((Boolean)p_189540_1_.func_177229_b(field_176440_b)).booleanValue();
  
++        logPowered(p_189540_2_, p_189540_3_, flag); // RSMM
++
          if (flag && !flag1)
-@@ -187,7 +201,8 @@
+         {
+             p_189540_2_.func_175684_a(p_189540_3_, this, this.func_149738_a(p_189540_2_));
+@@ -187,7 +205,8 @@
  
      public void func_180633_a(World p_180633_1_, BlockPos p_180633_2_, IBlockState p_180633_3_, EntityLivingBase p_180633_4_, ItemStack p_180633_5_)
      {
@@ -47,3 +55,26 @@
  
          if (p_180633_5_.func_82837_s())
          {
+@@ -269,4 +288,22 @@
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176441_a, field_176440_b});
+     }
++
++    // RSMM
++    @Override
++    public boolean logPoweredOnBlockUpdate() {
++        return false;
++    }
++
++    // RSMM
++    @Override
++    public boolean isPowered(World world, BlockPos pos, IBlockState state) {
++        return world.func_175640_z(pos) || (CarpetSettings.quasiConnectivity && world.func_175640_z(pos.func_177984_a()));
++    }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176440_b);
++    }
+ }

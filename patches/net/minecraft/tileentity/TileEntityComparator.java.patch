@@ -1,6 +1,14 @@
 --- ../src-base/minecraft/net/minecraft/tileentity/TileEntityComparator.java
 +++ ../src-work/minecraft/net/minecraft/tileentity/TileEntityComparator.java
-@@ -5,6 +5,10 @@
+@@ -1,10 +1,18 @@
+ package net.minecraft.tileentity;
+ 
++import carpet.CarpetSettings;
++
+ import net.minecraft.nbt.NBTTagCompound;
+ 
++import redstone.multimeter.helper.WorldHelper;
++
  public class TileEntityComparator extends TileEntity
  {
      private int field_145997_a;
@@ -11,3 +19,15 @@
  
      public NBTTagCompound func_189515_b(NBTTagCompound p_189515_1_)
      {
+@@ -26,6 +34,11 @@
+ 
+     public void func_145995_a(int p_145995_1_)
+     {
++        // RSMM start
++        if (CarpetSettings.redstoneMultimeter && !field_145850_b.field_72995_K) {
++            WorldHelper.getMultimeter().logPowerChange(field_145850_b, field_174879_c, field_145997_a, p_145995_1_);
++        }
++        // RSMM end
+         this.field_145997_a = p_145995_1_;
+     }
+ }

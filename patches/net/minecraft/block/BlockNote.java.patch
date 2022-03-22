@@ -1,20 +1,28 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockNote.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockNote.java
-@@ -19,9 +19,13 @@
+@@ -19,9 +19,15 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  
+-public class BlockNote extends BlockContainer
++import redstone.multimeter.block.MeterableBlock;
++import redstone.multimeter.helper.WorldHelper;
 +import carpet.CarpetSettings;
 +import net.minecraft.init.Blocks;
 +
- public class BlockNote extends BlockContainer
++public class BlockNote extends BlockContainer implements MeterableBlock /* RSMM */
  {
      private static final List<SoundEvent> field_176434_a = Lists.newArrayList(SoundEvents.field_187682_dG, SoundEvents.field_187676_dE, SoundEvents.field_187688_dI, SoundEvents.field_187685_dH, SoundEvents.field_187679_dF, SoundEvents.field_193809_ey, SoundEvents.field_193807_ew, SoundEvents.field_193810_ez, SoundEvents.field_193808_ex, SoundEvents.field_193785_eE);
 +    private SoundEvent saveSoundEvent;
  
      public BlockNote()
      {
-@@ -37,6 +41,8 @@
+@@ -34,9 +40,13 @@
+         boolean flag = p_189540_2_.func_175640_z(p_189540_3_);
+         TileEntity tileentity = p_189540_2_.func_175625_s(p_189540_3_);
+ 
++        logPowered(p_189540_2_, p_189540_3_, flag); // RSMM
++
          if (tileentity instanceof TileEntityNote)
          {
              TileEntityNote tileentitynote = (TileEntityNote)tileentity;
@@ -23,10 +31,16 @@
  
              if (tileentitynote.field_145880_i != flag)
              {
-@@ -46,6 +52,12 @@
+@@ -46,6 +56,18 @@
                  }
  
                  tileentitynote.field_145880_i = flag;
++  
++                // RSMM start
++                if (!p_189540_2_.field_72995_K) {
++                    WorldHelper.getMultimeter().logActive(p_189540_2_, p_189540_3_, flag);
++                }
++                // RSMM end
 +
 +                //Added note block imitation in 1.13 CARPET-XCOM
 +                if(CarpetSettings.noteBlockImitationOf1_13) p_189540_2_.func_175685_c(p_189540_3_, this, true);
@@ -36,7 +50,7 @@
              }
          }
      }
-@@ -68,6 +80,9 @@
+@@ -68,6 +90,9 @@
                  p_180639_4_.func_71029_a(StatList.field_188087_U);
              }
  
@@ -46,7 +60,7 @@
              return true;
          }
      }
-@@ -113,4 +128,60 @@
+@@ -113,4 +138,78 @@
      {
          return EnumBlockRenderType.MODEL;
      }
@@ -105,5 +119,23 @@
 +        }
 +
 +        return i;
++    }
++
++    // RSMM
++    @Override
++    public boolean logPoweredOnBlockUpdate() {
++        return false;
++    }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        TileEntity blockEntity = world.func_175625_s(pos);
++
++        if (blockEntity instanceof TileEntityNote) {
++            return ((TileEntityNote)blockEntity).field_145880_i;
++        }
++
++        return false;
 +    }
  }

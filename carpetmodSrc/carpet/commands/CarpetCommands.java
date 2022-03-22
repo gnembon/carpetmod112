@@ -3,6 +3,7 @@ package carpet.commands;
 import carpet.CarpetServer;
 import narcolepticfrog.rsmm.MeterCommand;
 import net.minecraft.command.CommandHandler;
+import redstone.multimeter.command.MeterGroupCommand;
 
 public class CarpetCommands {
     public static void register(CommandHandler handler) {
@@ -51,7 +52,9 @@ public class CarpetCommands {
         handler.registerCommand(new CommandZetBlock());
 
         // ----- RSMM Start ----- //
-        handler.registerCommand(new MeterCommand(CarpetServer.rsmmServer));
+        handler.registerCommand(new MeterCommand(CarpetServer.legacyRsmmServer));
         // ----- RSMM End ----- //
+
+        handler.registerCommand(new MeterGroupCommand(CarpetServer.rsmmServer));
     }
 }

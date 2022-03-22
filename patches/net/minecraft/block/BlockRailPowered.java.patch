@@ -1,15 +1,19 @@
 --- ../src-base/minecraft/net/minecraft/block/BlockRailPowered.java
 +++ ../src-work/minecraft/net/minecraft/block/BlockRailPowered.java
-@@ -12,6 +12,8 @@
+@@ -12,7 +12,11 @@
  import net.minecraft.util.math.BlockPos;
  import net.minecraft.world.World;
  
+-public class BlockRailPowered extends BlockRailBase
++import redstone.multimeter.block.MeterableBlock;
++
 +import carpet.CarpetSettings;
 +
- public class BlockRailPowered extends BlockRailBase
++public class BlockRailPowered extends BlockRailBase implements MeterableBlock /* RSMM */
  {
      public static final PropertyEnum<BlockRailBase.EnumRailDirection> field_176568_b = PropertyEnum.<BlockRailBase.EnumRailDirection>func_177708_a("shape", BlockRailBase.EnumRailDirection.class, new Predicate<BlockRailBase.EnumRailDirection>()
-@@ -32,7 +34,11 @@
+     {
+@@ -32,7 +36,11 @@
      @SuppressWarnings("incomplete-switch")
      protected boolean func_176566_a(World p_176566_1_, BlockPos p_176566_2_, IBlockState p_176566_3_, boolean p_176566_4_, int p_176566_5_)
      {
@@ -22,7 +26,16 @@
          {
              return false;
          }
-@@ -228,6 +234,14 @@
+@@ -184,6 +192,8 @@
+         boolean flag = ((Boolean)p_189541_1_.func_177229_b(field_176569_M)).booleanValue();
+         boolean flag1 = p_189541_2_.func_175640_z(p_189541_3_) || this.func_176566_a(p_189541_2_, p_189541_3_, p_189541_1_, true, 0) || this.func_176566_a(p_189541_2_, p_189541_3_, p_189541_1_, false, 0);
+ 
++        logPowered(p_189541_2_, p_189541_3_, flag1); // RSMM
++
+         if (flag1 != flag)
+         {
+             p_189541_2_.func_180501_a(p_189541_3_, p_189541_1_.func_177226_a(field_176569_M, Boolean.valueOf(flag1)), 3);
+@@ -228,6 +238,14 @@
  
                  switch ((BlockRailBase.EnumRailDirection)p_185499_1_.func_177229_b(field_176568_b))
                  {
@@ -37,3 +50,26 @@
                      case ASCENDING_EAST:
                          return p_185499_1_.func_177226_a(field_176568_b, BlockRailBase.EnumRailDirection.ASCENDING_WEST);
                      case ASCENDING_WEST:
+@@ -360,4 +378,22 @@
+     {
+         return new BlockStateContainer(this, new IProperty[] {field_176568_b, field_176569_M});
+     }
++
++    // RSMM
++    @Override
++    public boolean logPoweredOnBlockUpdate() {
++        return false;
++    }
++
++    // RSMM
++    @Override
++    public boolean isPowered(World world, BlockPos pos, IBlockState state) {
++        return world.func_175640_z(pos) || func_176566_a(world, pos, state, true, 0) || func_176566_a(world, pos, state, false, 0);
++    }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176569_M);
++    }
+ }

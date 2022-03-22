@@ -1,0 +1,31 @@
+--- ../src-base/minecraft/net/minecraft/block/BlockTripWireHook.java
++++ ../src-work/minecraft/net/minecraft/block/BlockTripWireHook.java
+@@ -25,7 +25,10 @@
+ import net.minecraft.world.IBlockAccess;
+ import net.minecraft.world.World;
+ 
+-public class BlockTripWireHook extends Block
++import redstone.multimeter.block.Meterable;
++import redstone.multimeter.block.PowerSource;
++
++public class BlockTripWireHook extends Block implements Meterable /* RSMM */, PowerSource /* RSMM */
+ {
+     public static final PropertyDirection field_176264_a = BlockHorizontal.field_185512_D;
+     public static final PropertyBool field_176263_b = PropertyBool.func_177716_a("powered");
+@@ -353,4 +356,16 @@
+     {
+         return BlockFaceShape.UNDEFINED;
+     }
++
++    // RSMM
++    @Override
++    public boolean isActive(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176263_b);
++    }
++
++    // RSMM
++    @Override
++    public int getPowerLevel(World world, BlockPos pos, IBlockState state) {
++        return state.func_177229_b(field_176263_b) ? MAX_POWER : MIN_POWER;
++    }
+ }
