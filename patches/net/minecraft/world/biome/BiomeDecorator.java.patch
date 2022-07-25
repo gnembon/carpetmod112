@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/world/biome/BiomeDecorator.java
++++ ../src-work/minecraft/net/minecraft/world/biome/BiomeDecorator.java
+@@ -1,11 +1,16 @@
+ package net.minecraft.world.biome;
+ 
+ import java.util.Random;
++
++import carpet.logging.LoggerRegistry;
++import carpet.utils.Messenger;
+ import net.minecraft.block.BlockFlower;
+ import net.minecraft.block.BlockStone;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.math.BlockPos;
++import net.minecraft.util.text.ITextComponent;
++import net.minecraft.util.text.TextFormatting;
+ import net.minecraft.world.World;
+ import net.minecraft.world.gen.ChunkGeneratorSettings;
+ import net.minecraft.world.gen.feature.WorldGenAbstractTree;
+@@ -66,6 +71,12 @@
+ 
+     public void func_180292_a(World p_180292_1_, Random p_180292_2_, Biome p_180292_3_, BlockPos p_180292_4_)
+     {
++        if(LoggerRegistry.__liquidPlacement) {
++            LoggerRegistry.getLogger("liquidPlacement").logNoCommand(()-> new ITextComponent[]{
++                    Messenger.s(null, TextFormatting.YELLOW + "Starting decoration of chunk: " + TextFormatting.AQUA + p_180292_4_.func_177958_n() / 16 + " " + p_180292_4_.func_177952_p() / 16)
++            });
++        }
++
+         if (this.field_185425_a)
+         {
+             throw new RuntimeException("Already decorating");
+@@ -88,6 +99,11 @@
+             this.func_150513_a(p_180292_3_, p_180292_1_, p_180292_2_);
+             this.field_185425_a = false;
+         }
++        if(LoggerRegistry.__liquidPlacement) {
++            LoggerRegistry.getLogger("liquidPlacement").logNoCommand(()-> new ITextComponent[]{
++                    Messenger.s(null, TextFormatting.YELLOW + "Finished decoration of chunk: " + TextFormatting.AQUA + p_180292_4_.func_177958_n() / 16 + " " + p_180292_4_.func_177952_p() / 16)
++            });
++        }
+     }
+ 
+     protected void func_150513_a(Biome p_150513_1_, World p_150513_2_, Random p_150513_3_)

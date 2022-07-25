@@ -999,6 +999,13 @@ public class CarpetSettings
     @Rule(desc = "Removes tnt applying velocity to other entities.", category = CREATIVE)
     public static boolean removeTNTVelocity = false;
 
+
+    @Rule(desc = "Minimum height to log \"liquidPlacement\" logger", category = {EXPERIMENTAL, FEATURE}, options = {"0","62","100"})
+    public static int logLiquidPlacementMinHeight = 62;
+
+    @Rule(desc = "Maximum height to log \"liquidPlacement\" logger", category = {EXPERIMENTAL, FEATURE}, options = {"0","73","100", "256"})
+    public static int logLiquidPlacementMaxHeight = 256;
+
     // ===== API ===== //
 
     /**
