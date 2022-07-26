@@ -21,8 +21,8 @@
  
      public void func_180292_a(World p_180292_1_, Random p_180292_2_, Biome p_180292_3_, BlockPos p_180292_4_)
      {
-+        if(LoggerRegistry.__liquidPlacement) {
-+            LoggerRegistry.getLogger("liquidPlacement").logNoCommand(()-> new ITextComponent[]{
++        if(LoggerRegistry.__liquidPopulation) {
++            LoggerRegistry.getLogger("liquidPopulation").logNoCommand(()-> new ITextComponent[]{
 +                    Messenger.s(null, TextFormatting.YELLOW + "Starting decoration of chunk: " + TextFormatting.AQUA + p_180292_4_.func_177958_n() / 16 + " " + p_180292_4_.func_177952_p() / 16)
 +            });
 +        }
@@ -34,8 +34,8 @@
              this.func_150513_a(p_180292_3_, p_180292_1_, p_180292_2_);
              this.field_185425_a = false;
          }
-+        if(LoggerRegistry.__liquidPlacement) {
-+            LoggerRegistry.getLogger("liquidPlacement").logNoCommand(()-> new ITextComponent[]{
++        if(LoggerRegistry.__liquidPopulation) {
++            LoggerRegistry.getLogger("liquidPopulation").logNoCommand(()-> new ITextComponent[]{
 +                    Messenger.s(null, TextFormatting.YELLOW + "Finished decoration of chunk: " + TextFormatting.AQUA + p_180292_4_.func_177958_n() / 16 + " " + p_180292_4_.func_177952_p() / 16)
 +            });
 +        }

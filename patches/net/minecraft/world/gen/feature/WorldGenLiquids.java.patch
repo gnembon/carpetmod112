@@ -22,9 +22,9 @@
  
      public boolean func_180709_b(World p_180709_1_, Random p_180709_2_, BlockPos p_180709_3_)
      {
-+        if (LoggerRegistry.__liquidPlacement && p_180709_3_.func_177956_o() >= CarpetSettings.logLiquidPlacementMinHeight && p_180709_3_.func_177956_o() <= CarpetSettings.logLiquidPlacementMaxHeight) {
++        if (LoggerRegistry.__liquidPopulation && p_180709_3_.func_177956_o() >= CarpetSettings.logLiquidPopulationMinHeight && p_180709_3_.func_177956_o() <= CarpetSettings.logLiquidPopulationMaxHeight) {
 +            TextFormatting color = field_150521_a.equals(Blocks.field_150356_k) ? TextFormatting.RED : TextFormatting.BLUE;
-+            LoggerRegistry.getLogger("liquidPlacement").logNoCommand(()-> new ITextComponent[]{
++            LoggerRegistry.getLogger("liquidPopulation").logNoCommand(()-> new ITextComponent[]{
 +                    Messenger.s(null, TextFormatting.GREEN + "- Pocket of " + color + field_150521_a + TextFormatting.GREEN + " tried to generate in: " +
 +                            TextFormatting.AQUA + p_180709_3_)
 +            });
