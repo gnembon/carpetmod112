@@ -23,6 +23,7 @@ import carpet.logging.LoggerRegistry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.WorldServer;
+import org.apache.logging.log4j.LogManager;
 import redstone.multimeter.server.MultimeterServer;
 
 public class CarpetServer // static for now - easier to handle all around the code, its one anyways
@@ -44,6 +45,13 @@ public class CarpetServer // static for now - easier to handle all around the co
 
     public static void init(MinecraftServer server) //aka constructor of this static singleton class
     {
+        if (JavaVersionUtil.JAVA_VERSION != 8)
+        {
+            LogManager.getLogger().warn("!!!!!!!!!!");
+            LogManager.getLogger().warn("1.12 TECH SERVERS SHOULD BE RUN USING JAVA 8, DETECTED JAVA " + JavaVersionUtil.JAVA_VERSION);
+            LogManager.getLogger().warn("!!!!!!!!!!");
+        }
+
         minecraft_server = server;
         pluginChannels = new PluginChannelManager(server);
         pluginChannels.register(PUBSUB_MESSENGER);
