@@ -8,7 +8,9 @@ import javax.annotation.Nullable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import carpet.CarpetServer;
 import carpet.CarpetSettings;
+import carpet.helpers.HopperCounter;
 import carpet.logging.LoggerRegistry;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
@@ -16,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameType;
 
 import net.minecraft.command.WrongUsageException;
@@ -29,12 +32,14 @@ import java.io.IOException;
 public class CommandExport extends CommandCarpetBase {
     public static boolean shouldAddData = false;
     public static ArrayList<Datapoint> savedPoints = new ArrayList<Datapoint>();
+    private static String counter = "";
 
     public static class Datapoint {
         public double iph;
         public double mspt;
         public long items;
         public long ticks;
+
         public Datapoint(long t, long i, double ih, double mt) {
             ticks = t;
             items = i;
@@ -56,13 +61,21 @@ public class CommandExport extends CommandCarpetBase {
             throw new WrongUsageException("/execute: expected one of 'start' or 'stop'", new Object[0]);
         }
         boolean starting = args[0].equals("start");
+        if (starting && args.length < 2) {
+            throw new WrongUsageException("Usage: /execute start <counter>", new Object[0]);
+        }
+        
         if (starting == shouldAddData) {
             throw new WrongUsageException(shouldAddData ? "/execute: already capturing data" : "/execute: not capturing any data", new Object[0]);
         }
         shouldAddData = starting;
         if (shouldAddData) {
             savedPoints.clear();
-            notifyCommandListener(sender, this, "Starting capture...");
+            if (!HopperCounter.COUNTERS.containsKey(args[1])) {
+                throw new WrongUsageException("/execute: unknown counter '" + args[1] + "'", new Object[0]);
+            }
+            counter = args[1];
+            notifyCommandListener(sender, this, "Starting capture of counter " + counter + "...");
         } else {
             String name;
             if (args.length > 1) {
@@ -86,16 +99,22 @@ public class CommandExport extends CommandCarpetBase {
         }
     }
 
-    public static void addDatapoint(long t, long i, double ih, double mspt) {
-        Datapoint dp = new Datapoint(t, i, ih, mspt);
-        CommandExport.savedPoints.add(dp);
+    public static void addDatapoint() {
+        if (CommandExport.shouldAddData) {
+            double mspt = MathHelper.average(CarpetServer.minecraft_server.tickTimeArray) * 1.0E-6D;
+            long total = HopperCounter.COUNTERS.get(counter).getTotalItems();
+            long ticks = CarpetServer.minecraft_server.getTickCounter() - HopperCounter.COUNTERS.get(counter).getStartTick();
+            Datapoint dp = new Datapoint(ticks, total, (double)total * 20 * 3600 / ticks, mspt);
+            CommandExport.savedPoints.add(dp);
+        }
     }
     
     public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos) {
-        if (args.length > 1) {
-            return Collections.<String>emptyList();
-        } else {
+        if (args.length == 1) {
             return Arrays.asList("start", "stop");
+        } else if (args.length == 2 && args[0].equals("start")) {
+            return new ArrayList<>(HopperCounter.COUNTERS.keySet());
         }
+        return Collections.<String>emptyList();
     }
 }

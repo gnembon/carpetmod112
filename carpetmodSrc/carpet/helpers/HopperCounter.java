@@ -94,10 +94,6 @@ public class HopperCounter
         long total = getTotalItems();
         long ticks = Math.max(realTime ? (MinecraftServer.getCurrentTimeMillis() - startMillis) / 50 : server.getTickCounter() - startTick, 1);
 
-        if (CommandExport.shouldAddData) {
-            double mspt = MathHelper.average(CarpetServer.minecraft_server.tickTimeArray) * 1.0E-6D;
-            CommandExport.addDatapoint(ticks, total, (double)total * 20 * 3600 / ticks, mspt);
-        }
         if (total == 0) {
             if (brief) {
                 return Collections.singletonList(Messenger.m(null,
@@ -137,4 +133,5 @@ public class HopperCounter
     public long getTotalItems() {
         return counter.values().stream().mapToLong(Long::longValue).sum();
     }
+    public long getStartTick() { return startTick; }
 }
