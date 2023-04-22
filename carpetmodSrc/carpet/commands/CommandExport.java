@@ -53,7 +53,7 @@ public class CommandExport extends CommandCarpetBase {
     }
     
     public String getUsage(ICommandSender sender) {
-        return "/export <start|stop> [filename]";
+        return "/export <start <counter> | stop [filename]>";
     }
 
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
@@ -62,11 +62,12 @@ public class CommandExport extends CommandCarpetBase {
         }
         boolean starting = args[0].equals("start");
         if (starting && args.length < 2) {
-            throw new WrongUsageException("Usage: /export start <counter>", new Object[0]);
+            throw new WrongUsageException("/export start <counter>", new Object[0]);
         }
         
         if (starting == shouldAddData) {
-            throw new WrongUsageException(shouldAddData ? "/export: already capturing data" : "/export: not capturing any data", new Object[0]);
+            notifyCommandListener(sender, this, shouldAddData ? "/export: already capturing data" : "/export: not capturing any data");
+            return;
         }
         shouldAddData = starting;
         if (shouldAddData) {
