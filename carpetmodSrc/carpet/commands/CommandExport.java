@@ -58,21 +58,21 @@ public class CommandExport extends CommandCarpetBase {
 
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length < 1 || (!args[0].equals("start") && !args[0].equals("stop"))) {
-            throw new WrongUsageException("/execute: expected one of 'start' or 'stop'", new Object[0]);
+            throw new WrongUsageException("/export: expected one of 'start' or 'stop'", new Object[0]);
         }
         boolean starting = args[0].equals("start");
         if (starting && args.length < 2) {
-            throw new WrongUsageException("Usage: /execute start <counter>", new Object[0]);
+            throw new WrongUsageException("Usage: /export start <counter>", new Object[0]);
         }
         
         if (starting == shouldAddData) {
-            throw new WrongUsageException(shouldAddData ? "/execute: already capturing data" : "/execute: not capturing any data", new Object[0]);
+            throw new WrongUsageException(shouldAddData ? "/export: already capturing data" : "/export: not capturing any data", new Object[0]);
         }
         shouldAddData = starting;
         if (shouldAddData) {
             savedPoints.clear();
             if (!HopperCounter.COUNTERS.containsKey(args[1])) {
-                throw new WrongUsageException("/execute: unknown counter '" + args[1] + "'", new Object[0]);
+                throw new WrongUsageException("/export: unknown counter '" + args[1] + "'", new Object[0]);
             }
             counter = args[1];
             notifyCommandListener(sender, this, "Starting capture of counter " + counter + "...");
