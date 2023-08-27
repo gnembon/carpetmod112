@@ -31,6 +31,7 @@ public class CarpetCommands {
         handler.registerCommand(new CommandLight());
         handler.registerCommand(new CommandLoadedChunks());
         handler.registerCommand(new CommandLog());
+        handler.registerCommand(new CommandLogCramming());
         handler.registerCommand(new CommandPalette());
         handler.registerCommand(new CommandPerimeter());
         handler.registerCommand(new CommandPing());
@@ -39,6 +40,7 @@ public class CarpetCommands {
         handler.registerCommand(new CommandRemoveEntity());
         handler.registerCommand(new CommandRepopulate());
         handler.registerCommand(new CommandRNG());
+        handler.registerCommand(new CommandSetpopulated());
         handler.registerCommand(new CommandScoreboardPublic());
         handler.registerCommand(new CommandSpawn());
         handler.registerCommand(new CommandStructure());

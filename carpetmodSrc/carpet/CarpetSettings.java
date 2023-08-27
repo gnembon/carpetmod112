@@ -1008,6 +1008,9 @@ public class CarpetSettings
     @Rule(desc = "Log the position of items that despawn.", category = CREATIVE)
     public static boolean logDespawnedItems = false;
 
+    @Rule(desc = "Log the position of entities that take cramming damage.", category = CREATIVE)
+    public static boolean logCramming = false;
+
     // ===== API ===== //
 
     /**
