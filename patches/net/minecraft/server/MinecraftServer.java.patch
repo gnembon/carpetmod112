@@ -206,9 +206,14 @@
                      this.field_71296_Q = true;
                  }
              }
-@@ -594,6 +658,15 @@
+@@ -592,8 +656,19 @@
+     protected void func_71217_p()
+     {
          long i = System.nanoTime();
-         ++this.field_71315_w;
+-        ++this.field_71315_w;
++        if (TickSpeed.process_entities){ // CM
++            ++this.field_71315_w;
++        }
  
 +        CarpetServer.tick(this);
 +        if (CarpetProfiler.tick_health_requested != 0L)
@@ -222,7 +227,7 @@
          if (this.field_71295_T)
          {
              this.field_71295_T = false;
-@@ -620,13 +693,23 @@
+@@ -620,13 +695,23 @@
              this.field_147147_p.func_151318_b().func_151330_a(agameprofile);
          }
  
@@ -246,7 +251,7 @@
  
          this.field_71304_b.func_76320_a("tallying");
          this.field_71311_j[this.field_71315_w % 100] = System.nanoTime() - i;
-@@ -645,12 +728,34 @@
+@@ -645,12 +730,34 @@
  
          this.field_71304_b.func_76319_b();
          this.field_71304_b.func_76319_b();
@@ -281,7 +286,7 @@
          synchronized (this.field_175589_i)
          {
              while (!this.field_175589_i.isEmpty())
-@@ -658,8 +763,10 @@
+@@ -658,8 +765,10 @@
                  Util.func_181617_a(this.field_175589_i.poll(), field_147145_h);
              }
          }
@@ -292,7 +297,7 @@
  
          for (int j = 0; j < this.field_71305_c.length; ++j)
          {
-@@ -672,6 +779,7 @@
+@@ -672,6 +781,7 @@
                  {
                      return worldserver.func_72912_H().func_76065_j();
                  });
@@ -300,7 +305,7 @@
  
                  if (this.field_71315_w % 20 == 0)
                  {
-@@ -686,27 +794,46 @@
+@@ -686,27 +796,46 @@
                  {
                      worldserver.func_72835_b();
                  }
@@ -349,7 +354,7 @@
                  this.field_71304_b.func_76319_b();
                  this.field_71304_b.func_76319_b();
              }
-@@ -714,13 +841,19 @@
+@@ -714,13 +843,19 @@
              this.field_71312_k[j][this.field_71315_w % 100] = System.nanoTime() - i;
          }
  
@@ -369,7 +374,7 @@
  
          for (int k = 0; k < this.field_71322_p.size(); ++k)
          {
-@@ -728,6 +861,9 @@
+@@ -728,6 +863,9 @@
          }
  
          this.field_71304_b.func_76319_b();
@@ -379,7 +384,7 @@
      }
  
      public boolean func_71255_r()
-@@ -939,7 +1075,7 @@
+@@ -939,7 +1077,7 @@
  
      public String getServerModName()
      {
@@ -388,7 +393,7 @@
      }
  
      public CrashReport func_71230_b(CrashReport p_71230_1_)
-@@ -1512,6 +1648,7 @@
+@@ -1512,6 +1650,7 @@
      {
          if (this.func_152345_ab())
          {
@@ -396,7 +401,7 @@
              this.func_184103_al().func_72389_g();
              this.field_71305_c[0].func_184146_ak().func_186522_a();
              this.func_191949_aK().func_192779_a();
-@@ -1523,4 +1660,9 @@
+@@ -1523,4 +1662,9 @@
              this.func_152344_a(this::func_193031_aM);
          }
      }
