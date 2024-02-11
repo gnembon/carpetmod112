@@ -1,0 +1,34 @@
+--- ../src-base/minecraft/net/minecraft/world/gen/feature/WorldGenHellLava.java
++++ ../src-work/minecraft/net/minecraft/world/gen/feature/WorldGenHellLava.java
+@@ -1,11 +1,17 @@
+ package net.minecraft.world.gen.feature;
+ 
+ import java.util.Random;
++
++import carpet.CarpetSettings;
++import carpet.logging.LoggerRegistry;
++import carpet.utils.Messenger;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.init.Blocks;
+ import net.minecraft.util.math.BlockPos;
++import net.minecraft.util.text.ITextComponent;
++import net.minecraft.util.text.TextFormatting;
+ import net.minecraft.world.World;
+ 
+ public class WorldGenHellLava extends WorldGenerator
+@@ -87,6 +93,13 @@
+ 
+             if (!this.field_94524_b && i == 4 && j == 1 || i == 5)
+             {
++
++                if (LoggerRegistry.__liquidPopulation && p_180709_3_.func_177956_o() >= CarpetSettings.logLiquidPopulationMinHeight && p_180709_3_.func_177956_o() <= CarpetSettings.logLiquidPopulationMaxHeight) {
++                    LoggerRegistry.getLogger("liquidPopulation").logNoCommand(()-> new ITextComponent[]{
++                            Messenger.s(null, TextFormatting.GREEN + "- Pocket of " + TextFormatting.RED + "LAVA" + TextFormatting.GREEN + " tried to generate in: " +
++                                    TextFormatting.AQUA + p_180709_3_)
++                    });
++                }
+                 IBlockState iblockstate = this.field_150553_a.func_176223_P();
+                 p_180709_1_.func_180501_a(p_180709_3_, iblockstate, 2);
+                 p_180709_1_.func_189507_a(p_180709_3_, iblockstate, p_180709_2_);
