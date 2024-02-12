@@ -34,7 +34,19 @@
          }
      }
  
-@@ -408,6 +419,10 @@
+@@ -318,7 +329,10 @@
+         if (item != null)
+         {
+             int i = this.field_70146_Z.nextInt(3);
+-
++            // <carpet>
++            if (CarpetSettings.alwaysLooting)
++                p_70628_2_ = 3;
++            // </carpet>
+             if (p_70628_2_ > 0)
+             {
+                 i += this.field_70146_Z.nextInt(p_70628_2_ + 1);
+@@ -408,6 +422,10 @@
  
              p_70014_1_.func_74782_a("Leash", nbttagcompound2);
          }
@@ -45,7 +57,7 @@
  
          p_70014_1_.func_74757_a("LeftHanded", this.func_184638_cS());
  
-@@ -1414,4 +1429,33 @@
+@@ -1414,4 +1432,33 @@
          IN_AIR,
          IN_WATER;
      }

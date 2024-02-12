@@ -3,6 +3,7 @@ package carpet.helpers;
 import carpet.CarpetServer;
 import carpet.pubsub.PubSubInfoProvider;
 import carpet.utils.Messenger;
+import carpet.commands.CommandExport;
 import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.objects.Object2LongLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongMap;
@@ -10,6 +11,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -91,6 +93,7 @@ public class HopperCounter
         }
         long total = getTotalItems();
         long ticks = Math.max(realTime ? (MinecraftServer.getCurrentTimeMillis() - startMillis) / 50 : server.getTickCounter() - startTick, 1);
+
         if (total == 0) {
             if (brief) {
                 return Collections.singletonList(Messenger.m(null,
@@ -130,4 +133,5 @@ public class HopperCounter
     public long getTotalItems() {
         return counter.values().stream().mapToLong(Long::longValue).sum();
     }
+    public long getStartTick() { return startTick; }
 }

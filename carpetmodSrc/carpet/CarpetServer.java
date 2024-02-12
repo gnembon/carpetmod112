@@ -1,5 +1,6 @@
 package carpet;
 
+import carpet.commands.CommandExport;
 import carpet.helpers.StackTraceDeobfuscator;
 import carpet.network.PluginChannelManager;
 import carpet.network.ToggleableChannelHandler;
@@ -129,6 +130,10 @@ public class CarpetServer // static for now - easier to handle all around the co
         HUDController.update_hud(server);
         WorldEditBridge.onStartTick();
         PUBSUB.update(server.getTickCounter());
+        // data export (Jachdich)
+        if (server.getTickCounter() % 20 == 0) { // log once an in-game second, ish
+            CommandExport.addDatapoint();
+        }
     }
     public static void playerConnected(EntityPlayerMP player)
     {
