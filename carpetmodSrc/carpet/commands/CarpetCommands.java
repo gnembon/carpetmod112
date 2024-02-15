@@ -44,10 +44,12 @@ public class CarpetCommands {
         handler.registerCommand(new CommandSubscribe());
         handler.registerCommand(new CommandTick());
         handler.registerCommand(new CommandTickingArea());
+        handler.registerCommand(new CommandTicktimes()); //Vales
         handler.registerCommand(new CommandTNT());
         handler.registerCommand(new CommandUnload());
         handler.registerCommand(new CommandUnload13());
         handler.registerCommand(new CommandUpdateCarpet());
+        handler.registerCommand(new CommandVillage());//Vales
         handler.registerCommand(new CommandWaypoint());
         handler.registerCommand(new CommandZetBlock());
 

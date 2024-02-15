@@ -1,6 +1,7 @@
 package carpet.carpetclient;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
@@ -8,6 +9,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.village.Village;
+import net.minecraft.village.VillageCollection;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
@@ -23,19 +25,33 @@ public class CarpetClientMarkers {
     public static final int MONUMENT = 7;
     public static final int MANSION = 8;
 
-    private static ArrayList<EntityPlayerMP> playersVillageMarkers = new ArrayList<>();
+    public static List<Village> annihilatedVillages = new ArrayList<>();
+    public static boolean changesOnly;
 
-    public static void updateClientVillageMarkers(World worldObj) {
-        if (playersVillageMarkers.size() == 0) {
-            return;
-        }
+    private static final List<EntityPlayerMP> playersVillageMarkers = new ArrayList<>();
+
+    public static void updateClientVillageMarkers(World world) {
+        if (playersVillageMarkers.size() == 0) return;
+
+        VillageCollection villageCollection = world.getVillageCollection();
         NBTTagList nbttaglist = new NBTTagList();
         NBTTagCompound tagCompound = new NBTTagCompound();
+        tagCompound.setInteger("Tick", villageCollection.getTickCounter());
 
-        for (Village village : worldObj.getVillageCollection().getVillageList()) {
-            NBTTagCompound nbttagcompound = new NBTTagCompound();
-            village.writeVillageDataToNBT(nbttagcompound);
-            nbttaglist.appendTag(nbttagcompound);
+        for (Village village : annihilatedVillages) {
+            NBTTagCompound compound = new NBTTagCompound();
+            village.writeMarkerDataToNBT(compound);
+            nbttaglist.appendTag(compound);
+        }
+        annihilatedVillages.clear();
+
+        for (Village village : villageCollection.getVillageList()) {
+            if (!CarpetClientMarkers.changesOnly || !village.oldVillage.equals(village.getVillageDoorInfoList())) {
+                village.oldVillage = new ArrayList<>(village.getVillageDoorInfoList());
+                NBTTagCompound compound = new NBTTagCompound();
+                village.writeMarkerDataToNBT(compound);
+                nbttaglist.appendTag(compound);
+            }
         }
 
         tagCompound.setTag("Villages", nbttaglist);
@@ -43,6 +59,7 @@ public class CarpetClientMarkers {
         for (EntityPlayerMP sender : playersVillageMarkers) {
             CarpetClientMessageHandler.sendNBTVillageData(sender, tagCompound);
         }
+        changesOnly = true;
     }
 
     public static void updateClientBoundingBoxMarkers(EntityPlayerMP sender, PacketBuffer data) {
@@ -62,6 +79,7 @@ public class CarpetClientMarkers {
         boolean addPlayer = data.readBoolean();
         if (addPlayer) {
             playersVillageMarkers.add(sender);
+            changesOnly = false;
             updateClientVillageMarkers(sender.world);
         } else {
             playersVillageMarkers.remove(sender);
