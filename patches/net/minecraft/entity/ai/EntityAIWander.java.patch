@@ -1,6 +1,24 @@
 --- ../src-base/minecraft/net/minecraft/entity/ai/EntityAIWander.java
 +++ ../src-work/minecraft/net/minecraft/entity/ai/EntityAIWander.java
-@@ -83,4 +83,9 @@
+@@ -1,6 +1,8 @@
+ package net.minecraft.entity.ai;
+ 
+ import javax.annotation.Nullable;
++
++import carpet.CarpetSettings;
+ import net.minecraft.entity.EntityCreature;
+ import net.minecraft.util.math.Vec3d;
+ 
+@@ -29,6 +31,8 @@
+ 
+     public boolean func_75250_a()
+     {
++
++        if (CarpetSettings.disableWandering) return false;
+         if (!this.field_179482_g)
+         {
+             if (this.field_75457_a.func_70654_ax() >= 100)
+@@ -83,4 +87,9 @@
      {
          this.field_179481_f = p_179479_1_;
      }

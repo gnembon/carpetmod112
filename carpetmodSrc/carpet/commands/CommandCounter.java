@@ -26,7 +26,7 @@ public class CommandCounter extends CommandCarpetBase
      */
     public String getUsage(ICommandSender sender)
     {
-        return "Usage: counter <color> <reset/realtime>";
+        return "/counter <color> <reset/realtime>";
     }
 
     public String getName()
@@ -44,12 +44,12 @@ public class CommandCounter extends CommandCarpetBase
             return;
         }
         if (args.length == 0) {
-            msg(sender, HopperCounter.formatAll(server, false));
+            msg(sender, HopperCounter.formatAll(server, false, false));
             return;
         }
         switch (args[0].toLowerCase(Locale.ROOT)) {
             case "realtime":
-                msg(sender, HopperCounter.formatAll(server, true));
+                msg(sender, HopperCounter.formatAll(server, true, false));
                 return;
             case "reset":
                 HopperCounter.resetAll(server);

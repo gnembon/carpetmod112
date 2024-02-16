@@ -25,6 +25,7 @@ public class CarpetCommands {
         handler.registerCommand(new CommandGMC());
         handler.registerCommand(new CommandGMS());
         handler.registerCommand(new CommandGrow());
+        handler.registerCommand(new CommandGolem());//Vales
         handler.registerCommand(new CommandLagSpike());
         handler.registerCommand(new CommandLazyChunkBehavior());
         handler.registerCommand(new CommandLight());
@@ -44,10 +45,12 @@ public class CarpetCommands {
         handler.registerCommand(new CommandSubscribe());
         handler.registerCommand(new CommandTick());
         handler.registerCommand(new CommandTickingArea());
+        handler.registerCommand(new CommandTicktimes()); //Vales
         handler.registerCommand(new CommandTNT());
         handler.registerCommand(new CommandUnload());
         handler.registerCommand(new CommandUnload13());
         handler.registerCommand(new CommandUpdateCarpet());
+        handler.registerCommand(new CommandVillage());//Vales
         handler.registerCommand(new CommandWaypoint());
         handler.registerCommand(new CommandZetBlock());
 

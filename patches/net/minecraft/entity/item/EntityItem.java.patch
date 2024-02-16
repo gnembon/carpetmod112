@@ -164,7 +164,21 @@
          }
      }
  
-@@ -470,4 +535,9 @@
+@@ -395,7 +460,12 @@
+     public Entity func_184204_a(int p_184204_1_)
+     {
+         Entity entity = super.func_184204_a(p_184204_1_);
+-
++        //CM
++        if (LoggerRegistry.__items && entity instanceof EntityItem) {
++            EntityItem item = (EntityItem) entity;
++            item.logHelper = this.logHelper;
++            entity = item;
++        }
+         if (!this.field_70170_p.field_72995_K && entity instanceof EntityItem)
+         {
+             ((EntityItem)entity).func_85054_d();
+@@ -470,4 +540,9 @@
          this.func_174871_r();
          this.field_70292_b = 5999;
      }
