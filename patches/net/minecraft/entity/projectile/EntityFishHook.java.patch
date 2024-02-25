@@ -1,0 +1,46 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityFishHook.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.entity.projectile;
+ 
+ import java.util.List;
++
++import carpet.CarpetSettings;
++import carpet.utils.RandomTools;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.BlockLiquid;
+ import net.minecraft.block.material.Material;
+@@ -88,9 +91,16 @@
+         this.field_70181_x = (double)MathHelper.func_76131_a(-(f5 / f4), -5.0F, 5.0F);
+         this.field_70179_y = (double)(-f2);
+         float f6 = MathHelper.func_76133_a(this.field_70159_w * this.field_70159_w + this.field_70181_x * this.field_70181_x + this.field_70179_y * this.field_70179_y);
+-        this.field_70159_w *= 0.6D / (double)f6 + 0.5D + this.field_70146_Z.nextGaussian() * 0.0045D;
+-        this.field_70181_x *= 0.6D / (double)f6 + 0.5D + this.field_70146_Z.nextGaussian() * 0.0045D;
+-        this.field_70179_y *= 0.6D / (double)f6 + 0.5D + this.field_70146_Z.nextGaussian() * 0.0045D;
++        if (!CarpetSettings.extremeBehaviours) {
++            this.field_70159_w *= 0.6D / (double) f6 + 0.5D + this.field_70146_Z.nextGaussian() * 0.0045D;
++            this.field_70181_x *= 0.6D / (double) f6 + 0.5D + this.field_70146_Z.nextGaussian() * 0.0045D;
++            this.field_70179_y *= 0.6D / (double) f6 + 0.5D + this.field_70146_Z.nextGaussian() * 0.0045D;
++        }
++        else {
++            this.field_70159_w *= 0.6D / (double) f6 + 0.5D + RandomTools.nextNotGaussian(this.field_70146_Z) * 0.0045D;
++            this.field_70181_x *= 0.6D / (double) f6 + 0.5D + RandomTools.nextNotGaussian(this.field_70146_Z) * 0.0045D;
++            this.field_70179_y *= 0.6D / (double) f6 + 0.5D + RandomTools.nextNotGaussian(this.field_70146_Z) * 0.0045D;
++        }
+         float f7 = MathHelper.func_76133_a(this.field_70159_w * this.field_70159_w + this.field_70179_y * this.field_70179_y);
+         this.field_70177_z = (float)(MathHelper.func_181159_b(this.field_70159_w, this.field_70179_y) * (180D / Math.PI));
+         this.field_70125_A = (float)(MathHelper.func_181159_b(this.field_70181_x, (double)f7) * (180D / Math.PI));
+@@ -384,7 +394,12 @@
+ 
+             if (this.field_146038_az > 0)
+             {
+-                this.field_146054_aA = (float)((double)this.field_146054_aA + this.field_70146_Z.nextGaussian() * 4.0D);
++                if (!CarpetSettings.extremeBehaviours) {
++                    this.field_146054_aA = (float) ((double) this.field_146054_aA + this.field_70146_Z.nextGaussian() * 4.0D);
++                }
++                else {
++                    this.field_146054_aA = (float)((double)this.field_146054_aA + RandomTools.nextNotGaussian(this.field_70146_Z) * 4.0D);
++                }
+                 float f = this.field_146054_aA * 0.017453292F;
+                 float f1 = MathHelper.func_76126_a(f);
+                 float f2 = MathHelper.func_76134_b(f);
