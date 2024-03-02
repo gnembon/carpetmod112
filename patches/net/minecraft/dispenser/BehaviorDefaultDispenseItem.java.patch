@@ -1,0 +1,30 @@
+--- ../src-base/minecraft/net/minecraft/dispenser/BehaviorDefaultDispenseItem.java
++++ ../src-work/minecraft/net/minecraft/dispenser/BehaviorDefaultDispenseItem.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.dispenser;
+ 
++import carpet.CarpetSettings;
++import carpet.utils.RandomTools;
+ import net.minecraft.block.BlockDispenser;
+ import net.minecraft.entity.item.EntityItem;
+ import net.minecraft.item.ItemStack;
+@@ -45,9 +47,16 @@
+         entityitem.field_70159_w = (double)p_82486_3_.func_82601_c() * d3;
+         entityitem.field_70181_x = 0.20000000298023224D;
+         entityitem.field_70179_y = (double)p_82486_3_.func_82599_e() * d3;
+-        entityitem.field_70159_w += p_82486_0_.field_73012_v.nextGaussian() * 0.007499999832361937D * (double)p_82486_2_;
+-        entityitem.field_70181_x += p_82486_0_.field_73012_v.nextGaussian() * 0.007499999832361937D * (double)p_82486_2_;
+-        entityitem.field_70179_y += p_82486_0_.field_73012_v.nextGaussian() * 0.007499999832361937D * (double)p_82486_2_;
++        if (!CarpetSettings.extremeBehaviours) {
++            entityitem.field_70159_w += p_82486_0_.field_73012_v.nextGaussian() * 0.007499999832361937D * (double)p_82486_2_;
++            entityitem.field_70181_x += p_82486_0_.field_73012_v.nextGaussian() * 0.007499999832361937D * (double)p_82486_2_;
++            entityitem.field_70179_y += p_82486_0_.field_73012_v.nextGaussian() * 0.007499999832361937D * (double)p_82486_2_;
++        }
++        else {
++            entityitem.field_70159_w += RandomTools.nextNotGaussian(p_82486_0_.field_73012_v) * 0.007499999832361937D * (double)p_82486_2_;
++            entityitem.field_70181_x += RandomTools.nextNotGaussian(p_82486_0_.field_73012_v) * 0.007499999832361937D * (double)p_82486_2_;
++            entityitem.field_70179_y += RandomTools.nextNotGaussian(p_82486_0_.field_73012_v) * 0.007499999832361937D * (double)p_82486_2_;
++        }
+         p_82486_0_.func_72838_d(entityitem);
+     }
+ 

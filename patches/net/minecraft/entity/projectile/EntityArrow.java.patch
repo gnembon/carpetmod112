@@ -1,0 +1,44 @@
+--- ../src-base/minecraft/net/minecraft/entity/projectile/EntityArrow.java
++++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityArrow.java
+@@ -1,5 +1,7 @@
+ package net.minecraft.entity.projectile;
+ 
++import carpet.CarpetSettings;
++import carpet.utils.RandomTools;
+ import com.google.common.base.Predicate;
+ import com.google.common.base.Predicates;
+ import java.util.List;
+@@ -114,9 +116,17 @@
+         p_70186_1_ = p_70186_1_ / (double)f;
+         p_70186_3_ = p_70186_3_ / (double)f;
+         p_70186_5_ = p_70186_5_ / (double)f;
+-        p_70186_1_ = p_70186_1_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double)p_70186_8_;
+-        p_70186_3_ = p_70186_3_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double)p_70186_8_;
+-        p_70186_5_ = p_70186_5_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double)p_70186_8_;
++        if (!CarpetSettings.extremeBehaviours) {
++            p_70186_1_ = p_70186_1_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double) p_70186_8_;
++            p_70186_3_ = p_70186_3_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double) p_70186_8_;
++            p_70186_5_ = p_70186_5_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double) p_70186_8_;
++        }
++        else {
++            p_70186_1_ = p_70186_1_ + RandomTools.nextNotGaussian(this.field_70146_Z) * 0.007499999832361937D * (double)p_70186_8_;
++            p_70186_3_ = p_70186_3_ + RandomTools.nextNotGaussian(this.field_70146_Z) * 0.007499999832361937D * (double)p_70186_8_;
++            p_70186_5_ = p_70186_5_ + RandomTools.nextNotGaussian(this.field_70146_Z) * 0.007499999832361937D * (double)p_70186_8_;
++        }
++
+         p_70186_1_ = p_70186_1_ * (double)p_70186_7_;
+         p_70186_3_ = p_70186_3_ * (double)p_70186_7_;
+         p_70186_5_ = p_70186_5_ * (double)p_70186_7_;
+@@ -599,7 +609,11 @@
+     {
+         int i = EnchantmentHelper.func_185284_a(Enchantments.field_185309_u, p_190547_1_);
+         int j = EnchantmentHelper.func_185284_a(Enchantments.field_185310_v, p_190547_1_);
+-        this.func_70239_b((double)(p_190547_2_ * 2.0F) + this.field_70146_Z.nextGaussian() * 0.25D + (double)((float)this.field_70170_p.func_175659_aa().func_151525_a() * 0.11F));
++        if (!CarpetSettings.extremeBehaviours) {
++            this.func_70239_b((double)(p_190547_2_ * 2.0F) + this.field_70146_Z.nextGaussian() * 0.25D + (double)((float)this.field_70170_p.func_175659_aa().func_151525_a() * 0.11F));
++        }else{
++            this.func_70239_b((double)(p_190547_2_ * 2.0F) + RandomTools.nextNotGaussian(this.field_70146_Z) * 0.25D + (double)((float)this.field_70170_p.func_175659_aa().func_151525_a() * 0.11F));
++        }
+ 
+         if (i > 0)
+         {

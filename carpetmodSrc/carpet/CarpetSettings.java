@@ -999,6 +999,20 @@ public class CarpetSettings
     @Rule(desc = "Removes tnt applying velocity to other entities.", category = CREATIVE)
     public static boolean removeTNTVelocity = false;
 
+    @Rule(
+            desc = "Edge cases are as frequent as common cases, for testing only!!",
+            extra = {"Velocities of items from dispensers, blaze projectiles, fireworks ",
+                    "Directions of fireballs, wither skulls, fishing bobbers, ",
+                    "items dropped from blocks and inventories, llamas spit, triggered trap horses",
+                    "Damage dealt with projectiles",
+                    "Blaze aggro sensitivity",
+                    "Mobs spawned follow range",
+                    "Velocity from projectiles thrown"
+            },
+            category = CREATIVE
+    )
+    public static boolean extremeBehaviours;
+
     // ===== API ===== //
 
     /**
