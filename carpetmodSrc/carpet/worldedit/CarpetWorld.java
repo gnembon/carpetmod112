@@ -123,7 +123,7 @@ class CarpetWorld extends AbstractWorld {
         }
 
         IBlockState newState = Block.getBlockById(block.getId()).getStateFromMeta(block.getData());
-        boolean successful = chunk.setBlockState(new BlockPos(x & 15, y, z & 15), newState) != null;
+        boolean successful = chunk.setBlockState(new BlockPos(x, y, z), newState) != null;
 
         // Create the TileEntity
         if (successful) {
