@@ -26,16 +26,18 @@
  import net.minecraft.util.DamageSource;
  import net.minecraft.util.datafix.DataFixer;
  import net.minecraft.util.datafix.FixTypes;
-@@ -25,6 +31,8 @@
+@@ -24,7 +30,10 @@
+ import net.minecraft.world.World;
  import org.apache.logging.log4j.LogManager;
  import org.apache.logging.log4j.Logger;
++import net.minecraft.util.text.TextComponentString;
  
 +import carpet.helpers.StatHelper;
 +
  public class EntityItem extends Entity
  {
      private static final Logger field_145803_d = LogManager.getLogger();
-@@ -35,6 +43,9 @@
+@@ -35,6 +44,9 @@
      private String field_145801_f;
      private String field_145802_g;
      public float field_70290_d;
@@ -45,7 +47,7 @@
  
      public EntityItem(World p_i1709_1_, double p_i1709_2_, double p_i1709_4_, double p_i1709_6_)
      {
-@@ -47,6 +58,12 @@
+@@ -47,6 +59,12 @@
          this.field_70159_w = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
          this.field_70181_x = 0.20000000298023224D;
          this.field_70179_y = (double)((float)(Math.random() * 0.20000000298023224D - 0.10000000149011612D));
@@ -58,7 +60,7 @@
      }
  
      public EntityItem(World p_i1710_1_, double p_i1710_2_, double p_i1710_4_, double p_i1710_6_, ItemStack p_i1710_8_)
-@@ -165,8 +182,20 @@
+@@ -165,8 +183,25 @@
                  }
              }
  
@@ -75,11 +77,16 @@
 +                if (LoggerRegistry.__items && logHelper != null) {
 +                    logHelper.onFinish("Despawn Timer");
 +                }
++
++                // Log if item despawned (Jachdich)
++                if (CarpetSettings.logDespawnedItems) {
++                    field_70170_p.func_73046_m().func_184103_al().func_148539_a(new TextComponentString("Despawned: " + field_70165_t + " " + field_70163_u + " " + field_70161_v));
++                }
 +                // ----- Carpet End ----- //
                  this.func_70106_y();
              }
          }
-@@ -221,8 +250,23 @@
+@@ -221,8 +256,23 @@
                      }
                      else if (itemstack1.func_190916_E() + itemstack.func_190916_E() > itemstack1.func_77976_d())
                      {
@@ -103,7 +110,7 @@
                      else
                      {
                          itemstack1.func_190917_f(itemstack.func_190916_E());
-@@ -256,6 +300,8 @@
+@@ -256,6 +306,8 @@
  
      public boolean func_70072_I()
      {
@@ -112,7 +119,7 @@
          if (this.field_70170_p.func_72918_a(this.func_174813_aQ(), Material.field_151586_h, this))
          {
              if (!this.field_70171_ac && !this.field_70148_d)
-@@ -269,7 +315,8 @@
+@@ -269,7 +321,8 @@
          {
              this.field_70171_ac = false;
          }
@@ -122,7 +129,7 @@
          return this.field_70171_ac;
      }
  
-@@ -295,6 +342,15 @@
+@@ -295,6 +348,22 @@
  
              if (this.field_70291_e <= 0)
              {
@@ -135,10 +142,17 @@
 +                    logHelper.onFinish(p_70097_1_.func_76355_l());
 +                }
 +                // ----- Carpet End ----- //
++                
++                // Log if item exploded (Jachdich)
++                // ----- Carpet Start ----- //
++                if (CarpetSettings.logExplodedItems && p_70097_1_.func_94541_c()) {
++                    field_70170_p.func_73046_m().func_184103_al().func_148539_a(new TextComponentString("Exploded: " + field_70165_t + " " + field_70163_u + " " + field_70161_v));
++                }
++                // ----- Carpet End ----- //
                  this.func_70106_y();
              }
  
-@@ -366,6 +422,10 @@
+@@ -366,6 +435,10 @@
              Item item = itemstack.func_77973_b();
              int i = itemstack.func_190916_E();
  
@@ -149,7 +163,7 @@
              if (this.field_145804_b == 0 && (this.field_145802_g == null || 6000 - this.field_70292_b <= 200 || this.field_145802_g.equals(p_70100_1_.func_70005_c_())) && p_70100_1_.field_71071_by.func_70441_a(itemstack))
              {
                  p_70100_1_.func_71001_a(this, i);
-@@ -376,8 +436,13 @@
+@@ -376,8 +449,13 @@
                      itemstack.func_190920_e(i);
                  }
  
@@ -164,7 +178,7 @@
          }
      }
  
-@@ -470,4 +535,9 @@
+@@ -470,4 +548,9 @@
          this.func_174871_r();
          this.field_70292_b = 5999;
      }

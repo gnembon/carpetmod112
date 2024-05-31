@@ -999,6 +999,18 @@ public class CarpetSettings
     @Rule(desc = "Removes tnt applying velocity to other entities.", category = CREATIVE)
     public static boolean removeTNTVelocity = false;
 
+    @Rule(desc = "Always apply looting to all mobs killed.", category = CREATIVE)
+    public static boolean alwaysLooting = false;
+    
+    @Rule(desc = "Log the position of items destroyed by explosion.", category = CREATIVE)
+    public static boolean logExplodedItems = false;
+
+    @Rule(desc = "Log the position of items that despawn.", category = CREATIVE)
+    public static boolean logDespawnedItems = false;
+
+    @Rule(desc = "Log the position of entities that take cramming damage.", category = CREATIVE)
+    public static boolean logCramming = false;
+
     // ===== API ===== //
 
     /**
