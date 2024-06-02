@@ -13,6 +13,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.village.Village;
+import net.minecraft.village.VillageCollection;
+import net.minecraft.village.VillageDoorInfo;
 import org.apache.commons.lang3.tuple.Pair;
 
 public class CarpetClientMessageHandler {
@@ -26,6 +30,7 @@ public class CarpetClientMessageHandler {
     public static final int PISTON_UPDATES = 6;
     public static final int RANDOMTICK_DISPLAY = 7;
     public static final int CUSTOM_RECIPES = 8;
+    public static final int DOOR_INFO = 9;
 
     private static final int NET_VERSION = 1;
 
@@ -46,6 +51,8 @@ public class CarpetClientMessageHandler {
             CarpetClientRandomtickingIndexing.register(sender, data);
         } else if (CUSTOM_RECIPES == type) {
             confirmationReceivedCustomRecipesSendUpdate(sender);
+        } else if (DOOR_INFO == type) {
+            doorInfoRequest(sender, data);
         }
     }
 
@@ -176,5 +183,51 @@ public class CarpetClientMessageHandler {
 
     public static void confirmationReceivedCustomRecipesSendUpdate(EntityPlayerMP sender) {
         sender.getRecipeBook().init(sender);
+    }
+    public static void doorInfoRequest(EntityPlayerMP sender, PacketBuffer data) {
+        BlockPos doorBlock;
+        VillageCollection collection;
+        try {
+            int x = data.readInt();
+            int y = data.readInt();
+            int z = data.readInt();
+            doorBlock = new BlockPos(x, y, z);
+            collection = sender.getEntityWorld().getVillageCollection();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger("Tick", collection.getTickCounter());
+        NBTTagList nbttaglist = new NBTTagList();
+
+        int villageNum = 1;
+        for (Village village : collection.getVillageList()) {
+            int doorNum = 1;
+            for (VillageDoorInfo door : village.getVillageDoorInfoList()) {
+                if (door.getDoorBlockPos().equals(doorBlock)) {
+                    NBTTagCompound nbttagcompound = new NBTTagCompound();
+                    nbttagcompound.setInteger("Village", villageNum);
+                    nbttagcompound.setInteger("Door", doorNum);
+                    nbttagcompound.setInteger("Stable", village.getLastAddDoorTimestamp());
+                    nbttagcompound.setInteger("TS", door.getLastActivityTimestamp());
+                    nbttaglist.appendTag(nbttagcompound);
+                }
+                doorNum++;
+            }
+            villageNum++;
+        }
+        compound.setTag("Doors", nbttaglist);
+        sendDoorInfo(sender, compound);
+    }
+
+    public static void sendDoorInfo(EntityPlayerMP sender, NBTTagCompound compound) {
+        PacketBuffer data = new PacketBuffer(Unpooled.buffer());
+        data.writeInt(CarpetClientMessageHandler.DOOR_INFO);
+
+        data.writeCompoundTag(compound);
+
+        CarpetClientServer.sender(data, sender);
     }
 }

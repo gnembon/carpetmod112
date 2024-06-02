@@ -1,0 +1,50 @@
+--- ../src-base/minecraft/net/minecraft/pathfinding/PathNavigate.java
++++ ../src-work/minecraft/net/minecraft/pathfinding/PathNavigate.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.pathfinding;
+ 
+ import javax.annotation.Nullable;
++
++import carpet.logging.LoggerRegistry;
++import carpet.utils.Messenger;
+ import net.minecraft.block.Block;
+ import net.minecraft.block.state.IBlockState;
+ import net.minecraft.entity.Entity;
+@@ -12,6 +15,7 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.MathHelper;
+ import net.minecraft.util.math.Vec3d;
++import net.minecraft.util.text.ITextComponent;
+ import net.minecraft.world.ChunkCache;
+ import net.minecraft.world.World;
+ 
+@@ -154,6 +158,29 @@
+ 
+     public boolean func_75484_a(@Nullable Path p_75484_1_, double p_75484_2_)
+     {
++        if (LoggerRegistry.__pathfinding)
++        {
++            EntityLiving entity = this.field_75515_a;
++            BlockPos destination = this.field_188564_r;
++            if (entity != null && !entity.func_174814_R()) {
++                BlockPos entityPos = entity.func_180425_c();
++                if (destination != null)
++                {
++                    LoggerRegistry.getLogger("pathfinding").log(option -> new ITextComponent[]{
++                            Messenger.m(null, String.format("w %s at %d, %d, %d pathfinding to %d, %d, %d",
++                                    entity.func_70005_c_(), entityPos.func_177958_n(), entityPos.func_177956_o(), entityPos.func_177952_p(), destination.func_177958_n(), destination.func_177956_o(), destination.func_177952_p()))
++                    });
++                }
++                else
++                {
++                    LoggerRegistry.getLogger("pathfinding").log(option -> new ITextComponent[]{
++                            Messenger.m(null, String.format("w %s at %d, %d, %d pathfinding to null",
++                                    entity.func_70005_c_(), entityPos.func_177958_n(), entityPos.func_177956_o(), entityPos.func_177952_p()))
++                    });
++                }
++            }
++        }
++
+         if (p_75484_1_ == null)
+         {
+             this.field_75514_c = null;

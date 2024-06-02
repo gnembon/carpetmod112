@@ -265,6 +265,7 @@ public class CommandLog extends CommandCarpetBase {
             }
             else
             {
+                LoggerRegistry.unsubscribePlayer(server, player.getName(), logger.getLogName());
                 LoggerRegistry.subscribePlayer(server, player.getName(), logger.getLogName(), option, handler);
             }
             if (subscribed)

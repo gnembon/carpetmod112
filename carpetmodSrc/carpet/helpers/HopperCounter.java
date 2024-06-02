@@ -66,14 +66,15 @@ public class HopperCounter
         }
     }
 
-    public static List<ITextComponent> formatAll(MinecraftServer server, boolean realtime)
+    public static List<ITextComponent> formatAll(MinecraftServer server, boolean realtime, boolean brief)
     {
         List<ITextComponent> text = new ArrayList<>();
 
-        for (HopperCounter counter : COUNTERS.values()) {
-            List<ITextComponent> temp = counter.format(server, realtime, false);
-            if (temp.size() > 1) {
-                text.addAll(temp);
+        List<HopperCounter> counters = new ArrayList<>(COUNTERS.values());
+        counters.sort(Comparator.comparingInt(counter -> counter.color.getMetadata()));
+        for (HopperCounter counter : counters) {
+            if (counter.getTotalItems() > 0) {
+                text.addAll(counter.format(server, realtime, brief));
             }
         }
         if (text.isEmpty()) {

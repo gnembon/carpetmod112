@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import carpet.carpetclient.CarpetClientChunkLogger;
 import carpet.carpetclient.CarpetClientRuleChanger;
+import carpet.helpers.IronFarmOptimization;
 import carpet.helpers.RandomTickOptimization;
 import carpet.helpers.ScoreboardDelta;
 import carpet.patches.BlockWool;
@@ -998,6 +999,87 @@ public class CarpetSettings
 
     @Rule(desc = "Removes tnt applying velocity to other entities.", category = CREATIVE)
     public static boolean removeTNTVelocity = false;
+
+    // ===== Vales ===== //
+
+    @Rule(desc = "Optimizes the door search for iron farms.", category = {EXPERIMENTAL, OPTIMIZATIONS}, validator = "validateDoorSearchOptimization")
+    public static boolean doorSearchOptimization;
+
+    private static boolean validateDoorSearchOptimization(boolean value) {
+        if (CarpetServer.minecraft_server.worlds != null) {
+            for (WorldServer world : CarpetServer.minecraft_server.worlds) {
+                if (value) {
+                    IronFarmOptimization.recalculateDoorCache(world.getVillageCollection());
+                }
+                else {
+                    world.getVillageCollection().getDoorCache().clear();
+                }
+            }
+        }
+        return true;
+    }
+
+    @Rule(desc = "Optimizes checking for wooden doors.", category = {EXPERIMENTAL, OPTIMIZATIONS}, validator = "validateDoorCheckOptimization", extra = {
+            "Checking that every door in every village every tick",
+            "is a wooden door takes a good chunk of performance.",
+            "Changes village behavior when update suppressing doors."
+    })
+    public static boolean doorCheckOptimization;
+
+    private static boolean validateDoorCheckOptimization(boolean value) {
+        if (CarpetServer.minecraft_server.worlds != null) {
+            for (WorldServer world : CarpetServer.minecraft_server.worlds) {
+                if (value) {
+                    IronFarmOptimization.recalculateVillageChunks(world.getVillageCollection());
+                }
+                else {
+                    world.getVillageCollection().getVillageChunks().clear();
+                }
+            }
+        }
+        return true;
+    }
+
+    @Rule(desc = "Optimizes AABB checks in iron farms.", category = {EXPERIMENTAL, OPTIMIZATIONS})
+    public static boolean ironFarmAABBOptimization;
+
+    @Rule(desc = "Changes villager ticking rate. Set 0 for default 70-119 rate", category = CREATIVE, options = {"0", "1", "70", "119"})
+    public static int villagerTickingRate = 0;
+
+    @Rule(desc = "Sets the length of the villager queue. Default 64 for up to 65 positions in the queue", category = CREATIVE, options = {"64", "1000"})
+    public static int villagerQueueLength = 64;
+
+    @Rule(desc = "Disables the village door ticking queue.", category = CREATIVE)
+    public static boolean disableVillagerQueue;
+
+    @Rule(desc = "Stops iron golems from swimming in certain edge cases.", category = CREATIVE)
+    public static boolean golemSwimFix;
+
+    @Rule(desc = "Delays the first door check of villagers instead of running instantly.", category = CREATIVE)
+    public static boolean villagersRandomStart;
+
+    @Rule(desc = "Changes time before doors are deregistered.", category = CREATIVE, options = {"1", "120", "1200", "12000"})
+    public static int doorDeregistrationTime = 1200;
+
+    @Rule(desc = "Toggles golem cap for iron farms.", category = CREATIVE)
+    public static boolean golemCap = true;
+
+    @Rule(desc = "Counts golem spawns. Enables /golem command.", category = CREATIVE)
+    public static boolean golemCounter;
+
+    @Rule(desc = "Use alternate rng to prevent rng manipulation of golem spawns.", category = CREATIVE)
+    public static boolean golemRNG;
+
+    @Rule(desc = "Freezes the game when villages are modified.", category = CREATIVE)
+    public static boolean freezeVillageChanges;
+
+    @Rule(desc = "Enables /ticktimes command to to log ticktimes", category = COMMANDS)
+    public static boolean commandTicktimes = true;
+    @Rule(desc = "Enables /village to query information about villages.", category = COMMANDS)
+    public static boolean commandVillage = true;
+    @Rule(desc = "Disables random entity AI wandering", category = CREATIVE)
+    public static boolean disableWandering;
+
 
     // ===== API ===== //
 
