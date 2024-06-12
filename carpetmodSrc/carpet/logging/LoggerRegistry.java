@@ -48,6 +48,7 @@ public class LoggerRegistry
     public static boolean __items;
     public static boolean __rng;
     public static boolean __explosions;
+    public static boolean __liquidPopulation;
     public static boolean __recipes;
     public static boolean __damageDebug;
     public static boolean __invisDebug;
@@ -68,6 +69,7 @@ public class LoggerRegistry
         registerLogger("items",new Logger(server, "items", "brief", new String[]{"brief", "full"}, LogHandler.CHAT));
         registerLogger("rng", new Logger(server, "rng", null, null, LogHandler.CHAT));
         registerLogger("explosions", new Logger(server, "explosions", "compact", new String[]{"brief", "full", "compact"}, LogHandler.CHAT));
+        registerLogger("liquidPopulation", new Logger(server, "liquidPopulation", "all", new String[]{"all","players","me"}, LogHandler.CHAT));
 
         registerLogger("autosave", new Logger(server, "autosave", null, null, LogHandler.HUD));
         registerLogger("tps", new Logger(server, "tps", null, null, LogHandler.HUD));

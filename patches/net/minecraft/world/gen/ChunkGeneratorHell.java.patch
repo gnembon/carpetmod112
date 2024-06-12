@@ -1,6 +1,26 @@
 --- ../src-base/minecraft/net/minecraft/world/gen/ChunkGeneratorHell.java
 +++ ../src-work/minecraft/net/minecraft/world/gen/ChunkGeneratorHell.java
-@@ -25,6 +25,10 @@
+@@ -3,6 +3,10 @@
+ import java.util.List;
+ import java.util.Random;
+ import javax.annotation.Nullable;
++
++import carpet.CarpetSettings;
++import carpet.logging.LoggerRegistry;
++import carpet.utils.Messenger;
+ import net.minecraft.block.BlockFalling;
+ import net.minecraft.block.material.Material;
+ import net.minecraft.block.state.IBlockState;
+@@ -12,6 +16,8 @@
+ import net.minecraft.util.math.BlockPos;
+ import net.minecraft.util.math.ChunkPos;
+ import net.minecraft.util.math.MathHelper;
++import net.minecraft.util.text.ITextComponent;
++import net.minecraft.util.text.TextFormatting;
+ import net.minecraft.world.World;
+ import net.minecraft.world.biome.Biome;
+ import net.minecraft.world.chunk.Chunk;
+@@ -25,6 +31,10 @@
  import net.minecraft.world.gen.feature.WorldGenerator;
  import net.minecraft.world.gen.structure.MapGenNetherBridge;
  
@@ -11,7 +31,46 @@
  public class ChunkGeneratorHell implements IChunkGenerator
  {
      protected static final IBlockState field_185940_a = Blocks.field_150350_a.func_176223_P();
-@@ -455,4 +459,12 @@
+@@ -209,6 +219,14 @@
+ 
+                                     if (j1 < i && (iblockstate == null || iblockstate.func_185904_a() == Material.field_151579_a))
+                                     {
++                                        if (LoggerRegistry.__liquidPopulation && j1 >= CarpetSettings.logLiquidPopulationMinHeight && j1 <= CarpetSettings.logLiquidPopulationMaxHeight) {
++                                            TextFormatting color =TextFormatting.RED;
++                                            String pos = "x: " + k + " y: " + j1 + " z: " + j;
++                                            LoggerRegistry.getLogger("liquidPopulation").logNoCommand(()-> new ITextComponent[]{
++                                                    Messenger.s(null, TextFormatting.GREEN + "- Pocket of " + color + "LAVA" + TextFormatting.GREEN + " tried to generate in: " +
++                                                            TextFormatting.AQUA + pos)
++                                            });
++                                        }
+                                         iblockstate = field_185943_d;
+                                     }
+ 
+@@ -246,6 +264,11 @@
+ 
+     public Chunk func_185932_a(int p_185932_1_, int p_185932_2_)
+     {
++        if(LoggerRegistry.__liquidPopulation) {
++            LoggerRegistry.getLogger("liquidPopulation").logNoCommand(()-> new ITextComponent[]{
++                    Messenger.s(null, TextFormatting.YELLOW + "Starting decoration of chunk: " + TextFormatting.AQUA + p_185932_1_ + " " + p_185932_2_)
++            });
++        }
+         this.field_185954_p.setSeed((long)p_185932_1_ * 341873128712L + (long)p_185932_2_ * 132897987541L);
+         ChunkPrimer chunkprimer = new ChunkPrimer();
+         this.func_185936_a(p_185932_1_, p_185932_2_, chunkprimer);
+@@ -267,6 +290,11 @@
+         }
+ 
+         chunk.func_76613_n();
++        if(LoggerRegistry.__liquidPopulation) {
++            LoggerRegistry.getLogger("liquidPopulation").logNoCommand(()-> new ITextComponent[]{
++                    Messenger.s(null, TextFormatting.YELLOW + "Finished decoration of chunk: " + TextFormatting.AQUA + p_185932_1_ + " " +p_185932_2_)
++            });
++        }
+         return chunk;
+     }
+ 
+@@ -455,4 +483,12 @@
      {
          this.field_73172_c.func_186125_a(this.field_185952_n, p_180514_2_, p_180514_3_, (ChunkPrimer)null);
      }
