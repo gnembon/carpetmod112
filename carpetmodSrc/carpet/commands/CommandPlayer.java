@@ -113,6 +113,7 @@ public class CommandPlayer extends CommandCarpetBase
         if ("stop".equalsIgnoreCase(action))
         {
             player.actionPack.stop();
+            player.stopActiveHand();
             return;
         }
         if ("drop".equalsIgnoreCase(action))
