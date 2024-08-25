@@ -1,6 +1,13 @@
 --- ../src-base/minecraft/net/minecraft/entity/EntityLiving.java
 +++ ../src-work/minecraft/net/minecraft/entity/EntityLiving.java
-@@ -56,6 +56,9 @@
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity;
+ 
++import carpet.utils.RandomTools;
+ import com.google.common.collect.Maps;
+ import java.util.Arrays;
+ import java.util.Map;
+@@ -56,6 +57,9 @@
  import net.minecraft.world.storage.loot.LootContext;
  import net.minecraft.world.storage.loot.LootTable;
  
@@ -10,7 +17,7 @@
  public abstract class EntityLiving extends EntityLivingBase
  {
      private static final DataParameter<Byte> field_184654_a = EntityDataManager.<Byte>func_187226_a(EntityLiving.class, DataSerializers.field_187191_a);
-@@ -192,11 +195,19 @@
+@@ -192,11 +196,19 @@
  
      public void func_70642_aH()
      {
@@ -34,7 +41,7 @@
          }
      }
  
-@@ -408,6 +419,10 @@
+@@ -408,6 +420,10 @@
  
              p_70014_1_.func_74782_a("Leash", nbttagcompound2);
          }
@@ -45,7 +52,20 @@
  
          p_70014_1_.func_74757_a("LeftHanded", this.func_184638_cS());
  
-@@ -1414,4 +1429,33 @@
+@@ -1119,7 +1135,11 @@
+     @Nullable
+     public IEntityLivingData func_180482_a(DifficultyInstance p_180482_1_, @Nullable IEntityLivingData p_180482_2_)
+     {
+-        this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111121_a(new AttributeModifier("Random spawn bonus", this.field_70146_Z.nextGaussian() * 0.05D, 1));
++        if (!CarpetSettings.extremeBehaviours) {
++            this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111121_a(new AttributeModifier("Random spawn bonus", this.field_70146_Z.nextGaussian() * 0.05D, 1));
++        }else{
++            this.func_110148_a(SharedMonsterAttributes.field_111265_b).func_111121_a(new AttributeModifier("Random spawn bonus", RandomTools.nextNotGaussian(this.field_70146_Z) * 0.05D, 1));
++        }
+ 
+         if (this.field_70146_Z.nextFloat() < 0.05F)
+         {
+@@ -1414,4 +1434,33 @@
          IN_AIR,
          IN_WATER;
      }

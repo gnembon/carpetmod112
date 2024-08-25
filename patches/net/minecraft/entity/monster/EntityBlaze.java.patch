@@ -1,0 +1,52 @@
+--- ../src-base/minecraft/net/minecraft/entity/monster/EntityBlaze.java
++++ ../src-work/minecraft/net/minecraft/entity/monster/EntityBlaze.java
+@@ -1,6 +1,9 @@
+ package net.minecraft.entity.monster;
+ 
+ import javax.annotation.Nullable;
++
++import carpet.CarpetSettings;
++import carpet.utils.RandomTools;
+ import net.minecraft.entity.EntityLiving;
+ import net.minecraft.entity.EntityLivingBase;
+ import net.minecraft.entity.SharedMonsterAttributes;
+@@ -131,7 +134,12 @@
+         if (this.field_70848_e <= 0)
+         {
+             this.field_70848_e = 100;
+-            this.field_70847_d = 0.5F + (float)this.field_70146_Z.nextGaussian() * 3.0F;
++            if (!CarpetSettings.extremeBehaviours) {
++                this.field_70847_d = 0.5F + (float) this.field_70146_Z.nextGaussian() * 3.0F;
++            }
++            else {
++                this.field_70847_d = 0.5F + (float) RandomTools.nextNotGaussian(this.field_70146_Z) * 3.0F;
++            }
+         }
+ 
+         EntityLivingBase entitylivingbase = this.func_70638_az();
+@@ -261,12 +269,20 @@
+                             float f = MathHelper.func_76129_c(MathHelper.func_76133_a(d0)) * 0.5F;
+                             this.field_179469_a.field_70170_p.func_180498_a((EntityPlayer)null, 1018, new BlockPos((int)this.field_179469_a.field_70165_t, (int)this.field_179469_a.field_70163_u, (int)this.field_179469_a.field_70161_v), 0);
+ 
+-                            for (int i = 0; i < 1; ++i)
+-                            {
+-                                EntitySmallFireball entitysmallfireball = new EntitySmallFireball(this.field_179469_a.field_70170_p, this.field_179469_a, d1 + this.field_179469_a.func_70681_au().nextGaussian() * (double)f, d2, d3 + this.field_179469_a.func_70681_au().nextGaussian() * (double)f);
+-                                entitysmallfireball.field_70163_u = this.field_179469_a.field_70163_u + (double)(this.field_179469_a.field_70131_O / 2.0F) + 0.5D;
+-                                this.field_179469_a.field_70170_p.func_72838_d(entitysmallfireball);
++                            if (!CarpetSettings.extremeBehaviours) {
++                                for (int i = 0; i < 1; ++i) {
++                                    EntitySmallFireball entitysmallfireball = new EntitySmallFireball(this.field_179469_a.field_70170_p, this.field_179469_a, d1 + this.field_179469_a.func_70681_au().nextGaussian() * (double) f, d2, d3 + this.field_179469_a.func_70681_au().nextGaussian() * (double) f);
++                                    entitysmallfireball.field_70163_u = this.field_179469_a.field_70163_u + (double) (this.field_179469_a.field_70131_O / 2.0F) + 0.5D;
++                                    this.field_179469_a.field_70170_p.func_72838_d(entitysmallfireball);
++                                }
+                             }
++                            else {
++                                for (int i = 0; i < 1; ++i) {
++                                    EntitySmallFireball entitysmallfireball = new EntitySmallFireball(this.field_179469_a.field_70170_p, this.field_179469_a, d1 + RandomTools.nextNotGaussian(this.field_179469_a.func_70681_au()) * (double) f, d2, d3 + RandomTools.nextNotGaussian(this.field_179469_a.func_70681_au()) * (double) f);
++                                    entitysmallfireball.field_70163_u = this.field_179469_a.field_70163_u + (double) (this.field_179469_a.field_70131_O / 2.0F) + 0.5D;
++                                    this.field_179469_a.field_70170_p.func_72838_d(entitysmallfireball);
++                                }
++                            }
+                         }
+                     }
+ 

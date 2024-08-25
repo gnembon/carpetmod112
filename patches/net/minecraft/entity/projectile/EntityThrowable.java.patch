@@ -1,15 +1,16 @@
 --- ../src-base/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
 +++ ../src-work/minecraft/net/minecraft/entity/projectile/EntityThrowable.java
-@@ -3,6 +3,8 @@
+@@ -3,6 +3,9 @@
  import java.util.List;
  import java.util.UUID;
  import javax.annotation.Nullable;
 +
 +import carpet.CarpetSettings;
++import carpet.utils.RandomTools;
  import net.minecraft.block.Block;
  import net.minecraft.entity.Entity;
  import net.minecraft.entity.EntityLivingBase;
-@@ -21,6 +23,9 @@
+@@ -21,6 +24,9 @@
  import net.minecraft.world.World;
  import net.minecraft.world.WorldServer;
  
@@ -19,7 +20,7 @@
  public abstract class EntityThrowable extends Entity implements IProjectile
  {
      private int field_145788_c;
-@@ -36,6 +41,8 @@
+@@ -36,6 +42,8 @@
      public Entity field_184539_c;
      private int field_184540_av;
  
@@ -28,7 +29,7 @@
      public EntityThrowable(World p_i1776_1_)
      {
          super(p_i1776_1_);
-@@ -43,6 +50,11 @@
+@@ -43,6 +51,11 @@
          this.field_145786_d = -1;
          this.field_145787_e = -1;
          this.func_70105_a(0.25F, 0.25F);
@@ -40,7 +41,27 @@
      }
  
      public EntityThrowable(World p_i1778_1_, double p_i1778_2_, double p_i1778_4_, double p_i1778_6_)
-@@ -268,9 +280,24 @@
+@@ -82,9 +95,16 @@
+         p_70186_1_ = p_70186_1_ / (double)f;
+         p_70186_3_ = p_70186_3_ / (double)f;
+         p_70186_5_ = p_70186_5_ / (double)f;
+-        p_70186_1_ = p_70186_1_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double)p_70186_8_;
+-        p_70186_3_ = p_70186_3_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double)p_70186_8_;
+-        p_70186_5_ = p_70186_5_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double)p_70186_8_;
++        if (!CarpetSettings.extremeBehaviours) {
++            p_70186_1_ = p_70186_1_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double) p_70186_8_;
++            p_70186_3_ = p_70186_3_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double) p_70186_8_;
++            p_70186_5_ = p_70186_5_ + this.field_70146_Z.nextGaussian() * 0.007499999832361937D * (double) p_70186_8_;
++        }
++        else {
++            p_70186_1_ = p_70186_1_ + RandomTools.nextNotGaussian(this.field_70146_Z) * 0.007499999832361937D * (double) p_70186_8_;
++            p_70186_3_ = p_70186_3_ + RandomTools.nextNotGaussian(this.field_70146_Z) * 0.007499999832361937D * (double) p_70186_8_;
++            p_70186_5_ = p_70186_5_ + RandomTools.nextNotGaussian(this.field_70146_Z) * 0.007499999832361937D * (double) p_70186_8_;
++        }
+         p_70186_1_ = p_70186_1_ * (double)p_70186_7_;
+         p_70186_3_ = p_70186_3_ * (double)p_70186_7_;
+         p_70186_5_ = p_70186_5_ * (double)p_70186_7_;
+@@ -268,9 +288,24 @@
              this.field_70181_x -= (double)f2;
          }
  
@@ -65,7 +86,7 @@
      protected float func_70185_h()
      {
          return 0.03F;
-@@ -331,6 +358,10 @@
+@@ -331,6 +366,10 @@
      @Nullable
      public EntityLivingBase func_85052_h()
      {
@@ -76,7 +97,7 @@
          if (this.field_70192_c == null && this.field_85053_h != null && !this.field_85053_h.isEmpty())
          {
              this.field_70192_c = this.field_70170_p.func_72924_a(this.field_85053_h);
-@@ -355,4 +386,17 @@
+@@ -355,4 +394,17 @@
  
          return this.field_70192_c;
      }

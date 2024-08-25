@@ -1,0 +1,26 @@
+--- ../src-base/minecraft/net/minecraft/entity/boss/EntityWither.java
++++ ../src-work/minecraft/net/minecraft/entity/boss/EntityWither.java
+@@ -1,5 +1,6 @@
+ package net.minecraft.entity.boss;
+ 
++import carpet.CarpetSettings;
+ import com.google.common.base.Predicate;
+ import com.google.common.base.Predicates;
+ import java.util.List;
+@@ -481,9 +482,13 @@
+         return p_82204_1_ + f;
+     }
+ 
+-    private void func_82216_a(int p_82216_1_, EntityLivingBase p_82216_2_)
+-    {
+-        this.func_82209_a(p_82216_1_, p_82216_2_.field_70165_t, p_82216_2_.field_70163_u + (double)p_82216_2_.func_70047_e() * 0.5D, p_82216_2_.field_70161_v, p_82216_1_ == 0 && this.field_70146_Z.nextFloat() < 0.001F);
++    private void func_82216_a(int p_82216_1_, EntityLivingBase p_82216_2_) {
++        if (!CarpetSettings.extremeBehaviours) {
++            this.func_82209_a(p_82216_1_, p_82216_2_.field_70165_t, p_82216_2_.field_70163_u + (double) p_82216_2_.func_70047_e() * 0.5D, p_82216_2_.field_70161_v, p_82216_1_ == 0 && this.field_70146_Z.nextFloat() < 0.001F);
++        }
++        else {
++            this.func_82209_a(p_82216_1_, p_82216_2_.field_70165_t, p_82216_2_.field_70163_u + (double) p_82216_2_.func_70047_e() * 0.5D, p_82216_2_.field_70161_v, p_82216_1_ == 0 && this.field_70146_Z.nextFloat()/100 < 0.001F);
++        }
+     }
+ 
+     private void func_82209_a(int p_82209_1_, double p_82209_2_, double p_82209_4_, double p_82209_6_, boolean p_82209_8_)
