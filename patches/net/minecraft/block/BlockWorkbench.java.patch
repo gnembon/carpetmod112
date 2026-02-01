@@ -46,7 +46,7 @@
              p_180639_4_.func_71029_a(StatList.field_188062_ab);
              return true;
          }
-@@ -75,4 +89,52 @@
+@@ -75,4 +89,53 @@
                  return "minecraft:crafting_table";
              }
          }
@@ -60,7 +60,8 @@
 +    @Nullable
 +    @Override
 +    public TileEntity func_149915_a(World worldIn, int meta) {
-+        return new TileEntityCraftingTable();
++        // Vanilla already handles null tile entity returns, so this is fine
++        return CarpetSettings.autocrafter ? new TileEntityCraftingTable() : null;
 +    }
 +
 +    @Override
